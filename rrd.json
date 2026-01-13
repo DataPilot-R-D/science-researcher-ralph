@@ -231,12 +231,26 @@
       "date": "2026-01-05",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "presented",
+      "score": 23,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Presents InternVLA-A1, a Mixture-of-Transformers VLA architecture that unifies scene understanding, visual foresight generation, and action execution. Trained on 533M+ frames from hybrid synthetic-real data, achieves 75.1% success on general tasks and 40-73% improvement over pi0/GR00T on dynamic manipulation tasks like conveyor sorting.",
+        "methodology": "Three coordinated experts (understanding built on InternVL3/Qwen3-VL, generation using Cosmos VAE for future frame prediction, action via flow matching) with blockwise masked self-attention. Two-stage training: 700K steps pre-training on InternData-A1 + AgiBot-World, 60K steps post-training. Joint loss combines visual foresight L2 and flow matching action prediction.",
+        "results": "Real-world: 75.1% avg success (3B), 14.5% improvement over pi0 on daily tasks, 40-73.3% boost on dynamic tasks. Simulation (RoboTwin 2.0): 65.0% easy, 25.4% hard tasks. Ablation shows pre-training contributes 51.6% performance gain, generation expert adds 19.4%.",
+        "implementations_found": ["https://github.com/InternRobotics/InternVLA-A1 (248 stars)", "https://huggingface.co/InternRobotics/InternVLA-A1-3B", "https://huggingface.co/datasets/InternRobotics/InternData-A1"],
+        "commercialized": true,
+        "limitations": "Lacks joint training on multimodal VQA datasets reducing semantic reasoning. Visual foresight quality compromised for real-time inference. Requires substantial training data (533M frames) and compute."
+      },
+      "decision": "PRESENT",
+      "notes": "High-quality VLA with full open-source stack (code, weights, dataset). Connected to AgiBot (~$1B valuation) commercial robot platform. Strong results on dynamic manipulation where visual foresight prediction helps most."
     },
     {
       "id": "arxiv_2601.02078",
@@ -721,6 +735,39 @@
         "cognitive-mapping"
       ],
       "cross_refs": []
+    },
+    {
+      "id": "insight_009",
+      "paper_id": "arxiv_2601.02456",
+      "insight": "Visual foresight prediction substantially improves dynamic manipulation: InternVLA-A1's generation expert contributed 19.4% success rate improvement in ablation, with biggest gains on moving-object tasks (conveyor sorting: +40%, in-motion picking: +73.3%).",
+      "tags": [
+        "visual-foresight",
+        "dynamic-manipulation",
+        "VLA"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_010",
+      "paper_id": "arxiv_2601.02456",
+      "insight": "Mixture-of-Transformers architecture with blockwise masked attention enables efficient multi-capability integration: understanding → generation → action flow enforces proper information dependencies while allowing parallel expert specialization.",
+      "tags": [
+        "architecture",
+        "mixture-of-experts",
+        "VLA"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_011",
+      "paper_id": "arxiv_2601.02456",
+      "insight": "Hybrid synthetic-real training synergizes strengths: synthetic data dominates simulation benchmarks while mixed data achieves best real-world performance. Pre-training contributes 51.6% performance gain, making large-scale diverse data critical.",
+      "tags": [
+        "sim2real",
+        "training-data",
+        "pre-training"
+      ],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -742,13 +789,17 @@
     "https://arxiv.org/abs/2601.03590",
     "https://arxiv.org/html/2601.03590",
     "https://api.github.com/search/repositories?q=SiT-Bench+spatial+text",
-    "https://api.github.com/search/repositories?q=2601.03590"
+    "https://api.github.com/search/repositories?q=2601.03590",
+    "https://arxiv.org/abs/2601.02456",
+    "https://arxiv.org/html/2601.02456",
+    "https://api.github.com/search/repositories?q=InternVLA-A1",
+    "https://api.github.com/repos/InternRobotics/InternVLA-A1"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 4,
-    "total_presented": 3,
+    "total_analyzed": 5,
+    "total_presented": 4,
     "total_rejected": 0,
     "total_insights_extracted": 1
   }

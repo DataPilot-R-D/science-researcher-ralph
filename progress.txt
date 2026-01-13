@@ -166,3 +166,47 @@ Score: 17/30
 **Learnings for Future Iterations:**
 - Text-only spatial benchmarks can reveal model capabilities that visual benchmarks conflate with perception.
 - When evaluating embodied AI capabilities, distinguish between localized semantic tasks (where LLMs do well) and global consistency tasks (where they fail).
+
+---
+
+## 2026-01-13 - Paper: InternVLA-A1: Unifying Understanding, Generation and Action for Robotic Manipulation
+ID: arxiv_2601.02456
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** Presents InternVLA-A1, a Mixture-of-Transformers VLA architecture that unifies scene understanding, visual foresight generation, and action execution in a single model. Built on InternVL3/Qwen3-VL backbones, trained on 533M+ frames from InternData-A1 (synthetic) and AgiBot-World (real). Achieves 75.1% success on general manipulation tasks and 40-73% improvement over pi0/GR00T on dynamic manipulation.
+
+**Key Method:** Three coordinated transformer experts with blockwise masked self-attention:
+1. Understanding Expert: Semantic comprehension via multimodal LLM (InternVL3 or Qwen3-VL)
+2. Generation Expert: Visual foresight prediction using Cosmos VAE (256×256 → 4×4 latent)
+3. Action Expert: Flow matching for action prediction, combining semantic context + predicted dynamics
+
+Two-stage training: 700K steps pre-training (AdamW, constant 5×10⁻⁵ LR), 60K steps post-training (warmup/decay). Joint loss: λ·Lgen + Laction (λ=0.01).
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/InternRobotics/InternVLA-A1 (248 stars, active)
+- HuggingFace: model (InternRobotics/InternVLA-A1-3B) and dataset (InternRobotics/InternData-A1) released
+- Commercial use: yes - connected to AgiBot (Zhiyuan Robotics), ~$1B valuation, mass-producing humanoid robots
+- Open questions: License not specified; how does performance scale with smaller training data budgets?
+
+**Score Breakdown:**
+- Novelty: 4/5 - MoT architecture with visual foresight expert is meaningful; builds on established VLA paradigms
+- Feasibility: 4/5 - Proven real-world results, full open-source stack; requires 533M+ frames and significant compute
+- Time-to-POC: 4/5 - Pre-trained models available, 13Hz inference, needs robot hardware
+- Value/Market: 4/5 - Strong results on high-value dynamic manipulation; connected to commercial platform
+- Defensibility: 3/5 - Architecture is published openly; main moat is training data scale
+- Adoption: 4/5 - Complete open-source ecosystem (code, weights, dataset)
+
+**Decision Rationale:** Strong VLA contribution with practical implementation. Visual foresight prediction yields substantial gains on dynamic tasks. Full open-source release lowers barrier to entry. Commercial validation via AgiBot.
+
+**Extracted Insights:**
+- Visual foresight prediction improves dynamic manipulation by 19.4% (ablation); biggest gains on moving objects (+40-73%)
+- MoT with blockwise masked attention enables efficient multi-capability integration
+- Hybrid synthetic-real training: synthetic dominates simulation, mixed achieves best real-world; pre-training contributes 51.6% gain
+
+**Cross-References:**
+- Related to: arxiv_2512.22615 (Dream-VLA also uses diffusion for VLA), arxiv_2512.22414 (human-to-robot transfer in VLAs)
+
+**Learnings for Future Iterations:**
+- Visual foresight is particularly valuable for dynamic manipulation tasks; static pick-and-place shows smaller gains
+- Full open-source VLA releases (code + weights + data) are becoming industry standard for top research labs
