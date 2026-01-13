@@ -37,7 +37,6 @@ while [[ $# -gt 0 ]]; do
       exit 0
       ;;
     --agent)
-      # Fix 1: Validate --agent value exists
       if [[ -z "${2:-}" || "$2" == -* ]]; then
         echo "Error: --agent requires a value (claude or amp)"
         exit 1
@@ -46,7 +45,6 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     *)
-      # Fix 2: Error on unknown options, warn on unexpected args
       if [[ "$1" =~ ^[0-9]+$ ]]; then
         MAX_ITERATIONS="$1"
       elif [[ "$1" == -* ]]; then
@@ -66,17 +64,11 @@ if [[ "$AGENT" != "claude" && "$AGENT" != "amp" ]]; then
   exit 1
 fi
 
-# Fix 5: Verify CLI is installed before starting
-CLI_CMD="claude"
-[[ "$AGENT" == "amp" ]] && CLI_CMD="amp"
-
-if ! command -v "$CLI_CMD" &> /dev/null; then
-  echo "Error: '$CLI_CMD' CLI not found in PATH."
-  if [[ "$AGENT" == "amp" ]]; then
-    echo "Install it from: https://ampcode.com"
-  else
-    echo "Install it from: https://claude.ai/code"
-  fi
+# Verify CLI is installed before starting
+if ! command -v "$AGENT" &> /dev/null; then
+  echo "Error: '$AGENT' CLI not found in PATH."
+  [[ "$AGENT" == "amp" ]] && echo "Install it from: https://ampcode.com"
+  [[ "$AGENT" == "claude" ]] && echo "Install it from: https://claude.ai/code"
   exit 1
 fi
 
@@ -93,26 +85,23 @@ PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
 ARCHIVE_DIR="$SCRIPT_DIR/archive"
 LAST_BRANCH_FILE="$SCRIPT_DIR/.last-branch"
 
+# Initialize or reset progress file
+init_progress_file() {
+  echo "# Ralph Progress Log" > "$PROGRESS_FILE"
+  echo "Started: $(date)" >> "$PROGRESS_FILE"
+  echo "---" >> "$PROGRESS_FILE"
+}
+
 # Agent invocation function
 run_agent() {
   local prompt_file="$1"
-
-  # Fix 4: Validate prompt file exists
-  if [[ ! -f "$prompt_file" ]]; then
-    echo "ERROR: Prompt file not found: $prompt_file" >&2
-    return 1
-  fi
-
-  if [[ ! -r "$prompt_file" ]]; then
-    echo "ERROR: Prompt file not readable: $prompt_file" >&2
-    return 1
-  fi
+  local prompt_content
+  prompt_content=$(cat "$prompt_file") || return 1
 
   if [[ "$AGENT" == "amp" ]]; then
-    cat "$prompt_file" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr
+    echo "$prompt_content" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr
   else
-    # Claude Code CLI
-    claude -p "$(cat "$prompt_file")" \
+    claude -p "$prompt_content" \
       --dangerously-skip-permissions \
       --allowedTools "Bash,Read,Edit,Write,Grep,Glob" \
       2>&1 | tee /dev/stderr
@@ -137,10 +126,7 @@ if [ -f "$PRD_FILE" ] && [ -f "$LAST_BRANCH_FILE" ]; then
     [ -f "$PROGRESS_FILE" ] && cp "$PROGRESS_FILE" "$ARCHIVE_FOLDER/"
     echo "   Archived to: $ARCHIVE_FOLDER"
 
-    # Reset progress file for new run
-    echo "# Ralph Progress Log" > "$PROGRESS_FILE"
-    echo "Started: $(date)" >> "$PROGRESS_FILE"
-    echo "---" >> "$PROGRESS_FILE"
+    init_progress_file
   fi
 fi
 
@@ -153,15 +139,11 @@ if [ -f "$PRD_FILE" ]; then
 fi
 
 # Initialize progress file if it doesn't exist
-if [ ! -f "$PROGRESS_FILE" ]; then
-  echo "# Ralph Progress Log" > "$PROGRESS_FILE"
-  echo "Started: $(date)" >> "$PROGRESS_FILE"
-  echo "---" >> "$PROGRESS_FILE"
-fi
+[[ ! -f "$PROGRESS_FILE" ]] && init_progress_file
 
 # Verify PRD file exists before starting
 if [[ ! -f "$PRD_FILE" ]]; then
-  echo "ERROR: prd.json not found at $PRD_FILE"
+  echo "Error: prd.json not found at $PRD_FILE"
   echo "Create a PRD first using: ./skill.sh prd \"Your feature description\""
   exit 1
 fi
@@ -174,7 +156,6 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   echo "  Ralph Iteration $i of $MAX_ITERATIONS ($AGENT)"
   echo "═══════════════════════════════════════════════════════"
 
-  # Fix 3: Handle agent failures properly instead of || true
   set +e
   OUTPUT=$(run_agent "$SCRIPT_DIR/prompt.md")
   EXIT_CODE=$?
@@ -182,14 +163,8 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 
   if [[ $EXIT_CODE -ne 0 ]]; then
     echo ""
-    echo "ERROR: Agent '$AGENT' failed with exit code $EXIT_CODE"
-    echo "Check if '$AGENT' CLI is installed and authenticated."
-    if [[ -n "$OUTPUT" ]]; then
-      echo "--- Agent output (last 50 lines) ---"
-      echo "$OUTPUT" | tail -50
-      echo "--- End of agent output ---"
-    fi
-    echo "Continuing to next iteration..."
+    echo "Error: Agent '$AGENT' failed (exit code $EXIT_CODE). Continuing to next iteration..."
+    [[ -n "$OUTPUT" ]] && echo "$OUTPUT" | tail -20
     sleep 2
     continue
   fi
