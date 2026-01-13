@@ -71,6 +71,10 @@ Research-Ralph will:
 | `rrd.json.example` | Example RRD format for reference |
 | `progress.txt` | Append-only research findings log |
 | `skills/rrd/` | Skill for generating RRDs |
+| `AGENTS.md` | Research patterns and gotchas for the loop agent |
+| `CLAUDE.md` | Same guidance for Claude Code (kept in sync with `AGENTS.md`) |
+| `docs-baseline/` | Baseline copies of `AGENTS.md` / `CLAUDE.md` for rollback |
+| `restore-docs.sh` | Restore `AGENTS.md` / `CLAUDE.md` from `docs-baseline/` |
 
 ## Research Workflow
 
@@ -157,6 +161,24 @@ cat rrd.json | jq '.papers_pool[] | select(.status == "presented")'
 
 Research-Ralph automatically archives previous runs when you start a new research topic (different `branchName`). Archives are saved to `archive/YYYY-MM-DD-topic-name/`.
 
+## Doc Safety (Rollback)
+
+The research agent may auto-edit `AGENTS.md` / `CLAUDE.md` to improve the workflow. If you want to revert those doc edits:
+- Restore from baseline: `./restore-docs.sh`
+- Baseline files live in `docs-baseline/` (do not edit these)
+- If you approve the current docs as the new baseline: `cp AGENTS.md docs-baseline/AGENTS.md && cp CLAUDE.md docs-baseline/CLAUDE.md`
+
+## Git Workflow (Checkpoints)
+
+To make research progress easy to track and revert, commit state/doc updates regularly:
+- Commit after each iteration (and any milestone like phase change)
+- Stage only the relevant files (avoid `git add .`); typically: `rrd.json`, `progress.txt`, `AGENTS.md`, `CLAUDE.md`
+- Commit message examples:
+  - `discovery: add N papers`
+  - `analysis: <paper_id> <PRESENT|REJECT|EXTRACT_INSIGHTS> (<score>/30)`
+  - `docs: update research patterns/workflow`
+  - `milestone: phase -> <DISCOVERY|ANALYSIS|COMPLETE>`
+
 ## Skills
 
 Skills are reusable prompts that work with Claude Code, Amp, and Codex.
@@ -203,9 +225,13 @@ The Research Requirements Document (`rrd.json`) contains:
   "phase": "DISCOVERY | ANALYSIS | COMPLETE",
   "papers_pool": [...],
   "insights": [...],
+  "visited_urls": [],
+  "blocked_sources": [],
   "statistics": {...}
 }
 ```
+
+See `rrd.json.example` for the complete schema with all fields.
 
 ## References
 

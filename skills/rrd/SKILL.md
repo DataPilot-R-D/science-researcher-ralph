@@ -113,7 +113,7 @@ Generate the RRD with these fields:
 | Field | Description |
 |-------|-------------|
 | `project` | Human-readable project name |
-| `branchName` | Git branch for this research session |
+| `branchName` | Topic identifier used for archive folder naming (not git branches) |
 | `description` | What we're researching and why |
 | `focus_area` | Primary research domain |
 | `keywords` | Search terms for paper discovery |

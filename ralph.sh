@@ -163,6 +163,32 @@ if [[ ! -f "$RRD_FILE" ]]; then
   exit 1
 fi
 
+# Validate RRD file is valid JSON
+if ! jq empty "$RRD_FILE" 2>/dev/null; then
+  echo "Error: rrd.json is not valid JSON"
+  echo "Please check the file for syntax errors: $RRD_FILE"
+  exit 1
+fi
+
+# Validate required fields exist
+if ! jq -e '.project' "$RRD_FILE" >/dev/null 2>&1; then
+  echo "Error: rrd.json missing required field 'project'"
+  exit 1
+fi
+
+if ! jq -e '.requirements.target_papers' "$RRD_FILE" >/dev/null 2>&1; then
+  echo "Error: rrd.json missing required field 'requirements.target_papers'"
+  exit 1
+fi
+
+# Verify prompt.md exists
+PROMPT_FILE="$SCRIPT_DIR/prompt.md"
+if [[ ! -f "$PROMPT_FILE" ]]; then
+  echo "Error: prompt.md not found at $PROMPT_FILE"
+  echo "This file contains the agent instructions and is required."
+  exit 1
+fi
+
 # Display research info
 PROJECT=$(jq -r '.project // "Unknown"' "$RRD_FILE")
 PHASE=$(jq -r '.phase // "DISCOVERY"' "$RRD_FILE")
@@ -188,7 +214,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   echo "  Phase: $PHASE"
 
   set +e
-  OUTPUT=$(run_agent "$SCRIPT_DIR/prompt.md")
+  OUTPUT=$(run_agent "$PROMPT_FILE")
   EXIT_CODE=$?
   set -e
 

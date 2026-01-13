@@ -1,0 +1,30 @@
+# Ralph Progress Log
+Started: wto 13 sty 12:28:30 2026 CET
+---
+
+## Codebase Patterns
+- Version variables should be defined at the top of ralph.sh, after set -e
+- Startup message format: "Starting Ralph v$RALPH_VERSION - Agent: $AGENT, Max iterations: $MAX_ITERATIONS"
+- Use bash -n to syntax-check shell scripts before committing
+- Help/version flags (-h, --help) should be first case in argument parsing
+
+## 2026-01-13 - US-001
+Commit: e9dba4c
+- Added RALPH_VERSION="1.0.0" variable to ralph.sh
+- Updated startup message to include version info
+- Files changed: ralph.sh
+- **Learnings for future iterations:**
+  - The startup echo is at line ~97 in ralph.sh
+  - Script syntax can be validated with `bash -n ralph.sh`
+---
+
+## 2026-01-13 - US-002
+Commit: 5701587
+- Added show_help() function to ralph.sh displaying version, usage, options, and examples
+- Added -h and --help flag handling in argument parsing (before other cases)
+- Files changed: ralph.sh
+- **Learnings for future iterations:**
+  - Help/version flags should be handled first in argument parsing (before other options)
+  - The show_help function uses $RALPH_VERSION for consistency with startup message
+  - Test argument parsing separately from full script execution to verify quickly
+---
