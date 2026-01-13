@@ -106,12 +106,13 @@ Ralph will:
 | File | Purpose |
 |------|---------|
 | `ralph.sh` | The bash loop that spawns fresh agent instances |
+| `skill.sh` | Run skills with either Claude Code or Amp |
 | `prompt.md` | Instructions given to each agent instance |
 | `prd.json` | User stories with `passes` status (the task list) |
 | `prd.json.example` | Example PRD format for reference |
 | `progress.txt` | Append-only learnings for future iterations |
-| `skills/prd/` | Skill for generating PRDs (Amp only) |
-| `skills/ralph/` | Skill for converting PRDs to JSON (Amp only) |
+| `skills/prd/` | Skill for generating PRDs |
+| `skills/ralph/` | Skill for converting PRDs to JSON |
 | `flowchart/` | Interactive visualization of how Ralph works |
 
 ## Flowchart
@@ -201,6 +202,33 @@ Edit `prompt.md` to customize Ralph's behavior for your project:
 ## Archiving
 
 Ralph automatically archives previous runs when you start a new feature (different `branchName`). Archives are saved to `archive/YYYY-MM-DD-feature-name/`.
+
+## Skills
+
+Skills are reusable prompts that work with both Claude Code and Amp.
+
+### Available Skills
+
+| Skill | Description |
+|-------|-------------|
+| `prd` | Generate a PRD from feature description |
+| `ralph` | Convert PRD markdown to prd.json format |
+
+### Running Skills
+
+```bash
+# List available skills
+./skill.sh --list
+
+# Run a skill with Claude Code (default)
+./skill.sh prd "Create a PRD for user authentication"
+
+# Run a skill with Amp
+./skill.sh prd "Create a PRD for login" --agent amp
+
+# Convert a PRD to JSON
+./skill.sh ralph tasks/prd-auth.md
+```
 
 ## References
 

@@ -15,6 +15,12 @@ Ralph is an autonomous AI agent loop that runs an AI coding agent (Claude Code o
 # Run Ralph with Amp
 ./ralph.sh [max_iterations] --agent amp
 
+# Run a skill
+./skill.sh <skill-name> [task] [--agent amp|claude]
+./skill.sh --list                    # List available skills
+./skill.sh prd "Create a PRD for X"  # Generate a PRD
+./skill.sh ralph tasks/prd-X.md      # Convert PRD to JSON
+
 # Flowchart development
 cd flowchart && npm install    # Install dependencies
 cd flowchart && npm run dev    # Start dev server
@@ -43,11 +49,12 @@ Each iteration is stateless. Cross-iteration memory is limited to:
 | File | Purpose |
 |------|---------|
 | `ralph.sh` | Bash loop spawning fresh agent instances |
+| `skill.sh` | Generic skill runner for both Claude Code and Amp |
 | `prompt.md` | Agent-agnostic instructions for each iteration |
 | `prd.json` | User stories with `passes` status |
 | `progress.txt` | Append-only learnings; `## Codebase Patterns` section at top for reusable knowledge |
-| `skills/prd/SKILL.md` | Amp skill for generating PRDs |
-| `skills/ralph/SKILL.md` | Amp skill for converting PRDs to JSON |
+| `skills/prd/SKILL.md` | Skill for generating PRDs |
+| `skills/ralph/SKILL.md` | Skill for converting PRDs to JSON |
 
 ### Flowchart (`flowchart/`)
 Interactive React Flow visualization for presentations. Built with:
