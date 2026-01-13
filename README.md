@@ -7,6 +7,7 @@ Ralph is an autonomous AI agent loop that runs an AI coding agent repeatedly unt
 **Supported Agents:**
 - [Claude Code CLI](https://claude.ai/code) (default)
 - [Amp CLI](https://ampcode.com)
+- [Codex CLI](https://openai.com/codex)
 
 Based on [Geoffrey Huntley's Ralph pattern](https://ghuntley.com/ralph/).
 
@@ -17,6 +18,7 @@ Based on [Geoffrey Huntley's Ralph pattern](https://ghuntley.com/ralph/).
 Choose ONE of the following AI agents:
 - [Claude Code CLI](https://claude.ai/code) installed and authenticated (default)
 - [Amp CLI](https://ampcode.com) installed and authenticated
+- [Codex CLI](https://openai.com/codex) installed and authenticated
 
 Also required:
 - `jq` installed (`brew install jq` on macOS)
@@ -87,6 +89,9 @@ This creates `prd.json` with user stories structured for autonomous execution.
 
 # Run with Amp
 ./scripts/ralph/ralph.sh [max_iterations] --agent amp
+
+# Run with Codex
+./scripts/ralph/ralph.sh [max_iterations] --agent codex
 ```
 
 Default is 10 iterations. Default agent is Claude Code CLI.
@@ -106,7 +111,7 @@ Ralph will:
 | File | Purpose |
 |------|---------|
 | `ralph.sh` | The bash loop that spawns fresh agent instances |
-| `skill.sh` | Run skills with either Claude Code or Amp |
+| `skill.sh` | Run skills with Claude Code, Amp, or Codex |
 | `prompt.md` | Instructions given to each agent instance |
 | `prd.json` | User stories with `passes` status (the task list) |
 | `prd.json.example` | Example PRD format for reference |
@@ -205,7 +210,7 @@ Ralph automatically archives previous runs when you start a new feature (differe
 
 ## Skills
 
-Skills are reusable prompts that work with both Claude Code and Amp.
+Skills are reusable prompts that work with Claude Code, Amp, and Codex.
 
 ### Available Skills
 
@@ -226,6 +231,9 @@ Skills are reusable prompts that work with both Claude Code and Amp.
 # Run a skill with Amp
 ./skill.sh prd "Create a PRD for login" --agent amp
 
+# Run a skill with Codex
+./skill.sh prd "Create a PRD for login" --agent codex
+
 # Convert a PRD to JSON
 ./skill.sh ralph tasks/prd-auth.md
 ```
@@ -235,3 +243,4 @@ Skills are reusable prompts that work with both Claude Code and Amp.
 - [Geoffrey Huntley's Ralph article](https://ghuntley.com/ralph/)
 - [Claude Code documentation](https://claude.ai/code)
 - [Amp documentation](https://ampcode.com/manual)
+- [Codex documentation](https://openai.com/codex)

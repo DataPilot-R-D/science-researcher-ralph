@@ -1,6 +1,6 @@
 #!/bin/bash
 # Ralph - Long-running AI agent loop
-# Usage: ./ralph.sh [max_iterations] [--agent amp|claude]
+# Usage: ./ralph.sh [max_iterations] [--agent amp|claude|codex]
 
 set -e
 
@@ -11,11 +11,11 @@ RALPH_VERSION="1.0.0"
 show_help() {
   echo "Ralph v$RALPH_VERSION - Autonomous AI agent loop"
   echo ""
-  echo "Usage: ./ralph.sh [max_iterations] [--agent amp|claude]"
+  echo "Usage: ./ralph.sh [max_iterations] [--agent amp|claude|codex]"
   echo ""
   echo "Options:"
   echo "  [max_iterations]    Maximum number of iterations (default: 10)"
-  echo "  --agent <name>      AI agent to use: 'claude' or 'amp' (default: claude)"
+  echo "  --agent <name>      AI agent to use: 'claude', 'amp', or 'codex' (default: claude)"
   echo "  -h, --help          Show this help message and exit"
   echo ""
   echo "Examples:"
@@ -59,8 +59,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate agent
-if [[ "$AGENT" != "claude" && "$AGENT" != "amp" ]]; then
-  echo "Error: Invalid agent '$AGENT'. Must be 'claude' or 'amp'."
+if [[ "$AGENT" != "claude" && "$AGENT" != "amp" && "$AGENT" != "codex" ]]; then
+  echo "Error: Invalid agent '$AGENT'. Must be 'claude', 'amp', or 'codex'."
   exit 1
 fi
 
@@ -69,6 +69,7 @@ if ! command -v "$AGENT" &> /dev/null; then
   echo "Error: '$AGENT' CLI not found in PATH."
   [[ "$AGENT" == "amp" ]] && echo "Install it from: https://ampcode.com"
   [[ "$AGENT" == "claude" ]] && echo "Install it from: https://claude.ai/code"
+  [[ "$AGENT" == "codex" ]] && echo "Install it from: https://openai.com/codex"
   exit 1
 fi
 
@@ -100,6 +101,8 @@ run_agent() {
 
   if [[ "$AGENT" == "amp" ]]; then
     echo "$prompt_content" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr
+  elif [[ "$AGENT" == "codex" ]]; then
+    echo "$prompt_content" | codex exec --dangerously-bypass-approvals-and-sandbox - 2>&1 | tee /dev/stderr
   else
     claude -p "$prompt_content" \
       --dangerously-skip-permissions \

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Ralph is an autonomous AI agent loop that runs an AI coding agent (Claude Code or Amp) repeatedly until all PRD items are complete. Each iteration is a fresh agent instance with clean context.
+Ralph is an autonomous AI agent loop that runs an AI coding agent (Claude Code, Amp, or Codex) repeatedly until all PRD items are complete. Each iteration is a fresh agent instance with clean context.
 
 ## Commands
 
@@ -12,6 +12,9 @@ Ralph is an autonomous AI agent loop that runs an AI coding agent (Claude Code o
 
 # Run Ralph with Amp
 ./ralph.sh [max_iterations] --agent amp
+
+# Run Ralph with Codex
+./ralph.sh [max_iterations] --agent codex
 
 # Run the flowchart dev server
 cd flowchart && npm run dev

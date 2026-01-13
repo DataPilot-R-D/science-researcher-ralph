@@ -1,6 +1,6 @@
 #!/bin/bash
 # skill.sh - Run skills with either Claude Code or Amp
-# Usage: ./skill.sh <skill-name> [task] [--agent amp|claude]
+# Usage: ./skill.sh <skill-name> [task] [--agent amp|claude|codex]
 
 set -e
 
@@ -11,11 +11,11 @@ AGENT="claude"
 show_help() {
   echo "skill.sh - Run skills with either Claude Code or Amp"
   echo ""
-  echo "Usage: ./skill.sh <skill-name> [task] [--agent amp|claude]"
+  echo "Usage: ./skill.sh <skill-name> [task] [--agent amp|claude|codex]"
   echo ""
   echo "Options:"
   echo "  --list           List available skills"
-  echo "  --agent <name>   Agent to use: 'claude' or 'amp' (default: claude)"
+  echo "  --agent <name>   Agent to use: 'claude', 'amp', or 'codex' (default: claude)"
   echo "  -h, --help       Show this help message"
   echo ""
   echo "Examples:"
@@ -74,8 +74,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate agent
-if [[ "$AGENT" != "claude" && "$AGENT" != "amp" ]]; then
-  echo "Error: Invalid agent '$AGENT'. Must be 'claude' or 'amp'."
+if [[ "$AGENT" != "claude" && "$AGENT" != "amp" && "$AGENT" != "codex" ]]; then
+  echo "Error: Invalid agent '$AGENT'. Must be 'claude', 'amp', or 'codex'."
   exit 1
 fi
 
@@ -101,6 +101,7 @@ if ! command -v "$AGENT" &> /dev/null; then
   echo "Error: '$AGENT' CLI not found in PATH."
   [[ "$AGENT" == "amp" ]] && echo "Install it from: https://ampcode.com"
   [[ "$AGENT" == "claude" ]] && echo "Install it from: https://claude.ai/code"
+  [[ "$AGENT" == "codex" ]] && echo "Install it from: https://openai.com/codex"
   exit 1
 fi
 
@@ -131,6 +132,8 @@ echo ""
 # Run with appropriate agent
 if [[ "$AGENT" == "amp" ]]; then
   echo "$FULL_PROMPT" | amp --dangerously-allow-all
+elif [[ "$AGENT" == "codex" ]]; then
+  echo "$FULL_PROMPT" | codex exec --dangerously-bypass-approvals-and-sandbox -
 else
   claude -p "$FULL_PROMPT" \
     --dangerously-skip-permissions \
