@@ -1,30 +1,130 @@
-# Ralph Progress Log
-Started: wto 13 sty 12:28:30 2026 CET
+# Research-Ralph Progress Log
+Started: Tue Jan 13 16:42:36 CET 2026
+
+## Research Patterns
+- (Patterns discovered during research will be added here)
+
+## Cross-Reference Insights
+- (Connections between papers will be added here)
+
 ---
 
-## Codebase Patterns
-- Version variables should be defined at the top of ralph.sh, after set -e
-- Startup message format: "Starting Ralph v$RALPH_VERSION - Agent: $AGENT, Max iterations: $MAX_ITERATIONS"
-- Use bash -n to syntax-check shell scripts before committing
-- Help/version flags (-h, --help) should be first case in argument parsing
-
-## 2026-01-13 - US-001
-Commit: e9dba4c
-- Added RALPH_VERSION="1.0.0" variable to ralph.sh
-- Updated startup message to include version info
-- Files changed: ralph.sh
-- **Learnings for future iterations:**
-  - The startup echo is at line ~97 in ralph.sh
-  - Script syntax can be validated with `bash -n ralph.sh`
 ---
 
-## 2026-01-13 - US-002
-Commit: 5701587
-- Added show_help() function to ralph.sh displaying version, usage, options, and examples
-- Added -h and --help flag handling in argument parsing (before other cases)
-- Files changed: ralph.sh
-- **Learnings for future iterations:**
-  - Help/version flags should be handled first in argument parsing (before other options)
-  - The show_help function uses $RALPH_VERSION for consistency with startup message
-  - Test argument parsing separately from full script execution to verify quickly
+## 2026-01-13 - Discovery Note
+Source: Google Scholar
+Issue: 403 Forbidden via r.jina.ai proxy while searching "vision language action robotics 2025 arXiv".
+Action: Logged as first failure; will retry in a later iteration before adding to blocked_sources.
+
 ---
+
+## 2026-01-13 - Paper: Follow the Signs: Using Textual Cues and LLMs to Guide Efficient Robot Navigation
+ID: arxiv_2601.06652
+Status: PRESENTED
+Score: 19/30
+
+**Summary:** Proposes an LLM-guided semantic navigation framework that infers numbering/signage patterns to predict likely goal regions, then combines confidence-guided exploration with frontier exploration and A* for efficient goal finding in partially observed indoor maps. Experiments across synthetic, real floor-plan, and noisy environments show higher SPL and success rates than NavGPT, LLM-only, and frontier-only baselines, with a real-world Spot robot demo.
+
+**Key Method:** Maintain seen occupancy/semantic grids, prompt an LLM for directional goal-region predictions from textual cues, update a decayed confidence grid, and plan with A* to the highest-confidence region (fallback to nearest frontier when confidence is uniform).
+
+**Implementation Check:**
+- GitHub repos: no (GitHub search for title and arXiv ID returned none)
+- Commercial use: no public evidence found
+- Open questions: Any public code or supplementary material links beyond the paper; how robust is perception when signs are detected on-device instead of pre-annotated grids?
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Decision Rationale:** Combines LLM semantic reasoning with a confidence-grid + frontier exploration loop to improve navigation efficiency; practical but relies on pre-annotated semantics and struggles with ambiguous numbering.
+
+**Extracted Insights:**
+- Decayed confidence grids can stabilize noisy LLM directional predictions while preserving completeness via frontier exploration.
+- Textual signage/numbering is a strong cue for structured environments and can outperform object-centric heuristics for goal localization.
+
+**Cross-References:**
+- Related to: none yet
+
+**Learnings for Future Iterations:**
+- DuckDuckGo HTML search triggered an anti-bot challenge; prefer GitHub API and other sources for implementation checks when web search is blocked.
+
+**Doc Update:** Added a Common Gotchas note about DuckDuckGo HTML bot challenges in `AGENTS.md` and `CLAUDE.md`.
+---
+
+## 2026-01-13 - Paper: Model Reconciliation through Explainability and Collaborative Recovery in Assistive Robotics
+ID: arxiv_2601.06552
+Status: PRESENTED
+Score: 18/30
+
+**Summary:** Presents an LLM-driven model reconciliation framework for shared-control assistive robots that predicts and explains differences between human and robot mental models without requiring an explicit user model. After explanation, a recovery workflow lets the human correct the robot via rebuttals, supported by a VLM that matches objects in camera views or updates symbolic world states. Validation includes a real wheelchair-based mobile manipulator and a digital-twin evaluation dataset.
+
+**Key Method:** Use an LLM to extract objects/actions from user queries and match them against a robot's object database, world model, and action graph to classify divergence types (D_GO, D_SO, D_GA, D_SA, FD), then trigger recovery via VLM-based object matching, movement suggestions, or symbolic state overrides.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search for title and arXiv ID returned none)
+- Commercial use: no public evidence found
+- Open questions: Will code or datasets be released; how well does the recovery pipeline generalize beyond the small set of daily-living scenarios?
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 3/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Decision Rationale:** The framework is practical for explainability and recovery in assistive robotics with real-robot validation, but it relies on clean semantic labels and has limited scenario coverage, keeping the score at the threshold.
+
+**Extracted Insights:**
+- LLM-based reconciliation grounded in robot models outperforms vision-only baselines for failure explanations in the reported unit tests.
+- Adding a translation dictionary for uncommon robot labels boosted precondition explanation accuracy from 78.8% to 92.4%.
+
+**Cross-References:**
+- Related to: none yet
+
+**Learnings for Future Iterations:**
+- When evaluating LLM explainability for robots, check whether labels are semantically interpretable and whether a translation dictionary was needed.
+
+**Doc Update:** Added a Common Gotchas note about semantic label mismatches in `AGENTS.md` and `CLAUDE.md`.
+
+---
+
+## 2026-01-13 - Paper: Safety Not Found (404): Hidden Risks of LLM-Based Robotics Decision Making
+ID: arxiv_2601.05529
+Status: PRESENTED
+Score: 19/30
+
+**Summary:** First systematic safety benchmark for LLM-controlled robots, introducing seven tasks across three categories: Complete Information (ASCII map navigation), Incomplete Information (hallucination tests via sequence reasoning), and Safety-Oriented Spatial Reasoning (SOSR) for emergency decision-making. The fire evacuation scenario reveals catastrophic failures where models direct users toward hazards instead of exits.
+
+**Key Method:** Complete Information tasks use ASCII maps to isolate spatial reasoning from visual processing; Incomplete Information tasks test for hallucinations via trajectory validation and uncertain terrain navigation; SOSR tasks evaluate direction sense and emergency decisions in life-threatening contexts. Evaluated GPT-5, GPT-4o, Gemini-2.5 Flash, Gemini-2.0 Flash, and LLaMA-3-8b.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Commercial use: no public evidence found; this is primarily diagnostic research
+- Open questions: Will code/benchmark be released? How to extend beyond the 100-video preliminary dataset?
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Decision Rationale:** Provides actionable diagnostic insights for anyone building LLM-based robotics. The finding that Gemini-2.5 Flash directs users to wrong locations 33% of the time in fire emergencies is immediately useful for risk assessment. Lacks concrete mitigation strategies but the benchmark methodology is straightforward to implement.
+
+**Extracted Insights:**
+- Even 99% accuracy is dangerous in robotics: 1/100 catastrophic failures is unacceptable for safety-critical systems.
+- ASCII map navigation isolates spatial reasoning and reveals stark model differences (GPT-5: 100% vs LLaMA-3-8b: 0% on hard tasks).
+- In fire evacuation scenarios, Gemini-2.5 Flash directed users to professor's office (32%) or hallucinated server room (1%) instead of exits.
+
+**Cross-References:**
+- Related to: arxiv_2601.06652 (both address LLM spatial reasoning for navigation, but this focuses on failure modes rather than methods)
+
+**Learnings for Future Iterations:**
+- When evaluating LLM-robotics papers, look for worst-case failure analysis, not just aggregate accuracy.
+- Safety benchmarks for robotics should include emergency scenarios where errors have physical consequences.
