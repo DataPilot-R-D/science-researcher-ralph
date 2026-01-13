@@ -4,38 +4,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Ralph is an autonomous AI agent loop that runs an AI coding agent (Claude Code, Amp, or Codex) repeatedly until all PRD items are complete. Each iteration spawns a fresh agent instance with clean context. Memory persists via git history, `progress.txt`, and `prd.json`.
+Research-Ralph is an autonomous research scouting agent that discovers, analyzes, and evaluates research papers. It runs an AI agent (Claude Code, Amp, or Codex) repeatedly until all papers in the Research Requirements Document (RRD) are analyzed.
 
 ## Commands
 
 ```bash
-# Run Ralph with Claude Code (default)
+# Run Research-Ralph with Claude Code (default)
 ./ralph.sh [max_iterations]
 
-# Run Ralph with Amp
+# Run Research-Ralph with Amp
 ./ralph.sh [max_iterations] --agent amp
 
-# Run Ralph with Codex
+# Run Research-Ralph with Codex
 ./ralph.sh [max_iterations] --agent codex
 
-# Run a skill
-./skill.sh <skill-name> [task] [--agent amp|claude|codex]
-./skill.sh --list                    # List available skills
-./skill.sh prd "Create a PRD for X"  # Generate a PRD
-./skill.sh ralph tasks/prd-X.md      # Convert PRD to JSON
+# Create a Research Requirements Document
+./skill.sh rrd "Your research topic description"
 
-# Flowchart development
-cd flowchart && npm install    # Install dependencies
-cd flowchart && npm run dev    # Start dev server
-cd flowchart && npm run build  # Build (runs tsc -b && vite build)
-cd flowchart && npm run lint   # Run ESLint
+# List available skills
+./skill.sh --list
 ```
 
 ## Architecture
 
 ### Core Loop (`ralph.sh`)
 1. Parses `--agent` flag (default: `claude`, options: `amp`, `codex`)
-2. Archives previous run if switching to a different feature branch
+2. Archives previous research if switching to different topic (via branchName)
 3. Invokes the selected agent with `prompt.md`
    - Claude: `claude -p "..." --dangerously-skip-permissions --allowedTools "..."`
    - Amp: `cat prompt.md | amp --dangerously-allow-all`
@@ -45,49 +39,64 @@ cd flowchart && npm run lint   # Run ESLint
 
 ### Memory Model
 Each iteration is stateless. Cross-iteration memory is limited to:
-- Git history (commits from previous iterations)
-- `progress.txt` (append-only learnings log with consolidated patterns at top)
-- `prd.json` (tracks which stories have `passes: true`)
+- `rrd.json` (papers pool, status, insights, statistics)
+- `progress.txt` (detailed findings log with patterns at top)
+- `AGENTS.md` (reusable research patterns)
 
 ### Key Files
 | File | Purpose |
 |------|---------|
 | `ralph.sh` | Bash loop spawning fresh agent instances |
 | `skill.sh` | Generic skill runner for Claude Code, Amp, and Codex |
-| `prompt.md` | Agent-agnostic instructions for each iteration |
-| `prd.json` | User stories with `passes` status |
-| `progress.txt` | Append-only learnings; `## Codebase Patterns` section at top for reusable knowledge |
-| `skills/prd/SKILL.md` | Skill for generating PRDs |
-| `skills/ralph/SKILL.md` | Skill for converting PRDs to JSON |
+| `prompt.md` | Agent instructions for research workflow |
+| `rrd.json` | Research Requirements Document with papers and status |
+| `rrd.json.example` | Example RRD format for reference |
+| `progress.txt` | Append-only research findings log |
+| `skills/rrd/SKILL.md` | Skill for generating RRDs |
 
-### Flowchart (`flowchart/`)
-Interactive React Flow visualization for presentations. Built with:
-- React 19 + TypeScript
-- @xyflow/react for flowchart rendering
-- Vite for bundling
+## Research Workflow
 
-The `App.tsx` implements a step-through presentation where nodes/edges appear progressively via opacity transitions.
+### Two Phases
 
-## PRD Format
+**DISCOVERY Phase:**
+- Search arXiv, Google Scholar, web for papers
+- Collect papers matching keywords and criteria
+- Assign initial priority scores (1-5)
+- Transition to ANALYSIS when target count reached
 
-Stories in `prd.json` must be:
-- **Small**: Completable in one context window (one agent iteration)
-- **Ordered by dependency**: Schema → backend → UI
-- **Verifiable**: Acceptance criteria must be checkable, not vague
+**ANALYSIS Phase:**
+- ONE paper per iteration (deep analysis)
+- Read full paper content (not just abstract)
+- Search for implementations (GitHub, blogs)
+- Check if commercialized
+- Score using rubric (0-30)
+- Decide: PRESENT / REJECT / EXTRACT_INSIGHTS
 
-Frontend stories should include browser verification in acceptance criteria.
+### Evaluation Rubric
 
-## Workflow Pattern
+Papers scored 0-5 on each dimension (total 0-30):
 
-When Ralph runs a story:
-1. Picks highest priority story where `passes: false`
-2. Implements the story
-3. Runs quality checks (typecheck, tests)
-4. Commits if checks pass
-5. Updates `prd.json` to mark `passes: true`
-6. Appends learnings to `progress.txt`
-7. Updates relevant `AGENTS.md` files with reusable patterns
+| Dimension | Question |
+|-----------|----------|
+| Novelty | How new/different is this approach? |
+| Feasibility | Can a small team build this? |
+| Time-to-POC | How quickly can we prototype? |
+| Value/Market | Is there clear demand? |
+| Defensibility | What's the competitive advantage? |
+| Adoption | How easy to deploy? |
+
+**Threshold:** Score >= 18 = PRESENT
+
+## RRD Format
+
+The `rrd.json` file contains:
+- `project`, `branchName`, `description` - Research metadata
+- `requirements` - Keywords, time window, target papers, sources
+- `phase` - DISCOVERY, ANALYSIS, or COMPLETE
+- `papers_pool` - All discovered papers with status and analysis
+- `insights` - Extracted valuable findings
+- `statistics` - Counts for tracking progress
 
 ## Stop Condition
 
-When all stories have `passes: true`, output `<promise>COMPLETE</promise>` to exit the loop.
+When all papers in `papers_pool` have been analyzed (status != "pending"), Research-Ralph outputs `<promise>COMPLETE</promise>` to exit the loop.

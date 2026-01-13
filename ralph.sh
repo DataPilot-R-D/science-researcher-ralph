@@ -1,15 +1,15 @@
 #!/bin/bash
-# Ralph - Long-running AI agent loop
+# Research-Ralph - Autonomous research scouting agent loop
 # Usage: ./ralph.sh [max_iterations] [--agent amp|claude|codex]
 
 set -e
 
 # Version
-RALPH_VERSION="1.0.0"
+RALPH_VERSION="2.0.0"
 
 # Help function
 show_help() {
-  echo "Ralph v$RALPH_VERSION - Autonomous AI agent loop"
+  echo "Research-Ralph v$RALPH_VERSION - Autonomous research scouting agent"
   echo ""
   echo "Usage: ./ralph.sh [max_iterations] [--agent amp|claude|codex]"
   echo ""
@@ -23,6 +23,11 @@ show_help() {
   echo "  ./ralph.sh 5            # Run for max 5 iterations"
   echo "  ./ralph.sh --agent amp  # Use Amp instead of Claude"
   echo "  ./ralph.sh 20 --agent amp"
+  echo ""
+  echo "Workflow:"
+  echo "  1. Create RRD: ./skill.sh rrd \"Research topic description\""
+  echo "  2. Run research: ./ralph.sh [iterations]"
+  echo "  3. Check results: cat progress.txt"
 }
 
 # Default values
@@ -73,7 +78,7 @@ if ! command -v "$AGENT" &> /dev/null; then
   exit 1
 fi
 
-# Verify jq is installed (needed for parsing prd.json)
+# Verify jq is installed (needed for parsing rrd.json)
 if ! command -v jq &> /dev/null; then
   echo "Error: 'jq' not found in PATH."
   echo "Install it with: brew install jq (macOS) or apt install jq (Linux)"
@@ -81,15 +86,22 @@ if ! command -v jq &> /dev/null; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PRD_FILE="$SCRIPT_DIR/prd.json"
+RRD_FILE="$SCRIPT_DIR/rrd.json"
 PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
 ARCHIVE_DIR="$SCRIPT_DIR/archive"
 LAST_BRANCH_FILE="$SCRIPT_DIR/.last-branch"
 
 # Initialize or reset progress file
 init_progress_file() {
-  echo "# Ralph Progress Log" > "$PROGRESS_FILE"
+  echo "# Research-Ralph Progress Log" > "$PROGRESS_FILE"
   echo "Started: $(date)" >> "$PROGRESS_FILE"
+  echo "" >> "$PROGRESS_FILE"
+  echo "## Research Patterns" >> "$PROGRESS_FILE"
+  echo "- (Patterns discovered during research will be added here)" >> "$PROGRESS_FILE"
+  echo "" >> "$PROGRESS_FILE"
+  echo "## Cross-Reference Insights" >> "$PROGRESS_FILE"
+  echo "- (Connections between papers will be added here)" >> "$PROGRESS_FILE"
+  echo "" >> "$PROGRESS_FILE"
   echo "---" >> "$PROGRESS_FILE"
 }
 
@@ -106,26 +118,26 @@ run_agent() {
   else
     claude -p "$prompt_content" \
       --dangerously-skip-permissions \
-      --allowedTools "Bash,Read,Edit,Write,Grep,Glob" \
+      --allowedTools "Bash,Read,Edit,Write,Grep,Glob,WebFetch,WebSearch" \
       2>&1 | tee /dev/stderr
   fi
 }
 
 # Archive previous run if branch changed
-if [ -f "$PRD_FILE" ] && [ -f "$LAST_BRANCH_FILE" ]; then
-  CURRENT_BRANCH=$(jq -r '.branchName // empty' "$PRD_FILE" 2>/dev/null || echo "")
+if [ -f "$RRD_FILE" ] && [ -f "$LAST_BRANCH_FILE" ]; then
+  CURRENT_BRANCH=$(jq -r '.branchName // empty' "$RRD_FILE" 2>/dev/null || echo "")
   LAST_BRANCH=$(cat "$LAST_BRANCH_FILE" 2>/dev/null || echo "")
 
   if [ -n "$CURRENT_BRANCH" ] && [ -n "$LAST_BRANCH" ] && [ "$CURRENT_BRANCH" != "$LAST_BRANCH" ]; then
     # Archive the previous run
     DATE=$(date +%Y-%m-%d)
-    # Strip "ralph/" prefix from branch name for folder
-    FOLDER_NAME=$(echo "$LAST_BRANCH" | sed 's|^ralph/||')
+    # Strip "research/" prefix from branch name for folder
+    FOLDER_NAME=$(echo "$LAST_BRANCH" | sed 's|^research/||')
     ARCHIVE_FOLDER="$ARCHIVE_DIR/$DATE-$FOLDER_NAME"
 
-    echo "Archiving previous run: $LAST_BRANCH"
+    echo "Archiving previous research: $LAST_BRANCH"
     mkdir -p "$ARCHIVE_FOLDER"
-    [ -f "$PRD_FILE" ] && cp "$PRD_FILE" "$ARCHIVE_FOLDER/"
+    [ -f "$RRD_FILE" ] && cp "$RRD_FILE" "$ARCHIVE_FOLDER/"
     [ -f "$PROGRESS_FILE" ] && cp "$PROGRESS_FILE" "$ARCHIVE_FOLDER/"
     echo "   Archived to: $ARCHIVE_FOLDER"
 
@@ -134,8 +146,8 @@ if [ -f "$PRD_FILE" ] && [ -f "$LAST_BRANCH_FILE" ]; then
 fi
 
 # Track current branch
-if [ -f "$PRD_FILE" ]; then
-  CURRENT_BRANCH=$(jq -r '.branchName // empty' "$PRD_FILE" 2>/dev/null || echo "")
+if [ -f "$RRD_FILE" ]; then
+  CURRENT_BRANCH=$(jq -r '.branchName // empty' "$RRD_FILE" 2>/dev/null || echo "")
   if [ -n "$CURRENT_BRANCH" ]; then
     echo "$CURRENT_BRANCH" > "$LAST_BRANCH_FILE"
   fi
@@ -144,20 +156,36 @@ fi
 # Initialize progress file if it doesn't exist
 [[ ! -f "$PROGRESS_FILE" ]] && init_progress_file
 
-# Verify PRD file exists before starting
-if [[ ! -f "$PRD_FILE" ]]; then
-  echo "Error: prd.json not found at $PRD_FILE"
-  echo "Create a PRD first using: ./skill.sh prd \"Your feature description\""
+# Verify RRD file exists before starting
+if [[ ! -f "$RRD_FILE" ]]; then
+  echo "Error: rrd.json not found at $RRD_FILE"
+  echo "Create an RRD first using: ./skill.sh rrd \"Your research topic description\""
   exit 1
 fi
 
-echo "Starting Ralph v$RALPH_VERSION - Agent: $AGENT, Max iterations: $MAX_ITERATIONS"
+# Display research info
+PROJECT=$(jq -r '.project // "Unknown"' "$RRD_FILE")
+PHASE=$(jq -r '.phase // "DISCOVERY"' "$RRD_FILE")
+TARGET=$(jq -r '.requirements.target_papers // 0' "$RRD_FILE")
+ANALYZED=$(jq -r '.statistics.total_analyzed // 0' "$RRD_FILE")
+
+echo "Starting Research-Ralph v$RALPH_VERSION"
+echo "  Agent: $AGENT"
+echo "  Project: $PROJECT"
+echo "  Phase: $PHASE"
+echo "  Papers: $ANALYZED analyzed / $TARGET target"
+echo "  Max iterations: $MAX_ITERATIONS"
+echo ""
 
 for i in $(seq 1 $MAX_ITERATIONS); do
   echo ""
-  echo "═══════════════════════════════════════════════════════"
-  echo "  Ralph Iteration $i of $MAX_ITERATIONS ($AGENT)"
-  echo "═══════════════════════════════════════════════════════"
+  echo "======================================================="
+  echo "  Research-Ralph Iteration $i of $MAX_ITERATIONS ($AGENT)"
+  echo "======================================================="
+
+  # Show current phase
+  PHASE=$(jq -r '.phase // "DISCOVERY"' "$RRD_FILE" 2>/dev/null || echo "DISCOVERY")
+  echo "  Phase: $PHASE"
 
   set +e
   OUTPUT=$(run_agent "$SCRIPT_DIR/prompt.md")
@@ -175,8 +203,18 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   # Check for completion signal
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
     echo ""
-    echo "Ralph completed all tasks!"
-    echo "Completed at iteration $i of $MAX_ITERATIONS"
+    echo "Research-Ralph completed all research tasks!"
+    echo ""
+    # Show summary
+    PRESENTED=$(jq -r '.statistics.total_presented // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+    REJECTED=$(jq -r '.statistics.total_rejected // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+    INSIGHTS=$(jq -r '.statistics.total_insights_extracted // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+    echo "Summary:"
+    echo "  Papers presented: $PRESENTED"
+    echo "  Papers rejected: $REJECTED"
+    echo "  Insights extracted: $INSIGHTS"
+    echo ""
+    echo "See progress.txt for detailed findings."
     exit 0
   fi
 
@@ -185,6 +223,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 done
 
 echo ""
-echo "Ralph reached max iterations ($MAX_ITERATIONS) without completing all tasks."
-echo "Check $PROGRESS_FILE for status."
+echo "Research-Ralph reached max iterations ($MAX_ITERATIONS) without completing."
+echo "Check progress.txt for current status."
+echo "Run again with more iterations if needed."
 exit 1

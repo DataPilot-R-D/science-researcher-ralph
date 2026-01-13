@@ -1,0 +1,59 @@
+{
+  "project": "Research: Robotics & Embodied AI",
+  "branchName": "research/robotics-embodied-ai",
+  "description": "Scout recent advances in robotics, embodied AI, and sim2real transfer. Focus on papers with implementation potential for a small startup team.",
+
+  "requirements": {
+    "focus_area": "robotics",
+    "keywords": ["embodied AI", "manipulation", "sim2real", "robot learning", "dexterous manipulation"],
+    "time_window_days": 30,
+    "target_papers": 20,
+    "sources": ["arXiv", "Google Scholar", "web"],
+    "min_score_to_present": 18
+  },
+
+  "phase": "DISCOVERY",
+
+  "papers_pool": [
+    {
+      "id": "arxiv_2501.12345",
+      "title": "Example: Dexterous Manipulation via Sim2Real Transfer",
+      "url": "https://arxiv.org/abs/2501.12345",
+      "pdf_url": "https://arxiv.org/pdf/2501.12345.pdf",
+      "authors": ["Author A", "Author B"],
+      "date": "2025-01-10",
+      "source": "arXiv",
+      "priority": 4,
+      "status": "pending",
+      "score": null,
+      "score_breakdown": null,
+      "analysis": null,
+      "decision": null,
+      "notes": ""
+    }
+  ],
+
+  "insights": [
+    {
+      "id": "insight_001",
+      "paper_id": "arxiv_2501.12345",
+      "insight": "Key finding worth preserving even if paper rejected",
+      "tags": ["sim2real", "domain-randomization"],
+      "cross_refs": []
+    }
+  ],
+
+  "presented": [],
+  "rejected": [],
+
+  "visited_urls": [],
+  "blocked_sources": [],
+
+  "statistics": {
+    "total_discovered": 0,
+    "total_analyzed": 0,
+    "total_presented": 0,
+    "total_rejected": 0,
+    "total_insights_extracted": 0
+  }
+}
