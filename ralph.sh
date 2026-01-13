@@ -37,12 +37,23 @@ while [[ $# -gt 0 ]]; do
       exit 0
       ;;
     --agent)
+      # Fix 1: Validate --agent value exists
+      if [[ -z "${2:-}" || "$2" == -* ]]; then
+        echo "Error: --agent requires a value (claude or amp)"
+        exit 1
+      fi
       AGENT="$2"
       shift 2
       ;;
     *)
+      # Fix 2: Error on unknown options, warn on unexpected args
       if [[ "$1" =~ ^[0-9]+$ ]]; then
         MAX_ITERATIONS="$1"
+      elif [[ "$1" == -* ]]; then
+        echo "Error: Unknown option '$1'. Use --help for usage."
+        exit 1
+      else
+        echo "Warning: Ignoring unexpected argument '$1'"
       fi
       shift
       ;;
@@ -55,6 +66,20 @@ if [[ "$AGENT" != "claude" && "$AGENT" != "amp" ]]; then
   exit 1
 fi
 
+# Fix 5: Verify CLI is installed before starting
+CLI_CMD="claude"
+[[ "$AGENT" == "amp" ]] && CLI_CMD="amp"
+
+if ! command -v "$CLI_CMD" &> /dev/null; then
+  echo "Error: '$CLI_CMD' CLI not found in PATH."
+  if [[ "$AGENT" == "amp" ]]; then
+    echo "Install it from: https://ampcode.com"
+  else
+    echo "Install it from: https://claude.ai/code"
+  fi
+  exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PRD_FILE="$SCRIPT_DIR/prd.json"
 PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
@@ -64,6 +89,17 @@ LAST_BRANCH_FILE="$SCRIPT_DIR/.last-branch"
 # Agent invocation function
 run_agent() {
   local prompt_file="$1"
+
+  # Fix 4: Validate prompt file exists
+  if [[ ! -f "$prompt_file" ]]; then
+    echo "ERROR: Prompt file not found: $prompt_file" >&2
+    return 1
+  fi
+
+  if [[ ! -r "$prompt_file" ]]; then
+    echo "ERROR: Prompt file not readable: $prompt_file" >&2
+    return 1
+  fi
 
   if [[ "$AGENT" == "amp" ]]; then
     cat "$prompt_file" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr
@@ -124,8 +160,20 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   echo "  Ralph Iteration $i of $MAX_ITERATIONS ($AGENT)"
   echo "═══════════════════════════════════════════════════════"
 
-  # Run the selected agent with the ralph prompt
-  OUTPUT=$(run_agent "$SCRIPT_DIR/prompt.md") || true
+  # Fix 3: Handle agent failures properly instead of || true
+  set +e
+  OUTPUT=$(run_agent "$SCRIPT_DIR/prompt.md")
+  EXIT_CODE=$?
+  set -e
+
+  if [[ $EXIT_CODE -ne 0 ]]; then
+    echo ""
+    echo "ERROR: Agent '$AGENT' failed with exit code $EXIT_CODE"
+    echo "Check if '$AGENT' CLI is installed and authenticated."
+    echo "Continuing to next iteration..."
+    sleep 2
+    continue
+  fi
 
   # Check for completion signal
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then

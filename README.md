@@ -2,7 +2,11 @@
 
 ![Ralph](ralph.webp)
 
-Ralph is an autonomous AI agent loop that runs [Amp](https://ampcode.com) repeatedly until all PRD items are complete. Each iteration is a fresh Amp instance with clean context. Memory persists via git history, `progress.txt`, and `prd.json`.
+Ralph is an autonomous AI agent loop that runs an AI coding agent repeatedly until all PRD items are complete. Each iteration spawns a fresh agent instance with clean context. Memory persists via git history, `progress.txt`, and `prd.json`.
+
+**Supported Agents:**
+- [Claude Code CLI](https://claude.ai/code) (default)
+- [Amp CLI](https://ampcode.com)
 
 Based on [Geoffrey Huntley's Ralph pattern](https://ghuntley.com/ralph/).
 
@@ -10,7 +14,11 @@ Based on [Geoffrey Huntley's Ralph pattern](https://ghuntley.com/ralph/).
 
 ## Prerequisites
 
+Choose ONE of the following AI agents:
+- [Claude Code CLI](https://claude.ai/code) installed and authenticated (default)
 - [Amp CLI](https://ampcode.com) installed and authenticated
+
+Also required:
 - `jq` installed (`brew install jq` on macOS)
 - A git repository for your project
 
@@ -74,10 +82,14 @@ This creates `prd.json` with user stories structured for autonomous execution.
 ### 3. Run Ralph
 
 ```bash
+# Run with Claude Code (default)
 ./scripts/ralph/ralph.sh [max_iterations]
+
+# Run with Amp
+./scripts/ralph/ralph.sh [max_iterations] --agent amp
 ```
 
-Default is 10 iterations.
+Default is 10 iterations. Default agent is Claude Code CLI.
 
 Ralph will:
 1. Create a feature branch (from PRD `branchName`)
@@ -93,13 +105,13 @@ Ralph will:
 
 | File | Purpose |
 |------|---------|
-| `ralph.sh` | The bash loop that spawns fresh Amp instances |
-| `prompt.md` | Instructions given to each Amp instance |
+| `ralph.sh` | The bash loop that spawns fresh agent instances |
+| `prompt.md` | Instructions given to each agent instance |
 | `prd.json` | User stories with `passes` status (the task list) |
 | `prd.json.example` | Example PRD format for reference |
 | `progress.txt` | Append-only learnings for future iterations |
-| `skills/prd/` | Skill for generating PRDs |
-| `skills/ralph/` | Skill for converting PRDs to JSON |
+| `skills/prd/` | Skill for generating PRDs (Amp only) |
+| `skills/ralph/` | Skill for converting PRDs to JSON (Amp only) |
 | `flowchart/` | Interactive visualization of how Ralph works |
 
 ## Flowchart
@@ -120,7 +132,7 @@ npm run dev
 
 ### Each Iteration = Fresh Context
 
-Each iteration spawns a **new Amp instance** with clean context. The only memory between iterations is:
+Each iteration spawns a **new agent instance** with clean context. The only memory between iterations is:
 - Git history (commits from previous iterations)
 - `progress.txt` (learnings and context)
 - `prd.json` (which stories are done)
@@ -142,7 +154,7 @@ Too big (split these):
 
 ### AGENTS.md Updates Are Critical
 
-After each iteration, Ralph updates the relevant `AGENTS.md` files with learnings. This is key because Amp automatically reads these files, so future iterations (and future human developers) benefit from discovered patterns, gotchas, and conventions.
+After each iteration, Ralph updates the relevant `AGENTS.md` files with learnings. Both Amp and Claude Code automatically read these files, so future iterations (and future human developers) benefit from discovered patterns, gotchas, and conventions.
 
 Examples of what to add to AGENTS.md:
 - Patterns discovered ("this codebase uses X for Y")
@@ -158,7 +170,7 @@ Ralph only works if there are feedback loops:
 
 ### Browser Verification for UI Stories
 
-Frontend stories must include "Verify in browser using dev-browser skill" in acceptance criteria. Ralph will use the dev-browser skill to navigate to the page, interact with the UI, and confirm changes work.
+Frontend stories should include browser verification in acceptance criteria. The agent will use its browser automation tools to navigate to the page, interact with the UI, and confirm changes work.
 
 ### Stop Condition
 
@@ -193,4 +205,5 @@ Ralph automatically archives previous runs when you start a new feature (differe
 ## References
 
 - [Geoffrey Huntley's Ralph article](https://ghuntley.com/ralph/)
+- [Claude Code documentation](https://claude.ai/code)
 - [Amp documentation](https://ampcode.com/manual)
