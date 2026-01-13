@@ -80,6 +80,13 @@ if ! command -v "$CLI_CMD" &> /dev/null; then
   exit 1
 fi
 
+# Verify jq is installed (needed for parsing prd.json)
+if ! command -v jq &> /dev/null; then
+  echo "Error: 'jq' not found in PATH."
+  echo "Install it with: brew install jq (macOS) or apt install jq (Linux)"
+  exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PRD_FILE="$SCRIPT_DIR/prd.json"
 PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
@@ -152,6 +159,13 @@ if [ ! -f "$PROGRESS_FILE" ]; then
   echo "---" >> "$PROGRESS_FILE"
 fi
 
+# Verify PRD file exists before starting
+if [[ ! -f "$PRD_FILE" ]]; then
+  echo "ERROR: prd.json not found at $PRD_FILE"
+  echo "Create a PRD first using: ./skill.sh prd \"Your feature description\""
+  exit 1
+fi
+
 echo "Starting Ralph v$RALPH_VERSION - Agent: $AGENT, Max iterations: $MAX_ITERATIONS"
 
 for i in $(seq 1 $MAX_ITERATIONS); do
@@ -170,6 +184,11 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     echo ""
     echo "ERROR: Agent '$AGENT' failed with exit code $EXIT_CODE"
     echo "Check if '$AGENT' CLI is installed and authenticated."
+    if [[ -n "$OUTPUT" ]]; then
+      echo "--- Agent output (last 50 lines) ---"
+      echo "$OUTPUT" | tail -50
+      echo "--- End of agent output ---"
+    fi
     echo "Continuing to next iteration..."
     sleep 2
     continue

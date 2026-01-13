@@ -135,10 +135,21 @@ echo "Running skill '$SKILL_NAME' with $AGENT..."
 echo ""
 
 # Run with appropriate agent
+set +e
 if [[ "$AGENT" == "amp" ]]; then
   echo "$FULL_PROMPT" | amp --dangerously-allow-all
+  EXIT_CODE=$?
 else
   claude -p "$FULL_PROMPT" \
     --dangerously-skip-permissions \
     --allowedTools "Bash,Read,Edit,Write,Grep,Glob"
+  EXIT_CODE=$?
+fi
+set -e
+
+if [[ $EXIT_CODE -ne 0 ]]; then
+  echo ""
+  echo "ERROR: Skill '$SKILL_NAME' failed with $AGENT (exit code: $EXIT_CODE)"
+  echo "Check if '$AGENT' CLI is installed and authenticated."
+  exit $EXIT_CODE
 fi
