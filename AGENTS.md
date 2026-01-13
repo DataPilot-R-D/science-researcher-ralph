@@ -4,6 +4,10 @@
 
 Research-Ralph is an autonomous research scouting agent that discovers, analyzes, and evaluates research papers. It runs an AI agent (Claude Code, Amp, or Codex) repeatedly until all papers are analyzed.
 
+## Sync Policy
+
+Keep research patterns and gotchas in this file in sync with `CLAUDE.md`. When updating one, update the other.
+
 ## Commands
 
 ```bash
@@ -66,7 +70,7 @@ Score 0-5 on each dimension (total 0-30):
 | Defensibility | What's the competitive advantage? |
 | Adoption | How easy to deploy? |
 
-**Threshold:** Score >= 18 = PRESENT, otherwise REJECT or EXTRACT_INSIGHTS
+**Threshold:** Score >= `min_score_to_present` (default: 18) = PRESENT, otherwise REJECT or EXTRACT_INSIGHTS
 
 ## Source Access Patterns
 

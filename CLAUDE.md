@@ -107,7 +107,7 @@ Papers scored 0-5 on each dimension (total 0-30):
 | Defensibility | What's the competitive advantage? |
 | Adoption | How easy to deploy? |
 
-**Threshold:** Score >= 18 = PRESENT
+**Threshold:** Score >= `min_score_to_present` (default: 18) = PRESENT
 
 ## RRD Format
 

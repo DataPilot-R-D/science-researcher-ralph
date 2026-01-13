@@ -137,7 +137,7 @@ elif [[ "$AGENT" == "codex" ]]; then
 else
   claude -p "$FULL_PROMPT" \
     --dangerously-skip-permissions \
-    --allowedTools "Bash,Read,Edit,Write,Grep,Glob"
+    --allowedTools "Bash,Read,Edit,Write,Grep,Glob,WebFetch,WebSearch"
 fi
 
 exit 0

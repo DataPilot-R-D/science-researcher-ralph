@@ -203,6 +203,10 @@ echo "  Papers: $ANALYZED analyzed / $TARGET target"
 echo "  Max iterations: $MAX_ITERATIONS"
 echo ""
 
+# Track consecutive failures
+CONSECUTIVE_FAILURES=0
+MAX_CONSECUTIVE_FAILURES=3
+
 for i in $(seq 1 $MAX_ITERATIONS); do
   echo ""
   echo "======================================================="
@@ -219,12 +223,29 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   set -e
 
   if [[ $EXIT_CODE -ne 0 ]]; then
+    CONSECUTIVE_FAILURES=$((CONSECUTIVE_FAILURES + 1))
     echo ""
-    echo "Error: Agent '$AGENT' failed (exit code $EXIT_CODE). Continuing to next iteration..."
-    [[ -n "$OUTPUT" ]] && echo "$OUTPUT" | tail -20
-    sleep 2
+    echo "Error: Agent '$AGENT' failed (exit code $EXIT_CODE)."
+    echo "  Consecutive failures: $CONSECUTIVE_FAILURES/$MAX_CONSECUTIVE_FAILURES"
+    [[ -n "$OUTPUT" ]] && echo "  Last 20 lines:" && echo "$OUTPUT" | tail -20
+
+    if [[ $CONSECUTIVE_FAILURES -ge $MAX_CONSECUTIVE_FAILURES ]]; then
+      echo ""
+      echo "Error: $MAX_CONSECUTIVE_FAILURES consecutive failures. Aborting."
+      echo "Possible causes:"
+      echo "  - Agent CLI not properly configured"
+      echo "  - Network connectivity issues"
+      echo "  - Authentication/API key problems"
+      exit 1
+    fi
+
+    echo "  Retrying..."
+    sleep 5
     continue
   fi
+
+  # Reset on success
+  CONSECUTIVE_FAILURES=0
 
   # Check for completion signal
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then

@@ -94,8 +94,6 @@ Generate the RRD with these fields:
   "phase": "DISCOVERY",
   "papers_pool": [],
   "insights": [],
-  "presented": [],
-  "rejected": [],
   "visited_urls": [],
   "blocked_sources": [],
   "statistics": {
@@ -136,7 +134,7 @@ Papers are scored 0-5 on each dimension (total 0-30):
 5. **Defensibility/Moat** - What's the competitive advantage?
 6. **Adoption Friction** - How easy to deploy? (higher = easier)
 
-**Threshold:** Score >= 18 → PRESENT, else REJECT or EXTRACT_INSIGHTS
+**Threshold:** Score >= `min_score_to_present` (default: 18) → PRESENT, else REJECT or EXTRACT_INSIGHTS
 
 Include this rubric explanation in the RRD description or notes if the user needs context.
 
@@ -177,8 +175,6 @@ Include this rubric explanation in the RRD description or notes if the user need
   "phase": "DISCOVERY",
   "papers_pool": [],
   "insights": [],
-  "presented": [],
-  "rejected": [],
   "visited_urls": [],
   "blocked_sources": [],
   "statistics": {
