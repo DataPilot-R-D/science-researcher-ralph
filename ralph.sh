@@ -7,6 +7,24 @@ set -e
 # Version
 RALPH_VERSION="1.0.0"
 
+# Help function
+show_help() {
+  echo "Ralph v$RALPH_VERSION - Autonomous AI agent loop"
+  echo ""
+  echo "Usage: ./ralph.sh [max_iterations] [--agent amp|claude]"
+  echo ""
+  echo "Options:"
+  echo "  [max_iterations]    Maximum number of iterations (default: 10)"
+  echo "  --agent <name>      AI agent to use: 'claude' or 'amp' (default: claude)"
+  echo "  -h, --help          Show this help message and exit"
+  echo ""
+  echo "Examples:"
+  echo "  ./ralph.sh              # Run with defaults (claude, 10 iterations)"
+  echo "  ./ralph.sh 5            # Run for max 5 iterations"
+  echo "  ./ralph.sh --agent amp  # Use Amp instead of Claude"
+  echo "  ./ralph.sh 20 --agent amp"
+}
+
 # Default values
 MAX_ITERATIONS=10
 AGENT="claude"  # Default to Claude Code CLI
@@ -14,6 +32,10 @@ AGENT="claude"  # Default to Claude Code CLI
 # Parse arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
+    -h|--help)
+      show_help
+      exit 0
+      ;;
     --agent)
       AGENT="$2"
       shift 2
