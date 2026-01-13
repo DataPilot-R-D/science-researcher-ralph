@@ -158,12 +158,26 @@
       "date": "2026-01-07",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "insights_extracted",
+      "score": 17,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 4,
+        "time_to_poc": 3,
+        "value_market": 2,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Introduces SiT-Bench, the first large-scale benchmark to evaluate spatial intelligence of LLMs using text-only descriptions (no pixels). Tests whether spatial reasoning originates from visual encoders or language model backbones by converting scenes into coordinate-aware textual descriptions.",
+        "methodology": "3,892 expert-annotated samples across 5 categories (Navigation & Planning, Embodied & Fine-grained, Multi-View & Geometric Reasoning, Global Perception & Mapping, Logic Detection) and 17 subtasks. Data constructed via GPT-4o quality scoring on robotic/gaming environments plus adapted existing vision benchmarks. Two-phase verification with DeepSeek-R1 filtering and human review.",
+        "results": "Gemini-3-Flash leads at 59.46% average accuracy; human baseline is 74.42%; random baseline is 27.3%. VLMs outperform pure LLMs despite text-only input. Explicit reasoning modes boost performance (Qwen3-8B: 37.91% → 45.04% with CoT). Critical 'spatial gap' in global consistency: Cognitive Mapping task shows 8.34% best model vs 26.77% human.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Text abstractions don't capture continuous real-time feedback loops essential for robotics. Thinking-mode models show 35-70× latency increases (up to 190s for DeepSeek-V3.2), incompatible with real-time embodied tasks."
+      },
+      "decision": "EXTRACT_INSIGHTS",
+      "notes": "Below threshold (17/30) but provides valuable diagnostic methodology for evaluating spatial reasoning in LLMs. Key finding: 'thinking' in structured symbolic language can be more effective than 'seeing' more pixels for spatial tasks."
     },
     {
       "id": "arxiv_2601.02456",
@@ -672,6 +686,41 @@
         "model-comparison"
       ],
       "cross_refs": []
+    },
+    {
+      "id": "insight_006",
+      "paper_id": "arxiv_2601.03590",
+      "insight": "VLMs outperform pure LLMs on text-only spatial tasks, suggesting multimodal training embeds spatial priors into language weights even when visual input is absent.",
+      "tags": [
+        "spatial-reasoning",
+        "multimodal-training",
+        "benchmark"
+      ],
+      "cross_refs": [
+        "arxiv_2601.05529"
+      ]
+    },
+    {
+      "id": "insight_007",
+      "paper_id": "arxiv_2601.03590",
+      "insight": "Explicit reasoning modes (CoT) substantially boost spatial performance: Qwen3-8B improved from 37.91% to 45.04% with chain-of-thought enabled. But latency increases 35-70× are incompatible with real-time robotics.",
+      "tags": [
+        "chain-of-thought",
+        "latency",
+        "robotics-constraints"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_008",
+      "paper_id": "arxiv_2601.03590",
+      "insight": "LLMs excel at localized semantic spatial tasks but show a critical 'spatial gap' in global consistency: Cognitive Mapping task shows 8.34% best model accuracy vs 26.77% human baseline.",
+      "tags": [
+        "spatial-reasoning",
+        "global-consistency",
+        "cognitive-mapping"
+      ],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -689,14 +738,18 @@
     "https://arxiv.org/abs/2601.05529",
     "https://arxiv.org/html/2601.05529",
     "https://api.github.com/search/repositories?q=2601.05529",
-    "https://api.github.com/search/repositories?q=%22Safety%20Not%20Found%22%20LLM%20robotics"
+    "https://api.github.com/search/repositories?q=%22Safety%20Not%20Found%22%20LLM%20robotics",
+    "https://arxiv.org/abs/2601.03590",
+    "https://arxiv.org/html/2601.03590",
+    "https://api.github.com/search/repositories?q=SiT-Bench+spatial+text",
+    "https://api.github.com/search/repositories?q=2601.03590"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 3,
+    "total_analyzed": 4,
     "total_presented": 3,
     "total_rejected": 0,
-    "total_insights_extracted": 0
+    "total_insights_extracted": 1
   }
 }

@@ -5,7 +5,7 @@ Started: Tue Jan 13 16:42:36 CET 2026
 - (Patterns discovered during research will be added here)
 
 ## Cross-Reference Insights
-- (Connections between papers will be added here)
+- **LLM spatial reasoning benchmarks:** arxiv_2601.05529 (ASCII maps) and arxiv_2601.03590 (coordinate-aware text) both isolate spatial reasoning from visual perception; both find significant model variance and failure modes in global/safety-critical scenarios.
 
 ---
 
@@ -128,3 +128,41 @@ Score: 19/30
 **Learnings for Future Iterations:**
 - When evaluating LLM-robotics papers, look for worst-case failure analysis, not just aggregate accuracy.
 - Safety benchmarks for robotics should include emergency scenarios where errors have physical consequences.
+
+---
+
+## 2026-01-13 - Paper: Can LLMs See Without Pixels? Benchmarking Spatial Intelligence from Textual Descriptions
+ID: arxiv_2601.03590
+Status: INSIGHTS_EXTRACTED
+Score: 17/30
+
+**Summary:** Introduces SiT-Bench, the first large-scale benchmark to evaluate spatial intelligence of LLMs using text-only descriptions (no pixels). Tests whether spatial reasoning originates from visual encoders or language model backbones by converting scenes into coordinate-aware textual descriptions across 3,892 samples in 5 categories and 17 subtasks.
+
+**Key Method:** Data constructed via GPT-4o quality scoring on robotic, gaming, and simulated environments, plus adapted existing vision benchmarks converted to text. Two-phase verification with DeepSeek-R1 filtering and human review. Categories: Navigation & Planning (23.1%), Embodied & Fine-grained (28.4%), Multi-View & Geometric Reasoning (21.5%), Global Perception & Mapping (15.4%), Logic Detection (11.6%).
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Commercial use: no; this is research benchmark infrastructure
+- Open questions: Will the dataset be released? What's the plan for extending to more subtasks?
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 3/5
+- Value/Market: 2/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Decision Rationale:** Below threshold (17/30) but provides valuable diagnostic methodology. Key finding that VLMs outperform pure LLMs even on text-only spatial tasks suggests multimodal training embeds spatial priors. Latency concerns (35-70× slowdown with thinking modes) make it less directly actionable for real-time robotics.
+
+**Extracted Insights:**
+- VLMs outperform pure LLMs on text-only spatial tasks, suggesting multimodal training embeds spatial priors into language weights.
+- Explicit reasoning (CoT) boosts spatial performance significantly (Qwen3-8B: 37.91% → 45.04%) but 35-70× latency increase is incompatible with real-time robotics.
+- LLMs excel at localized semantic spatial tasks but show a critical "spatial gap" in global consistency (Cognitive Mapping: 8.34% best model vs 26.77% human).
+
+**Cross-References:**
+- Related to: arxiv_2601.05529 (both evaluate LLM spatial reasoning with text-based representations; this uses coordinate-aware descriptions, that uses ASCII maps)
+
+**Learnings for Future Iterations:**
+- Text-only spatial benchmarks can reveal model capabilities that visual benchmarks conflate with perception.
+- When evaluating embodied AI capabilities, distinguish between localized semantic tasks (where LLMs do well) and global consistency tasks (where they fail).
