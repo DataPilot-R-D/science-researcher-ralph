@@ -38,7 +38,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     --agent)
       if [[ -z "${2:-}" || "$2" == -* ]]; then
-        echo "Error: --agent requires a value (claude or amp)"
+        echo "Error: --agent requires a value (claude, amp, or codex)"
         exit 1
       fi
       AGENT="$2"
