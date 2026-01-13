@@ -210,3 +210,47 @@ Two-stage training: 700K steps pre-training (AdamW, constant 5×10⁻⁵ LR), 60
 **Learnings for Future Iterations:**
 - Visual foresight is particularly valuable for dynamic manipulation tasks; static pick-and-place shows smaller gains
 - Full open-source VLA releases (code + weights + data) are becoming industry standard for top research labs
+
+---
+
+## 2026-01-13 - Paper: Genie Sim 3.0: A High-Fidelity Comprehensive Simulation Platform for Humanoid Robot
+ID: arxiv_2601.02078
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** Introduces Genie Sim 3.0, an LLM-powered simulation platform for humanoid robots. The platform enables natural language scene generation, automated evaluation via VLM, and releases 10,000+ hours of synthetic training data across 200+ manipulation tasks. Demonstrates strong sim-to-real transfer with R²=0.924 correlation between simulated and real-world performance.
+
+**Key Method:** Four-stage scene generation pipeline:
+1. **Intention Interpreter:** CoT-enabled LLM parses NL prompts to JSON schemas
+2. **Assets Index:** RAG with 5,140 objects across 353 categories, QWEN embeddings in ChromaDB (~200ms retrieval)
+3. **DSL Code Generator:** LLM produces executable Python scene specifications
+4. **Results Assembler:** Creates hierarchical scene graphs via OpenUSD/Isaac Sim APIs
+
+Evaluation pipeline combines LLM-generated task protocols (ADER system) with VLM-based success assessment analyzing temporal visual sequences.
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/AgibotTech/genie_sim (490 stars, 37 forks)
+- Commercial use: yes - AgiBot (Zhiyuan Robotics), $6.4B valuation, planning HK IPO Q3 2026
+- Company backed by Tencent, HongShan, BYD, LG Electronics, Mirae Asset
+
+**Score Breakdown:**
+- Novelty: 4/5 - LLM-powered scene gen + VLM evaluation pipeline is meaningful; builds on Isaac Sim/procedural gen
+- Feasibility: 4/5 - Full open-source, 10K+ hours data; requires Isaac Sim + GPU
+- Time-to-POC: 4/5 - Pre-built scenes, 5,140 assets, NL interface lowers barrier
+- Value/Market: 4/5 - $6.4B company using this for commercial robot production
+- Defensibility: 3/5 - Open-source; moat is asset library + data scale
+- Adoption: 4/5 - Isaac Sim (industry standard), Python DSL, complete ecosystem
+
+**Decision Rationale:** Strong simulation platform with practical commercial validation. LLM-powered scene generation + VLM evaluation reduces manual effort. R²=0.924 sim-to-real correlation demonstrates synthetic data viability. Same team as InternVLA-A1, indicating coherent robotics stack.
+
+**Extracted Insights:**
+- LLM-powered 4-stage scene generation can produce thousands of diverse scenes in minutes from natural language
+- Sim-to-real R²=0.924 validates synthetic data at scale, but equivalent-volume real data still outperforms
+- VLM-based automated evaluation with LLM-generated protocols enables large-scale benchmark creation
+
+**Cross-References:**
+- Related to: arxiv_2601.02456 (InternVLA-A1 - same company, uses Genie Sim for training data)
+
+**Learnings for Future Iterations:**
+- AgiBot (AgibotTech) is building a coherent robotics stack: simulator (Genie Sim) + VLA model (InternVLA-A1) + dataset (AgiBot-World) - worth tracking their releases
+- Isaac Sim + OpenUSD is becoming the de facto standard for high-fidelity robot simulation
