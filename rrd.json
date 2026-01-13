@@ -339,12 +339,26 @@
       "date": "2026-01-04",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "rejected",
+      "score": 10,
+      "score_breakdown": {
+        "novelty": 2,
+        "feasibility": 2,
+        "time_to_poc": 1,
+        "value_market": 2,
+        "defensibility": 1,
+        "adoption": 2
+      },
+      "analysis": {
+        "summary": "Comprehensive survey paper presenting a four-stage framework for AI integration in digital twins: (1) physics-based modeling, (2) real-time mirroring/synchronization, (3) intervention through prediction/optimization, and (4) autonomous management via LLMs and agents. Covers 11 application domains including healthcare, aerospace, manufacturing, and robotics.",
+        "methodology": "Conceptual framework synthesizing existing technologies. No novel implementation. Reviews physics-informed AI (PINNs, Neural Operators), generative models for scene representation (NeRF, 3DGS), LLM-based autonomous management, and world models (NVIDIA Cosmos). Four-stage lifecycle: Modeling → Mirroring → Intervening → Autonomous Management.",
+        "results": "Survey with no original experiments. Cites existing results: physics-informed models achieve ~1000x speedups over numerical solvers; RL-based grasping achieves 96.7% success in cited work. Robotics coverage spans space/aerial, medical/rehabilitation, soft robotics, industrial, and field/service domains.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Survey paper with no novel implementation. Acknowledges LLM/world models 'do not guarantee physical fidelity or closed-loop stability' and their role 'remains largely exploratory'. Missing empirical validation, unified metrics, and head-to-head comparisons."
+      },
+      "decision": "REJECT",
+      "notes": "Survey paper providing landscape overview but no actionable methodology or artifacts. Useful as a reference for understanding digital twin + AI integration patterns, but low POC potential. The four-stage framework is conceptual rather than implementable."
     },
     {
       "id": "arxiv_2601.01196",
@@ -819,6 +833,20 @@
         "benchmark"
       ],
       "cross_refs": []
+    },
+    {
+      "id": "insight_015",
+      "paper_id": "arxiv_2601.01321",
+      "insight": "Four-stage framework for AI-digital twin integration (Modeling → Mirroring → Intervening → Autonomous Management) provides useful taxonomy but current LLM/world models 'do not guarantee physical fidelity or closed-loop stability' for robotics applications.",
+      "tags": [
+        "digital-twin",
+        "survey",
+        "framework",
+        "limitations"
+      ],
+      "cross_refs": [
+        "arxiv_2601.02078"
+      ]
     }
   ],
   "visited_urls": [
@@ -847,14 +875,17 @@
     "https://api.github.com/repos/InternRobotics/InternVLA-A1",
     "https://arxiv.org/abs/2601.02078",
     "https://arxiv.org/html/2601.02078",
-    "https://api.github.com/repos/AgibotTech/genie_sim"
+    "https://api.github.com/repos/AgibotTech/genie_sim",
+    "https://arxiv.org/abs/2601.01321",
+    "https://arxiv.org/html/2601.01321",
+    "https://api.github.com/search/repositories?q=2601.01321"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 6,
+    "total_analyzed": 7,
     "total_presented": 5,
-    "total_rejected": 0,
+    "total_rejected": 1,
     "total_insights_extracted": 1
   }
 }

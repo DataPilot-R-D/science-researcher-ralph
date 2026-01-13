@@ -254,3 +254,41 @@ Evaluation pipeline combines LLM-generated task protocols (ADER system) with VLM
 **Learnings for Future Iterations:**
 - AgiBot (AgibotTech) is building a coherent robotics stack: simulator (Genie Sim) + VLA model (InternVLA-A1) + dataset (AgiBot-World) - worth tracking their releases
 - Isaac Sim + OpenUSD is becoming the de facto standard for high-fidelity robot simulation
+
+---
+
+## 2026-01-13 - Paper: Digital Twin AI: Opportunities and Challenges from Large Language Models to World Models
+ID: arxiv_2601.01321
+Status: REJECTED
+Score: 10/30
+
+**Summary:** Comprehensive survey paper (27 authors from 12+ institutions) presenting a four-stage framework for AI integration in digital twins: (1) physics-based modeling, (2) real-time mirroring/synchronization, (3) intervention through prediction/optimization, and (4) autonomous management via LLMs and agents. Covers 11 application domains including healthcare, aerospace, manufacturing, and robotics.
+
+**Key Method:** Conceptual framework synthesizing existing technologies—no novel implementation. Reviews physics-informed AI (PINNs, Neural Operators), generative models for scene representation (NeRF, 3DGS), LLM-based autonomous management, and world models (NVIDIA Cosmos). The four-stage lifecycle (Modeling → Mirroring → Intervening → Autonomous Management) organizes existing work rather than proposing new methods.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Commercial use: no; this is a survey/review paper
+- Open questions: N/A—survey paper with no artifacts to release
+
+**Score Breakdown:**
+- Novelty: 2/5 - Survey organizing existing work, no new methods or architectures
+- Feasibility: 2/5 - No concrete implementation to build on
+- Time-to-POC: 1/5 - Conceptual framework with nothing directly actionable
+- Value/Market: 2/5 - Good reference for landscape understanding but no direct application
+- Defensibility: 1/5 - N/A for survey papers
+- Adoption: 2/5 - Useful as reference but no artifacts (code, models, datasets)
+
+**Decision Rationale:** Survey paper providing landscape overview but no actionable methodology or artifacts. The four-stage framework is conceptual rather than implementable. Useful for understanding digital twin + AI integration patterns, but low POC potential. Authors explicitly acknowledge LLM/world models "do not guarantee physical fidelity or closed-loop stability" and their role "remains largely exploratory."
+
+**Extracted Insights:**
+- Four-stage framework (Modeling → Mirroring → Intervening → Autonomous) provides useful taxonomy for organizing digital twin AI integration work
+- Key limitation: current LLM/world models "do not guarantee physical fidelity or closed-loop stability" for robotics applications
+- Missing from field: unified evaluation metrics, head-to-head comparisons, ablation studies, long-term robustness testing
+
+**Cross-References:**
+- Related to: arxiv_2601.02078 (Genie Sim - concrete implementation of LLM-powered digital twin generation that this survey would reference)
+
+**Learnings for Future Iterations:**
+- Survey papers rarely score above threshold due to lack of novel implementation; prioritize papers with code/weights/benchmarks
+- "Exploratory" framing in surveys indicates the field lacks mature solutions—be cautious of overclaiming in related application papers
