@@ -372,12 +372,26 @@
       "date": "2026-01-03",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "rejected",
+      "score": 14,
+      "score_breakdown": {
+        "novelty": 2,
+        "feasibility": 3,
+        "time_to_poc": 4,
+        "value_market": 2,
+        "defensibility": 1,
+        "adoption": 2
+      },
+      "analysis": {
+        "summary": "Educational platform integrating LLMs with CoppeliaSim for zero-code robot control. Uses LangChain with Llama3 (70b/8b) to translate natural language to Python control code. Four-module architecture: NL interface, LLM planner, simulation backend, Gradio frontend.",
+        "methodology": "Structured prompt templates convert NL instructions to executable Python via executeActionCode function. Supports direct (step-by-step) and autonomous operation modes. Multi-robot collaboration via sequential action generation across agents.",
+        "results": "108 test instances: 100% success on simple tasks, 94.4% on composite, 88.9% on complex. Natural language control reduced operation time by 17 seconds vs manual control (under 21s vs over 29s). Tested on three YouBot configurations.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No code released. Uses CoppeliaSim (smaller community than Isaac Sim). Educational niche with limited commercial potential. Incremental over GenSim and similar LLM-to-simulation work."
+      },
+      "decision": "REJECT",
+      "notes": "Straightforward educational tool combining off-the-shelf components (CoppeliaSim, LangChain, Gradio, Llama3). While useful for teaching, lacks novelty, defensibility, and commercial potential. Score 14/30 below threshold."
     },
     {
       "id": "arxiv_2512.22615",
@@ -878,14 +892,18 @@
     "https://api.github.com/repos/AgibotTech/genie_sim",
     "https://arxiv.org/abs/2601.01321",
     "https://arxiv.org/html/2601.01321",
-    "https://api.github.com/search/repositories?q=2601.01321"
+    "https://api.github.com/search/repositories?q=2601.01321",
+    "https://arxiv.org/abs/2601.01196",
+    "https://arxiv.org/html/2601.01196",
+    "https://api.github.com/search/repositories?q=EduSim-LLM",
+    "https://api.github.com/search/repositories?q=2601.01196"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 7,
+    "total_analyzed": 8,
     "total_presented": 5,
-    "total_rejected": 1,
+    "total_rejected": 2,
     "total_insights_extracted": 1
   }
 }

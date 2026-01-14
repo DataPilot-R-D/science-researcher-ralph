@@ -292,3 +292,39 @@ Score: 10/30
 **Learnings for Future Iterations:**
 - Survey papers rarely score above threshold due to lack of novel implementation; prioritize papers with code/weights/benchmarks
 - "Exploratory" framing in surveys indicates the field lacks mature solutions—be cautious of overclaiming in related application papers
+
+---
+
+## 2026-01-14 - Paper: EduSim-LLM: An Educational Platform Integrating Large Language Models and Robotic Simulation for Beginners
+ID: arxiv_2601.01196
+Status: REJECTED
+Score: 14/30
+
+**Summary:** Educational platform for zero-code robot control using LLMs with CoppeliaSim. Uses LangChain with Llama3 (70b via Groq, 8b via Ollama) to translate natural language instructions into executable Python control code. Four-module architecture: NL interface, LLM planner, simulation backend (CoppeliaSim remote API), and Gradio frontend.
+
+**Key Method:** Structured prompt templates convert natural language instructions to executable Python via executeActionCode function. Supports direct (step-by-step commands) and autonomous operation modes. RobotController class manages locomotion and manipulation. Multi-robot collaboration via sequential action generation across agents (tested on three YouBot configurations).
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search for title and arXiv ID returned none)
+- Commercial use: no; academic research project for educational accessibility
+- Open questions: Will code be released? How does it compare to Isaac Sim Academy or Robot Virtual Worlds?
+
+**Score Breakdown:**
+- Novelty: 2/5 - Incremental over GenSim and similar LLM-to-simulation work; educational focus is niche
+- Feasibility: 3/5 - Uses off-the-shelf tools but no code released
+- Time-to-POC: 4/5 - Well-documented architecture, could replicate in days
+- Value/Market: 2/5 - Educational niche is small; free alternatives exist
+- Defensibility: 1/5 - No unique tech or data; trivially replicable
+- Adoption: 2/5 - CoppeliaSim has smaller community than Isaac Sim; no code release
+
+**Decision Rationale:** Straightforward educational tool combining off-the-shelf components (CoppeliaSim, LangChain, Gradio, Llama3). While useful for teaching robotics to beginners, lacks novelty, defensibility, and commercial potential. Score 14/30 well below threshold.
+
+**Extracted Insights:**
+- (None significant - standard LLM-to-code pipeline applied to educational context)
+
+**Cross-References:**
+- Related to: arxiv_2601.02078 (Genie Sim) - same domain (LLM-powered simulation) but Genie Sim is far more sophisticated and commercially validated
+
+**Learnings for Future Iterations:**
+- Educational platforms tend to score low on defensibility and value/market unless they introduce novel pedagogical methods or achieve significant scale
+- CoppeliaSim-based work has smaller potential reach than Isaac Sim-based work due to community size
