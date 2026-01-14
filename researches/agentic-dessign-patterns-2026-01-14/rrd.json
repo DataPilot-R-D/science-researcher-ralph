@@ -611,12 +611,31 @@
       "date": "2025-02-07",
       "source": "arXiv",
       "priority": 4,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "Unifies CoT, ToT, GoT. Dynamic DAG reasoning. 46.2% improvement on GPQA without training."
+      "status": "presented",
+      "score": 24,
+      "score_breakdown": {
+        "novelty": 5,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Dynamic test-time inference framework that unifies Chain-of-Thought, Tree-of-Thoughts, and Graph-of-Thoughts into a single adaptive paradigm. Recursively decomposes complex queries into structured subproblems forming a directed acyclic graph (DAG), selectively expanding only subproblems requiring deeper analysis based on LLM-driven complexity classification.",
+        "methodology": "Layer-by-layer graph expansion with heritage-based indexing tracking position through nested graphs. Complexity check function (C) determines node expansion: complex nodes trigger nested AGoT recursion, simple nodes receive direct evaluation. Parameters: d_max=1 (recursion depth), l_max=3 (layers), n_max=3 (nodes per layer). Achieves structural adaptation from chain-like (simple) to tree-like (branching) to graph-like (DAG) based on problem complexity.",
+        "results": "GPQA Diamond: +46.2% over baseline with gpt-4o, +32.4% with gpt-4o-mini. HotpotQA: +11.1%, MoreHopQA: +30.9%, HybridQA: +23.5%. Game of 24: +400% (50% accuracy on hardest problems). Mini-crosswords: +86.6% letter accuracy, +344% word accuracy. Matches DeepSeek-R1's RL-based +46% improvement through inference-time restructuring alone.",
+        "implementations_found": [
+          "https://github.com/AgnostiqHQ/multi-agent-llm",
+          "https://github.com/spcl/graph-of-thoughts",
+          "https://github.com/SaptaDey/Adaptive-Graph-of-Thoughts-MCP-server"
+        ],
+        "commercialized": true,
+        "commercialized_by": "DataRobot acquired Agnostiq (Feb 2025) - company behind AGoT implementation. Syftr open-source framework for optimizing agentic workflows announced as part of acquisition.",
+        "limitations": "Position bias vulnerability: gains disappear on unshuffled GPQA (+0.9%) suggesting training data exposure. Mini-crossword plateau indicates blind spots for character-positional tasks. Computational overhead from recursive decomposition increases API calls. Potential hallucination amplification through iterative response re-digestion. Parameters not fully optimized - 'satisfactory balance' rather than optimal."
+      },
+      "decision": "PRESENT",
+      "notes": "Key contribution: unifies reasoning paradigms through dynamic adaptation rather than fixed structure. Test-time only - no training required. DataRobot acquisition validates commercial viability. Open-source implementation (126 stars, AGPL-3.0) immediately usable. Cross-references: extends reasoning topology taxonomy from arxiv_2401.14295; relates to ToT patterns in arxiv_2404.11584; complements cognitive patterns from arxiv_2505.07087."
     },
     {
       "id": "arxiv_2401.14295",
@@ -1074,6 +1093,41 @@
       "insight": "Representational commitment as reasoning constraint: Explicit problem model is 'not merely an intermediate reasoning step, but a representational commitment that constrains all downstream reasoning' - constraining solution space improves consistency",
       "tags": ["reasoning", "constraints", "planning"],
       "cross_refs": ["arxiv_2506.08837", "arxiv_2509.08646"]
+    },
+    {
+      "id": "insight_051",
+      "paper_id": "arxiv_2502.05078",
+      "insight": "Adaptive reasoning structure unification: AGoT dynamically adapts from chain-like (simple problems) to tree-like (branching needed) to graph-like (DAG interdependencies) based on LLM-driven complexity classification - one framework covers all reasoning topologies",
+      "tags": ["reasoning", "architecture", "unification"],
+      "cross_refs": ["arxiv_2404.11584", "arxiv_2401.14295"]
+    },
+    {
+      "id": "insight_052",
+      "paper_id": "arxiv_2502.05078",
+      "insight": "Test-time adaptive inference matches RL-based training: AGoT achieves +46.2% on GPQA through inference restructuring alone, comparable to DeepSeek-R1's RL-based gains - demonstrates reasoning improvements possible without expensive training",
+      "tags": ["efficiency", "inference", "cost-benefit"],
+      "cross_refs": ["arxiv_2512.20845", "arxiv_2503.16024"]
+    },
+    {
+      "id": "insight_053",
+      "paper_id": "arxiv_2502.05078",
+      "insight": "Heritage-based indexing for nested reasoning: Unique node identification via position sequence through nested graphs enables hierarchical tracking of reasoning steps - critical for debugging and interpretability of complex decompositions",
+      "tags": ["interpretability", "debugging", "architecture"],
+      "cross_refs": ["arxiv_2512.14474"]
+    },
+    {
+      "id": "insight_054",
+      "paper_id": "arxiv_2502.05078",
+      "insight": "Selective expansion pattern: Only expand subproblems requiring deeper analysis based on complexity check function - avoids unnecessary computation while maintaining reasoning rigor, key for cost-effective multi-step reasoning",
+      "tags": ["efficiency", "patterns", "cost-optimization"],
+      "cross_refs": ["arxiv_2509.08646", "arxiv_2511.03023"]
+    },
+    {
+      "id": "insight_055",
+      "paper_id": "arxiv_2502.05078",
+      "insight": "Position bias vulnerability in benchmarks: AGoT gains dropped from +46.2% to +0.9% on unshuffled vs shuffled GPQA, indicating training data exposure effects - always evaluate on shuffled/modified benchmarks to detect true reasoning vs memorization",
+      "tags": ["benchmarks", "evaluation", "limitations"],
+      "cross_refs": ["arxiv_2404.11584", "arxiv_2510.09244"]
     }
   ],
   "visited_urls": [
@@ -1130,15 +1184,20 @@
     "https://github.com/AI-Planning/l2p",
     "https://github.com/Cranial-XIX/llm-pddl",
     "https://github.com/eth-sri/lmql",
-    "https://github.com/samkhur006/awesome-llm-planning-reasoning"
+    "https://github.com/samkhur006/awesome-llm-planning-reasoning",
+    "https://arxiv.org/html/2502.05078v1",
+    "https://github.com/AgnostiqHQ/multi-agent-llm",
+    "https://github.com/spcl/graph-of-thoughts",
+    "https://github.com/SaptaDey/Adaptive-Graph-of-Thoughts-MCP-server",
+    "https://www.datarobot.com/newsroom/press/datarobot-acquires-agnostiq-to-accelerate-agentic-ai-application-development/"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 13,
-    "total_presented": 13,
+    "total_analyzed": 14,
+    "total_presented": 14,
     "total_rejected": 0,
-    "total_insights_extracted": 50,
+    "total_insights_extracted": 55,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -1154,12 +1213,12 @@
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 21.8,
+      "avg_score": 21.9,
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
         "18-23": 11,
-        "24-30": 2
+        "24-30": 3
       }
     }
   }

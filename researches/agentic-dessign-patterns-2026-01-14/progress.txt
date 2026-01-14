@@ -896,3 +896,81 @@ Key distinction from CoT/ReAct: MFR makes problem representation an explicit "re
 - Connection to classical AI planning (PDDL, formal specification) is an emerging research direction
 
 ---
+
+## 2026-01-14 - Paper: Adaptive Graph of Thoughts: Test-Time Adaptive Reasoning
+ID: arxiv_2502.05078
+Status: PRESENTED
+Score: 24/30
+
+**Summary:** Dynamic test-time inference framework that unifies Chain-of-Thought (CoT), Tree-of-Thoughts (ToT), and Graph-of-Thoughts (GoT) into a single adaptive paradigm. Rather than following predetermined reasoning paths, AGoT recursively decomposes complex queries into interconnected subproblems arranged as a directed acyclic graph (DAG), selectively expanding only subproblems requiring deeper analysis.
+
+**Key Method:** Layer-by-layer graph expansion with three core mechanisms:
+1. **Complexity Classification:** LLM-driven function C evaluates each node; complex nodes trigger nested AGoT recursion, simple nodes receive direct evaluation
+2. **Heritage-based Indexing:** Unique node identification via position sequence through nested graphs enables tracking across recursion depth
+3. **Structural Adaptation:** Framework dynamically shifts from chain-like (linear) to tree-like (branching) to graph-like (DAG) based on problem requirements
+
+Parameters: d_max=1 (recursion depth), l_max=3 (layers), n_max=3 (nodes per layer) - authors note these represent "satisfactory balance" not optimization.
+
+**Implementation Check:**
+- GitHub repos: Yes
+  - https://github.com/AgnostiqHQ/multi-agent-llm (126 stars, AGPL-3.0, official implementation)
+  - https://github.com/spcl/graph-of-thoughts (original GoT framework)
+  - https://github.com/SaptaDey/Adaptive-Graph-of-Thoughts-MCP-server (MCP integration, 16 stars)
+- Commercial use: Yes - DataRobot acquired Agnostiq (Feb 2025) for agentic AI capabilities
+- Syftr: Open-source framework announced as part of acquisition for optimizing agentic workflows
+- Open questions: How to minimize computational overhead? Character-positional task limitations?
+
+**Benchmark Results:**
+
+| Task | IO Baseline | CoT | AIoT | AGoT | Improvement |
+|------|-------------|-----|------|------|-------------|
+| GPQA Diamond (gpt-4o) | 37.4% | 38.6% | 39.4% | 49.5% | +46.2% |
+| HotpotQA | 72.0% | 75.0% | 76.0% | 80.0% | +11.1% |
+| MoreHopQA | - | - | - | - | +30.9% |
+| HybridQA | - | - | - | - | +23.5% |
+| Game of 24 | 10.0% | 20.0% | 25.0% | 50.0% | +400% |
+| Mini-crosswords (letter) | - | - | - | - | +86.6% |
+| Mini-crosswords (word) | - | - | - | - | +344% |
+
+**Score Breakdown:**
+- Novelty: 5/5 (First unified framework for CoT/ToT/GoT with dynamic adaptation)
+- Feasibility: 4/5 (Open-source implementation available; test-time only, no training required)
+- Time-to-POC: 4/5 (Working code with notebooks; parameters need tuning per domain)
+- Value/Market: 4/5 (DataRobot acquisition validates commercial interest; matches RL-based gains)
+- Defensibility: 3/5 (Technique published; acquisition provides commercial backing)
+- Adoption: 4/5 (Framework-agnostic; prompt-only; works with any LLM)
+
+**Decision Rationale:** High score (24/30) earned through novel unification of reasoning paradigms, strong benchmark results (+46.2% on GPQA matching DeepSeek-R1 RL gains), and commercial validation via DataRobot acquisition. Test-time only approach makes immediately deployable. Open-source implementation enables rapid prototyping.
+
+**Extracted Insights:**
+- Adaptive reasoning structure unification: one framework dynamically covers chain/tree/graph topologies based on complexity
+- Test-time gains match expensive RL training: +46.2% improvement without model modification
+- Heritage-based indexing enables interpretable nested reasoning traces
+- Selective expansion pattern: compute-efficient by only expanding complex subproblems
+- Position bias vulnerability: benchmark gains can be artifacts of training data exposure (shuffled vs unshuffled)
+
+**Critical Limitations:**
+- Position bias: Gains dropped from +46.2% to +0.9% on unshuffled GPQA
+- Character-positional blind spots: Mini-crossword plateau despite other gains
+- Hallucination amplification: Iterative response re-digestion may create positive feedback loops for errors
+- Parameters not optimized: Current settings are "satisfactory" not optimal
+
+**Cross-References:**
+- Extends reasoning topology taxonomy from arxiv_2401.14295 (Demystifying Chains, Trees, and Graphs)
+- Relates to ToT/planning approaches in arxiv_2404.11584 (AI Agent Architectures survey)
+- Complements cognitive patterns from arxiv_2505.07087 (hierarchical decomposition, knowledge compilation)
+- Heritage indexing relates to interpretability concerns in arxiv_2512.14474 (Model-First Reasoning)
+
+**Commercial Ecosystem:**
+- Agnostiq: Founded as quantum computing platform, pivoted to AI orchestration (Covalent)
+- DataRobot acquisition (Feb 2025): Validates AI agent orchestration market
+- Syftr framework: Open-source tool for discovering performant agentic workflows
+- MCP server integration: Community implementation enables Claude/other MCP-compatible agents
+
+**Learnings for Future Iterations:**
+- Papers with working open-source implementations and commercial validation score higher
+- Test-time inference improvements are increasingly valuable given training costs
+- Benchmark evaluation requires shuffled/modified versions to detect true reasoning vs memorization
+- Acquisition announcements provide strong commercial validation signal
+
+---
