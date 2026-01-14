@@ -10,6 +10,7 @@ Started: śro 14 sty 12:37:38 2026 CET
 - **Dual LLM pattern**: Separate privileged (planning) from quarantined (untrusted input) LLMs for architectural isolation
 - **Security through constrained capabilities**: General-purpose agents cannot provide meaningful security guarantees - application-specific agents with pattern-based constraints are the path to production security
 - **Six security patterns hierarchy**: Action-Selector (max security) → Plan-Then-Execute → Map-Reduce → Dual LLM → Code-Then-Execute → Context-Minimization (simplest)
+- **Lazy agent failure mode**: GRPO loss normalization (1/T_i) inadvertently favors shorter trajectories, causing multi-agent collapse to single-agent behavior - mitigate with causal influence measurement + restart mechanisms
 
 ## Cross-Reference Insights
 - arxiv_2601.03624 and arxiv_2601.03328 both emphasize governance/accountability patterns
@@ -766,5 +767,65 @@ Training: 32K expert-annotated examples (14K ScienceWorld, 10K WebShop, 8K TextC
 - Tencent affiliation suggests potential for enterprise adoption pathway
 - Placeholder GitHub repos common for recent papers - check back later for code releases
 - 4x cost overhead is emerging theme in improved feedback patterns (cf. 3x for MAR arxiv_2512.20845)
+
+---
+
+## 2026-01-14 - Paper: Unlocking the Power of Multi-Agent LLM for Reasoning: From Lazy Agents to Deliberation
+ID: arxiv_2511.02303
+Status: PRESENTED
+Score: 22/30
+
+**Summary:** Identifies and solves the 'lazy agent' problem in multi-agent LLM reasoning where one agent dominates while the other contributes minimally, effectively collapsing the multi-agent setup to single-agent behavior. Root cause traced mathematically to GRPO loss normalization (1/T_i) which inadvertently favors shorter trajectories. Proposes Dr. MAMR (Multi-Agent Meta-Reasoning Done Right) with Shapley-style causal influence measurement and verifiable restart mechanism.
+
+**Key Method:** Two-agent architecture: meta-thinking agent proposes plans and monitors progress; reasoning agent executes through sequential conversational turns. Three key innovations:
+1. **Causal Influence Measurement:** Shapley-inspired approach grouping semantically similar steps across rollouts (0.9 cosine threshold) to compute trajectory-independent contribution estimates via probability differences between full/masked histories
+2. **Verifiable Restart Mechanism:** `<restart>` control token allowing reasoning agent to discard noisy outputs when masking earlier reasoning increases correct answer confidence (+1 reward), decreases it (-1), or no effect (0)
+3. **Step-level Advantage:** Combines normalized outcome rewards, causal influence scores, and restart signals (α=β=0.1)
+
+**Implementation Check:**
+- GitHub repos: No direct implementation released
+  - Related: https://github.com/kyegomez/awesome-multi-agent-papers (tracks paper)
+  - Related: https://github.com/TsinghuaC3I/MARTI (MARL training framework)
+  - Related: https://github.com/LazyAGI/LazyLLM (low-code multi-agent)
+- Commercial use: No - academic research
+- Venue: ICLR 2026 submission (under review, Submission #14685)
+- Open questions: When will code be released? How do results generalize beyond mathematical reasoning?
+
+**Benchmark Results (7B Qwen2.5):**
+
+| Benchmark | Dr. MAMR | ReMA | Single GRPO | Improvement |
+|-----------|----------|------|-------------|-------------|
+| MATH500 | 78.6% | 74.4% | - | +4.2 pts |
+| AIME24 | 20.0% | 13.33% | - | +6.67 pts |
+| AMC23 | 62.5% | 50.0% | - | +12.5 pts |
+| **Average (7 benchmarks)** | **58.43%** | 51.97% | 55.08% | +6.46 pts |
+
+**Score Breakdown:**
+- Novelty: 5/5 (First theoretical explanation of lazy agent behavior via GRPO loss structure)
+- Feasibility: 4/5 (Built on Verl RL framework; requires RL training expertise and GPU resources)
+- Time-to-POC: 3/5 (No public implementation; requires SFT cold-start + RL training)
+- Value/Market: 4/5 (ICLR 2026 submission; addresses fundamental multi-agent training failure)
+- Defensibility: 3/5 (Novel theorem on GRPO bias; causal influence principled approach)
+- Adoption: 3/5 (Requires RL infrastructure; domain-specific to math reasoning)
+
+**Decision Rationale:** ICLR 2026 submission addressing fundamental multi-agent collaboration failure mode. First paper to theoretically explain why lazy agents emerge through loss function analysis (Theorem 1). Key insight: normalization favoring shorter trajectories drives agents to minimize collaboration. Restart mechanism enables error recovery in multi-turn contexts - directly addresses accumulated error problem. Score 22/30 meets threshold.
+
+**Extracted Insights:**
+- Lazy agent problem root cause: GRPO loss normalization (1/T_i) inadvertently favors shorter trajectories, implicitly incentivizing agents to minimize turns
+- Shapley-style causal influence overcomes phrasing bias by grouping semantically similar steps across rollouts
+- Verifiable restart mechanism critical for multi-turn contexts where accumulated errors compound
+- Training stability: Dr. MAMR maintains stable training while ReMA collapsed after 150 steps
+
+**Cross-References:**
+- Extends multi-agent collaboration analysis from arxiv_2404.11584 (identifies when multi-agent fails)
+- Relates to degeneration-of-thought problem in arxiv_2512.20845 (different mechanism, same outcome - single agent dominates)
+- Causal influence measurement complements credit assignment approaches in actor-critic (arxiv_2503.16024)
+- Restart mechanism relates to commitment & reconsideration pattern from arxiv_2505.07087 (cognitive patterns)
+
+**Learnings for Future Iterations:**
+- ICLR/top-tier venue submissions with theoretical contributions (theorems) indicate high research rigor
+- Lazy agent problem is a distinct failure mode from degeneration-of-thought - both collapse multi-agent to single-agent but via different mechanisms
+- Training stability metrics (collapse at N steps) provide concrete comparison criteria
+- Domain-specific results (math reasoning) require careful extrapolation to other agent domains
 
 ---

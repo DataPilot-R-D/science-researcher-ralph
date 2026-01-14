@@ -500,17 +500,41 @@
         "Xiaomin Li",
         "Yudi Lin",
         "Hui Liu",
-        "et al."
+        "Ramraj Chandradevan",
+        "Linlin Wu",
+        "Minhua Lin",
+        "Fali Wang",
+        "Xianfeng Tang",
+        "Qi He",
+        "Suhang Wang"
       ],
       "date": "2025-11-04",
       "source": "arXiv",
       "priority": 4,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "Addresses lazy agent problem in multi-agent reasoning. Causal influence measurement and verifiable rewards."
+      "status": "presented",
+      "score": 22,
+      "score_breakdown": {
+        "novelty": 5,
+        "feasibility": 4,
+        "time_to_poc": 3,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Identifies and solves the 'lazy agent' problem in multi-agent LLM reasoning: one agent dominates while the other contributes minimally, collapsing to ineffective single-agent behavior. Root cause traced to GRPO loss normalization (1/T_i) which inadvertently favors shorter trajectories. Proposes Dr. MAMR (Multi-Agent Meta-Reasoning Done Right) with Shapley-style causal influence measurement and verifiable restart mechanism.",
+        "methodology": "Meta-thinking agent proposes plans and monitors progress; reasoning agent executes through sequential turns. Causal influence computed via probability differences between full/masked histories, grouped by semantic similarity (0.9 cosine threshold). Verifiable restart reward: +1 if masking earlier reasoning increases correct answer confidence, -1 if decreases, 0 otherwise. Step-level advantages combine normalized outcome rewards, causal influence, and restart signals (α=β=0.1).",
+        "results": "7B model: MATH500 78.6% (vs 74.4% ReMA), AIME24 20.0% (vs 13.33% ReMA), AMC23 62.5% (vs 50% ReMA). Average across 7 benchmarks: 58.43% vs 51.97% ReMA. Exceeds single-agent GRPO (55.08%). Training stable throughout while ReMA collapsed after 150 steps. Performance gaps widen at pass@K indicating stronger capability on harder problems.",
+        "implementations_found": [
+          "https://github.com/kyegomez/awesome-multi-agent-papers",
+          "https://github.com/TsinghuaC3I/MARTI",
+          "https://github.com/LazyAGI/LazyLLM"
+        ],
+        "commercialized": false,
+        "limitations": "Results domain-specific (mathematical reasoning). Smaller models (3B) show less pronounced gains - instruction-following capability limits multi-agent benefits. Hyperparameters (α, β) fixed due to computational constraints. No public code release. Requires SFT cold-start on adversarially-generated data using GPT-4o before RL training."
+      },
+      "decision": "PRESENT",
+      "notes": "ICLR 2026 submission. First paper to theoretically explain lazy agent behavior via GRPO loss structure (Theorem 1). Key contribution: lazy agents emerge because normalization favors shorter trajectories. Restart mechanism allows agent to discard noisy outputs and restart reasoning - critical for multi-turn contexts where errors compound. Cross-references: extends multi-agent collaboration analysis from arxiv_2404.11584; relates to degeneration-of-thought problem in arxiv_2512.20845; causal influence measurement complements credit assignment in actor-critic (arxiv_2503.16024)."
     },
     {
       "id": "arxiv_2505.00875",
@@ -975,6 +999,34 @@
       "insight": "Critique-guided early exploration: Highest action revision frequency occurs in stage 1 (early exploration), with revision ratio dropping sharply in later stages - critiques primarily guide initial search, reducing ineffective exploration",
       "tags": ["exploration", "efficiency", "patterns"],
       "cross_refs": ["arxiv_2404.11584"]
+    },
+    {
+      "id": "insight_043",
+      "paper_id": "arxiv_2511.02303",
+      "insight": "Lazy agent problem root cause: GRPO loss normalization (1/T_i) inadvertently favors shorter trajectories - agents are implicitly incentivized to minimize turns, bypassing collaborative reflection and collapsing multi-agent to single-agent behavior",
+      "tags": ["multi-agent", "training", "failure-modes"],
+      "cross_refs": ["arxiv_2404.11584", "arxiv_2512.20845"]
+    },
+    {
+      "id": "insight_044",
+      "paper_id": "arxiv_2511.02303",
+      "insight": "Shapley-style causal influence measurement: Group semantically similar steps across rollouts (0.9 cosine threshold) to overcome phrasing bias; measure probability differences between full and masked histories for trajectory-independent contribution estimates",
+      "tags": ["credit-assignment", "multi-agent", "patterns"],
+      "cross_refs": ["arxiv_2503.16024"]
+    },
+    {
+      "id": "insight_045",
+      "paper_id": "arxiv_2511.02303",
+      "insight": "Verifiable restart mechanism: Allow reasoning agent to discard noisy outputs and restart when earlier reasoning decreases confidence in correct answer - critical for multi-turn contexts where accumulated errors compound",
+      "tags": ["deliberation", "error-recovery", "patterns"],
+      "cross_refs": ["arxiv_2509.08646", "arxiv_2505.07087"]
+    },
+    {
+      "id": "insight_046",
+      "paper_id": "arxiv_2511.02303",
+      "insight": "Multi-agent RL training stability: Dr. MAMR maintains stable training while baseline (ReMA) collapsed after 150 steps - causal influence + restart rewards prevent training instability from lazy agent emergence",
+      "tags": ["training", "stability", "multi-agent"],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -1021,15 +1073,17 @@
     "https://github.com/Skytliang/Multi-Agents-Debate",
     "https://github.com/composable-models/llm_multiagent_debate",
     "https://github.com/instadeepai/DebateLLM",
-    "https://microsoft.github.io/autogen/stable//user-guide/core-user-guide/design-patterns/multi-agent-debate.html"
+    "https://microsoft.github.io/autogen/stable//user-guide/core-user-guide/design-patterns/multi-agent-debate.html",
+    "https://arxiv.org/html/2511.02303v1",
+    "https://openreview.net/forum?id=5J6u03ObRZ"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 11,
-    "total_presented": 11,
+    "total_analyzed": 12,
+    "total_presented": 12,
     "total_rejected": 0,
-    "total_insights_extracted": 42,
+    "total_insights_extracted": 46,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -1049,7 +1103,7 @@
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
-        "18-23": 9,
+        "18-23": 10,
         "24-30": 2
       }
     }
