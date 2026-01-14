@@ -744,3 +744,96 @@ Score: 20/30
 - "Imagination" paradigm (synthesizing future observations for planning) is emerging approach for mapless navigation
 - DINOv2 features are becoming standard for visual memory/keyframe selection in embodied AI
 - Diffusion-based novel view synthesis quality directly impacts downstream navigation performance (4-6% gap vs oracle)
+
+---
+
+## 2026-01-14 - Paper: RecipeMasterLLM: Revisiting RoboEarth in the Era of Large Language Models
+ID: arxiv_2512.17309
+Status: PRESENTED
+Score: 19/30
+
+**Summary:** Modernizes the decade-old RoboEarth action recipe framework using fine-tuned CodeLLaMa 13B with QLoRA and RAG. Generates OWL action ontologies validated via Prolog queries—a neuro-symbolic approach that catches LLM hallucinations through formal verification. Outperforms SMART-LLM (Llama2-70b) on 3/4 AI-THOR2 task categories despite being 5x smaller.
+
+**Key Method:** Two-stage approach: (1) QLoRA fine-tuning on 350 curated action recipes (RoboEarth + GPT-4 generated), (2) RAG via LlamaIndex with bge-small-en-v1.5 embeddings injects digital twin environmental knowledge during generation. Generated OWL/RDF triples validated against RoboEarth ontology via SWI-Prolog queries; invalid recipes flagged and regenerated automatically.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Commercial use: no public evidence found
+- Open questions: Will code be released? How does this compare to modern alternatives like UniPred for predicate learning?
+
+**Score Breakdown:**
+- Novelty: 3/5 - Revival of RoboEarth with LLM is incremental; formal validation layer is useful
+- Feasibility: 4/5 - QLoRA enables small-resource deployment; uses proven components
+- Time-to-POC: 4/5 - Clear methodology, RoboEarth infrastructure exists; no code release
+- Value/Market: 3/5 - Practical approach but RoboEarth ecosystem is dormant
+- Defensibility: 2/5 - Built on public infrastructure; no unique data or model moat
+- Adoption: 3/5 - RoboEarth dependency limits ecosystem growth; ROS2 integration
+
+**Decision Rationale:** Practical neuro-symbolic approach with formal ontology validation. The key insight is that hallucinations caught via Prolog queries (73-97% success rates) would be invisible in end-to-end systems. Outperforming 70B model with 13B validates QLoRA efficiency. However, building on decade-old RoboEarth infrastructure limits ecosystem growth potential.
+
+**Extracted Insights:**
+- Formal ontology validation (OWL/Prolog) makes LLM hallucinations detectable, unlike black-box approaches
+- QLoRA fine-tuning on small curated datasets (350 recipes) enables competitive performance vs much larger models
+- Commonsense inference works: "red small fruit" → strawberry despite no explicit color attributes in knowledge graph
+
+**Cross-References:**
+- Related to: arxiv_2512.17992 (UniPred) - both address LLM-based symbolic reasoning for robot planning; UniPred uses neural feedback, RecipeMasterLLM uses formal ontology validation
+- Related to: arxiv_2512.21243 (LookPlanGraph) - both use structured knowledge representations for planning
+
+**Learnings for Future Iterations:**
+- Formal validation layers (OWL/Prolog, PDDL) make LLM errors detectable but require domain expertise
+- RoboEarth-based work is niche due to dormant ecosystem; prefer approaches building on active infrastructure
+- AI-THOR2 benchmark is useful for comparing high-level planners across task complexity levels
+
+---
+
+## 2026-01-14 - Paper: Semantic Co-Speech Gesture Synthesis and Real-Time Control for Humanoid Robots
+ID: arxiv_2512.17183
+Status: PRESENTED
+Score: 18/30
+
+**Summary:** End-to-end framework for semantic co-speech gesture generation and real-time deployment on Unitree G1 humanoid robot. Combines LLM-based semantic retrieval, Residual VQ-VAE motion tokenization, autoregressive Motion-GPT for gesture prediction, and MotionTracker imitation learning controller for balanced physical execution.
+
+**Key Method:** Three-stage pipeline:
+1. **Motion Retargeting:** GMR bridges human MoCap (ZEGGS, BEAT datasets) to G1's 29-DoF morphology via key-body matching and differential inverse kinematics
+2. **Gesture Generation:** RVQ-VAE encodes motion as discrete tokens (separate body/hand parts). Motion-GPT autoregressively predicts gestures from audio features (MFCC, chromagram, onset, tempogram) + LLM-retrieved semantic gesture candidates
+3. **Physical Control:** MotionTracker uses residual PD offsets relative to reference motion via two-stage RL imitation learning
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no direct results; related repos like liamreneroy/LLM_motion exist but are different projects)
+- Commercial use: no public evidence found
+- Open questions: Will code be released? Can the approach scale beyond single-actor training data?
+
+**Score Breakdown:**
+- Novelty: 3/5 - Integration is valuable but components (VQ-VAE, Motion-GPT, imitation learning) are established
+- Feasibility: 3/5 - Real-robot deployment proven but requires Unitree G1, MoCap setup, and significant compute
+- Time-to-POC: 3/5 - No code release; would need to replicate complex multi-stage pipeline
+- Value/Market: 3/5 - Social robots and humanoid communication is growing market; niche but valuable
+- Defensibility: 2/5 - Components are standard; no unique data or model moat
+- Adoption: 4/5 - Unitree G1 is commercially available; end-to-end demo shows practical viability
+
+**Decision Rationale:** Complete end-to-end pipeline from speech to physical robot gestures addresses real gap in humanoid communication. Real-world Unitree G1 deployment demonstrates practical viability. LLM provides semantic retrieval for contextually appropriate gesture selection. At threshold (18/30) due to single-actor training data limitation and lack of user study.
+
+**Extracted Insights:**
+- Separate body/hand motion tokenization needed: hands show ~0.2 wrist RMSE vs ~0.0006 root position, suggesting different granularity for expressive vs locomotion control
+- Residual PD offsets (predicting corrections rather than absolute targets) improve motion tracking fidelity
+- Audio features (MFCC, chromagram, onset, tempogram) combined with LLM semantic retrieval bridges rhythm and meaning
+
+**Cross-References:**
+- Related to: arxiv_2601.02078 (Genie Sim) - both deploy on humanoid platforms; different focus (manipulation vs communication)
+- Related to: arxiv_2512.20206 (TongSIM) - both address humanoid simulation; TongSIM includes text-driven motion generation
+
+**Learnings for Future Iterations:**
+- Humanoid gesture synthesis is emerging research area as social/service robots gain traction (Unitree, Figure, etc.)
+- MoCap-to-robot retargeting is critical infrastructure; watch for unified approaches across platforms
+- User studies for perceived naturalness are important for gesture quality evaluation; papers without them should note the limitation
+
+---
+
+## Research Complete
+
+All 20 papers in papers_pool have been analyzed:
+- **Presented:** 14 papers (≥18/30 threshold)
+- **Rejected:** 5 papers (<18/30)
+- **Insights Extracted:** 1 paper (EXTRACT_INSIGHTS decision)
+- **Total Insights:** 36 cross-paper insights logged

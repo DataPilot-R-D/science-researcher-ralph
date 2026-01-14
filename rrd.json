@@ -29,7 +29,7 @@
     ],
     "min_score_to_present": 18
   },
-  "phase": "ANALYSIS",
+  "phase": "COMPLETE",
   "papers_pool": [
     {
       "id": "arxiv_2601.06652",
@@ -756,12 +756,26 @@
       "date": "2025-12-19",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "presented",
+      "score": 19,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Modernizes the RoboEarth action recipe framework using fine-tuned CodeLLaMa 13B with QLoRA and RAG for environment-aware ontology generation. Generates OWL action ontologies validated via Prolog queries. Outperforms SMART-LLM (Llama2-70b) on 3/4 AI-THOR2 task categories despite 5x smaller model.",
+        "methodology": "Two-stage approach: (1) QLoRA fine-tuning on 350 curated action recipes (RoboEarth + GPT-4 generated), (2) RAG via LlamaIndex with bge-small-en-v1.5 embeddings injects digital twin knowledge during generation. Generated OWL/RDF triples validated against RoboEarth ontology via SWI-Prolog queries; invalid recipes flagged and regenerated.",
+        "results": "100 iterations: 88% serve drink, 76% red small fruit (commonsense inference), 97% perceive objects, 73% clean table. AI-THOR2 benchmark (1K tasks): Elemental 0.940, Simple 0.871 (vs SMART-LLM 0.75), Compound 0.745 (vs 0.64), Complex 0.781 (vs 0.63). Hallucinations detectable via Prolog validation.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Hallucinations remain primary challenge (73-97% success rates show variance). Elemental tasks underperform larger models. RoboEarth dependency limits adoption. No code release. Tested only in O3DE simulator with ROS2; no real-robot validation."
+      },
+      "decision": "PRESENT",
+      "notes": "Practical neuro-symbolic approach: formal ontology validation catches LLM hallucinations that would be invisible in end-to-end systems. QLoRA enables small-resource deployment. Builds on decade-old RoboEarth infrastructure—interesting revival but limits ecosystem growth."
     },
     {
       "id": "arxiv_2512.17183",
@@ -774,12 +788,26 @@
       "date": "2025-12-19",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "presented",
+      "score": 18,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "End-to-end framework for semantic co-speech gesture generation and real-time deployment on Unitree G1 humanoid. Combines LLM-based semantic retrieval, Residual VQ-VAE motion tokenization, autoregressive Motion-GPT for gesture prediction, and MotionTracker imitation learning controller for balanced execution.",
+        "methodology": "Three-stage pipeline: (1) General Motion Retargeting (GMR) bridges human MoCap to G1's 29-DoF morphology via key-body matching and differential IK, (2) RVQ-VAE encodes motion as discrete tokens (separate body/hand parts, multiple residual quantization layers), Motion-GPT autoregressively predicts gestures from audio features (MFCC, chromagram, onset, tempogram) + LLM-retrieved semantic candidates, (3) MotionTracker controller uses residual PD offsets relative to reference motion.",
+        "results": "RVQ-VAE reconstruction closely follows original motion over 120s sequences. Root position RMSE ~0.0006, hand joint errors higher (~0.2 wrist). Simulation tracking: joint RMSE 0.005-0.006. Real-world: successful gesture execution with balance maintenance. Trained on ZEGGS (2hr MoCap, 1 actor, 19 styles) and BEAT datasets.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Single actor training data (ZEGGS); no multi-party conversation support; LLM speech rhythm/prosody understanding needs enhancement; simple stroke-phase alignment limits complex gesture merging; no quantitative user study on perceived naturalness."
+      },
+      "decision": "PRESENT",
+      "notes": "Complete end-to-end pipeline from speech to physical robot gestures is valuable. Unitree G1 deployment shows real-world viability. LLM provides semantic retrieval for gesture selection. Limitations around single-actor data and simple merging strategies."
     },
     {
       "id": "arxiv_2601.05248",
@@ -1246,6 +1274,32 @@
         "navigation"
       ],
       "cross_refs": []
+    },
+    {
+      "id": "insight_035",
+      "paper_id": "arxiv_2512.17309",
+      "insight": "Formal ontology validation (OWL/Prolog) makes LLM hallucinations detectable and recoverable: invalid generated recipes trigger Prolog query failures, prompting automatic regeneration. This catches errors that would be invisible in end-to-end black-box systems.",
+      "tags": [
+        "neuro-symbolic",
+        "hallucination-detection",
+        "formal-validation",
+        "action-planning"
+      ],
+      "cross_refs": [
+        "arxiv_2512.17992"
+      ]
+    },
+    {
+      "id": "insight_036",
+      "paper_id": "arxiv_2512.17183",
+      "insight": "End-to-end co-speech gesture synthesis requires separate body/hand motion tokenization (RVQ-VAE) because hands have higher reconstruction error (~0.2 wrist RMSE) than body (~0.0006 root position), suggesting different granularity needs for expressive vs locomotion control.",
+      "tags": [
+        "gesture-synthesis",
+        "motion-representation",
+        "humanoid-control",
+        "embodied-communication"
+      ],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -1316,13 +1370,20 @@
     "https://huggingface.co/datasets/bigai/TongSIM-Asset",
     "https://arxiv.org/abs/2512.17992",
     "https://arxiv.org/html/2512.17992",
-    "https://api.github.com/search/repositories?q=UniPred+predicate"
+    "https://api.github.com/search/repositories?q=UniPred+predicate",
+    "https://arxiv.org/abs/2512.17309",
+    "https://arxiv.org/html/2512.17309",
+    "https://api.github.com/search/repositories?q=RecipeMasterLLM+OR+2512.17309",
+    "https://api.github.com/search/repositories?q=RoboEarth+LLM",
+    "https://arxiv.org/abs/2512.17183",
+    "https://arxiv.org/html/2512.17183",
+    "https://api.github.com/search/repositories?q=Motion-GPT+gesture+OR+ZEGGS+robot"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 18,
-    "total_presented": 12,
+    "total_analyzed": 20,
+    "total_presented": 14,
     "total_rejected": 5,
     "total_insights_extracted": 1
   }
