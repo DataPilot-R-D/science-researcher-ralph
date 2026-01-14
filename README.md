@@ -1,8 +1,6 @@
 # Research-Ralph
 
-![Ralph](ralph.webp)
-
-Research-Ralph is an autonomous AI research scouting agent that discovers, analyzes, and evaluates research papers. Each iteration spawns a fresh agent instance with clean context. Memory persists via `rrd.json` (Research Requirements Document), `progress.txt`, and `AGENTS.md`.
+Research-Ralph is an autonomous AI research scouting agent that discovers, analyzes, and evaluates research papers. Each research project gets its own folder with all artifacts, and each iteration spawns a fresh agent instance with clean context.
 
 **Supported Agents:**
 - [Claude Code CLI](https://claude.ai/code) (default)
@@ -23,7 +21,7 @@ Also required:
 
 ## Quick Start
 
-### 1. Create a Research Requirements Document (RRD)
+### 1. Create a Research Project
 
 Use the RRD skill to generate research requirements:
 
@@ -31,19 +29,28 @@ Use the RRD skill to generate research requirements:
 ./skill.sh rrd "Research robotics and embodied AI, focusing on sim2real transfer"
 ```
 
-Answer the clarifying questions. The skill saves output to `rrd.json`.
+This creates a research folder with your RRD:
+```
+researches/research-robotics-and-embodied-2026-01-14/
+└── rrd.json
+```
+
+Answer the clarifying questions to configure your research parameters.
 
 ### 2. Run Research-Ralph
 
 ```bash
 # Run with Claude Code (default)
-./ralph.sh [max_iterations]
+./ralph.sh researches/research-robotics-and-embodied-2026-01-14
+
+# Run with more iterations
+./ralph.sh researches/research-robotics-and-embodied-2026-01-14 20
 
 # Run with Amp
-./ralph.sh [max_iterations] --agent amp
+./ralph.sh researches/research-robotics-and-embodied-2026-01-14 --agent amp
 
 # Run with Codex
-./ralph.sh [max_iterations] --agent codex
+./ralph.sh researches/research-robotics-and-embodied-2026-01-14 --agent codex
 ```
 
 Default is 10 iterations. Default agent is Claude Code CLI.
@@ -60,21 +67,35 @@ Research-Ralph will:
 4. Append detailed analysis to `progress.txt`
 5. Repeat until all papers analyzed
 
+## Folder Structure
+
+Each research project gets its own folder:
+
+```
+researches/
+├── robotics-llms-2026-01-14/
+│   ├── rrd.json           # Research requirements and paper data
+│   ├── progress.txt       # Research findings log
+│   └── research-report.md # Optional: final report
+└── quantum-ai-2026-01-15/
+    ├── rrd.json
+    └── progress.txt
+```
+
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `ralph.sh` | The bash loop that spawns fresh agent instances |
-| `skill.sh` | Run skills with Claude Code, Amp, or Codex |
+| File/Folder | Purpose |
+|-------------|---------|
+| `ralph.sh` | Main research loop script |
+| `skill.sh` | Skill runner (creates research folders) |
 | `prompt.md` | Instructions given to each agent instance |
-| `rrd.json` | Research Requirements Document with papers and status |
+| `researches/` | Per-research artifact folders |
+| `researches/{name}/rrd.json` | Research Requirements Document |
+| `researches/{name}/progress.txt` | Research findings log |
 | `rrd.json.example` | Example RRD format for reference |
-| `progress.txt` | Append-only research findings log |
-| `skills/rrd/` | Skill for generating RRDs |
-| `AGENTS.md` | Research patterns and gotchas for the loop agent |
-| `CLAUDE.md` | Same guidance for Claude Code (kept in sync with `AGENTS.md`) |
-| `docs-baseline/` | Baseline copies of `AGENTS.md` / `CLAUDE.md` for rollback |
-| `restore-docs.sh` | Restore `AGENTS.md` / `CLAUDE.md` from `docs-baseline/` |
+| `skills/rrd/SKILL.md` | Skill for generating RRDs |
+| `AGENTS.md` | Research patterns and gotchas |
+| `CLAUDE.md` | Same guidance for Claude Code |
 
 ## Research Workflow
 
@@ -115,8 +136,8 @@ Papers are scored 0-5 on each dimension (total 0-30):
 ### Each Iteration = Fresh Context
 
 Each iteration spawns a **new agent instance** with clean context. The only memory between iterations is:
-- `rrd.json` (papers pool, status, insights)
-- `progress.txt` (detailed findings)
+- `researches/{name}/rrd.json` (papers pool, status, insights)
+- `researches/{name}/progress.txt` (detailed findings)
 - `AGENTS.md` (research patterns)
 
 ### Deep Research
@@ -145,21 +166,31 @@ Check current state:
 
 ```bash
 # See research status
-cat rrd.json | jq '.phase, .statistics'
+cat researches/{folder}/rrd.json | jq '.phase, .statistics'
 
 # See paper statuses
-cat rrd.json | jq '.papers_pool[] | {id, title, status, score}'
+cat researches/{folder}/rrd.json | jq '.papers_pool[] | {id, title, status, score}'
 
 # See research findings
-cat progress.txt
+cat researches/{folder}/progress.txt
 
 # See presented papers
-cat rrd.json | jq '.papers_pool[] | select(.status == "presented")'
+cat researches/{folder}/rrd.json | jq '.papers_pool[] | select(.status == "presented")'
+
+# List all research projects
+ls researches/
 ```
 
-## Archiving
+## Rate Limits
 
-Research-Ralph automatically archives previous runs when you start a new research topic (different `branchName`). Archives are saved to `archive/YYYY-MM-DD-topic-name/`.
+For higher GitHub API rate limits, set your token:
+
+```bash
+export GITHUB_TOKEN="ghp_your_token_here"
+```
+
+- Unauthenticated: 10 requests/minute
+- Authenticated: 30 requests/minute
 
 ## Doc Safety (Rollback)
 
@@ -171,8 +202,7 @@ The research agent may auto-edit `AGENTS.md` / `CLAUDE.md` to improve the workfl
 ## Git Workflow (Checkpoints)
 
 To make research progress easy to track and revert, commit state/doc updates regularly:
-- Commit after each iteration (and any milestone like phase change)
-- Stage only the relevant files (avoid `git add .`); typically: `rrd.json`, `progress.txt`, `AGENTS.md`, `CLAUDE.md`
+- Stage files from the research folder: `researches/{name}/rrd.json`, `researches/{name}/progress.txt`
 - Commit message examples:
   - `discovery: add N papers`
   - `analysis: <paper_id> <PRESENT|REJECT|EXTRACT_INSIGHTS> (<score>/30)`
