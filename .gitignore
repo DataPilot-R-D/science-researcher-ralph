@@ -2,8 +2,12 @@
 prd.json
 .last-branch
 
-# Archive is optional to commit
-# archive/
+# Research run artifacts (keep locally, not in version control)
+research-report-*.md
+archive/
+
+# IDE/tool config
+.serena/
 
 # OS files
 .DS_Store

@@ -235,17 +235,32 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     echo "  Consecutive failures: $CONSECUTIVE_FAILURES/$MAX_CONSECUTIVE_FAILURES"
     [[ -n "$OUTPUT" ]] && echo "  Last 20 lines:" && echo "$OUTPUT" | tail -20
 
-    # Classify error type for debugging
+    # Classify error type and set retry behavior
+    RETRY_DELAY=5
+    SHOULD_RETRY=true
+
     if echo "$OUTPUT" | grep -qi "403\|Forbidden"; then
-      echo "  Error type: HTTP 403 Forbidden (source block - try fallback sources)"
+      echo "  Error type: HTTP 403 Forbidden (source block - skipping retry)"
+      SHOULD_RETRY=false
     elif echo "$OUTPUT" | grep -qi "429\|Too Many Requests\|rate.limit"; then
-      echo "  Error type: Rate limit (429) - will retry with backoff"
+      echo "  Error type: Rate limit (429) - extended backoff (30s)"
+      RETRY_DELAY=30
     elif echo "$OUTPUT" | grep -qi "bot\|challenge\|captcha\|blocked"; then
-      echo "  Error type: Bot challenge detected - use GitHub API instead"
+      echo "  Error type: Bot challenge detected - skipping retry"
+      SHOULD_RETRY=false
     elif echo "$OUTPUT" | grep -qi "timeout\|timed.out"; then
-      echo "  Error type: Request timeout - retry may help"
+      echo "  Error type: Request timeout - quick retry (2s)"
+      RETRY_DELAY=2
     elif echo "$OUTPUT" | grep -qi "network\|connection\|DNS"; then
-      echo "  Error type: Network error - check connectivity"
+      echo "  Error type: Network error - quick retry (2s)"
+      RETRY_DELAY=2
+    fi
+
+    # Skip retry for permanent errors (403, bot blocks)
+    if [[ "$SHOULD_RETRY" == "false" ]]; then
+      echo "  Skipping retry for this error type, continuing to next iteration..."
+      CONSECUTIVE_FAILURES=0  # Reset - this is a known permanent error, not a systemic failure
+      continue
     fi
 
     if [[ $CONSECUTIVE_FAILURES -ge $MAX_CONSECUTIVE_FAILURES ]]; then
@@ -258,8 +273,8 @@ for i in $(seq 1 $MAX_ITERATIONS); do
       exit 1
     fi
 
-    echo "  Retrying..."
-    sleep 5
+    echo "  Retrying in ${RETRY_DELAY}s..."
+    sleep $RETRY_DELAY
     continue
   fi
 

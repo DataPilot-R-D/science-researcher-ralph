@@ -175,6 +175,17 @@ When searching for papers and implementations, use this fallback hierarchy:
 https://api.github.com/search/repositories?q="{paper_title}"+language:python
 ```
 
+**GitHub API Authentication (recommended):**
+Set `GITHUB_TOKEN` environment variable for higher rate limits:
+- Unauthenticated: 10 requests/minute
+- Authenticated: 30 requests/minute
+
+```bash
+export GITHUB_TOKEN="ghp_your_token_here"
+```
+
+The agent will automatically use `Authorization: token $GITHUB_TOKEN` header when available.
+
 **If all sources blocked:** Extract URLs from paper's Related Work section
 
 ## Rate Limiting Configuration
