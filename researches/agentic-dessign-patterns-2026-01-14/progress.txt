@@ -829,3 +829,70 @@ Score: 22/30
 - Domain-specific results (math reasoning) require careful extrapolation to other agent domains
 
 ---
+
+## 2026-01-14 - Paper: Model-First Reasoning LLM Agents: Reducing Hallucinations through Explicit Problem Modeling
+ID: arxiv_2512.14474
+Status: PRESENTED
+Score: 21/30
+
+**Summary:** Proposes Model-First Reasoning (MFR), a two-phase paradigm where LLMs first construct an explicit problem model (entities, state variables, actions, constraints) before generating solution plans. Core insight: many LLM planning failures are representational rather than inferential - hallucination stems from reasoning over implicit, unstable internal models.
+
+**Key Method:** Two-phase approach inspired by classical AI planning:
+1. **Phase 1 (Model Construction):** LLM explicitly articulates problem structure - entities, state variables (properties that change over time), actions (with preconditions and effects), and constraints. Crucially, LLM is PROHIBITED from generating solutions during this phase, enforcing clean separation.
+2. **Phase 2 (Reasoning and Planning):** Solutions generated strictly within defined model constraints. Actions must respect preconditions, state transitions align with declared effects, constraints remain satisfied.
+
+Key distinction from CoT/ReAct: MFR makes problem representation an explicit "representational commitment that constrains all downstream reasoning" rather than allowing reasoning over implicit, unstable internal models.
+
+**Implementation Check:**
+- GitHub repos: No direct implementation released
+  - Related: https://github.com/AI-Planning/l2p (L2P PDDL generation toolkit)
+  - Related: https://github.com/Cranial-XIX/llm-pddl (LLM+P PDDL integration)
+  - Related: https://github.com/eth-sri/lmql (constraint-guided LLM programming)
+  - Related: https://github.com/samkhur006/awesome-llm-planning-reasoning (resource collection)
+- Commercial use: No
+- Open questions: How to minimize token overhead? How does MFR interact with tool use in agentic systems? How to evaluate quality of generated models?
+
+**Comparative Analysis:**
+
+| Metric | MFR | CoT | ReAct |
+|--------|-----|-----|-------|
+| Constraint Violations | Low | Medium | Medium-Low |
+| Implicit Assumptions | Rare | Frequent | Occasional |
+| Structural Clarity | High | Low | Medium |
+
+**Domains Evaluated:**
+- Medical scheduling
+- Route planning with temporal dependencies
+- Resource allocation with sequential constraints
+- Logic puzzle solving
+- Procedural synthesis tasks
+
+**Score Breakdown:**
+- Novelty: 4/5 (Novel framing of hallucination as representational deficiency; clean two-phase separation)
+- Feasibility: 4/5 (Prompt-only implementation; no architectural changes needed)
+- Time-to-POC: 4/5 (Immediately applicable to existing LLMs; templates provided)
+- Value/Market: 4/5 (Addresses core pain point in LLM planning; applicable to constraint-driven tasks)
+- Defensibility: 2/5 (Pattern is public knowledge; builds on classical AI planning concepts)
+- Adoption: 3/5 (Requires prompt engineering per domain; token overhead; no quantitative benchmarks)
+
+**Decision Rationale:** Meets threshold (21/30). Key contribution is reframing hallucination as a representational problem rather than inferential failure. Two-phase separation of modeling from solving is a distinct design pattern that complements Plan-then-Execute (which focuses on security through control-flow integrity). Prompt-only implementation makes immediately applicable.
+
+**Extracted Insights:**
+- Hallucination as representational deficiency: Many LLM failures arise from reasoning over implicit, unstable internal models
+- Model-First Reasoning pattern: Explicit separation of problem modeling from solution generation
+- Prompt-only implementation: No architectural changes or fine-tuning required for adoption
+- Representational commitment constrains solution space, improving consistency across extended reasoning
+
+**Cross-References:**
+- Extends Plan-then-Execute pattern from arxiv_2509.08646 (both separate phases, but MFR focuses on representation while P-t-E focuses on security)
+- Relates to PDDL formalization research (L2P, LLM+P) - formal specification of planning domains
+- Complements cognitive patterns in arxiv_2505.07087 (classical AI concepts applied to LLM agents)
+- Pattern composition with arxiv_2601.03624 three-tier framework: MFR applicable at Agentic AI tier for complex planning
+
+**Learnings for Future Iterations:**
+- Papers reframing existing problems (hallucination as representation) provide novel architectural insights
+- Qualitative rather than quantitative benchmarking limits defensibility scoring
+- Prompt-only patterns are highly adoptable but require domain-specific engineering
+- Connection to classical AI planning (PDDL, formal specification) is an emerging research direction
+
+---

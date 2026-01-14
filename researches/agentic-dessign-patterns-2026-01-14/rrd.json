@@ -571,12 +571,31 @@
       "date": "2025-12-16",
       "source": "arXiv",
       "priority": 4,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "Model-First Reasoning pattern. Explicit problem modeling before planning. Outperforms CoT and ReAct on complex planning."
+      "status": "presented",
+      "score": 21,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 4,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Proposes Model-First Reasoning (MFR), a two-phase paradigm where LLMs first construct an explicit problem model (entities, state variables, actions, constraints) before generating solution plans. Core insight: many LLM planning failures are representational rather than inferential - hallucination stems from reasoning over implicit, unstable internal models.",
+        "methodology": "Two-phase approach: Phase 1 (Model Construction) explicitly defines problem structure including entities, state variables with preconditions/effects, and constraints - LLM prohibited from generating solutions during this phase. Phase 2 (Reasoning and Planning) generates solutions strictly within defined model constraints. Implemented purely through prompting - no architectural changes or fine-tuning required.",
+        "results": "Qualitative improvements across five planning domains: medical scheduling, route planning, resource allocation, logic puzzles, procedural synthesis. Compared to baselines: Constraint Violations (MFR: Low vs CoT: Medium, ReAct: Medium-Low), Implicit Assumptions (MFR: Rare vs CoT: Frequent, ReAct: Occasional), Structural Clarity (MFR: High vs CoT: Low, ReAct: Medium). Ablation confirms explicit modeling phase is critical for gains.",
+        "implementations_found": [
+          "https://github.com/AI-Planning/l2p (related L2P PDDL generation toolkit)",
+          "https://github.com/Cranial-XIX/llm-pddl (related LLM+P PDDL integration)",
+          "https://github.com/eth-sri/lmql (constraint-guided LLM programming)",
+          "https://github.com/samkhur006/awesome-llm-planning-reasoning (resource collection)"
+        ],
+        "commercialized": false,
+        "limitations": "Qualitative rather than quantitative benchmarking. Benefits concentrated in structured, constraint-driven planning tasks. Token overhead from model construction phase. Effectiveness depends on LLM accurately defining problem model. No formal correctness guarantees - reduces but doesn't eliminate hallucinations. No public implementation released."
+      },
+      "decision": "PRESENT",
+      "notes": "Key contribution: reframes hallucination as representational deficiency rather than reasoning failure. Two-phase separation of modeling from solving is novel design pattern. Prompt-only implementation makes immediately applicable. Relates to Plan-then-Execute but focuses on problem representation rather than security. Cross-references: extends P-t-E pattern from arxiv_2509.08646; relates to PDDL formalization research (L2P, LLM+P); complements cognitive patterns in arxiv_2505.07087."
     },
     {
       "id": "arxiv_2502.05078",
@@ -1027,6 +1046,34 @@
       "insight": "Multi-agent RL training stability: Dr. MAMR maintains stable training while baseline (ReMA) collapsed after 150 steps - causal influence + restart rewards prevent training instability from lazy agent emergence",
       "tags": ["training", "stability", "multi-agent"],
       "cross_refs": []
+    },
+    {
+      "id": "insight_047",
+      "paper_id": "arxiv_2512.14474",
+      "insight": "Hallucination as representational deficiency: Many LLM planning failures arise not from reasoning limitations but from absence of explicit problem representation - reasoning over implicit, unstable internal models causes constraint violations and inconsistent solutions",
+      "tags": ["hallucination", "representation", "planning"],
+      "cross_refs": ["arxiv_2509.08646", "arxiv_2510.09244"]
+    },
+    {
+      "id": "insight_048",
+      "paper_id": "arxiv_2512.14474",
+      "insight": "Model-First Reasoning (MFR) pattern: Two-phase paradigm separating model construction (entities, state variables, actions, constraints) from solution generation. LLM prohibited from generating solutions until model is complete, enforcing clean representational-inferential separation",
+      "tags": ["patterns", "planning", "architecture"],
+      "cross_refs": ["arxiv_2509.08646", "arxiv_2601.03624"]
+    },
+    {
+      "id": "insight_049",
+      "paper_id": "arxiv_2512.14474",
+      "insight": "Prompt-only implementation pattern: MFR requires no architectural modifications, fine-tuning, or external symbolic solvers - operates purely through prompting mechanisms, making it immediately applicable to existing LLM deployments",
+      "tags": ["implementation", "prompting", "adoption"],
+      "cross_refs": ["arxiv_2505.07087", "arxiv_2404.11584"]
+    },
+    {
+      "id": "insight_050",
+      "paper_id": "arxiv_2512.14474",
+      "insight": "Representational commitment as reasoning constraint: Explicit problem model is 'not merely an intermediate reasoning step, but a representational commitment that constrains all downstream reasoning' - constraining solution space improves consistency",
+      "tags": ["reasoning", "constraints", "planning"],
+      "cross_refs": ["arxiv_2506.08837", "arxiv_2509.08646"]
     }
   ],
   "visited_urls": [
@@ -1075,15 +1122,23 @@
     "https://github.com/instadeepai/DebateLLM",
     "https://microsoft.github.io/autogen/stable//user-guide/core-user-guide/design-patterns/multi-agent-debate.html",
     "https://arxiv.org/html/2511.02303v1",
-    "https://openreview.net/forum?id=5J6u03ObRZ"
+    "https://openreview.net/forum?id=5J6u03ObRZ",
+    "https://arxiv.org/html/2512.14474v1",
+    "https://www.researchgate.net/publication/398766645_Model-First_Reasoning_LLM_Agents_Reducing_Hallucinations_through_Explicit_Problem_Modeling",
+    "https://www.alphaxiv.org/overview/2512.14474v1",
+    "https://www.themoonlight.io/en/review/model-first-reasoning-llm-agents-reducing-hallucinations-through-explicit-problem-modeling",
+    "https://github.com/AI-Planning/l2p",
+    "https://github.com/Cranial-XIX/llm-pddl",
+    "https://github.com/eth-sri/lmql",
+    "https://github.com/samkhur006/awesome-llm-planning-reasoning"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 12,
-    "total_presented": 12,
+    "total_analyzed": 13,
+    "total_presented": 13,
     "total_rejected": 0,
-    "total_insights_extracted": 46,
+    "total_insights_extracted": 50,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -1103,7 +1158,7 @@
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
-        "18-23": 10,
+        "18-23": 11,
         "24-30": 2
       }
     }
