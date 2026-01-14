@@ -91,12 +91,30 @@
       "date": "2026-01-06",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "Empirical evaluation across telecom, heritage assets, customer service. Defines orchestration, communication, control-flow patterns. Recent and highly practical."
+      "status": "presented",
+      "score": 23,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 5,
+        "time_to_poc": 5,
+        "value_market": 4,
+        "defensibility": 2,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Empirical evaluation of LLM-enabled multi-agent systems across three real-world domains: telecom security, heritage asset management, and utilities customer service. Formalizes design patterns including ReAct agents, Single Information Environment (SIE), hierarchical architectures, supervisor patterns, and swarm configurations.",
+        "methodology": "Three controlled containerized pilots with stakeholder feedback, sentiment analysis, UAT with Likert scales (correctness, usefulness, clarity, groundedness, safety). Measures development velocity, cost efficiency, and throughput.",
+        "results": "Prototypes delivered in 2 weeks, pilot-ready in 1 month. CS3 achieved 100% email categorization accuracy, 4.3/5 quality rating, 5 emails/min throughput vs 3 baseline, ~£0.05/email vs £0.33 for regex. Critical gap identified between rapid prototyping and production maturity due to LLM behavioral variability.",
+        "implementations_found": [
+          "https://github.com/NisaarAgharia/AI-Agents",
+          "https://developers.googleblog.com/developers-guide-to-multi-agent-patterns-in-adk/"
+        ],
+        "commercialized": true,
+        "commercialized_by": "Kaze Technologies/Kaze Consulting (authors' company, Bath, UK)",
+        "limitations": "Variability in LLM outputs, hallucination risks, lack of robust guardrails for regulated domains. Human oversight remains persistent requirement. Coordination overhead scales with agent network size."
+      },
+      "decision": "PRESENT",
+      "notes": "Highly practical paper with real empirical data. Key insight: prototype speed doesn't translate to production speed. Patterns validated across 3 enterprise domains. Cross-references SIE architecture, hierarchical patterns from arxiv_2601.03624."
     },
     {
       "id": "arxiv_2508.10146",
@@ -509,6 +527,34 @@
       "insight": "Intent vs Obligation distinction: Internal intent (non-transferable) vs External obligation (delegable with traceability) preserves agent autonomy while enabling responsibility chains",
       "tags": ["governance", "delegation", "accountability"],
       "cross_refs": []
+    },
+    {
+      "id": "insight_005",
+      "paper_id": "arxiv_2601.03328",
+      "insight": "Prototype-to-production gap: MAS prototypes can be delivered in 2 weeks, but production maturity requires extensive tuning for LLM variability - plan for 3-6x longer stabilization phase",
+      "tags": ["development-velocity", "production", "planning"],
+      "cross_refs": ["arxiv_2601.03624"]
+    },
+    {
+      "id": "insight_006",
+      "paper_id": "arxiv_2601.03328",
+      "insight": "Single Information Environment (SIE) pattern: Data-centric design where specialist agents handle unique datasets with coordinators routing queries - effective for knowledge-intensive domains",
+      "tags": ["architecture", "patterns", "data-centric"],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_007",
+      "paper_id": "arxiv_2601.03328",
+      "insight": "Human oversight is a persistent requirement across all tested domains - MAS should augment not replace human decision-making, especially in high-stakes/regulated environments",
+      "tags": ["governance", "human-in-loop", "production"],
+      "cross_refs": ["arxiv_2601.03624"]
+    },
+    {
+      "id": "insight_008",
+      "paper_id": "arxiv_2601.03328",
+      "insight": "Cost efficiency pattern: LLM-based specialist agents can achieve 6x cost reduction (£0.05 vs £0.33/email) and 66% throughput improvement over regex baselines when properly architected",
+      "tags": ["cost", "efficiency", "benchmarks"],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -537,10 +583,10 @@
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 1,
-    "total_presented": 1,
+    "total_analyzed": 2,
+    "total_presented": 2,
     "total_rejected": 0,
-    "total_insights_extracted": 4,
+    "total_insights_extracted": 8,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -560,7 +606,7 @@
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
-        "18-23": 1,
+        "18-23": 2,
         "24-30": 0
       }
     }

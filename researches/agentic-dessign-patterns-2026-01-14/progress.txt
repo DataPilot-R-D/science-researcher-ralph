@@ -2,10 +2,14 @@
 Started: śro 14 sty 12:37:38 2026 CET
 
 ## Research Patterns
-- (Patterns discovered during research will be added here)
+- **Prototype-to-production gap**: MAS prototypes can be delivered in 2 weeks but production maturity requires 3-6x longer stabilization phase
+- **Human oversight persistence**: MAS should augment not replace humans in high-stakes/regulated domains
+- **Cost efficiency via specialization**: Proper LLM-based agent architecture can achieve 6x cost reduction over regex baselines
 
 ## Cross-Reference Insights
-- (Connections between papers will be added here)
+- arxiv_2601.03624 and arxiv_2601.03328 both emphasize governance/accountability patterns
+- SIE (Single Information Environment) pattern from arxiv_2601.03328 maps to "Agentic Communities" tier in arxiv_2601.03624
+- Both papers highlight hallucination risks and need for guardrails in production
 
 ---
 
@@ -112,5 +116,55 @@ Score: 23/30
 - Papers grounding agent patterns in formal methods (ISO standards, deontic logic) score higher on enterprise applicability
 - GitHub implementation search yields related resources even when paper itself has no direct implementation
 - Clinical trial case study pattern: domain-specific case studies validate enterprise applicability
+
+---
+
+## 2026-01-14 - Paper: LLM-Enabled Multi-Agent Systems: Empirical Evaluation
+ID: arxiv_2601.03328
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** Empirical evaluation of LLM-enabled multi-agent systems across three real-world domains: telecom security, heritage asset management, and utilities customer service. Formalizes design patterns including ReAct agents, Single Information Environment (SIE), hierarchical architectures, supervisor patterns, and swarm configurations.
+
+**Key Method:** Three controlled containerized pilots with stakeholder feedback, sentiment analysis, and UAT with Likert scales measuring correctness, usefulness, clarity, groundedness, and safety. Measures development velocity, cost efficiency, and throughput quantitatively.
+
+**Implementation Check:**
+- GitHub repos: General multi-agent patterns (https://github.com/NisaarAgharia/AI-Agents - 83 stars)
+- Google ADK patterns: https://developers.googleblog.com/developers-guide-to-multi-agent-patterns-in-adk/
+- Commercial use: Yes - Authors from Kaze Technologies/Kaze Consulting (Bath, UK)
+- Open questions: How to bridge prototype-to-production gap? What guardrails work for regulated domains?
+
+**Case Study Results:**
+| Case | Domain | Architecture | Key Metric |
+|------|--------|--------------|------------|
+| CS1 | Telecom Security | SIE | CISO approved further investigation |
+| CS2 | National Heritage | SIE | 61% positive sentiment |
+| CS3 | Utilities Customer Service | Hierarchical | 100% email categorization, £0.05/email vs £0.33 baseline |
+
+**Score Breakdown:**
+- Novelty: 3/5 (Formalizes existing patterns; value is in empirical validation)
+- Feasibility: 5/5 (Prototypes in 2 weeks, pilots in 1 month - real case studies)
+- Time-to-POC: 5/5 (Demonstrated rapid prototyping; clear architectural guidance)
+- Value/Market: 4/5 (Enterprise applicability validated; addresses real business needs)
+- Defensibility: 2/5 (Patterns are public knowledge; no proprietary advantage)
+- Adoption: 4/5 (Works with LangGraph, existing frameworks)
+
+**Decision Rationale:** Highly practical paper with real empirical data from 3 enterprise domains. Key insight: prototype speed doesn't equal production speed - critical for planning.
+
+**Extracted Insights:**
+- Prototype-to-production gap: 2 weeks to prototype, but production maturity requires extensive tuning (plan 3-6x longer)
+- Single Information Environment (SIE) pattern: Data-centric design with specialist agents per dataset
+- Human oversight remains persistent requirement even in automated domains
+- Cost efficiency: 6x cost reduction achievable with proper MAS architecture
+
+**Cross-References:**
+- SIE architecture relates to "Agentic Communities" tier from arxiv_2601.03624
+- Hierarchical patterns share taxonomy with three-tier framework
+- Hallucination/grounding risks echo formal governance needs from arxiv_2601.03624
+
+**Learnings for Future Iterations:**
+- Papers with quantitative metrics (£/email, throughput, accuracy) are more actionable than pure theoretical frameworks
+- Authors' commercial affiliation indicates real-world applicability
+- Google ADK documentation provides complementary pattern catalogue (8 patterns: Sequential Pipeline, Coordinator, Parallel Fan-Out, Hierarchical, Generator-Critic, Iterative Refinement, Human-in-Loop, Composite)
 
 ---
