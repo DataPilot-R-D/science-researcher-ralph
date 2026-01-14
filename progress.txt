@@ -535,3 +535,40 @@ Score: 15/30
 **Learnings for Future Iterations:**
 - Papers mentioning "robotics" as application domain may not actually contribute robotics-specific methods; check methodology section for domain-specific evaluation
 - Time-budgeted inference is relevant for robotics control loops but needs robotics-specific benchmarks (control frequencies, sensor latencies) to be actionable
+
+---
+
+## 2026-01-14 - Paper: Quadrupped-Legged Robot Movement Plan Generation using Large Language Model
+ID: arxiv_2512.21293
+Status: REJECTED
+Score: 13/30
+
+**Summary:** Distributed client-server architecture integrating Vertex AI Gemini with DeepRobotics Jueying Lite 3 quadruped robot for natural language navigation. LLM generates JSON action sequences that are converted to ROS navigation commands. Achieves >90% success rate across four indoor navigation scenarios. Academic project from Indonesian university (ITS) as a final project.
+
+**Key Method:** Three-tier computation: motion host (actuators/sensors), perception host (NVIDIA Jetson Xavier NX for localization/planning via HDL-Localization 3D LiDAR SLAM), external server (Gemini LLM). Semantic waypoints map to global coordinates. Flask web interface accepts Indonesian natural language commands; LLM generates JSON with command type and waypoint parameters published to ROS topics.
+
+**Implementation Check:**
+- GitHub repos: no direct repos found for this paper
+- Similar projects exist: zsibot_vln (6 stars), llm_mjx_go1_playground (10 stars)
+- Commercial use: no - this is academic research; DeepRobotics ($140M raised, planning 2026 IPO) makes the Jueying platform but this LLM work is from Indonesian university
+- Open questions: Will code be released? Can findings transfer to non-Indonesian language interfaces?
+
+**Score Breakdown:**
+- Novelty: 2/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 2/5
+- Defensibility: 1/5
+- Adoption: 2/5
+
+**Decision Rationale:** Standard LLM-to-ROS integration pattern on commercial quadruped platform. While >90% success rate is respectable, the methodology is incremental over existing open-source projects. No code release, academic final project without commercial backing, and Indonesian-specific NL interface limits broader applicability.
+
+**Extracted Insights:**
+- (None significant - standard LLM-to-ROS integration)
+
+**Cross-References:**
+- Related to: arxiv_2601.06652 (Follow the Signs) - both use LLMs for robot navigation but different platforms (wheeled vs quadruped)
+
+**Learnings for Future Iterations:**
+- Papers using commercial robot platforms (DeepRobotics, Unitree) may be academic research rather than commercial development; check author affiliations
+- Final project / thesis papers tend to score low on defensibility and adoption due to limited resources for code release and maintenance

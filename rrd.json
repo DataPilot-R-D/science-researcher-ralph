@@ -556,12 +556,26 @@
       "date": "2025-12-24",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "rejected",
+      "score": 13,
+      "score_breakdown": {
+        "novelty": 2,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 2,
+        "defensibility": 1,
+        "adoption": 2
+      },
+      "analysis": {
+        "summary": "Presents a distributed client-server architecture integrating Vertex AI Gemini with DeepRobotics Jueying Lite 3 quadruped robot for natural language navigation. LLM generates JSON action sequences converted to ROS navigation commands. Tested in structured indoor environments with >90% success across 4 scenarios.",
+        "methodology": "Three-tier architecture: motion host (actuators/sensors), perception host (NVIDIA Jetson Xavier NX for localization/planning), external server (LLM). Uses HDL-Localization 3D LiDAR SLAM with semantic waypoints. Flask web interface accepts Indonesian NL commands; Gemini generates JSON with command type and waypoint parameters published to ROS topics.",
+        "results": "Single-room: 100% success (45.26s avg). Multi-room short: 96% success (68.27s avg). Multi-room long: 90% success (89.71s avg). Cross-zone: 100% success (130.98s avg). Aggregate >90% success. JSON generation remained semantically accurate throughout testing.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No code release. Academic project from Indonesian university (ITS) as final project, not DeepRobotics commercial effort. External server dependency creates latency. Failures in multi-room scenarios due to local navigation handling during transition phases. Indonesian-specific NL interface limits broader adoption."
+      },
+      "decision": "REJECT",
+      "notes": "Standard LLM-to-ROS integration on commercial quadruped. Methodology is incremental over similar open-source projects (zsibot_vln, llm_mjx_go1_playground). Good success rate but no novel contribution. Academic final project without code release or commercial backing."
     },
     {
       "id": "arxiv_2512.21243",
@@ -1108,9 +1122,9 @@
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 13,
+    "total_analyzed": 14,
     "total_presented": 8,
-    "total_rejected": 4,
+    "total_rejected": 5,
     "total_insights_extracted": 1
   }
 }
