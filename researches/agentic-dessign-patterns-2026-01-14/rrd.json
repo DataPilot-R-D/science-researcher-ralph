@@ -2,7 +2,6 @@
   "project": "Research: Agentic Design Patterns",
   "branchName": "research/agentic-design-patterns",
   "description": "Scout recent advances in design patterns for AI agents and multi-agent systems. Focus on architectural patterns for building reliable, composable, and scalable autonomous agents. Looking for patterns around agent orchestration, tool use, memory management, planning, reflection, and multi-agent collaboration that can be practically implemented.",
-
   "requirements": {
     "focus_area": "AI agents",
     "keywords": [
@@ -17,11 +16,14 @@
     ],
     "time_window_days": 90,
     "historical_lookback_days": 1095,
-    "target_papers": 20,
-    "sources": ["arXiv", "Google Scholar", "web"],
+    "target_papers": 30,
+    "sources": [
+      "arXiv",
+      "Google Scholar",
+      "web"
+    ],
     "min_score_to_present": 18
   },
-
   "domain_glossary": {
     "enabled": true,
     "terms": {
@@ -34,9 +36,7 @@
       "Reflection": "Agent self-critique and iterative improvement pattern"
     }
   },
-
   "open_questions": [],
-
   "phase": "ANALYSIS",
   "papers_pool": [
     {
@@ -44,23 +44,50 @@
       "title": "Architecting Agentic Communities using Design Patterns",
       "url": "https://arxiv.org/abs/2601.03624",
       "pdf_url": "https://arxiv.org/pdf/2601.03624",
-      "authors": ["Zoran Milosevic", "Fethi Rabhi"],
+      "authors": [
+        "Zoran Milosevic",
+        "Fethi Rabhi"
+      ],
       "date": "2026-01-07",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "Three-tier classification: LLM Agents, Agentic AI, Agentic Communities. Includes complete design patterns catalogue. Highly relevant to core research focus."
+      "status": "presented",
+      "score": 23,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 3,
+        "value_market": 5,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Comprehensive design pattern catalogue (46 patterns) for agentic AI systems organized in three tiers: LLM Agents (task automation), Agentic AI (autonomous reasoning), and Agentic Communities (multi-participant coordination). Uniquely grounds patterns in ISO ODP-EL formal semantics enabling verifiable governance.",
+        "methodology": "Three-tier classification derived from enterprise distributed systems standards (ISO/IEC 15414). Uses deontic tokens (burden/permit/embargo) for formal accountability. Three-step design methodology: assess use case, apply pattern composition, scope implementation.",
+        "results": "46 patterns catalogued (11 LLM Agent, 22 Agentic AI, 13 Agentic Community). Clinical trial matching case study validates approach. Formal verification properties for safety, authority, prohibition, and accountability.",
+        "implementations_found": [
+          "https://github.com/sarwarbeing-ai/Agentic_Design_Patterns",
+          "https://github.com/promptadvisers/agentic-design-patterns-docs",
+          "https://github.com/nibzard/awesome-agentic-patterns",
+          "https://github.com/ksm26/AI-Agentic-Design-Patterns-with-AutoGen"
+        ],
+        "commercialized": false,
+        "limitations": "Initial pattern set; domain-specific instantiations needed for finance/manufacturing/cybersecurity. Formal verification focus on governance patterns only. Learning curve for ODP-EL framework."
+      },
+      "decision": "PRESENT",
+      "notes": "Highest-value paper for research focus. Three-tier framework directly applicable to building production agents. ODP-EL formal grounding distinguishes from narrative pattern catalogues. Cross-references: ReAct, Reflexion, Constitutional AI, Plan-then-Execute patterns appear in other papers."
     },
     {
       "id": "arxiv_2601.03328",
       "title": "LLM-Enabled Multi-Agent Systems: Empirical Evaluation and Insights into Emerging Design Patterns & Paradigms",
       "url": "https://arxiv.org/abs/2601.03328",
       "pdf_url": "https://arxiv.org/pdf/2601.03328",
-      "authors": ["Harri Renney", "Maxim N Nethercott", "Nathan Renney", "Peter Hayes"],
+      "authors": [
+        "Harri Renney",
+        "Maxim N Nethercott",
+        "Nathan Renney",
+        "Peter Hayes"
+      ],
       "date": "2026-01-06",
       "source": "arXiv",
       "priority": 5,
@@ -76,7 +103,11 @@
       "title": "Agentic AI Frameworks: Architectures, Protocols, and Design Challenges",
       "url": "https://arxiv.org/abs/2508.10146",
       "pdf_url": "https://arxiv.org/pdf/2508.10146",
-      "authors": ["Hana Derouiche", "Zaki Brahmi", "Haithem Mazeni"],
+      "authors": [
+        "Hana Derouiche",
+        "Zaki Brahmi",
+        "Haithem Mazeni"
+      ],
       "date": "2025-08-13",
       "source": "arXiv",
       "priority": 5,
@@ -92,7 +123,12 @@
       "title": "Fundamentals of Building Autonomous LLM Agents",
       "url": "https://arxiv.org/abs/2510.09244",
       "pdf_url": "https://arxiv.org/pdf/2510.09244",
-      "authors": ["Victor de Lamo Castrillo", "Habtom Kahsay Gidey", "Alexander Lenz", "Alois Knoll"],
+      "authors": [
+        "Victor de Lamo Castrillo",
+        "Habtom Kahsay Gidey",
+        "Alexander Lenz",
+        "Alois Knoll"
+      ],
       "date": "2025-10-10",
       "source": "arXiv",
       "priority": 5,
@@ -108,7 +144,11 @@
       "title": "Architecting Resilient LLM Agents: A Guide to Secure Plan-then-Execute Implementations",
       "url": "https://arxiv.org/abs/2509.08646",
       "pdf_url": "https://arxiv.org/pdf/2509.08646",
-      "authors": ["Ron F. Del Rosario", "Klaudia Krawiecka", "Christian Schroeder de Witt"],
+      "authors": [
+        "Ron F. Del Rosario",
+        "Klaudia Krawiecka",
+        "Christian Schroeder de Witt"
+      ],
       "date": "2025-09-10",
       "source": "arXiv",
       "priority": 5,
@@ -124,7 +164,13 @@
       "title": "Design Patterns for Securing LLM Agents against Prompt Injections",
       "url": "https://arxiv.org/abs/2506.08837",
       "pdf_url": "https://arxiv.org/pdf/2506.08837",
-      "authors": ["Luca Beurer-Kellner", "Beat Buesser", "Ana-Maria Cretu", "Edoardo Debenedetti", "et al."],
+      "authors": [
+        "Luca Beurer-Kellner",
+        "Beat Buesser",
+        "Ana-Maria Cretu",
+        "Edoardo Debenedetti",
+        "et al."
+      ],
       "date": "2025-06-10",
       "source": "arXiv",
       "priority": 4,
@@ -140,7 +186,11 @@
       "title": "Applying Cognitive Design Patterns to General LLM Agents",
       "url": "https://arxiv.org/abs/2505.07087",
       "pdf_url": "https://arxiv.org/pdf/2505.07087",
-      "authors": ["Robert E. Wray", "James R. Kirk", "John E. Laird"],
+      "authors": [
+        "Robert E. Wray",
+        "James R. Kirk",
+        "John E. Laird"
+      ],
       "date": "2025-05-11",
       "source": "arXiv",
       "priority": 5,
@@ -156,7 +206,12 @@
       "title": "The Landscape of Emerging AI Agent Architectures for Reasoning, Planning, and Tool Calling: A Survey",
       "url": "https://arxiv.org/abs/2404.11584",
       "pdf_url": "https://arxiv.org/pdf/2404.11584",
-      "authors": ["Tula Masterman", "Sandi Besen", "Mason Sawtell", "Alex Chao"],
+      "authors": [
+        "Tula Masterman",
+        "Sandi Besen",
+        "Mason Sawtell",
+        "Alex Chao"
+      ],
       "date": "2024-04-17",
       "source": "arXiv",
       "priority": 4,
@@ -172,7 +227,11 @@
       "title": "PublicAgent: Multi-Agent Design Principles From an LLM-Based Open Data Analysis Framework",
       "url": "https://arxiv.org/abs/2511.03023",
       "pdf_url": "https://arxiv.org/pdf/2511.03023",
-      "authors": ["Sina Montazeri", "Yunhe Feng", "Kewei Sha"],
+      "authors": [
+        "Sina Montazeri",
+        "Yunhe Feng",
+        "Kewei Sha"
+      ],
       "date": "2025-11-04",
       "source": "arXiv",
       "priority": 4,
@@ -188,7 +247,14 @@
       "title": "MAR: Multi-Agent Reflexion Improves Reasoning Abilities in LLMs",
       "url": "https://arxiv.org/abs/2512.20845",
       "pdf_url": "https://arxiv.org/pdf/2512.20845",
-      "authors": ["Onat Ozer", "Grace Wu", "Yuchen Wang", "Daniel Dosti", "Honghao Zhang", "Vivi De La Rue"],
+      "authors": [
+        "Onat Ozer",
+        "Grace Wu",
+        "Yuchen Wang",
+        "Daniel Dosti",
+        "Honghao Zhang",
+        "Vivi De La Rue"
+      ],
       "date": "2025-12-23",
       "source": "arXiv",
       "priority": 5,
@@ -204,7 +270,16 @@
       "title": "The Lighthouse of Language: Enhancing LLM Agents via Critique-Guided Improvement",
       "url": "https://arxiv.org/abs/2503.16024",
       "pdf_url": "https://arxiv.org/pdf/2503.16024",
-      "authors": ["Ruihan Yang", "Fanghua Ye", "Jian Li", "Siyu Yuan", "Yikai Zhang", "Zhaopeng Tu", "Xiaolong Li", "Deqing Yang"],
+      "authors": [
+        "Ruihan Yang",
+        "Fanghua Ye",
+        "Jian Li",
+        "Siyu Yuan",
+        "Yikai Zhang",
+        "Zhaopeng Tu",
+        "Xiaolong Li",
+        "Deqing Yang"
+      ],
       "date": "2025-03-20",
       "source": "arXiv",
       "priority": 4,
@@ -220,7 +295,13 @@
       "title": "Unlocking the Power of Multi-Agent LLM for Reasoning: From Lazy Agents to Deliberation",
       "url": "https://arxiv.org/abs/2511.02303",
       "pdf_url": "https://arxiv.org/pdf/2511.02303",
-      "authors": ["Zhiwei Zhang", "Xiaomin Li", "Yudi Lin", "Hui Liu", "et al."],
+      "authors": [
+        "Zhiwei Zhang",
+        "Xiaomin Li",
+        "Yudi Lin",
+        "Hui Liu",
+        "et al."
+      ],
       "date": "2025-11-04",
       "source": "arXiv",
       "priority": 4,
@@ -236,7 +317,14 @@
       "title": "Thoughts without Thinking: Reconsidering the Explanatory Value of Chain-of-Thought Reasoning in LLMs through Agentic Pipelines",
       "url": "https://arxiv.org/abs/2505.00875",
       "pdf_url": "https://arxiv.org/pdf/2505.00875",
-      "authors": ["Ramesh Manuvinakurike", "Emanuel Moss", "Elizabeth Anne Watkins", "Saurav Sahay", "Giuseppe Raffa", "Lama Nachman"],
+      "authors": [
+        "Ramesh Manuvinakurike",
+        "Emanuel Moss",
+        "Elizabeth Anne Watkins",
+        "Saurav Sahay",
+        "Giuseppe Raffa",
+        "Lama Nachman"
+      ],
       "date": "2025-05-01",
       "source": "arXiv",
       "priority": 3,
@@ -252,7 +340,10 @@
       "title": "Model-First Reasoning LLM Agents: Reducing Hallucinations through Explicit Problem Modeling",
       "url": "https://arxiv.org/abs/2512.14474",
       "pdf_url": "https://arxiv.org/pdf/2512.14474",
-      "authors": ["Annu Rana", "Gaurav Kumar"],
+      "authors": [
+        "Annu Rana",
+        "Gaurav Kumar"
+      ],
       "date": "2025-12-16",
       "source": "arXiv",
       "priority": 4,
@@ -268,7 +359,12 @@
       "title": "Adaptive Graph of Thoughts: Test-Time Adaptive Reasoning Unifying Chain, Tree, and Graph Structures",
       "url": "https://arxiv.org/abs/2502.05078",
       "pdf_url": "https://arxiv.org/pdf/2502.05078",
-      "authors": ["Tushar Pandey", "Ara Ghukasyan", "Oktay Goktas", "Santosh Kumar Radha"],
+      "authors": [
+        "Tushar Pandey",
+        "Ara Ghukasyan",
+        "Oktay Goktas",
+        "Santosh Kumar Radha"
+      ],
       "date": "2025-02-07",
       "source": "arXiv",
       "priority": 4,
@@ -284,7 +380,12 @@
       "title": "Demystifying Chains, Trees, and Graphs of Thoughts",
       "url": "https://arxiv.org/abs/2401.14295",
       "pdf_url": "https://arxiv.org/pdf/2401.14295",
-      "authors": ["Maciej Besta", "Florim Memedi", "Zhenyu Zhang", "et al."],
+      "authors": [
+        "Maciej Besta",
+        "Florim Memedi",
+        "Zhenyu Zhang",
+        "et al."
+      ],
       "date": "2024-01-25",
       "source": "arXiv",
       "priority": 4,
@@ -300,7 +401,12 @@
       "title": "MemRec: Collaborative Memory-Augmented Agentic Recommender System",
       "url": "https://arxiv.org/abs/2601.08816",
       "pdf_url": "https://arxiv.org/pdf/2601.08816",
-      "authors": ["Weixin Chen", "Yuhan Zhao", "Jingyuan Huang", "et al."],
+      "authors": [
+        "Weixin Chen",
+        "Yuhan Zhao",
+        "Jingyuan Huang",
+        "et al."
+      ],
       "date": "2026-01-13",
       "source": "arXiv",
       "priority": 4,
@@ -316,7 +422,10 @@
       "title": "Agent Contracts: A Formal Framework for Resource-Bounded Autonomous AI Systems",
       "url": "https://arxiv.org/abs/2601.08815",
       "pdf_url": "https://arxiv.org/pdf/2601.08815",
-      "authors": ["Qing Ye", "Jing Tan"],
+      "authors": [
+        "Qing Ye",
+        "Jing Tan"
+      ],
       "date": "2026-01-13",
       "source": "arXiv",
       "priority": 4,
@@ -332,7 +441,13 @@
       "title": "To Retrieve or To Think? An Agentic Approach for Context Evolution",
       "url": "https://arxiv.org/abs/2601.08747",
       "pdf_url": "https://arxiv.org/pdf/2601.08747",
-      "authors": ["Rubing Chen", "Jian Wang", "Wenjie Li", "Xiao-Yong Wei", "Qing Li"],
+      "authors": [
+        "Rubing Chen",
+        "Jian Wang",
+        "Wenjie Li",
+        "Xiao-Yong Wei",
+        "Qing Li"
+      ],
       "date": "2026-01-13",
       "source": "arXiv",
       "priority": 4,
@@ -348,7 +463,13 @@
       "title": "RAGShaper: Eliciting Sophisticated Agentic RAG Skills via Automated Data Synthesis",
       "url": "https://arxiv.org/abs/2601.08699",
       "pdf_url": "https://arxiv.org/pdf/2601.08699",
-      "authors": ["Zhengwei Tao", "Bo Li", "Jialong Wu", "Guochen Yan", "et al."],
+      "authors": [
+        "Zhengwei Tao",
+        "Bo Li",
+        "Jialong Wu",
+        "Guochen Yan",
+        "et al."
+      ],
       "date": "2026-01-13",
       "source": "arXiv",
       "priority": 3,
@@ -360,7 +481,36 @@
       "notes": "Agentic RAG skill training via data synthesis. Adversarial distractor navigation pattern."
     }
   ],
-  "insights": [],
+  "insights": [
+    {
+      "id": "insight_001",
+      "paper_id": "arxiv_2601.03624",
+      "insight": "Three-tier agent classification (LLM Agents→Agentic AI→Agentic Communities) provides clear scoping for incremental system development",
+      "tags": ["architecture", "taxonomy", "incremental-development"],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_002",
+      "paper_id": "arxiv_2601.03624",
+      "insight": "Deontic tokens (burden/permit/embargo) enable formal accountability chains in multi-agent systems - critical for regulated industries",
+      "tags": ["governance", "compliance", "formal-methods"],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_003",
+      "paper_id": "arxiv_2601.03624",
+      "insight": "Pattern composition strategies: Vertical (foundational→sophisticated), Horizontal (peer patterns), Cross-Cutting (governance overlay)",
+      "tags": ["composition", "architecture", "patterns"],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_004",
+      "paper_id": "arxiv_2601.03624",
+      "insight": "Intent vs Obligation distinction: Internal intent (non-transferable) vs External obligation (delegable with traceability) preserves agent autonomy while enabling responsibility chains",
+      "tags": ["governance", "delegation", "accountability"],
+      "cross_refs": []
+    }
+  ],
   "visited_urls": [
     "https://export.arxiv.org/api/query?search_query=all:agentic+AI+LLM+agent+architecture",
     "https://export.arxiv.org/api/query?search_query=all:multi-agent+systems+LLM",
@@ -387,19 +537,32 @@
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 0,
-    "total_presented": 0,
+    "total_analyzed": 1,
+    "total_presented": 1,
     "total_rejected": 0,
-    "total_insights_extracted": 0,
+    "total_insights_extracted": 4,
     "discovery_metrics": {
-      "sources_tried": ["arXiv", "Google Scholar", "web"],
-      "sources_successful": ["arXiv", "Google Scholar", "web"],
+      "sources_tried": [
+        "arXiv",
+        "Google Scholar",
+        "web"
+      ],
+      "sources_successful": [
+        "arXiv",
+        "Google Scholar",
+        "web"
+      ],
       "sources_blocked": [],
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 0,
-      "score_distribution": {"0-11": 0, "12-17": 0, "18-23": 0, "24-30": 0}
+      "avg_score": 23,
+      "score_distribution": {
+        "0-11": 0,
+        "12-17": 0,
+        "18-23": 1,
+        "24-30": 0
+      }
     }
   }
 }

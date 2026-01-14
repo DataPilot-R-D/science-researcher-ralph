@@ -69,3 +69,48 @@ Started: śro 14 sty 12:37:38 2026 CET
 - First paper: arxiv_2601.03624 "Architecting Agentic Communities using Design Patterns"
 
 ---
+
+## 2026-01-14 - Paper: Architecting Agentic Communities using Design Patterns
+ID: arxiv_2601.03624
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** Comprehensive design pattern catalogue (46 patterns) for agentic AI systems organized in three tiers: LLM Agents (task-specific automation), Agentic AI (autonomous reasoning), and Agentic Communities (multi-participant coordination). Uniquely grounds patterns in ISO ODP-EL formal semantics enabling verifiable governance and accountability.
+
+**Key Method:** Three-tier classification derived from ISO/IEC 15414 Open Distributed Processing Enterprise Language. Uses deontic tokens (burden/permit/embargo) for formal accountability chains. Three-step design methodology: (1) Assess use case characteristics, (2) Apply pattern composition (vertical/horizontal/cross-cutting), (3) Scope implementation tier.
+
+**Implementation Check:**
+- GitHub repos: Yes
+  - https://github.com/sarwarbeing-ai/Agentic_Design_Patterns (Antonio Gulli's book implementation)
+  - https://github.com/promptadvisers/agentic-design-patterns-docs (21 patterns documented)
+  - https://github.com/nibzard/awesome-agentic-patterns (curated pattern catalogue)
+  - https://github.com/ksm26/AI-Agentic-Design-Patterns-with-AutoGen (AutoGen implementation)
+- Commercial use: No direct commercialization found
+- Open questions: How do ODP-EL formal semantics integrate with existing frameworks (LangChain, CrewAI)? Runtime verification tooling not yet available.
+
+**Score Breakdown:**
+- Novelty: 4/5 (Three-tier framework + ODP-EL formal grounding is unique)
+- Feasibility: 4/5 (46 patterns with concrete guidance; incremental adoption path)
+- Time-to-POC: 3/5 (Patterns usable immediately; ODP-EL has learning curve)
+- Value/Market: 5/5 (Enterprise need for systematic agent architecture; compliance-ready)
+- Defensibility: 3/5 (Patterns are reusable knowledge; formal grounding is differentiated)
+- Adoption: 4/5 (Framework-agnostic; works with existing agent frameworks)
+
+**Decision Rationale:** Highest-value paper for research focus. Three-tier framework directly applicable to building production agents. ODP-EL formal grounding distinguishes from narrative pattern catalogues.
+
+**Extracted Insights:**
+- Three-tier classification (LLM Agents→Agentic AI→Agentic Communities) provides clear scoping for incremental development
+- Deontic tokens (burden/permit/embargo) enable formal accountability - critical for regulated industries
+- Pattern composition: Vertical (foundational→sophisticated), Horizontal (peer patterns), Cross-Cutting (governance overlay)
+- Intent vs Obligation distinction preserves autonomy while enabling responsibility chains
+
+**Cross-References:**
+- Patterns referenced: ReAct (#1), Reflexion (#6), Constitutional AI (#7), Plan-then-Execute (#41), Memory-Augmented (#3)
+- Related papers in pool: arxiv_2509.08646 (Plan-then-Execute focus), arxiv_2512.20845 (Multi-Agent Reflexion), arxiv_2505.07087 (Cognitive patterns)
+
+**Learnings for Future Iterations:**
+- Papers grounding agent patterns in formal methods (ISO standards, deontic logic) score higher on enterprise applicability
+- GitHub implementation search yields related resources even when paper itself has no direct implementation
+- Clinical trial case study pattern: domain-specific case studies validate enterprise applicability
+
+---
