@@ -252,3 +252,58 @@ Score: 23/30
 - Cross-referencing frameworks to protocols reveals interoperability strategy
 
 ---
+
+## 2026-01-14 - Paper: Fundamentals of Building Autonomous LLM Agents
+ID: arxiv_2510.09244
+Status: PRESENTED
+Score: 19/30
+
+**Summary:** TUM seminar technical report defining a four-component architecture for autonomous LLM agents: Perception (environmental sensing), Reasoning (planning and adaptation), Memory (short/long-term storage), and Execution (action translation). Synthesizes existing patterns (ReAct, CoT, ToT, RAG, MCTS) into a coherent educational framework with practical design recommendations.
+
+**Key Method:** Structured review organizing agent capabilities into four cognitive-inspired systems. The paper identifies:
+- Four perception approaches: text-based, multimodal, structured data (DOM/accessibility trees), tool-augmented
+- Four reasoning patterns: task decomposition (HuggingGPT, ReAct), multi-plan generation (ToT, MCTS), reflection, multi-agent experts
+- Three memory types: long-term (RAG, SQL, fine-tuning), short-term (context window), storage (experiences, procedures, domain, user)
+- Four execution modes: tool integration, visual/GUI automation, code generation, robotic control
+
+**Implementation Check:**
+- GitHub repos: Multiple educational resources found
+  - https://github.com/artnitolog/awesome-agent-learning (courses + assignments)
+  - https://github.com/HKUDS/AutoAgent (zero-code agent framework)
+  - https://github.com/victordibia/designing-multiagent-systems (multi-agent from scratch)
+  - https://github.com/tmgthb/Autonomous-Agents (research papers repository)
+- Commercial use: No direct commercialization; TUM academic context
+- Open questions: How to close 72% vs 43% human-AI performance gap? Solutions for repetitive action loops?
+
+**Score Breakdown:**
+- Novelty: 2/5 (Educational synthesis; consolidates known patterns without advancing state-of-art)
+- Feasibility: 5/5 (Four-component model directly implementable; clear mental model)
+- Time-to-POC: 4/5 (Clear principles; multiple linked implementations accelerate prototyping)
+- Value/Market: 3/5 (High educational value; no competitive edge as public knowledge synthesis)
+- Defensibility: 1/5 (Seminar report; no proprietary techniques or novel methods)
+- Adoption: 4/5 (Framework-agnostic; principles applicable to any agent implementation)
+
+**Decision Rationale:** Meets threshold as foundational educational reference. Four-component framework provides clear mental model for agent design. Benchmark gap analysis (72% human vs 43% AI) quantifies current limitations.
+
+**Extracted Insights:**
+- Four-component architecture (Perception→Reasoning→Memory→Execution) provides foundational mental model
+- Human-AI performance gap: 72%+ for humans vs ~43% for leading AI on OSWorld - sets realistic expectations
+- Agent vs workflow distinction: "Simply augmenting an LLM with modules, tools, or predefined steps does not make it an agent" - agents act according to feedback
+
+**Critical Challenges Identified:**
+1. GUI grounding - mapping screenshots to precise interaction coordinates unreliable
+2. Repetitive actions - agents frequently enter unproductive loops
+3. UI robustness - unexpected elements/layout changes cause failures
+4. Context window - constraints require aggressive summarization
+
+**Cross-References:**
+- Four-component model relates to three-tier framework from arxiv_2601.03624
+- Memory patterns connect to arxiv_2508.10146 framework comparison
+- Reasoning patterns (CoT, ToT, MCTS) connect to arxiv_2502.05078 and arxiv_2401.14295
+
+**Learnings for Future Iterations:**
+- Educational synthesis papers score lower on novelty/defensibility but high on feasibility/adoption
+- Quantified benchmark gaps (72% vs 43%) are valuable for setting expectations
+- Agent vs workflow distinction is foundational for avoiding over-engineered solutions
+
+---
