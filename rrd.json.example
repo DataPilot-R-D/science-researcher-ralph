@@ -23,6 +23,8 @@
     }
   },
 
+  "open_questions": [],
+
   "phase": "DISCOVERY",
 
   "papers_pool": [

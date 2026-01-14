@@ -12,65 +12,57 @@ Create detailed Research Requirements Documents that guide autonomous research s
 ## The Job
 
 1. Receive a research topic/area description from the user
-2. Ask 3-5 essential clarifying questions (with lettered options)
-3. Generate a structured RRD based on answers
-4. Save to `rrd.json`
+2. Infer focus area and keywords from the topic
+3. Generate RRD with sensible defaults
+4. Add `open_questions` if topic is ambiguous
+5. Save to `rrd.json`
 
 **Important:** Do NOT start researching. Just create the RRD.
 
 ---
 
-## Step 1: Clarifying Questions
+## Autonomous Generation
 
-Ask only critical questions where the initial prompt is ambiguous. Focus on:
+Generate the RRD immediately without asking questions. Use these defaults:
 
-- **Focus Area:** What's the primary research domain?
-- **Keywords:** What specific topics/terms to search for?
-- **Time Window:** How recent should the papers be?
-- **Depth:** How many papers to analyze?
-- **Criteria:** What makes a paper worth presenting?
+| Field | Default |
+|-------|---------|
+| `time_window_days` | 90 |
+| `target_papers` | 20 |
+| `min_score_to_present` | 18 |
+| `sources` | ["arXiv", "Google Scholar", "web"] |
 
-### Format Questions Like This:
+**Infer from topic description:**
+- `focus_area` - Primary research domain (robotics, NLP, ML, etc.)
+- `keywords` - 5-8 specific, searchable terms related to the topic
+- `description` - Clear research objective
 
-```
-1. What is the primary research focus?
-   A. Robotics & embodied AI
-   B. Machine learning / deep learning
-   C. Natural language processing
-   D. Computer vision
-   E. Other: [please specify]
+**If the topic is ambiguous**, add questions to `open_questions` array:
 
-2. How far back should we look for papers?
-   A. Last 7 days (very recent)
-   B. Last 30 days (recent)
-   C. Last 90 days (quarter)
-   D. Last 365 days (year)
-
-3. How many papers should we target for analysis?
-   A. 5-10 (quick survey)
-   B. 10-20 (standard survey)
-   C. 20-50 (comprehensive survey)
-   D. 50+ (exhaustive survey)
-
-4. What's most important when evaluating papers?
-   A. Novel approaches/methods
-   B. Implementation feasibility for small teams
-   C. Commercial/market potential
-   D. Academic rigor/citations
-   E. Combination of above
-
-5. Which sources should we prioritize?
-   A. arXiv only
-   B. arXiv + Google Scholar
-   C. arXiv + Google Scholar + Web (blogs, GitHub)
-   D. All sources equally
+```json
+"open_questions": [
+  {
+    "field": "focus_area",
+    "question": "Should this focus on theoretical foundations or practical implementations?",
+    "options": ["A: Theoretical", "B: Practical", "C: Both"],
+    "current_default": "Both"
+  }
+]
 ```
 
-This lets users respond with "1A, 2B, 3B, 4E, 5C" for quick iteration.
+**At the end, if there are open questions, output this warning:**
+
+```
+---
+RRD saved to: {path}/rrd.json
+
+WARNING: There are open questions in the RRD. Review and edit rrd.json before running ralph.sh:
+- {list each question}
+```
 
 ---
 
-## Step 2: RRD Structure
+## RRD Structure
 
 Generate the RRD with these fields:
 
@@ -85,7 +77,7 @@ Generate the RRD with these fields:
   "requirements": {
     "focus_area": "Primary domain (robotics, NLP, etc.)",
     "keywords": ["keyword1", "keyword2", "keyword3"],
-    "time_window_days": 30,
+    "time_window_days": 90,
     "historical_lookback_days": 1095,
     "target_papers": 20,
     "sources": ["arXiv", "Google Scholar", "web"],
@@ -96,6 +88,8 @@ Generate the RRD with these fields:
     "enabled": false,
     "terms": {}
   },
+
+  "open_questions": [],
 
   "phase": "DISCOVERY",
   "papers_pool": [],
@@ -138,6 +132,7 @@ Generate the RRD with these fields:
 | `min_score_to_present` | Threshold score (0-30) for PRESENT decision |
 | `phase` | Current phase: DISCOVERY, ANALYSIS, or COMPLETE |
 | `domain_glossary` | Optional: domain-specific term definitions to improve LLM reasoning |
+| `open_questions` | Questions for user to answer if topic was ambiguous |
 | `discovery_metrics` | Tracks which sources were tried, succeeded, or blocked |
 | `analysis_metrics` | Tracks average score and score distribution |
 
@@ -154,7 +149,7 @@ Papers are scored 0-5 on each dimension (total 0-30):
 5. **Defensibility/Moat** - What's the competitive advantage?
 6. **Adoption Friction** - How easy to deploy? (higher = easier)
 
-**Threshold:** Score >= `min_score_to_present` (default: 18) → PRESENT, else REJECT or EXTRACT_INSIGHTS
+**Threshold:** Score >= `min_score_to_present` (default: 18) -> PRESENT, else REJECT or EXTRACT_INSIGHTS
 
 Include this rubric explanation in the RRD description or notes if the user needs context.
 
@@ -187,7 +182,7 @@ Include this rubric explanation in the RRD description or notes if the user need
       "robot learning",
       "visuomotor policy"
     ],
-    "time_window_days": 30,
+    "time_window_days": 90,
     "historical_lookback_days": 1095,
     "target_papers": 20,
     "sources": ["arXiv", "Google Scholar", "web"],
@@ -203,6 +198,8 @@ Include this rubric explanation in the RRD description or notes if the user need
       "VLA": "Vision-Language-Action model"
     }
   },
+
+  "open_questions": [],
 
   "phase": "DISCOVERY",
   "papers_pool": [],
@@ -235,10 +232,9 @@ Include this rubric explanation in the RRD description or notes if the user need
 
 Before saving the RRD:
 
-- [ ] Asked clarifying questions with lettered options
-- [ ] Incorporated user's answers
-- [ ] Keywords are specific and searchable
-- [ ] Time window matches user's needs
-- [ ] Target paper count is realistic
-- [ ] Sources are appropriate for the domain
-- [ ] Saved to the research folder path provided in the prompt (e.g., `researches/{name}-{date}/rrd.json`)
+- [ ] Inferred focus_area from topic description
+- [ ] Generated 5-8 specific, searchable keywords
+- [ ] Used sensible defaults for time_window, target_papers, sources
+- [ ] Added open_questions if any ambiguity exists
+- [ ] Saved to the research folder path provided in the prompt
+- [ ] Printed warning if open_questions is non-empty
