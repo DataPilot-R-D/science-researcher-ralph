@@ -632,3 +632,76 @@ Evaluation via LLM-as-Judge protocol measuring Factual Consistency, Completeness
 - Lead author (Montazeri) has industry background - principles likely grounded in practical experience
 
 ---
+
+## 2026-01-14 - Paper: MAR: Multi-Agent Reflexion Improves Reasoning Abilities in LLMs
+ID: arxiv_2512.20845
+Status: PRESENTED
+Score: 20/30
+
+**Summary:** Addresses degeneration-of-thought in single-LLM Reflexion by replacing self-critique with structured multi-agent debate among persona-based critics. Multiple agents with distinct roles analyze failures from different perspectives before a Judge synthesizes consensus reflection. Demonstrates that diverse viewpoints break repetitive error cycles inherent in single-agent self-reflection.
+
+**Key Method:** Six-step pipeline:
+1. Actor Attempt - LLM generates initial response
+2. Evaluation - System checks correctness
+3. Initial Diagnosis - Each persona analyzes failure reasons independently
+4. Debates - Up to 2 rounds of agreement/disagreement between personas
+5. Consensus Reflection - Judge synthesizes debate into actionable guidance
+6. Retry - Actor attempts task again with reflection in memory
+
+**Personas Defined:**
+
+| Domain | Personas |
+|--------|----------|
+| **Reasoning (HotPotQA)** | Verifier (high exploit), Skeptic (high explore, counters confirmation bias), Logician (strict specification), Creative (divergent thinking), Meta-Reflector (process analysis) |
+| **Programming (HumanEval)** | Senior Engineer (correctness/efficiency), QA Engineer (edge cases), Algorithm Expert (algorithmic correctness), Code Reviewer (bugs/style) |
+
+**Implementation Check:**
+- GitHub repos: Yes (related multi-agent debate frameworks)
+  - https://github.com/Skytliang/Multi-Agents-Debate (MAD framework)
+  - https://github.com/composable-models/llm_multiagent_debate (ICML 2024)
+  - https://github.com/instadeepai/DebateLLM (benchmarking library)
+  - AutoGen native support: https://microsoft.github.io/autogen/stable//user-guide/core-user-guide/design-patterns/multi-agent-debate.html
+- Commercial use: No direct commercialization; AutoGen (Microsoft) provides built-in pattern
+- Open questions: Optimal number of debate rounds? How to minimize 3x cost overhead? Domain-specific persona transfer?
+
+**Benchmark Results:**
+
+| Benchmark | Baseline | Reflexion | MAR | Improvement |
+|-----------|----------|-----------|-----|-------------|
+| HotPotQA EM | 32.0% | 44.0% | 47.0% | +3 pts |
+| HumanEval pass@1 | 67.1% | 76.4% | 82.6% | +6.2 pts |
+
+**Score Breakdown:**
+- Novelty: 4/5 (Principled solution to documented Reflexion failure; persona design systematic)
+- Feasibility: 4/5 (Clear architecture; builds on existing Reflexion framework)
+- Time-to-POC: 3/5 (3x API cost increase; requires persona engineering per domain)
+- Value/Market: 3/5 (Benchmark improvements modest; cost increase significant barrier)
+- Defensibility: 2/5 (Persona definitions public; builds on existing multi-agent debate literature)
+- Adoption: 4/5 (AutoGen native support; works with existing frameworks)
+
+**Decision Rationale:** Meets threshold (20/30). Extends Reflexion with principled solution to degeneration-of-thought. Persona design template valuable for domain adaptation. AutoGen native support simplifies adoption. Key trade-off: 3x cost for 3-6 point improvement.
+
+**Extracted Insights:**
+- Degeneration-of-thought: Single LLM repeats errors despite explicit failure feedback due to confirmation bias and mode collapse
+- Multi-persona debate breaks error cycles by introducing diverse reasoning perspectives
+- Persona engineering varies on exploit/explore/strictness axes for reasoning; mirrors real-world roles for programming
+- Cost-benefit: ~300-400 API calls per task (3x Reflexion) for marginal gains - evaluate per use case
+
+**Documented Failure Modes Addressed:**
+- Hallucinated Specification Drift - Reflexion invents new task spec and steers away from true objective
+- Confirmation Bias - Single agent repeats initial errors across iterations
+- Mode Collapse - Identical buggy structures reproduced despite feedback
+
+**Cross-References:**
+- Directly extends Reflexion pattern from arxiv_2505.07087 (cognitive patterns)
+- Multi-agent debate relates to collaboration patterns from arxiv_2404.11584
+- Persona specialization aligns with Universal/Conditional taxonomy from arxiv_2511.03023
+- Cost-benefit trade-off mirrors P-t-E latency discussion from arxiv_2509.08646
+
+**Learnings for Future Iterations:**
+- Multi-agent debate is increasingly mainstream (ICML 2024, AutoGen native support)
+- Persona design is domain-specific - requires explicit engineering for new applications
+- 3x cost increase may limit production adoption despite benchmark improvements
+- EM metric limitations (penalizes correct answers for formatting) suggest benchmark skepticism warranted
+
+---
