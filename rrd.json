@@ -451,12 +451,26 @@
       "date": "2025-12-27",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "presented",
+      "score": 24,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 5,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Demonstrates that human-to-robot transfer is an emergent property of diverse VLA pretraining. Uses co-training on 14 hours of embodied human video (head/wrist-mounted cameras) with robot data to nearly double performance on generalization settings seen only in human data.",
+        "methodology": "Co-train π₀.₅ VLA on human video (with 6D head tracking via visual SLAM, 3D hand keypoints) and robot teleoperation data using identical objectives: flow matching for low-level actions, language annotations for high-level subtask prediction. Transfer emerges once model sees sufficient diversity across scenes, tasks, and embodiments.",
+        "results": "Substantial generalization improvements: Spice task 32%→71%, Dresser task 25%→50%, Egg sorting 57%→78%. T-SNE visualizations show human and robot embeddings naturally align as pretraining diversity increases without explicit alignment mechanisms. Transfer works for both high-level subtask and low-level action prediction.",
+        "implementations_found": ["https://github.com/Physical-Intelligence/openpi (9,800 stars, Apache 2.0)"],
+        "commercialized": true,
+        "limitations": "Requires diverse pretraining data across many embodiments to see emergence; models lacking diverse pretraining show negligible transfer. Human data collection requires specialized hardware (head/wrist cameras, SLAM tracking). 14 hours is modest compared to internet-scale human video potential."
+      },
+      "decision": "PRESENT",
+      "notes": "From Physical Intelligence ($5.6B valuation, $1B+ raised). Key insight: human-to-robot transfer emerges with sufficient pretraining diversity—no explicit alignment needed. Directly connected to π0.5 which powers real robots cleaning homes. Authors include Chelsea Finn and Sergey Levine (Stanford/Berkeley robotics leaders)."
     },
     {
       "id": "arxiv_2512.21859",
@@ -911,6 +925,33 @@
         "robotics"
       ],
       "cross_refs": []
+    },
+    {
+      "id": "insight_019",
+      "paper_id": "arxiv_2512.22414",
+      "insight": "Human-to-robot transfer is an emergent property of diverse VLA pretraining: models naturally develop embodiment-agnostic representations (human/robot embeddings align in t-SNE) without explicit alignment mechanisms, but only after training on sufficient diversity across scenes, tasks, and embodiments.",
+      "tags": [
+        "human-to-robot-transfer",
+        "emergent-capability",
+        "VLA",
+        "pretraining-diversity"
+      ],
+      "cross_refs": [
+        "arxiv_2601.02456",
+        "arxiv_2512.22615"
+      ]
+    },
+    {
+      "id": "insight_020",
+      "paper_id": "arxiv_2512.22414",
+      "insight": "Co-training on human video data nearly doubles performance on out-of-distribution generalization settings (e.g., Spice task 32%→71%), suggesting human video can dramatically expand the effective training distribution for robotics without proportional robot data collection costs.",
+      "tags": [
+        "human-video-data",
+        "generalization",
+        "data-efficiency",
+        "VLA"
+      ],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -951,13 +992,18 @@
     "https://api.github.com/search/repositories?q=Dream-VLA",
     "https://api.github.com/repos/DreamLM/Dream-VLX",
     "https://hkunlp.github.io/blog/2025/dream-vlx/",
-    "https://huggingface.co/Dream-org/Dream-VLA-7B"
+    "https://huggingface.co/Dream-org/Dream-VLA-7B",
+    "https://arxiv.org/abs/2512.22414",
+    "https://arxiv.org/html/2512.22414",
+    "https://api.github.com/search/repositories?q=2512.22414",
+    "https://api.github.com/repos/Physical-Intelligence/openpi",
+    "https://www.pi.website/blog/pi05"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 9,
-    "total_presented": 6,
+    "total_analyzed": 10,
+    "total_presented": 7,
     "total_rejected": 2,
     "total_insights_extracted": 1
   }

@@ -6,6 +6,7 @@ Started: Tue Jan 13 16:42:36 CET 2026
 
 ## Cross-Reference Insights
 - **LLM spatial reasoning benchmarks:** arxiv_2601.05529 (ASCII maps) and arxiv_2601.03590 (coordinate-aware text) both isolate spatial reasoning from visual perception; both find significant model variance and failure modes in global/safety-critical scenarios.
+- **VLA landscape (2025-2026):** Three major approaches emerging: (1) MoT with visual foresight (InternVLA-A1/AgiBot), (2) Diffusion LLM backbone (Dream-VLA/HKU), (3) Flow matching with diverse co-training (π0.5/Physical Intelligence). All emphasize data diversity; Physical Intelligence ($5.6B) and AgiBot ($6.4B) lead commercially.
 
 ---
 
@@ -370,3 +371,45 @@ Score: 23/30
 - Diffusion LLM is emerging as alternative to autoregressive backbone for VLAs; track HKU NLP's Dream family releases
 - Apache 2.0 licensing makes HKU NLP models more commercially accessible than some alternatives
 - SimplerEnv is becoming standard VLA benchmark; scores are directly comparable across papers
+
+---
+
+## 2026-01-14 - Paper: Emergence of Human to Robot Transfer in Vision-Language-Action Models
+ID: arxiv_2512.22414
+Status: PRESENTED
+Score: 24/30
+
+**Summary:** Demonstrates that human-to-robot transfer is an emergent property of diverse VLA pretraining. By co-training π₀.₅ on 14 hours of embodied human video (head/wrist-mounted cameras with SLAM tracking) alongside robot teleoperation data, the approach nearly doubles performance on generalization settings seen only in human data. Key finding: no explicit alignment mechanism needed—embodiment-agnostic representations emerge naturally with sufficient pretraining diversity.
+
+**Key Method:** Equip human demonstrators with head-mounted and wrist-worn cameras. Process via visual SLAM for 6D head motion tracking and 3D hand keypoint extraction. Co-train VLA on both human and robot data with identical objectives: flow matching for low-level action prediction, language annotations for high-level subtask prediction. Transfer emerges once model sees sufficient diversity across scenes, tasks, and embodiments.
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/Physical-Intelligence/openpi (9,800 stars, Apache 2.0)
+- Commercial use: yes - Physical Intelligence ($5.6B valuation, $1.07B raised total). Founders include Karol Hausman (CEO), Chelsea Finn, and Lachy Groom. Backed by CapitalG, Jeff Bezos, Thrive, Lux, Amazon, T. Rowe Price.
+- Open questions: Can human video scale to internet-video levels without specialized cameras? What's the minimum diversity threshold for emergence?
+
+**Score Breakdown:**
+- Novelty: 4/5 - First demonstration of emergent human-to-robot transfer; challenges assumption that explicit domain adaptation is required
+- Feasibility: 4/5 - Builds on π₀.₅ which is deployed in real homes; requires diverse pretraining data
+- Time-to-POC: 4/5 - openpi provides pretrained checkpoints and fine-tuning recipes
+- Value/Market: 5/5 - Physical Intelligence is highest-valued robotics AI startup; this enables leveraging abundant human video data
+- Defensibility: 3/5 - Research is public but data collection and scale create moat
+- Adoption: 4/5 - Apache 2.0 license, HuggingFace integration, 9.8K GitHub stars
+
+**Decision Rationale:** High-impact finding from leading robotics startup. The emergent alignment insight reduces the perceived complexity of human-to-robot transfer from "fundamental research challenge" to "scaling problem." Commercial validation through Physical Intelligence's real-world deployments. Strong author team (Finn, Levine, Nair from Stanford/Berkeley robotics).
+
+**Extracted Insights:**
+- Human-to-robot transfer emerges naturally with diverse VLA pretraining—no explicit alignment needed
+- Pretraining diversity is the key variable: models lacking diverse training show negligible transfer
+- Co-training on human video nearly doubles OOD generalization (32%→71% on some tasks)
+- T-SNE shows human/robot embeddings naturally align as diversity increases
+
+**Cross-References:**
+- Related to: arxiv_2601.02456 (InternVLA-A1) - different architecture but both explore scaling VLAs with diverse data
+- Related to: arxiv_2512.22615 (Dream-VLA) - both advance VLA architecture frontier
+- Related to: π0.5 paper (arxiv 2504.16054) - this paper contributes to that system's data strategy
+
+**Learnings for Future Iterations:**
+- Physical Intelligence is the dominant commercial player in VLA space ($5.6B valuation); track their releases closely
+- "Emergence" framing connects robotics to LLM scaling insights—may see more such crossover
+- Human video data is potentially transformative for robotics if collection/processing can scale
