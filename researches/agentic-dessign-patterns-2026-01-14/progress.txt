@@ -369,3 +369,60 @@ Score: 25/30
 - Cross-referencing security literature (OWASP, CVEs) provides real-world context
 
 ---
+
+## 2026-01-14 - Paper: Applying Cognitive Design Patterns to General LLM Agents
+ID: arxiv_2505.07087
+Status: PRESENTED
+Score: 18/30
+
+**Summary:** Maps cognitive design patterns from pre-transformer AI architectures (Soar, ACT-R, BDI) to modern LLM-based agents. Identifies six key cognitive patterns and their presence/absence in agentic LLM systems, revealing specific gaps that represent research opportunities toward general intelligence.
+
+**Key Method:** Comparative cognitive architecture analysis examining patterns from 40+ years of research. Addresses three questions: (1) Which patterns appear in existing agentic LLM systems? (2) Which seem relevant but remain underexplored? (3) Do LLMs suggest novel patterns?
+
+**Cognitive Patterns Identified:**
+
+| Pattern | Status in LLM Agents | Examples |
+|---------|---------------------|----------|
+| Observe-Decide-Act | Present (partial) | ReAct (lacks commitment stage) |
+| Hierarchical Decomposition | Present | Voyager, Tree of Thoughts |
+| Memory Types | Present | Generative Agents (episodic), RAG (semantic) |
+| Knowledge Compilation | Emerging | ExpeL, Reflexion, Voyager |
+| Commitment & Reconsideration | **UNDEREXPLORED** | Gap - BDI has it, ReAct lacks it |
+| Step-wise Reflection | Novel (LLM-specific) | Iterative self-evaluation pattern |
+
+**Implementation Check:**
+- GitHub repos: Yes
+  - https://github.com/SoarGroup/Soar (Soar cognitive architecture, BSD license)
+  - https://github.com/soartech/jsoar (Java implementation)
+  - https://github.com/ysymyth/awesome-language-agents (CoALA framework + 70+ agent papers)
+- Commercial use: Soar Technology Inc (defense-focused AI); no direct LLM agent product
+- Open questions: Would introducing explicit commitment to ReAct improve reasoning? How to implement reconsideration efficiently in LLM agents?
+
+**Score Breakdown:**
+- Novelty: 4/5 (Novel bridging of cognitive science + LLM agents; identifies specific gaps)
+- Feasibility: 3/5 (Theoretical framework; requires cognitive architecture expertise)
+- Time-to-POC: 3/5 (Research-oriented; Soar has learning curve)
+- Value/Market: 3/5 (High research value; limited immediate commercial application)
+- Defensibility: 2/5 (Patterns are public knowledge synthesis from 40+ year history)
+- Adoption: 3/5 (Framework-agnostic; requires understanding BDI/Soar concepts)
+
+**Decision Rationale:** Meets threshold (18/30). Valuable theoretical foundation bridging cognitive science and LLM agents. The commitment/reconsideration gap is a concrete research direction for improving agent reasoning.
+
+**Extracted Insights:**
+- Commitment & Reconsideration is the most underexplored cognitive pattern in LLM agents
+- Knowledge Compilation becomes strategically important as reasoning model costs rise
+- Step-wise Reflection is a novel LLM-specific pattern not found in traditional cognitive architectures
+
+**Cross-References:**
+- BDI (Belief-Desire-Intention) architecture relates to three-tier framework from arxiv_2601.03624
+- Memory types connect to arxiv_2508.10146 framework memory comparison and arxiv_2601.08816 (MemRec)
+- Knowledge compilation (ExpeL, Reflexion) connects to reflection patterns in arxiv_2512.20845 (MAR)
+- Four-component model from arxiv_2510.09244 is a simplified version of full cognitive architecture
+
+**Learnings for Future Iterations:**
+- Papers bridging established AI fields (cognitive science) with LLM agents provide unique value
+- AGI conference papers (AGI25) tend to focus on theoretical frameworks vs practical implementations
+- Soar has 40+ years of research history - rich source for pattern identification
+- CoALA framework provides good synthesis of cognitive architecture + language agent intersection
+
+---

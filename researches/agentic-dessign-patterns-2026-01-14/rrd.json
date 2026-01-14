@@ -271,12 +271,31 @@
       "date": "2025-05-11",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "AGI25 oral presentation. Cognitive patterns from pre-transformer AI applied to LLM agents. Path toward general intelligence."
+      "status": "presented",
+      "score": 18,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Maps cognitive design patterns from pre-transformer AI architectures (Soar, ACT-R, BDI) to modern LLM-based agents. Identifies six key patterns: Observe-Decide-Act (present in ReAct but lacking explicit commitment), Hierarchical Decomposition (Voyager, ToT), Memory Types (episodic, semantic, procedural), Knowledge Compilation (ExpeL, Reflexion), Commitment & Reconsideration (underexplored gap), and Step-wise Reflection (novel LLM-specific pattern).",
+        "methodology": "Comparative cognitive architecture analysis examining how patterns from 40+ years of cognitive science research manifest in agentic LLM systems. Addresses three research questions: which patterns appear in existing systems, which remain underexplored, and whether LLMs suggest novel patterns. Framework-agnostic analysis applicable across agent implementations.",
+        "results": "Identifies commitment and reconsideration as critical underexplored pattern in LLM agents - ReAct implements observe-decide-act but lacks explicit commitment stage that enables reconsidering prior choices. Knowledge compilation (caching reasoning into reusable forms) identified as strategically important given computational costs of reasoning models. Step-wise reflection identified as novel LLM-specific pattern.",
+        "implementations_found": [
+          "https://github.com/SoarGroup/Soar",
+          "https://github.com/soartech/jsoar",
+          "https://github.com/ysymyth/awesome-language-agents"
+        ],
+        "commercialized": false,
+        "commercialized_by": "Soar Technology Inc (defense-focused AI; no direct LLM product)",
+        "limitations": "Theoretical framework without direct implementation. Requires cognitive architecture expertise to apply. Research-oriented with limited immediate commercial application. Patterns are public knowledge synthesis from existing literature."
+      },
+      "decision": "PRESENT",
+      "notes": "AGI25 oral presentation (Springer LNCS vol 16058). Bridges cognitive science theory and LLM agents. Key gap identified: commitment/reconsideration pattern missing from ReAct. Authors from Soar Technology Inc / Center for Integrated Cognition with 40+ years of cognitive architecture research. Cross-references: CoALA framework, BDI architectures, relates to memory patterns in arxiv_2508.10146 and four-component model in arxiv_2510.09244."
     },
     {
       "id": "arxiv_2404.11584",
@@ -691,6 +710,27 @@
       "insight": "P-t-E trade-offs: Improved reasoning quality, cost efficiency, predictability, and prompt injection resistance vs upfront latency, high token consumption in planning, and wasted effort if early steps fail without re-planning",
       "tags": ["architecture", "trade-offs", "planning"],
       "cross_refs": ["arxiv_2601.03624"]
+    },
+    {
+      "id": "insight_020",
+      "paper_id": "arxiv_2505.07087",
+      "insight": "Commitment & Reconsideration pattern is underexplored in LLM agents: ReAct implements observe-decide-act but lacks explicit commitment stage - introducing commitment may improve reasoning outcomes by enabling principled reconsidering of prior choices",
+      "tags": ["cognitive-patterns", "reasoning", "gap-analysis"],
+      "cross_refs": ["arxiv_2510.09244", "arxiv_2601.03624"]
+    },
+    {
+      "id": "insight_021",
+      "paper_id": "arxiv_2505.07087",
+      "insight": "Knowledge Compilation pattern is strategically important: Caching LLM reasoning into reusable forms (ExpeL, Reflexion, Voyager) becomes increasingly valuable as reasoning model computational costs rise",
+      "tags": ["cognitive-patterns", "efficiency", "caching"],
+      "cross_refs": ["arxiv_2508.10146"]
+    },
+    {
+      "id": "insight_022",
+      "paper_id": "arxiv_2505.07087",
+      "insight": "Step-wise Reflection is a novel LLM-specific pattern: Iterative self-evaluation during reasoning distinguishes itself from traditional metacognitive reflection in cognitive architectures - enables improved reliability without explicit commitment mechanisms",
+      "tags": ["cognitive-patterns", "reflection", "novel-pattern"],
+      "cross_refs": ["arxiv_2512.20845", "arxiv_2503.16024"]
     }
   ],
   "visited_urls": [
@@ -719,15 +759,20 @@
     "https://arxiv.org/pdf/2509.08646",
     "https://www.themoonlight.io/en/review/architecting-resilient-llm-agents-a-guide-to-secure-plan-then-execute-implementations",
     "https://community.sap.com/t5/security-and-compliance-blog-posts/plan-then-execute-an-architectural-pattern-for-responsible-agentic-ai/ba-p/14239753",
-    "https://github.com/RichardHGL/CHI2025_Plan-then-Execute_LLMAgent"
+    "https://github.com/RichardHGL/CHI2025_Plan-then-Execute_LLMAgent",
+    "https://arxiv.org/html/2505.07087v2",
+    "https://link.springer.com/chapter/10.1007/978-3-032-00800-8_28",
+    "https://github.com/SoarGroup/Soar",
+    "https://github.com/soartech/jsoar",
+    "https://github.com/ysymyth/awesome-language-agents"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 5,
-    "total_presented": 5,
+    "total_analyzed": 6,
+    "total_presented": 6,
     "total_rejected": 0,
-    "total_insights_extracted": 19,
+    "total_insights_extracted": 22,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -743,11 +788,11 @@
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 22.6,
+      "avg_score": 21.83,
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
-        "18-23": 4,
+        "18-23": 5,
         "24-30": 1
       }
     }
