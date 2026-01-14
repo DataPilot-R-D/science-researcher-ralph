@@ -109,7 +109,20 @@ cat researches/research-robotics-and-embodied-2026-01-14/progress.txt
 
 ## Step 4: Review Results
 
-When Research-Ralph completes (or you stop it), check your results:
+When Research-Ralph completes, it automatically generates a comprehensive `research-report.md`. You can also check individual results:
+
+### Research Report
+When all papers are analyzed, a report is auto-generated with:
+- Executive summary and key metrics
+- Top scoring papers (tiered by score)
+- Key insights grouped by category
+- Commercial ecosystem map
+- Research quality self-assessment
+- Prioritized recommendations
+
+```bash
+cat researches/research-robotics-and-embodied-2026-01-14/research-report.md
+```
 
 ### Presented Papers
 Papers that scored >= 18/30 and are worth investigating:
@@ -149,13 +162,13 @@ researches/
 └── research-robotics-and-embodied-2026-01-14/
     ├── rrd.json           # Research config and paper data
     ├── progress.txt       # Detailed findings log
-    └── research-report.md # Optional: final report
+    └── research-report.md # Auto-generated when complete
 ```
 
 ## Next Steps
 
-- **Customize research parameters**: Edit `rrd.json` to adjust keywords, thresholds, or add exclusions
+- **Customize research parameters**: See [Customizing Research](./customizing-research.md) for tuning keywords, thresholds, and sources
 - **Run multiple projects**: Create separate research folders for different topics
-- **Generate reports**: Ask the agent to create a summary report from the findings
+- **Understand scoring**: See [Evaluation Rubric](../explanations/evaluation-rubric.md) for how papers are scored
 
 See the [CLI Reference](../reference/cli.md) for all available options.

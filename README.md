@@ -96,7 +96,7 @@ researches/
 ├── robotics-llms-2026-01-14/
 │   ├── rrd.json           # Research requirements and paper data
 │   ├── progress.txt       # Research findings log
-│   └── research-report.md # Optional: final report
+│   └── research-report.md # Auto-generated when complete
 └── quantum-ai-2026-01-15/
     ├── rrd.json
     └── progress.txt
@@ -112,6 +112,7 @@ researches/
 | `researches/` | Per-research artifact folders |
 | `researches/{name}/rrd.json` | Research Requirements Document |
 | `researches/{name}/progress.txt` | Research findings log |
+| `researches/{name}/research-report.md` | Auto-generated comprehensive report |
 | `rrd.json.example` | Example RRD format for reference |
 | `skills/rrd/SKILL.md` | Skill for generating RRDs |
 | `AGENTS.md` | Research patterns and gotchas |
@@ -179,6 +180,17 @@ Research-Ralph looks for connections between papers:
 ### Stop Condition
 
 When all papers in `papers_pool` have been analyzed, Research-Ralph outputs `<promise>COMPLETE</promise>` and exits.
+
+### Research Report
+
+When research completes, Research-Ralph automatically generates `research-report.md` with:
+
+- **Executive Summary**: Key metrics and findings overview
+- **Top Scoring Papers**: Tiered by score (Tier 1: High-Impact, Tier 2: Strong, Tier 3: Threshold)
+- **Key Insights by Category**: Grouped findings from all papers
+- **Commercial Ecosystem Map**: Companies, valuations, and open-source projects found
+- **Research Quality Self-Assessment**: Coverage, depth, accuracy scores (0-100)
+- **Recommendations**: Prioritized follow-up actions
 
 ## Debugging
 

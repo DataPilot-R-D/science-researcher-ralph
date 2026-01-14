@@ -51,6 +51,17 @@ Main research loop script that runs autonomous research sessions.
 
 - **Console**: Progress updates for each iteration
 - **Files**: Updates `rrd.json` and `progress.txt` in the research folder
+- **Report**: Auto-generates `research-report.md` when research completes
+
+### Research Report Contents
+
+When all papers are analyzed, the report includes:
+- Executive summary with key metrics
+- Top scoring papers (tiered by score range)
+- Key insights grouped by category
+- Commercial ecosystem map (companies, open-source projects)
+- Research quality self-assessment (0-100 scores)
+- Prioritized follow-up recommendations
 
 ### Completion Signal
 
@@ -143,7 +154,7 @@ export GITHUB_TOKEN="ghp_your_token_here"
 researches/{name}-{date}/
 ├── rrd.json           # Research Requirements Document
 ├── progress.txt       # Research findings log
-└── research-report.md # Optional final report
+└── research-report.md # Auto-generated comprehensive report
 ```
 
 ### Project Files
