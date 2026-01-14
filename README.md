@@ -1,5 +1,9 @@
 # Research-Ralph
 
+[![Status: Active](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/DataPilot-R-D/science-researcher-ralph)
+[![Version: 2.1.0](https://img.shields.io/badge/version-2.1.0-blue)](https://github.com/DataPilot-R-D/science-researcher-ralph/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
+
 Research-Ralph is an autonomous AI research scouting agent that discovers, analyzes, and evaluates research papers. Each research project gets its own folder with all artifacts, and each iteration spawns a fresh agent instance with clean context.
 
 **Supported Agents:**
@@ -54,6 +58,22 @@ Answer the clarifying questions to configure your research parameters.
 ```
 
 Default is 10 iterations. Default agent is Claude Code CLI.
+
+You'll see output like:
+```
+Starting Research-Ralph v2.1.0
+  Research: researches/research-robotics-and-embodied-2026-01-14
+  Agent: claude
+  Project: Research: Robotics and Embodied AI
+  Phase: DISCOVERY
+  Papers: 0 analyzed / 20 target
+  Max iterations: 10
+
+=======================================================
+  Research-Ralph Iteration 1 of 10 (claude)
+=======================================================
+  Phase: DISCOVERY
+```
 
 Research-Ralph will:
 1. **DISCOVERY Phase:** Search arXiv, Google Scholar, and web for papers matching your requirements
@@ -262,6 +282,20 @@ The Research Requirements Document (`rrd.json`) contains:
 ```
 
 See `rrd.json.example` for the complete schema with all fields.
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Open an issue first to discuss proposed changes
+2. Fork the repository and create a feature branch
+3. Submit a pull request with a clear description
+
+For bug reports, include your OS, agent version, and steps to reproduce.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## References
 
