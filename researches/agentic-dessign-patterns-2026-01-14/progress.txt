@@ -5,11 +5,14 @@ Started: śro 14 sty 12:37:38 2026 CET
 - **Prototype-to-production gap**: MAS prototypes can be delivered in 2 weeks but production maturity requires 3-6x longer stabilization phase
 - **Human oversight persistence**: MAS should augment not replace humans in high-stakes/regulated domains
 - **Cost efficiency via specialization**: Proper LLM-based agent architecture can achieve 6x cost reduction over regex baselines
+- **Framework selection heuristic**: Graph-based (LangGraph) for branching workflows; Role-based (CrewAI) for team collaboration; Conversational (AutoGen) for prototyping
 
 ## Cross-Reference Insights
 - arxiv_2601.03624 and arxiv_2601.03328 both emphasize governance/accountability patterns
 - SIE (Single Information Environment) pattern from arxiv_2601.03328 maps to "Agentic Communities" tier in arxiv_2601.03624
 - Both papers highlight hallucination risks and need for guardrails in production
+- arxiv_2508.10146 framework taxonomy complements three-tier model from arxiv_2601.03624
+- A2A vs ANP protocols are complementary: A2A for enterprise task orchestration, ANP for decentralized discovery
 
 ---
 
@@ -166,5 +169,86 @@ Score: 23/30
 - Papers with quantitative metrics (£/email, throughput, accuracy) are more actionable than pure theoretical frameworks
 - Authors' commercial affiliation indicates real-world applicability
 - Google ADK documentation provides complementary pattern catalogue (8 patterns: Sequential Pipeline, Coordinator, Parallel Fan-Out, Hierarchical, Generator-Critic, Iterative Refinement, Human-in-Loop, Composite)
+
+---
+
+## 2026-01-14 - Paper: Agentic AI Frameworks: Architectures, Protocols, and Design Challenges
+ID: arxiv_2508.10146
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** Systematic review and comparative analysis of 7 major agentic AI frameworks (CrewAI, LangGraph, AutoGen, Semantic Kernel, Agno, Google ADK, MetaGPT) and 4 agent communication protocols (MCP, ACP, A2A, ANP). Establishes foundational taxonomy for agentic AI systems covering orchestration approaches, memory implementations, guardrails, and service computing readiness.
+
+**Key Method:** Multi-dimensional framework comparison across: architectural approaches (graph-based vs role-based vs conversational), memory implementations (stateful nodes vs agent-level vs shared dialogue), guardrails (validators, retry logic, trust layers), and SOA alignment. Protocol analysis covers message formats, discovery mechanisms, and transport layers.
+
+**Implementation Check:**
+- GitHub repos: Yes - all frameworks analyzed are open-source
+  - https://github.com/a2aproject/A2A (A2A Protocol - Linux Foundation/Google)
+  - https://github.com/agent-network-protocol/AgentNetworkProtocol (ANP Protocol)
+  - https://github.com/langchain-ai/langgraph (LangGraph)
+  - https://github.com/crewAIInc/crewAI (CrewAI)
+  - https://github.com/microsoft/autogen (AutoGen)
+- Commercial use: Yes - all frameworks are backed by commercial entities
+  - LangChain/LangGraph: LangChain Inc
+  - CrewAI: CrewAI Inc
+  - AutoGen & Semantic Kernel: Microsoft
+  - Google ADK: Google
+- Open questions: How will A2A vs ANP interoperability evolve? When will standardized benchmarks emerge?
+
+**Framework Comparison Summary:**
+
+| Framework | Architecture | Primary Focus | Best Use Case |
+|-----------|-------------|---------------|---------------|
+| LangGraph | Graph-based | State management & control flow | Complex branching workflows |
+| AutoGen | Conversational/Event-driven | Multi-agent conversations | Dialogue & prototyping |
+| CrewAI | Role-based teams | Collaborative task execution | Structured team collaboration |
+| Semantic Kernel | Modular/Enterprise | Fine-grained planning control | Enterprise orchestration |
+| MetaGPT | Role-based (SWE) | Software engineering simulation | Code generation teams |
+| Google ADK | Multi-agent workflows | Scale & cloud integration | Cloud-native deployments |
+| Agno | Declarative | Transparency | Lightweight agents |
+
+**Protocol Comparison:**
+
+| Protocol | Message Format | Discovery | Key Innovation |
+|----------|---------------|-----------|----------------|
+| MCP | JSON-RPC | Manual | Structured tool calls via schema validation |
+| A2A | JSON-RPC/HTTP | Agent Cards | Memory, goal coordination, capability discovery |
+| ANP | JSON-LD + NLP | DID-based | Decentralized identifiers, semantic interop |
+| Agora | Meta-layer | Protocol Docs | Multi-protocol coordination |
+
+**Five Critical Design Challenges Identified:**
+1. Rigid architectures - static agent roles limit mid-execution adaptation
+2. No runtime discovery - peers cannot dynamically locate capabilities
+3. Code safety risks - generated code execution poses file system/shell vulnerabilities
+4. Interoperability gaps - framework-specific abstractions prevent seamless integration
+5. Missing standards - lack of universal agent communication contracts
+
+**Score Breakdown:**
+- Novelty: 3/5 (Survey paper synthesizing existing work; novel taxonomy and protocol comparison)
+- Feasibility: 5/5 (All frameworks analyzed are production-ready open-source)
+- Time-to-POC: 5/5 (Direct framework recommendations enable quick prototyping decisions)
+- Value/Market: 4/5 (High enterprise demand for framework selection guidance)
+- Defensibility: 2/5 (Comparative knowledge is public; no proprietary advantage)
+- Adoption: 4/5 (Framework-agnostic analysis; protocol recommendations actionable)
+
+**Decision Rationale:** Essential reference for framework selection. Five design challenges directly inform production architecture decisions. Protocol comparison (A2A vs ANP) clarifies interoperability strategy.
+
+**Extracted Insights:**
+- Framework selection heuristic: Graph-based (LangGraph) for branching; Role-based (CrewAI) for teams; Conversational (AutoGen) for prototyping
+- Five critical design challenges map directly to production risks
+- A2A vs ANP are complementary not competing: A2A for enterprise task orchestration, ANP for decentralized discovery
+- Memory implementations vary significantly: stateful nodes (LangGraph), agent-level (CrewAI), shared dialogue (AutoGen)
+
+**Cross-References:**
+- Memory patterns connect to arxiv_2601.08816 (MemRec)
+- Guardrails patterns connect to arxiv_2506.08837 (security patterns)
+- Framework taxonomy complements three-tier model from arxiv_2601.03624
+- Protocol analysis extends SIE pattern discussion from arxiv_2601.03328
+
+**Learnings for Future Iterations:**
+- Survey papers score high on feasibility/time-to-POC due to immediate actionability
+- Protocol landscape is rapidly evolving (A2A launched June 2025 under Linux Foundation)
+- ArXiv HTML version often more accessible than PDF for extraction
+- Cross-referencing frameworks to protocols reveals interoperability strategy
 
 ---
