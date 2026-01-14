@@ -201,3 +201,12 @@ Help the agent understand jargon:
   }
 }
 ```
+
+---
+
+## Related Documentation
+
+- [RRD Schema](rrd-schema.md) - Complete field-by-field reference
+- [Customizing Research](../tutorials/customizing-research.md) - Hands-on customization guide
+- [Handle Rate Limits](../how-to/handle-rate-limits.md) - Rate limit configuration in practice
+- [Switch Agents](../how-to/switch-agents.md) - Agent-specific configuration

@@ -188,3 +188,12 @@ Adjust `min_score_to_present` in your `rrd.json`:
 3. **Consider context**: A 3 in "Novelty" for a mature field is different from a new field
 4. **Look at the total**: Individual scores matter less than the overall picture
 5. **Extract insights anyway**: Even low-scoring papers can have valuable findings
+
+---
+
+## Related Documentation
+
+- [Architecture Overview](architecture.md) - How scoring fits into the ANALYSIS phase
+- [Configuration Reference](../reference/configuration.md) - Adjusting `min_score_to_present`
+- [Use Research Insights](../how-to/use-insights.md) - Working with extracted findings
+- [Customizing Research](../tutorials/customizing-research.md) - Tailoring scoring thresholds

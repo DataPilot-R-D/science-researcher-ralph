@@ -243,3 +243,12 @@ Progress tracking metrics.
 ## Complete Example
 
 See `rrd.json.example` in the project root for a complete working example.
+
+---
+
+## Related Documentation
+
+- [Configuration Reference](configuration.md) - All configurable options
+- [Customizing Research](../tutorials/customizing-research.md) - Hands-on guide to RRD settings
+- [Evaluation Rubric](../explanations/evaluation-rubric.md) - How `score_breakdown` values are determined
+- [Use Research Insights](../how-to/use-insights.md) - Working with the `insights` array

@@ -76,7 +76,7 @@ Research runs through two distinct phases:
 │  3. Read full paper content             │
 │  4. Search for implementations          │
 │  5. Check commercialization             │
-│  6. Score using rubric (0-30)           │
+│  6. Score using [rubric](evaluation-rubric.md) (0-30) │
 │  7. Decide: PRESENT/REJECT/EXTRACT      │
 │  8. Extract insights                    │
 │  9. Update status and log findings      │
@@ -186,3 +186,12 @@ project-root/
         ├── rrd.json      # Research state
         └── progress.txt  # Findings log
 ```
+
+---
+
+## Related Documentation
+
+- [Evaluation Rubric](evaluation-rubric.md) - How papers are scored during ANALYSIS
+- [RRD Schema](../reference/rrd-schema.md) - Complete `rrd.json` field reference
+- [CLI Reference](../reference/cli.md) - Command-line options for `ralph.sh`
+- [Handle Rate Limits](../how-to/handle-rate-limits.md) - Error handling in practice
