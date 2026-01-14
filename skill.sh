@@ -126,6 +126,37 @@ if [[ -n "$TASK" ]]; then
 $TASK"
 fi
 
+# Special handling for rrd skill: create research folder
+RESEARCH_DIR=""
+if [[ "$SKILL_NAME" == "rrd" ]]; then
+  if [[ -z "$TASK" ]]; then
+    echo "Error: RRD skill requires a task description"
+    echo "Usage: ./skill.sh rrd \"Your research topic description\""
+    exit 1
+  fi
+
+  # Generate folder name from task description
+  # Format: researches/{sanitized-name}-{date}
+  RESEARCH_NAME=$(echo "$TASK" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//' | cut -c1-40)
+  RESEARCH_DATE=$(date +%Y-%m-%d)
+  RESEARCH_DIR="$SCRIPT_DIR/researches/${RESEARCH_NAME}-${RESEARCH_DATE}"
+
+  mkdir -p "$RESEARCH_DIR"
+  echo "Created research folder: $RESEARCH_DIR"
+  echo ""
+
+  # Add folder path to prompt so agent knows where to save
+  FULL_PROMPT="$FULL_PROMPT
+
+---
+
+## Output Location
+
+Save all files to the research folder: $RESEARCH_DIR/
+- Save rrd.json to: $RESEARCH_DIR/rrd.json
+- progress.txt will be created automatically by ralph.sh"
+fi
+
 echo "Running skill '$SKILL_NAME' with $AGENT..."
 echo ""
 
@@ -138,6 +169,15 @@ else
   claude -p "$FULL_PROMPT" \
     --dangerously-skip-permissions \
     --allowedTools "Bash,Read,Edit,Write,Grep,Glob,WebFetch,WebSearch"
+fi
+
+# Show next steps for rrd skill
+if [[ "$SKILL_NAME" == "rrd" && -n "$RESEARCH_DIR" ]]; then
+  echo ""
+  echo "Research folder ready: $RESEARCH_DIR"
+  echo ""
+  echo "Next step:"
+  echo "  ./ralph.sh $RESEARCH_DIR [max_iterations]"
 fi
 
 exit 0

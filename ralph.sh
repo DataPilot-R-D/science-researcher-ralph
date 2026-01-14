@@ -1,38 +1,50 @@
 #!/bin/bash
 # Research-Ralph - Autonomous research scouting agent loop
-# Usage: ./ralph.sh [max_iterations] [--agent amp|claude|codex]
+# Usage: ./ralph.sh <research_folder> [max_iterations] [--agent amp|claude|codex]
 
 set -e
 
 # Version
-RALPH_VERSION="2.0.0"
+RALPH_VERSION="2.1.0"
 
 # Help function
 show_help() {
   echo "Research-Ralph v$RALPH_VERSION - Autonomous research scouting agent"
   echo ""
-  echo "Usage: ./ralph.sh [max_iterations] [--agent amp|claude|codex]"
+  echo "Usage: ./ralph.sh <research_folder> [max_iterations] [--agent amp|claude|codex]"
   echo ""
-  echo "Options:"
+  echo "Arguments:"
+  echo "  <research_folder>   Path to research folder (required)"
   echo "  [max_iterations]    Maximum number of iterations (default: 10)"
-  echo "  --agent <name>      AI agent to use: 'claude', 'amp', or 'codex' (default: claude)"
-  echo "  -h, --help          Show this help message and exit"
+  echo "  --agent <name>      AI agent: 'claude', 'amp', or 'codex' (default: claude)"
+  echo "  -h, --help          Show this help message"
   echo ""
   echo "Examples:"
-  echo "  ./ralph.sh              # Run with defaults (claude, 10 iterations)"
-  echo "  ./ralph.sh 5            # Run for max 5 iterations"
-  echo "  ./ralph.sh --agent amp  # Use Amp instead of Claude"
-  echo "  ./ralph.sh 20 --agent amp"
+  echo "  ./ralph.sh researches/robotics-2026-01-14"
+  echo "  ./ralph.sh researches/robotics-2026-01-14 20"
+  echo "  ./ralph.sh researches/robotics-2026-01-14 --agent amp"
   echo ""
   echo "Workflow:"
-  echo "  1. Create RRD: ./skill.sh rrd \"Research topic description\""
-  echo "  2. Run research: ./ralph.sh [iterations]"
-  echo "  3. Check results: cat progress.txt"
+  echo "  1. Create research: ./skill.sh rrd \"Research topic description\""
+  echo "  2. Run research: ./ralph.sh researches/<folder-name> [iterations]"
+  echo "  3. Check results: cat researches/<folder-name>/progress.txt"
 }
 
 # Default values
 MAX_ITERATIONS=10
 AGENT="claude"  # Default to Claude Code CLI
+RESEARCH_DIR=""
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Helper to list available researches
+list_researches() {
+  if [[ -d "$SCRIPT_DIR/researches" ]]; then
+    ls -1 "$SCRIPT_DIR/researches/" 2>/dev/null | head -10
+  else
+    echo "  (none)"
+  fi
+}
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -49,12 +61,31 @@ while [[ $# -gt 0 ]]; do
       AGENT="$2"
       shift 2
       ;;
+    -*)
+      echo "Error: Unknown option '$1'. Use --help for usage."
+      exit 1
+      ;;
     *)
-      if [[ "$1" =~ ^[0-9]+$ ]]; then
+      # First non-option argument is research folder, second is max_iterations
+      if [[ -z "$RESEARCH_DIR" ]]; then
+        # Try to resolve the research folder path
+        if [[ -d "$1" ]]; then
+          RESEARCH_DIR="$1"
+        elif [[ -d "$SCRIPT_DIR/researches/$1" ]]; then
+          RESEARCH_DIR="$SCRIPT_DIR/researches/$1"
+        elif [[ -d "$SCRIPT_DIR/$1" ]]; then
+          RESEARCH_DIR="$SCRIPT_DIR/$1"
+        else
+          echo "Error: Research folder not found: $1"
+          echo ""
+          echo "Available researches:"
+          list_researches
+          echo ""
+          echo "Create new research: ./skill.sh rrd \"Your research topic\""
+          exit 1
+        fi
+      elif [[ "$1" =~ ^[0-9]+$ ]]; then
         MAX_ITERATIONS="$1"
-      elif [[ "$1" == -* ]]; then
-        echo "Error: Unknown option '$1'. Use --help for usage."
-        exit 1
       else
         echo "Warning: Ignoring unexpected argument '$1'"
       fi
@@ -62,6 +93,19 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+# Require research folder
+if [[ -z "$RESEARCH_DIR" ]]; then
+  echo "Error: Research folder required."
+  echo ""
+  echo "Usage: ./ralph.sh <research_folder> [max_iterations] [--agent amp|claude|codex]"
+  echo ""
+  echo "Available researches:"
+  list_researches
+  echo ""
+  echo "Create new research: ./skill.sh rrd \"Your research topic\""
+  exit 1
+fi
 
 # Validate agent
 if [[ "$AGENT" != "claude" && "$AGENT" != "amp" && "$AGENT" != "codex" ]]; then
@@ -85,11 +129,9 @@ if ! command -v jq &> /dev/null; then
   exit 1
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-RRD_FILE="$SCRIPT_DIR/rrd.json"
-PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
-ARCHIVE_DIR="$SCRIPT_DIR/archive"
-LAST_BRANCH_FILE="$SCRIPT_DIR/.last-branch"
+# File paths within research folder
+RRD_FILE="$RESEARCH_DIR/rrd.json"
+PROGRESS_FILE="$RESEARCH_DIR/progress.txt"
 
 # Initialize or reset progress file
 init_progress_file() {
@@ -129,42 +171,14 @@ run_agent() {
   fi
 }
 
-# Archive previous run if branch changed
-if [ -f "$RRD_FILE" ] && [ -f "$LAST_BRANCH_FILE" ]; then
-  CURRENT_BRANCH=$(jq -r '.branchName // empty' "$RRD_FILE" 2>/dev/null || echo "")
-  LAST_BRANCH=$(cat "$LAST_BRANCH_FILE" 2>/dev/null || echo "")
-
-  if [ -n "$CURRENT_BRANCH" ] && [ -n "$LAST_BRANCH" ] && [ "$CURRENT_BRANCH" != "$LAST_BRANCH" ]; then
-    # Archive the previous run
-    DATE=$(date +%Y-%m-%d)
-    # Strip "research/" prefix from branch name for folder
-    FOLDER_NAME=$(echo "$LAST_BRANCH" | sed 's|^research/||')
-    ARCHIVE_FOLDER="$ARCHIVE_DIR/$DATE-$FOLDER_NAME"
-
-    echo "Archiving previous research: $LAST_BRANCH"
-    mkdir -p "$ARCHIVE_FOLDER"
-    [ -f "$RRD_FILE" ] && cp "$RRD_FILE" "$ARCHIVE_FOLDER/"
-    [ -f "$PROGRESS_FILE" ] && cp "$PROGRESS_FILE" "$ARCHIVE_FOLDER/"
-    echo "   Archived to: $ARCHIVE_FOLDER"
-
-    init_progress_file
-  fi
-fi
-
-# Track current branch
-if [ -f "$RRD_FILE" ]; then
-  CURRENT_BRANCH=$(jq -r '.branchName // empty' "$RRD_FILE" 2>/dev/null || echo "")
-  if [ -n "$CURRENT_BRANCH" ]; then
-    echo "$CURRENT_BRANCH" > "$LAST_BRANCH_FILE"
-  fi
-fi
-
 # Initialize progress file if it doesn't exist
 [[ ! -f "$PROGRESS_FILE" ]] && init_progress_file
 
 # Verify RRD file exists before starting
 if [[ ! -f "$RRD_FILE" ]]; then
-  echo "Error: rrd.json not found at $RRD_FILE"
+  echo "Error: rrd.json not found in research folder: $RESEARCH_DIR"
+  echo ""
+  echo "Expected file: $RRD_FILE"
   echo "Create an RRD first using: ./skill.sh rrd \"Your research topic description\""
   exit 1
 fi
@@ -202,6 +216,7 @@ TARGET=$(jq -r '.requirements.target_papers // 0' "$RRD_FILE")
 ANALYZED=$(jq -r '.statistics.total_analyzed // 0' "$RRD_FILE")
 
 echo "Starting Research-Ralph v$RALPH_VERSION"
+echo "  Research: $RESEARCH_DIR"
 echo "  Agent: $AGENT"
 echo "  Project: $PROJECT"
 echo "  Phase: $PHASE"
@@ -295,7 +310,9 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     echo "  Papers rejected: $REJECTED"
     echo "  Insights extracted: $INSIGHTS"
     echo ""
-    echo "See progress.txt for detailed findings."
+    echo "Results in: $RESEARCH_DIR/"
+    echo "  - progress.txt for detailed findings"
+    echo "  - rrd.json for full data"
     exit 0
   fi
 
@@ -305,6 +322,6 @@ done
 
 echo ""
 echo "Research-Ralph reached max iterations ($MAX_ITERATIONS) without completing."
-echo "Check progress.txt for current status."
-echo "Run again with more iterations if needed."
+echo "Check $PROGRESS_FILE for current status."
+echo "Run again: ./ralph.sh $RESEARCH_DIR [more_iterations]"
 exit 1

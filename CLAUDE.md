@@ -21,7 +21,7 @@ If automated edits to `AGENTS.md` / `CLAUDE.md` go wrong, restore from baseline:
 
 Use git commits as checkpoints so research progress is easy to track and revert:
 - Commit after each iteration (and any milestone like phase change)
-- Stage only the relevant files (avoid `git add .`); typically: `rrd.json`, `progress.txt`, `AGENTS.md`, `CLAUDE.md`
+- Stage files from the research folder: `researches/{name}/rrd.json`, `researches/{name}/progress.txt`
 - Commit message examples:
   - `discovery: add N papers`
   - `analysis: <paper_id> <PRESENT|REJECT|EXTRACT_INSIGHTS> (<score>/30)`
@@ -31,17 +31,17 @@ Use git commits as checkpoints so research progress is easy to track and revert:
 ## Commands
 
 ```bash
-# Run Research-Ralph with Claude Code (default)
-./ralph.sh [max_iterations]
-
-# Run Research-Ralph with Amp
-./ralph.sh [max_iterations] --agent amp
-
-# Run Research-Ralph with Codex
-./ralph.sh [max_iterations] --agent codex
-
-# Create a Research Requirements Document
+# Create a new research (creates folder in researches/)
 ./skill.sh rrd "Your research topic description"
+# Creates: researches/{topic}-{date}/rrd.json
+
+# Run research on a folder
+./ralph.sh researches/{folder-name} [max_iterations]
+
+# Examples
+./ralph.sh researches/robotics-llms-2026-01-14
+./ralph.sh researches/robotics-llms-2026-01-14 20
+./ralph.sh researches/robotics-llms-2026-01-14 --agent amp
 
 # List available skills
 ./skill.sh --list
@@ -50,8 +50,8 @@ Use git commits as checkpoints so research progress is easy to track and revert:
 ## Architecture
 
 ### Core Loop (`ralph.sh`)
-1. Parses `--agent` flag (default: `claude`, options: `amp`, `codex`)
-2. Archives previous research if switching to different topic (via branchName)
+1. Parses research folder path (required) and `--agent` flag
+2. Reads `rrd.json` and `progress.txt` from the research folder
 3. Invokes the selected agent with `prompt.md`
    - Claude: `claude -p "..." --dangerously-skip-permissions --allowedTools "..."`
    - Amp: `cat prompt.md | amp --dangerously-allow-all`
@@ -61,19 +61,32 @@ Use git commits as checkpoints so research progress is easy to track and revert:
 
 ### Memory Model
 Each iteration is stateless. Cross-iteration memory is limited to:
-- `rrd.json` (papers pool, status, insights, statistics)
-- `progress.txt` (detailed findings log with patterns at top)
+- `researches/{name}/rrd.json` (papers pool, status, insights, statistics)
+- `researches/{name}/progress.txt` (detailed findings log with patterns at top)
 - `AGENTS.md` (reusable research patterns)
 
+### Folder Structure
+```
+researches/
+├── robotics-llms-2026-01-14/
+│   ├── rrd.json           # Research requirements and paper data
+│   ├── progress.txt       # Research findings log
+│   └── research-report.md # Optional: final report
+└── quantum-ai-2026-01-15/
+    ├── rrd.json
+    └── progress.txt
+```
+
 ### Key Files
-| File | Purpose |
-|------|---------|
-| `ralph.sh` | Bash loop spawning fresh agent instances |
-| `skill.sh` | Generic skill runner for Claude Code, Amp, and Codex |
+| File/Folder | Purpose |
+|-------------|---------|
+| `ralph.sh` | Main research loop script |
+| `skill.sh` | Skill runner (creates research folders for rrd skill) |
 | `prompt.md` | Agent instructions for research workflow |
-| `rrd.json` | Research Requirements Document with papers and status |
+| `researches/` | Per-research artifact folders |
+| `researches/{name}/rrd.json` | Research Requirements Document |
+| `researches/{name}/progress.txt` | Research findings log |
 | `rrd.json.example` | Example RRD format for reference |
-| `progress.txt` | Append-only research findings log |
 | `skills/rrd/SKILL.md` | Skill for generating RRDs |
 
 ## Research Workflow
@@ -232,6 +245,7 @@ Add `cross_cluster` field to insights when patterns emerge:
 ## Patterns
 
 - Each iteration spawns a fresh agent instance with clean context
-- Memory persists via `rrd.json` and `progress.txt`
+- Memory persists via `researches/{name}/rrd.json` and `researches/{name}/progress.txt`
+- Each research topic has its own isolated folder
 - Cross-reference papers to find connections
 - Update this file with domain-specific learnings

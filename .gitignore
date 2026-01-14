@@ -1,10 +1,5 @@
-# Ralph working files (generated during runs)
+# Ralph working files (legacy, kept for cleanup)
 prd.json
-.last-branch
-
-# Research run artifacts (keep locally, not in version control)
-research-report-*.md
-archive/
 
 # IDE/tool config
 .serena/

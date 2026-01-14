@@ -11,32 +11,46 @@ Keep research patterns and gotchas in this file in sync with `CLAUDE.md`. When u
 ## Commands
 
 ```bash
-# Run Research-Ralph with Claude Code (default)
-./ralph.sh [max_iterations]
-
-# Run Research-Ralph with Amp
-./ralph.sh [max_iterations] --agent amp
-
-# Run Research-Ralph with Codex
-./ralph.sh [max_iterations] --agent codex
-
-# Create a Research Requirements Document
+# Create a new research (creates folder in researches/)
 ./skill.sh rrd "Your research topic description"
+# Creates: researches/{topic}-{date}/rrd.json
+
+# Run research on a folder
+./ralph.sh researches/{folder-name} [max_iterations]
+
+# Examples
+./ralph.sh researches/robotics-llms-2026-01-14
+./ralph.sh researches/robotics-llms-2026-01-14 20
+./ralph.sh researches/robotics-llms-2026-01-14 --agent amp
 
 # List available skills
 ./skill.sh --list
 ```
 
+## Folder Structure
+
+```
+researches/
+├── robotics-llms-2026-01-14/
+│   ├── rrd.json           # Research requirements and paper data
+│   ├── progress.txt       # Research findings log
+│   └── research-report.md # Optional: final report
+└── quantum-ai-2026-01-15/
+    ├── rrd.json
+    └── progress.txt
+```
+
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `ralph.sh` | Bash loop spawning fresh agent instances |
-| `skill.sh` | Generic skill runner for Claude Code, Amp, and Codex |
+| File/Folder | Purpose |
+|-------------|---------|
+| `ralph.sh` | Main research loop script |
+| `skill.sh` | Skill runner (creates research folders for rrd skill) |
 | `prompt.md` | Agent instructions for research workflow |
-| `rrd.json` | Research Requirements Document with papers and status |
+| `researches/` | Per-research artifact folders |
+| `researches/{name}/rrd.json` | Research Requirements Document |
+| `researches/{name}/progress.txt` | Research findings log |
 | `rrd.json.example` | Example RRD format |
-| `progress.txt` | Append-only research findings log |
 | `skills/rrd/` | Skill for generating RRDs |
 
 ## Research Workflow
@@ -181,7 +195,8 @@ Add `cross_cluster` field to insights when patterns emerge:
 ## Patterns
 
 - Each iteration spawns a fresh agent instance with clean context
-- Memory persists via `rrd.json` and `progress.txt`
+- Memory persists via `researches/{name}/rrd.json` and `researches/{name}/progress.txt`
+- Each research topic has its own isolated folder
 - Cross-reference papers to find connections
 - Update this file with domain-specific learnings
 - Keep this file mirrored in `CLAUDE.md` so Claude Code gets the same updated guidance
@@ -190,7 +205,7 @@ Add `cross_cluster` field to insights when patterns emerge:
 
 Use git commits as checkpoints so it's easy to review/revert research progress:
 - Commit after each iteration (and any milestone like phase change)
-- Stage only the relevant files (avoid `git add .`); typically: `rrd.json`, `progress.txt`, `AGENTS.md`, `CLAUDE.md`
+- Stage files from the research folder: `researches/{name}/rrd.json`, `researches/{name}/progress.txt`
 - Commit message examples:
   - `discovery: add N papers`
   - `analysis: <paper_id> <PRESENT|REJECT|EXTRACT_INSIGHTS> (<score>/30)`

@@ -163,8 +163,9 @@ Include this rubric explanation in the RRD description or notes if the user need
 ## Output
 
 - **Format:** JSON
-- **Location:** Project root
+- **Location:** Research folder (path provided at end of prompt)
 - **Filename:** `rrd.json`
+- The research folder path will be provided in the "Output Location" section at the end of the prompt
 
 ---
 
@@ -240,4 +241,4 @@ Before saving the RRD:
 - [ ] Time window matches user's needs
 - [ ] Target paper count is realistic
 - [ ] Sources are appropriate for the domain
-- [ ] Saved to `rrd.json`
+- [ ] Saved to the research folder path provided in the prompt (e.g., `researches/{name}-{date}/rrd.json`)
