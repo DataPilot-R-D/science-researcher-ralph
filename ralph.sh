@@ -177,6 +177,9 @@ run_agent() {
   local prompt_content
   prompt_content=$(cat "$prompt_file") || return 1
 
+  # Inject research folder path into prompt (replace {{RESEARCH_DIR}} placeholder)
+  prompt_content="${prompt_content//\{\{RESEARCH_DIR\}\}/$RESEARCH_DIR}"
+
   if [[ "$AGENT" == "amp" ]]; then
     echo "$prompt_content" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr
   elif [[ "$AGENT" == "codex" ]]; then
