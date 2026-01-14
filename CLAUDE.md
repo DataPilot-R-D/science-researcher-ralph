@@ -4,38 +4,54 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Ralph is an autonomous AI agent loop that runs an AI coding agent (Claude Code, Amp, or Codex) repeatedly until all PRD items are complete. Each iteration spawns a fresh agent instance with clean context. Memory persists via git history, `progress.txt`, and `prd.json`.
+Research-Ralph is an autonomous research scouting agent that discovers, analyzes, and evaluates research papers. It runs an AI agent (Claude Code, Amp, or Codex) repeatedly until all papers in the Research Requirements Document (RRD) are analyzed.
+
+## Sync Policy
+
+Keep research patterns and gotchas in this file in sync with `AGENTS.md`. When updating one, update the other.
+
+## Doc Safety (Rollback)
+
+If automated edits to `AGENTS.md` / `CLAUDE.md` go wrong, restore from baseline:
+- Baseline copies: `docs-baseline/AGENTS.md`, `docs-baseline/CLAUDE.md` (do not edit these)
+- Restore command: `./restore-docs.sh`
+- If you approve the current docs as the new baseline: `cp AGENTS.md docs-baseline/AGENTS.md && cp CLAUDE.md docs-baseline/CLAUDE.md`
+
+## Git Workflow (Checkpoints)
+
+Use git commits as checkpoints so research progress is easy to track and revert:
+- Commit after each iteration (and any milestone like phase change)
+- Stage files from the research folder: `researches/{name}/rrd.json`, `researches/{name}/progress.txt`
+- Commit message examples:
+  - `discovery: add N papers`
+  - `analysis: <paper_id> <PRESENT|REJECT|EXTRACT_INSIGHTS> (<score>/30)`
+  - `docs: update research patterns/workflow`
+  - `milestone: phase -> <DISCOVERY|ANALYSIS|COMPLETE>`
 
 ## Commands
 
 ```bash
-# Run Ralph with Claude Code (default)
-./ralph.sh [max_iterations]
+# Create a new research (creates folder in researches/)
+./skill.sh rrd "Your research topic description"
+# Creates: researches/{topic}-{date}/rrd.json
 
-# Run Ralph with Amp
-./ralph.sh [max_iterations] --agent amp
+# Run research on a folder
+./ralph.sh researches/{folder-name} [max_iterations]
 
-# Run Ralph with Codex
-./ralph.sh [max_iterations] --agent codex
+# Examples
+./ralph.sh researches/robotics-llms-2026-01-14
+./ralph.sh researches/robotics-llms-2026-01-14 20
+./ralph.sh researches/robotics-llms-2026-01-14 --agent amp
 
-# Run a skill
-./skill.sh <skill-name> [task] [--agent amp|claude|codex]
-./skill.sh --list                    # List available skills
-./skill.sh prd "Create a PRD for X"  # Generate a PRD
-./skill.sh ralph tasks/prd-X.md      # Convert PRD to JSON
-
-# Flowchart development
-cd flowchart && npm install    # Install dependencies
-cd flowchart && npm run dev    # Start dev server
-cd flowchart && npm run build  # Build (runs tsc -b && vite build)
-cd flowchart && npm run lint   # Run ESLint
+# List available skills
+./skill.sh --list
 ```
 
 ## Architecture
 
 ### Core Loop (`ralph.sh`)
-1. Parses `--agent` flag (default: `claude`, options: `amp`, `codex`)
-2. Archives previous run if switching to a different feature branch
+1. Parses research folder path (required) and `--agent` flag
+2. Reads `rrd.json` and `progress.txt` from the research folder
 3. Invokes the selected agent with `prompt.md`
    - Claude: `claude -p "..." --dangerously-skip-permissions --allowedTools "..."`
    - Amp: `cat prompt.md | amp --dangerously-allow-all`
@@ -45,49 +61,191 @@ cd flowchart && npm run lint   # Run ESLint
 
 ### Memory Model
 Each iteration is stateless. Cross-iteration memory is limited to:
-- Git history (commits from previous iterations)
-- `progress.txt` (append-only learnings log with consolidated patterns at top)
-- `prd.json` (tracks which stories have `passes: true`)
+- `researches/{name}/rrd.json` (papers pool, status, insights, statistics)
+- `researches/{name}/progress.txt` (detailed findings log with patterns at top)
+- `AGENTS.md` (reusable research patterns)
+
+### Folder Structure
+```
+researches/
+├── robotics-llms-2026-01-14/
+│   ├── rrd.json           # Research requirements and paper data
+│   ├── progress.txt       # Research findings log
+│   └── research-report.md # Optional: final report
+└── quantum-ai-2026-01-15/
+    ├── rrd.json
+    └── progress.txt
+```
 
 ### Key Files
-| File | Purpose |
-|------|---------|
-| `ralph.sh` | Bash loop spawning fresh agent instances |
-| `skill.sh` | Generic skill runner for Claude Code, Amp, and Codex |
-| `prompt.md` | Agent-agnostic instructions for each iteration |
-| `prd.json` | User stories with `passes` status |
-| `progress.txt` | Append-only learnings; `## Codebase Patterns` section at top for reusable knowledge |
-| `skills/prd/SKILL.md` | Skill for generating PRDs |
-| `skills/ralph/SKILL.md` | Skill for converting PRDs to JSON |
+| File/Folder | Purpose |
+|-------------|---------|
+| `ralph.sh` | Main research loop script |
+| `skill.sh` | Skill runner (creates research folders for rrd skill) |
+| `prompt.md` | Agent instructions for research workflow |
+| `researches/` | Per-research artifact folders |
+| `researches/{name}/rrd.json` | Research Requirements Document |
+| `researches/{name}/progress.txt` | Research findings log |
+| `rrd.json.example` | Example RRD format for reference |
+| `skills/rrd/SKILL.md` | Skill for generating RRDs |
 
-### Flowchart (`flowchart/`)
-Interactive React Flow visualization for presentations. Built with:
-- React 19 + TypeScript
-- @xyflow/react for flowchart rendering
-- Vite for bundling
+## Research Workflow
 
-The `App.tsx` implements a step-through presentation where nodes/edges appear progressively via opacity transitions.
+### Two Phases
 
-## PRD Format
+**DISCOVERY Phase:**
+- Search arXiv, Google Scholar, web for papers
+- Collect papers matching keywords and criteria
+- Assign initial priority scores (1-5)
+- Transition to ANALYSIS when target count reached
 
-Stories in `prd.json` must be:
-- **Small**: Completable in one context window (one agent iteration)
-- **Ordered by dependency**: Schema → backend → UI
-- **Verifiable**: Acceptance criteria must be checkable, not vague
+**ANALYSIS Phase:**
+- ONE paper per iteration (deep analysis)
+- Read full paper content (not just abstract)
+- Search for implementations (GitHub, blogs)
+- Check if commercialized
+- Score using rubric (0-30)
+- Decide: PRESENT / REJECT / EXTRACT_INSIGHTS
 
-Frontend stories should include browser verification in acceptance criteria.
+### Evaluation Rubric
 
-## Workflow Pattern
+Papers scored 0-5 on each dimension (total 0-30):
 
-When Ralph runs a story:
-1. Picks highest priority story where `passes: false`
-2. Implements the story
-3. Runs quality checks (typecheck, tests)
-4. Commits if checks pass
-5. Updates `prd.json` to mark `passes: true`
-6. Appends learnings to `progress.txt`
-7. Updates relevant `AGENTS.md` files with reusable patterns
+| Dimension | Question |
+|-----------|----------|
+| Novelty | How new/different is this approach? |
+| Feasibility | Can a small team build this? |
+| Time-to-POC | How quickly can we prototype? |
+| Value/Market | Is there clear demand? |
+| Defensibility | What's the competitive advantage? |
+| Adoption | How easy to deploy? |
+
+**Threshold:** Score >= `min_score_to_present` (default: 18) = PRESENT
+
+## RRD Format
+
+The `rrd.json` file contains:
+- `project`, `branchName`, `description` - Research metadata
+- `requirements` - Keywords, time window, target papers, sources
+- `phase` - DISCOVERY, ANALYSIS, or COMPLETE
+- `papers_pool` - All discovered papers with status and analysis
+- `insights` - Extracted valuable findings
+- `statistics` - Counts for tracking progress
 
 ## Stop Condition
 
-When all stories have `passes: true`, output `<promise>COMPLETE</promise>` to exit the loop.
+When all papers in `papers_pool` have been analyzed (status != "pending" and status != "analyzing"), Research-Ralph outputs `<promise>COMPLETE</promise>` to exit the loop.
+
+## Source Access Patterns
+
+### arXiv API
+
+```
+https://export.arxiv.org/api/query?search_query=all:{keyword}&sortBy=submittedDate&sortOrder=descending&max_results=50
+```
+
+- Free, no auth required
+- Rate limit: Be conservative - 1 request per 3 seconds to avoid blocks
+- Returns Atom XML feed
+
+### Google Scholar
+
+- Use WebSearch with keywords
+- Add `site:scholar.google.com` for direct results
+- Often returns abstracts only (need to follow PDF links)
+
+### PDF Access
+
+- arXiv: Replace `/abs/` with `/pdf/` in URL, add `.pdf`
+- Most papers: Check for PDF link in metadata
+- Some require institutional access
+
+## Common Gotchas
+
+- **Rate limits:** arXiv blocks rapid requests; add delays between searches
+- **Paywalls:** Some papers not freely accessible; note in `blocked_sources`
+- **Stale data:** Scholar results can be cached; check dates
+- **Web search blocks:** DuckDuckGo HTML can trigger bot challenges; use GitHub API or alternate sources
+- **Duplicate papers:** Same paper on arXiv and publisher site; dedupe by title
+- **PDF parsing:** Some PDFs are image-only; note limitations
+- **Semantic label mismatch:** Robot object/action labels that do not map cleanly to English can degrade LLM explanations; consider a translation dictionary
+- **Hallucination risk:** unless you enforce "only claim what you can cite/link", the agent can invent details when it can't read the paper properly
+
+## Source Fallback Strategy
+
+When searching for papers and implementations, use this fallback hierarchy:
+
+**Implementation checks:** GitHub API → arXiv → Semantic Scholar → WebSearch
+**Paper discovery:** arXiv API → Google Scholar → web
+
+**Rate limit handling:**
+- 429/503 → wait 60s, retry (max 2 retries)
+- 403 → skip to next source, log in progress.txt
+- 3 consecutive blocks → add to `blocked_sources`
+
+**GitHub API (preferred for implementation checks):**
+```
+https://api.github.com/search/repositories?q="{paper_title}"+language:python
+```
+
+**GitHub API Authentication (recommended):**
+Set `GITHUB_TOKEN` environment variable for higher rate limits:
+- Unauthenticated: 10 requests/minute
+- Authenticated: 30 requests/minute
+
+```bash
+export GITHUB_TOKEN="ghp_your_token_here"
+```
+
+The agent will automatically use `Authorization: token $GITHUB_TOKEN` header when available.
+
+**If all sources blocked:** Extract URLs from paper's Related Work section
+
+## Rate Limiting Configuration
+
+| Source | Delay | Retry on 429 | Retry on 403 |
+|--------|-------|--------------|--------------|
+| arXiv API | 3s | Yes (60s backoff) | No |
+| Google Scholar | 5s | Yes | No (use fallback) |
+| GitHub API | 1s | Yes | No |
+| WebSearch | 2s | Yes | No |
+
+If a source is blocked 3 consecutive iterations → move to `blocked_sources` and use fallback.
+
+## Cross-Reference Patterns
+
+When analyzing papers, actively identify cross-reference clusters:
+- **Same benchmark:** e.g., LIBERO used by InternVLA-A1, Dream-VLA, π₀.₅
+- **Same dataset:** e.g., Open-X Embodiment
+- **Same authors/institutions:** Track prolific labs and researchers
+- **Competing approaches:** e.g., MoT vs Diffusion vs Flow Matching for VLA backbone
+
+Add `cross_cluster` field to insights when patterns emerge:
+```json
+{"cross_cluster": "VLA_ARCHITECTURES", "papers": ["arxiv_X", "arxiv_Y"]}
+```
+
+## Operational Rules
+
+- ONE paper per ANALYSIS iteration (deep analysis takes full context)
+- Read FULL papers, not just abstracts
+- Always extract insights, even from rejected papers
+- Track all URLs visited; add to `visited_urls`
+- Update statistics after each operation
+- When feasible, write small tests or prototype code to validate paper assumptions; record results in `progress.txt` and clean up temp files (or note where the code lives)
+- Handle rate limits:
+  - Wait 60 seconds before retrying
+  - After 3 consecutive failures for a source, add it to `blocked_sources` and move on
+  - Log rate limit errors in `progress.txt`
+- Process fixes (self-repair):
+  - If you notice workflow/instruction issues, log the proposed fix in `progress.txt` (file(s) + change + why)
+  - If it's a small doc-only fix, you may edit `AGENTS.md` and `CLAUDE.md` (keep them in sync) and note the change in `progress.txt`
+- Follow the Git Workflow (Checkpoints) section for commits
+
+## Patterns
+
+- Each iteration spawns a fresh agent instance with clean context
+- Memory persists via `researches/{name}/rrd.json` and `researches/{name}/progress.txt`
+- Each research topic has its own isolated folder
+- Cross-reference papers to find connections
+- Update this file with domain-specific learnings

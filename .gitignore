@@ -1,10 +1,8 @@
-# Ralph working files (generated during runs)
+# Ralph working files (legacy, kept for cleanup)
 prd.json
-progress.txt
-.last-branch
 
-# Archive is optional to commit
-# archive/
+# IDE/tool config
+.serena/
 
 # OS files
 .DS_Store

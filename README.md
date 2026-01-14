@@ -1,17 +1,17 @@
-# Ralph
+# Research-Ralph
 
-![Ralph](ralph.webp)
+[![Status: Active](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/DataPilot-R-D/science-researcher-ralph)
+[![Version: 2.1.0](https://img.shields.io/badge/version-2.1.0-blue)](https://github.com/DataPilot-R-D/science-researcher-ralph/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
-Ralph is an autonomous AI agent loop that runs an AI coding agent repeatedly until all PRD items are complete. Each iteration spawns a fresh agent instance with clean context. Memory persists via git history, `progress.txt`, and `prd.json`.
+Research-Ralph is an autonomous AI research scouting agent that discovers, analyzes, and evaluates research papers. Each research project gets its own folder with all artifacts, and each iteration spawns a fresh agent instance with clean context.
 
 **Supported Agents:**
 - [Claude Code CLI](https://claude.ai/code) (default)
 - [Amp CLI](https://ampcode.com)
 - [Codex CLI](https://openai.com/codex)
 
-Based on [Geoffrey Huntley's Ralph pattern](https://ghuntley.com/ralph/).
-
-[Read my in-depth article on how I use Ralph](https://x.com/ryancarson/status/2008548371712135632)
+Based on [Geoffrey Huntley's Ralph pattern](https://ghuntley.com/ralph/), adapted for research scouting.
 
 ## Prerequisites
 
@@ -22,191 +22,212 @@ Choose ONE of the following AI agents:
 
 Also required:
 - `jq` installed (`brew install jq` on macOS)
-- A git repository for your project
 
-## Setup
+## Quick Start
 
-### Option 1: Copy to your project
+### 1. Create a Research Project
 
-Copy the ralph files into your project:
-
-```bash
-# From your project root
-mkdir -p scripts/ralph
-cp /path/to/ralph/ralph.sh scripts/ralph/
-cp /path/to/ralph/prompt.md scripts/ralph/
-chmod +x scripts/ralph/ralph.sh
-```
-
-### Option 2: Install skills globally
-
-Copy the skills to your Amp config for use across all projects:
+Use the RRD skill to generate research requirements:
 
 ```bash
-cp -r skills/prd ~/.config/amp/skills/
-cp -r skills/ralph ~/.config/amp/skills/
+./skill.sh rrd "Research robotics and embodied AI, focusing on sim2real transfer"
 ```
 
-### Configure Amp auto-handoff (recommended)
-
-Add to `~/.config/amp/settings.json`:
-
-```json
-{
-  "amp.experimental.autoHandoff": { "context": 90 }
-}
+This creates a research folder with your RRD:
+```
+researches/research-robotics-and-embodied-2026-01-14/
+└── rrd.json
 ```
 
-This enables automatic handoff when context fills up, allowing Ralph to handle large stories that exceed a single context window.
+Answer the clarifying questions to configure your research parameters.
 
-## Workflow
-
-### 1. Create a PRD
-
-Use the PRD skill to generate a detailed requirements document:
-
-```
-Load the prd skill and create a PRD for [your feature description]
-```
-
-Answer the clarifying questions. The skill saves output to `tasks/prd-[feature-name].md`.
-
-### 2. Convert PRD to Ralph format
-
-Use the Ralph skill to convert the markdown PRD to JSON:
-
-```
-Load the ralph skill and convert tasks/prd-[feature-name].md to prd.json
-```
-
-This creates `prd.json` with user stories structured for autonomous execution.
-
-### 3. Run Ralph
+### 2. Run Research-Ralph
 
 ```bash
 # Run with Claude Code (default)
-./scripts/ralph/ralph.sh [max_iterations]
+./ralph.sh researches/research-robotics-and-embodied-2026-01-14
+
+# Run with more iterations
+./ralph.sh researches/research-robotics-and-embodied-2026-01-14 20
 
 # Run with Amp
-./scripts/ralph/ralph.sh [max_iterations] --agent amp
+./ralph.sh researches/research-robotics-and-embodied-2026-01-14 --agent amp
 
 # Run with Codex
-./scripts/ralph/ralph.sh [max_iterations] --agent codex
+./ralph.sh researches/research-robotics-and-embodied-2026-01-14 --agent codex
 ```
 
 Default is 10 iterations. Default agent is Claude Code CLI.
 
-Ralph will:
-1. Create a feature branch (from PRD `branchName`)
-2. Pick the highest priority story where `passes: false`
-3. Implement that single story
-4. Run quality checks (typecheck, tests)
-5. Commit if checks pass
-6. Update `prd.json` to mark story as `passes: true`
-7. Append learnings to `progress.txt`
-8. Repeat until all stories pass or max iterations reached
+You'll see output like:
+```
+Starting Research-Ralph v2.1.0
+  Research: researches/research-robotics-and-embodied-2026-01-14
+  Agent: claude
+  Project: Research: Robotics and Embodied AI
+  Phase: DISCOVERY
+  Papers: 0 analyzed / 20 target
+  Max iterations: 10
+
+=======================================================
+  Research-Ralph Iteration 1 of 10 (claude)
+=======================================================
+  Phase: DISCOVERY
+```
+
+Research-Ralph will:
+1. **DISCOVERY Phase:** Search arXiv, Google Scholar, and web for papers matching your requirements
+2. **ANALYSIS Phase:** Deep-analyze ONE paper per iteration:
+   - Read the full paper (not just abstract)
+   - Search for implementations (GitHub, blogs)
+   - Check if commercialized
+   - Score using evaluation rubric
+   - Decide: PRESENT / REJECT / EXTRACT_INSIGHTS
+3. Update `rrd.json` with findings
+4. Append detailed analysis to `progress.txt`
+5. Repeat until all papers analyzed
+
+## Folder Structure
+
+Each research project gets its own folder:
+
+```
+researches/
+├── robotics-llms-2026-01-14/
+│   ├── rrd.json           # Research requirements and paper data
+│   ├── progress.txt       # Research findings log
+│   └── research-report.md # Optional: final report
+└── quantum-ai-2026-01-15/
+    ├── rrd.json
+    └── progress.txt
+```
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `ralph.sh` | The bash loop that spawns fresh agent instances |
-| `skill.sh` | Run skills with Claude Code, Amp, or Codex |
+| File/Folder | Purpose |
+|-------------|---------|
+| `ralph.sh` | Main research loop script |
+| `skill.sh` | Skill runner (creates research folders) |
 | `prompt.md` | Instructions given to each agent instance |
-| `prd.json` | User stories with `passes` status (the task list) |
-| `prd.json.example` | Example PRD format for reference |
-| `progress.txt` | Append-only learnings for future iterations |
-| `skills/prd/` | Skill for generating PRDs |
-| `skills/ralph/` | Skill for converting PRDs to JSON |
-| `flowchart/` | Interactive visualization of how Ralph works |
+| `researches/` | Per-research artifact folders |
+| `researches/{name}/rrd.json` | Research Requirements Document |
+| `researches/{name}/progress.txt` | Research findings log |
+| `rrd.json.example` | Example RRD format for reference |
+| `skills/rrd/SKILL.md` | Skill for generating RRDs |
+| `AGENTS.md` | Research patterns and gotchas |
+| `CLAUDE.md` | Same guidance for Claude Code |
 
-## Flowchart
+## Research Workflow
 
-[![Ralph Flowchart](ralph-flowchart.png)](https://snarktank.github.io/ralph/)
+### Two Phases
 
-**[View Interactive Flowchart](https://snarktank.github.io/ralph/)** - Click through to see each step with animations.
+**DISCOVERY Phase:**
+- Search arXiv, Google Scholar, and web for papers
+- Collect papers matching keywords and criteria
+- Assign initial priority scores (1-5)
+- Transition to ANALYSIS when target count reached
 
-The `flowchart/` directory contains the source code. To run locally:
+**ANALYSIS Phase (ONE paper per iteration):**
+- Read full paper content
+- Search for GitHub implementations
+- Search for blog posts and discussions
+- Check if commercialized
+- Score using evaluation rubric
+- Decide: PRESENT / REJECT / EXTRACT_INSIGHTS
+- Extract insights (even from rejected papers)
 
-```bash
-cd flowchart
-npm install
-npm run dev
-```
+### Evaluation Rubric
+
+Papers are scored 0-5 on each dimension (total 0-30):
+
+| Dimension | Question |
+|-----------|----------|
+| **Novelty** | How new/different is this approach? |
+| **Feasibility** | Can a small team build this? |
+| **Time-to-POC** | How quickly can we prototype? |
+| **Value/Market** | Is there clear demand? |
+| **Defensibility** | What's the competitive advantage? |
+| **Adoption** | How easy to deploy? |
+
+**Threshold:** Score >= `min_score_to_present` (default: 18) = PRESENT, otherwise REJECT or EXTRACT_INSIGHTS
 
 ## Critical Concepts
 
 ### Each Iteration = Fresh Context
 
 Each iteration spawns a **new agent instance** with clean context. The only memory between iterations is:
-- Git history (commits from previous iterations)
-- `progress.txt` (learnings and context)
-- `prd.json` (which stories are done)
+- `researches/{name}/rrd.json` (papers pool, status, insights)
+- `researches/{name}/progress.txt` (detailed findings)
+- `AGENTS.md` (research patterns)
 
-### Small Tasks
+### Deep Research
 
-Each PRD item should be small enough to complete in one context window. If a task is too big, the LLM runs out of context before finishing and produces poor code.
+Research-Ralph reads **full papers**, not just abstracts. This is deep research that requires thorough analysis of methodology, results, and limitations.
 
-Right-sized stories:
-- Add a database column and migration
-- Add a UI component to an existing page
-- Update a server action with new logic
-- Add a filter dropdown to a list
+### Insights Are Always Extracted
 
-Too big (split these):
-- "Build the entire dashboard"
-- "Add authentication"
-- "Refactor the API"
+Even rejected papers can have valuable insights. Research-Ralph extracts and preserves findings from every paper analyzed.
 
-### AGENTS.md Updates Are Critical
+### Cross-Reference Insights
 
-After each iteration, Ralph updates the relevant `AGENTS.md` files with learnings. Both Amp and Claude Code automatically read these files, so future iterations (and future human developers) benefit from discovered patterns, gotchas, and conventions.
-
-Examples of what to add to AGENTS.md:
-- Patterns discovered ("this codebase uses X for Y")
-- Gotchas ("do not forget to update Z when changing W")
-- Useful context ("the settings panel is in component X")
-
-### Feedback Loops
-
-Ralph only works if there are feedback loops:
-- Typecheck catches type errors
-- Tests verify behavior
-- CI must stay green (broken code compounds across iterations)
-
-### Browser Verification for UI Stories
-
-Frontend stories should include browser verification in acceptance criteria. The agent will use its browser automation tools to navigate to the page, interact with the UI, and confirm changes work.
+Research-Ralph looks for connections between papers:
+- Similar techniques
+- Papers that build on each other
+- Complementary approaches
+- Conflicting claims
 
 ### Stop Condition
 
-When all stories have `passes: true`, Ralph outputs `<promise>COMPLETE</promise>` and the loop exits.
+When all papers in `papers_pool` have been analyzed, Research-Ralph outputs `<promise>COMPLETE</promise>` and exits.
 
 ## Debugging
 
 Check current state:
 
 ```bash
-# See which stories are done
-cat prd.json | jq '.userStories[] | {id, title, passes}'
+# See research status
+cat researches/{folder}/rrd.json | jq '.phase, .statistics'
 
-# See learnings from previous iterations
-cat progress.txt
+# See paper statuses
+cat researches/{folder}/rrd.json | jq '.papers_pool[] | {id, title, status, score}'
 
-# Check git history
-git log --oneline -10
+# See research findings
+cat researches/{folder}/progress.txt
+
+# See presented papers
+cat researches/{folder}/rrd.json | jq '.papers_pool[] | select(.status == "presented")'
+
+# List all research projects
+ls researches/
 ```
 
-## Customizing prompt.md
+## Rate Limits
 
-Edit `prompt.md` to customize Ralph's behavior for your project:
-- Add project-specific quality check commands
-- Include codebase conventions
-- Add common gotchas for your stack
+For higher GitHub API rate limits, set your token:
 
-## Archiving
+```bash
+export GITHUB_TOKEN="ghp_your_token_here"
+```
 
-Ralph automatically archives previous runs when you start a new feature (different `branchName`). Archives are saved to `archive/YYYY-MM-DD-feature-name/`.
+- Unauthenticated: 10 requests/minute
+- Authenticated: 30 requests/minute
+
+## Doc Safety (Rollback)
+
+The research agent may auto-edit `AGENTS.md` / `CLAUDE.md` to improve the workflow. If you want to revert those doc edits:
+- Restore from baseline: `./restore-docs.sh`
+- Baseline files live in `docs-baseline/` (do not edit these)
+- If you approve the current docs as the new baseline: `cp AGENTS.md docs-baseline/AGENTS.md && cp CLAUDE.md docs-baseline/CLAUDE.md`
+
+## Git Workflow (Checkpoints)
+
+To make research progress easy to track and revert, commit state/doc updates regularly:
+- Stage files from the research folder: `researches/{name}/rrd.json`, `researches/{name}/progress.txt`
+- Commit message examples:
+  - `discovery: add N papers`
+  - `analysis: <paper_id> <PRESENT|REJECT|EXTRACT_INSIGHTS> (<score>/30)`
+  - `docs: update research patterns/workflow`
+  - `milestone: phase -> <DISCOVERY|ANALYSIS|COMPLETE>`
 
 ## Skills
 
@@ -216,8 +237,7 @@ Skills are reusable prompts that work with Claude Code, Amp, and Codex.
 
 | Skill | Description |
 |-------|-------------|
-| `prd` | Generate a PRD from feature description |
-| `ralph` | Convert PRD markdown to prd.json format |
+| `rrd` | Generate an RRD from research topic description |
 
 ### Running Skills
 
@@ -226,17 +246,56 @@ Skills are reusable prompts that work with Claude Code, Amp, and Codex.
 ./skill.sh --list
 
 # Run a skill with Claude Code (default)
-./skill.sh prd "Create a PRD for user authentication"
+./skill.sh rrd "Research robotics and embodied AI"
 
 # Run a skill with Amp
-./skill.sh prd "Create a PRD for login" --agent amp
+./skill.sh rrd "Research NLP transformers" --agent amp
 
 # Run a skill with Codex
-./skill.sh prd "Create a PRD for login" --agent codex
-
-# Convert a PRD to JSON
-./skill.sh ralph tasks/prd-auth.md
+./skill.sh rrd "Research computer vision" --agent codex
 ```
+
+## RRD Format
+
+The Research Requirements Document (`rrd.json`) contains:
+
+```json
+{
+  "project": "Research: [Topic]",
+  "branchName": "research/[topic-slug]",
+  "description": "Research objective and scope",
+  "requirements": {
+    "focus_area": "robotics",
+    "keywords": ["embodied AI", "manipulation", "sim2real"],
+    "time_window_days": 30,
+    "target_papers": 20,
+    "sources": ["arXiv", "Google Scholar", "web"],
+    "min_score_to_present": 18
+  },
+  "phase": "DISCOVERY | ANALYSIS | COMPLETE",
+  "papers_pool": [...],
+  "insights": [...],
+  "visited_urls": [],
+  "blocked_sources": [],
+  "statistics": {...}
+}
+```
+
+See `rrd.json.example` for the complete schema with all fields.
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Open an issue first to discuss proposed changes
+2. Fork the repository and create a feature branch
+3. Submit a pull request with a clear description
+
+For bug reports, include your OS, agent version, and steps to reproduce.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## References
 

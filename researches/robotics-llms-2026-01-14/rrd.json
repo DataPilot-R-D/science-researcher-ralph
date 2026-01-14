@@ -1,0 +1,1390 @@
+{
+  "project": "Research: Robotics x LLMs",
+  "branchName": "research/robotics-llms",
+  "description": "Scout recent work on robotics combined with LLMs and language-conditioned control. Focus on VLA models, instruction-following robot control, tool use, planning, navigation, and sim2real transfer with practical implementation potential. Scoring rubric: 0-5 each for novelty, feasibility, time-to-POC, value/market, defensibility, and adoption (total 0-30); PRESENT if score >= 18.",
+  "requirements": {
+    "focus_area": "robotics / embodied AI + LLMs",
+    "keywords": [
+      "language-conditioned policy",
+      "vision-language-action",
+      "VLA model",
+      "instruction-following robot control",
+      "robot tool use",
+      "LLM planning",
+      "task and motion planning",
+      "semantic navigation",
+      "embodied LLM",
+      "robot foundation model",
+      "sim2real transfer",
+      "robot manipulation",
+      "multimodal policy",
+      "affordance grounding"
+    ],
+    "time_window_days": 365,
+    "target_papers": 20,
+    "sources": [
+      "arXiv",
+      "Google Scholar",
+      "web"
+    ],
+    "min_score_to_present": 18
+  },
+  "phase": "COMPLETE",
+  "papers_pool": [
+    {
+      "id": "arxiv_2601.06652",
+      "title": "Follow the Signs: Using Textual Cues and LLMs to Guide Efficient Robot Navigation",
+      "url": "http://arxiv.org/abs/2601.06652v1",
+      "pdf_url": "https://arxiv.org/pdf/2601.06652v1",
+      "authors": [
+        "Jing Cao",
+        "Nishanth Kumar",
+        "Aidan Curtis"
+      ],
+      "date": "2026-01-10",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 19,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Proposes an LLM-guided semantic navigation framework that uses textual cues (room numbers, signs) to predict likely goal regions in structured indoor maps, then combines these predictions with frontier exploration and A* to reach goals more efficiently under partial observability.",
+        "methodology": "Maintain seen occupancy/semantic grids; prompt an LLM to infer numbering or signage patterns and output a relative goal region. Update a confidence grid with exponential decay and zero out explored non-goal cells; plan with A* to the highest-confidence region, otherwise fall back to nearest frontier exploration.",
+        "results": "Across seven grid environments (synthetic, real floor plans, and a noisy Polycam scan), the method achieves higher SPL and success rates than NavGPT, LLM-only, and frontier-only baselines; overall SPL 0.745 vs 0.596 for frontier and 0.236 for NavGPT, with a real-world Spot robot demo navigating to a room using signage cues.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Requires pre-annotated semantic grids and assumes full kxk local observability; performance degrades in noisy maps and when numbering patterns are ambiguous or inconsistent."
+      },
+      "decision": "PRESENT",
+      "notes": "LLM reasoning over signage patterns plus confidence-grid guidance improves navigation efficiency; limitations around perception and ambiguous numbering remain."
+    },
+    {
+      "id": "arxiv_2601.06552",
+      "title": "Model Reconciliation through Explainability and Collaborative Recovery in Assistive Robotics",
+      "url": "http://arxiv.org/abs/2601.06552v1",
+      "pdf_url": "https://arxiv.org/pdf/2601.06552v1",
+      "authors": [
+        "Britt Besch",
+        "Tai Mai",
+        "Jeremias Thun",
+        "Markus Huff",
+        "J\u00f6rn Vogel",
+        "Freek Stulp",
+        "Samuel Bustamante"
+      ],
+      "date": "2026-01-10",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 18,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 3,
+        "time_to_poc": 4,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Introduces an LLM-driven model reconciliation framework for shared-control assistive robots that predicts and explains differences between human and robot mental models without requiring an explicit user model, then supports collaborative recovery through user rebuttals.",
+        "methodology": "Robot knowledge is split into a static object database, a world model of object instances, and an action model (PDDL-based action graph). An LLM extracts objects/actions from a user query and matches them against these models in four steps to classify divergence types (D_GO, D_SO, D_GA, D_SA, or FD) and generate explanations. For recovery, a VLM matches rebuttal objects in the camera view to suggest robot repositioning or update the world model; unmet preconditions are resolved by translating user rebuttals into symbolic state updates.",
+        "results": "Pilot tests on a real wheelchair-based mobile manipulator showed correct explanations and successful recovery in daily living scenarios. In a digital-twin evaluation (40 episodes, 120 runs), the method achieved 100% accuracy on object localization explanations, 78.79% on symbolic state explanations, and 78.12% on recovery suggestions; adding a translation dictionary for uncommon terms improved precondition explanation accuracy from 78.8% to 92.4% (Cohen\u2019s kappa 0.91 between human and LLM labels).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Recovery movement suggestions are weaker due to VLM spatial reasoning errors; adjectives can confuse smaller LLMs; evaluation covers a limited set of daily living scenarios and relies on semantically interpretable robot labels."
+      },
+      "decision": "PRESENT",
+      "notes": "Practical LLM-based model reconciliation with real-robot validation; useful for explainability and collaborative recovery in assistive robotics, though dependent on clean semantic labels and limited scenarios."
+    },
+    {
+      "id": "arxiv_2601.05529",
+      "title": "Safety Not Found (404): Hidden Risks of LLM-Based Robotics Decision Making",
+      "url": "http://arxiv.org/abs/2601.05529v1",
+      "pdf_url": "https://arxiv.org/pdf/2601.05529v1",
+      "authors": [
+        "Jua Han",
+        "Jaeyoon Seo",
+        "Jungbin Min",
+        "Jean Oh",
+        "Jihie Kim"
+      ],
+      "date": "2026-01-09",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 19,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "First systematic safety benchmark for LLM-controlled robots, introducing seven tasks across three categories (Complete Information, Incomplete Information, Safety-Oriented Spatial Reasoning) to evaluate failure modes in safety-critical scenarios like fire evacuations.",
+        "methodology": "Complete Information tasks use ASCII maps to isolate spatial reasoning; Incomplete Information tasks test hallucinations via sequence reasoning and uncertain terrain; SOSR tasks evaluate direction sense and emergency decision-making. Tested GPT-5, GPT-4o, Gemini-2.5 Flash, Gemini-2.0 Flash, and LLaMA-3-8b.",
+        "results": "LLaMA-3-8b achieved 0% on ASCII navigation; Gemini-2.5 Flash directed users to professor's office (32%) or hallucinated server room (1%) instead of emergency exits in fire scenarios; GPT-5 achieved 100% on hard deterministic tasks but even best models show catastrophic failures in edge cases.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Hardware constraints limited evaluation to smaller models; preliminary dataset (100 video sequences); no concrete mitigation strategies proposed; authors acknowledge this is a mini-benchmark requiring expansion."
+      },
+      "decision": "PRESENT",
+      "notes": "Critical diagnostic for LLM-robotics: even 99% accuracy is dangerous when 1/100 executions could cause catastrophic harm. No code released yet."
+    },
+    {
+      "id": "arxiv_2601.03590",
+      "title": "Can LLMs See Without Pixels? Benchmarking Spatial Intelligence from Textual Descriptions",
+      "url": "http://arxiv.org/abs/2601.03590v1",
+      "pdf_url": "https://arxiv.org/pdf/2601.03590v1",
+      "authors": [
+        "Zhongbin Guo",
+        "Zhen Yang",
+        "Yushan Li",
+        "Xinyue Zhang",
+        "Wenyu Gao",
+        "Jiacheng Wang",
+        "Chengzhi Li",
+        "Xiangrui Liu",
+        "Ping Jian"
+      ],
+      "date": "2026-01-07",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "insights_extracted",
+      "score": 17,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 4,
+        "time_to_poc": 3,
+        "value_market": 2,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Introduces SiT-Bench, the first large-scale benchmark to evaluate spatial intelligence of LLMs using text-only descriptions (no pixels). Tests whether spatial reasoning originates from visual encoders or language model backbones by converting scenes into coordinate-aware textual descriptions.",
+        "methodology": "3,892 expert-annotated samples across 5 categories (Navigation & Planning, Embodied & Fine-grained, Multi-View & Geometric Reasoning, Global Perception & Mapping, Logic Detection) and 17 subtasks. Data constructed via GPT-4o quality scoring on robotic/gaming environments plus adapted existing vision benchmarks. Two-phase verification with DeepSeek-R1 filtering and human review.",
+        "results": "Gemini-3-Flash leads at 59.46% average accuracy; human baseline is 74.42%; random baseline is 27.3%. VLMs outperform pure LLMs despite text-only input. Explicit reasoning modes boost performance (Qwen3-8B: 37.91% → 45.04% with CoT). Critical 'spatial gap' in global consistency: Cognitive Mapping task shows 8.34% best model vs 26.77% human.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Text abstractions don't capture continuous real-time feedback loops essential for robotics. Thinking-mode models show 35-70× latency increases (up to 190s for DeepSeek-V3.2), incompatible with real-time embodied tasks."
+      },
+      "decision": "EXTRACT_INSIGHTS",
+      "notes": "Below threshold (17/30) but provides valuable diagnostic methodology for evaluating spatial reasoning in LLMs. Key finding: 'thinking' in structured symbolic language can be more effective than 'seeing' more pixels for spatial tasks."
+    },
+    {
+      "id": "arxiv_2601.02456",
+      "title": "InternVLA-A1: Unifying Understanding, Generation and Action for Robotic Manipulation",
+      "url": "http://arxiv.org/abs/2601.02456v1",
+      "pdf_url": "https://arxiv.org/pdf/2601.02456v1",
+      "authors": [
+        "Junhao Cai",
+        "Zetao Cai",
+        "Jiafei Cao",
+        "Yilun Chen",
+        "Zeyu He",
+        "Lei Jiang",
+        "Hang Li",
+        "Hengjie Li",
+        "Yang Li",
+        "Yufei Liu",
+        "Yanan Lu",
+        "Qi Lv",
+        "Haoxiang Ma",
+        "Jiangmiao Pang",
+        "Yu Qiao",
+        "Zherui Qiu",
+        "Yanqing Shen",
+        "Xu Shi",
+        "Yang Tian",
+        "Bolun Wang",
+        "Hanqing Wang",
+        "Jiaheng Wang",
+        "Tai Wang",
+        "Xueyuan Wei",
+        "Chao Wu",
+        "Yiman Xie",
+        "Boyang Xing",
+        "Yuqiang Yang",
+        "Yuyin Yang",
+        "Qiaojun Yu",
+        "Feng Yuan",
+        "Jia Zeng",
+        "Jingjing Zhang",
+        "Shenghan Zhang",
+        "Shi Zhang",
+        "Zhuoma Zhaxi",
+        "Bowen Zhou",
+        "Yuanzhen Zhou",
+        "Yunsong Zhou",
+        "Hongrui Zhu",
+        "Yangkun Zhu",
+        "Yuchen Zhu"
+      ],
+      "date": "2026-01-05",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 23,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Presents InternVLA-A1, a Mixture-of-Transformers VLA architecture that unifies scene understanding, visual foresight generation, and action execution. Trained on 533M+ frames from hybrid synthetic-real data, achieves 75.1% success on general tasks and 40-73% improvement over pi0/GR00T on dynamic manipulation tasks like conveyor sorting.",
+        "methodology": "Three coordinated experts (understanding built on InternVL3/Qwen3-VL, generation using Cosmos VAE for future frame prediction, action via flow matching) with blockwise masked self-attention. Two-stage training: 700K steps pre-training on InternData-A1 + AgiBot-World, 60K steps post-training. Joint loss combines visual foresight L2 and flow matching action prediction.",
+        "results": "Real-world: 75.1% avg success (3B), 14.5% improvement over pi0 on daily tasks, 40-73.3% boost on dynamic tasks. Simulation (RoboTwin 2.0): 65.0% easy, 25.4% hard tasks. Ablation shows pre-training contributes 51.6% performance gain, generation expert adds 19.4%.",
+        "implementations_found": ["https://github.com/InternRobotics/InternVLA-A1 (248 stars)", "https://huggingface.co/InternRobotics/InternVLA-A1-3B", "https://huggingface.co/datasets/InternRobotics/InternData-A1"],
+        "commercialized": true,
+        "limitations": "Lacks joint training on multimodal VQA datasets reducing semantic reasoning. Visual foresight quality compromised for real-time inference. Requires substantial training data (533M frames) and compute."
+      },
+      "decision": "PRESENT",
+      "notes": "High-quality VLA with full open-source stack (code, weights, dataset). Connected to AgiBot (~$1B valuation) commercial robot platform. Strong results on dynamic manipulation where visual foresight prediction helps most."
+    },
+    {
+      "id": "arxiv_2601.02078",
+      "title": "Genie Sim 3.0 : A High-Fidelity Comprehensive Simulation Platform for Humanoid Robot",
+      "url": "http://arxiv.org/abs/2601.02078v1",
+      "pdf_url": "https://arxiv.org/pdf/2601.02078v1",
+      "authors": [
+        "Chenghao Yin",
+        "Da Huang",
+        "Di Yang",
+        "Jichao Wang",
+        "Nanshu Zhao",
+        "Chen Xu",
+        "Wenjun Sun",
+        "Linjie Hou",
+        "Zhijun Li",
+        "Junhui Wu",
+        "Zhaobo Liu",
+        "Zhen Xiao",
+        "Sheng Zhang",
+        "Lei Bao",
+        "Rui Feng",
+        "Zhenquan Pang",
+        "Jiayu Li",
+        "Qian Wang",
+        "Maoqing Yao"
+      ],
+      "date": "2026-01-05",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 23,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Introduces Genie Sim 3.0, an LLM-powered simulation platform for humanoid robots that enables natural language scene generation, automated evaluation via VLM, and releases 10,000+ hours of synthetic training data across 200+ tasks with strong sim-to-real transfer (R²=0.924).",
+        "methodology": "Four-stage scene generation pipeline: (1) Intention Interpreter parses NL prompts via CoT-enabled LLM to JSON schemas, (2) Assets Index uses RAG with 5,140 objects/353 categories in ChromaDB with QWEN embeddings, (3) DSL Code Generator produces executable Python scene specs, (4) Results Assembler creates hierarchical scene graphs via OpenUSD/Isaac Sim. Evaluation uses LLM-generated task protocols and VLM-based success assessment.",
+        "results": "Sim-to-real correlation R²=0.924 with slope ~1.045. Synthetic-only models achieved highest zero-shot success rates across four benchmark tasks. 10,000+ hours of data released across 200+ manipulation tasks. Generation of thousands of diverse scenes in minutes.",
+        "implementations_found": ["https://github.com/AgibotTech/genie_sim (490 stars, 37 forks)"],
+        "commercialized": true,
+        "limitations": "Contact dynamics and friction imperfectly modeled; real data still outperforms equivalent-volume synthetic data due to higher physical fidelity; avoids tasks with extremely high/low success rates in validation."
+      },
+      "decision": "PRESENT",
+      "notes": "AgiBot's simulation platform with full open-source release. Parent company valued at $6.4B, planning HK IPO 2026. Strong ecosystem: same company behind InternVLA-A1 model and AgiBot-World dataset."
+    },
+    {
+      "id": "arxiv_2601.01321",
+      "title": "Digital Twin AI: Opportunities and Challenges from Large Language Models to World Models",
+      "url": "http://arxiv.org/abs/2601.01321v1",
+      "pdf_url": "https://arxiv.org/pdf/2601.01321v1",
+      "authors": [
+        "Rong Zhou",
+        "Dongping Chen",
+        "Zihan Jia",
+        "Yao Su",
+        "Yixin Liu",
+        "Yiwen Lu",
+        "Dongwei Shi",
+        "Yue Huang",
+        "Tianyang Xu",
+        "Yi Pan",
+        "Xinliang Li",
+        "Yohannes Abate",
+        "Qingyu Chen",
+        "Zhengzhong Tu",
+        "Yu Yang",
+        "Yu Zhang",
+        "Qingsong Wen",
+        "Gengchen Mai",
+        "Sunyang Fu",
+        "Jiachen Li",
+        "Xuyu Wang",
+        "Ziran Wang",
+        "Jing Huang",
+        "Tianming Liu",
+        "Yong Chen",
+        "Lichao Sun",
+        "Lifang He"
+      ],
+      "date": "2026-01-04",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "rejected",
+      "score": 10,
+      "score_breakdown": {
+        "novelty": 2,
+        "feasibility": 2,
+        "time_to_poc": 1,
+        "value_market": 2,
+        "defensibility": 1,
+        "adoption": 2
+      },
+      "analysis": {
+        "summary": "Comprehensive survey paper presenting a four-stage framework for AI integration in digital twins: (1) physics-based modeling, (2) real-time mirroring/synchronization, (3) intervention through prediction/optimization, and (4) autonomous management via LLMs and agents. Covers 11 application domains including healthcare, aerospace, manufacturing, and robotics.",
+        "methodology": "Conceptual framework synthesizing existing technologies. No novel implementation. Reviews physics-informed AI (PINNs, Neural Operators), generative models for scene representation (NeRF, 3DGS), LLM-based autonomous management, and world models (NVIDIA Cosmos). Four-stage lifecycle: Modeling → Mirroring → Intervening → Autonomous Management.",
+        "results": "Survey with no original experiments. Cites existing results: physics-informed models achieve ~1000x speedups over numerical solvers; RL-based grasping achieves 96.7% success in cited work. Robotics coverage spans space/aerial, medical/rehabilitation, soft robotics, industrial, and field/service domains.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Survey paper with no novel implementation. Acknowledges LLM/world models 'do not guarantee physical fidelity or closed-loop stability' and their role 'remains largely exploratory'. Missing empirical validation, unified metrics, and head-to-head comparisons."
+      },
+      "decision": "REJECT",
+      "notes": "Survey paper providing landscape overview but no actionable methodology or artifacts. Useful as a reference for understanding digital twin + AI integration patterns, but low POC potential. The four-stage framework is conceptual rather than implementable."
+    },
+    {
+      "id": "arxiv_2601.01196",
+      "title": "EduSim-LLM: An Educational Platform Integrating Large Language Models and Robotic Simulation for Beginners",
+      "url": "http://arxiv.org/abs/2601.01196v1",
+      "pdf_url": "https://arxiv.org/pdf/2601.01196v1",
+      "authors": [
+        "Shenqi Lu",
+        "Liangwei Zhang"
+      ],
+      "date": "2026-01-03",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "rejected",
+      "score": 14,
+      "score_breakdown": {
+        "novelty": 2,
+        "feasibility": 3,
+        "time_to_poc": 4,
+        "value_market": 2,
+        "defensibility": 1,
+        "adoption": 2
+      },
+      "analysis": {
+        "summary": "Educational platform integrating LLMs with CoppeliaSim for zero-code robot control. Uses LangChain with Llama3 (70b/8b) to translate natural language to Python control code. Four-module architecture: NL interface, LLM planner, simulation backend, Gradio frontend.",
+        "methodology": "Structured prompt templates convert NL instructions to executable Python via executeActionCode function. Supports direct (step-by-step) and autonomous operation modes. Multi-robot collaboration via sequential action generation across agents.",
+        "results": "108 test instances: 100% success on simple tasks, 94.4% on composite, 88.9% on complex. Natural language control reduced operation time by 17 seconds vs manual control (under 21s vs over 29s). Tested on three YouBot configurations.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No code released. Uses CoppeliaSim (smaller community than Isaac Sim). Educational niche with limited commercial potential. Incremental over GenSim and similar LLM-to-simulation work."
+      },
+      "decision": "REJECT",
+      "notes": "Straightforward educational tool combining off-the-shelf components (CoppeliaSim, LangChain, Gradio, Llama3). While useful for teaching, lacks novelty, defensibility, and commercial potential. Score 14/30 below threshold."
+    },
+    {
+      "id": "arxiv_2512.22615",
+      "title": "Dream-VL & Dream-VLA: Open Vision-Language and Vision-Language-Action Models with Diffusion Language Model Backbone",
+      "url": "http://arxiv.org/abs/2512.22615v2",
+      "pdf_url": "https://arxiv.org/pdf/2512.22615v2",
+      "authors": [
+        "Jiacheng Ye",
+        "Shansan Gong",
+        "Jiahui Gao",
+        "Junming Fan",
+        "Shuang Wu",
+        "Wei Bi",
+        "Haoli Bai",
+        "Lifeng Shang",
+        "Lingpeng Kong"
+      ],
+      "date": "2025-12-27",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 23,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "First diffusion-based vision-language and vision-language-action models. Dream-VL and Dream-VLA use a discrete diffusion language model (Dream 7B) as backbone instead of autoregressive LLMs. Achieves 97.2% on LIBERO, 71.4% on SimplerEnv-Bridge, and 60.5% on SimplerEnv-Fractal, outperforming π₀ and GR00T-N1.",
+        "methodology": "Built on Dream 7B discrete diffusion LLM. Dream-VL trained on 12M MAmmoTH-VL multimodal data. Dream-VLA pretrained on 970K Open-X Embodiment robot trajectories. Bidirectional masked diffusion enables parallel action generation. Key advantage: 27× speedup over autoregressive generation through native action chunking support without architectural modifications.",
+        "results": "VLM benchmarks: MMMU 52.2%, MathVista 63.1%, DocVQA 94.4%. VLA benchmarks: LIBERO 97.2% avg success (vs π₀ 93.9%), SimplerEnv-Bridge 71.4% (vs GR00T 49.5%), SimplerEnv-Fractal 60.5% (vs GR00T 48.27%). Single diffusion step achieves competitive performance.",
+        "implementations_found": ["https://github.com/DreamLM/Dream-VLX (86 stars)", "https://huggingface.co/Dream-org/Dream-VLA-7B", "https://huggingface.co/Dream-org/Dream-VL-7B"],
+        "commercialized": false,
+        "limitations": "Authors note 'substantial room for improvement' but don't detail specific limitations. 7B model size requires significant GPU memory. Diffusion LLM backbone is less mature than autoregressive alternatives."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong VLA with novel diffusion backbone. HKU NLP + Huawei collaboration. Apache 2.0 license enables commercial use. 27× inference speedup is compelling for real-time robotics. Cross-reference with InternVLA-A1 for architecture comparison."
+    },
+    {
+      "id": "arxiv_2512.22414",
+      "title": "Emergence of Human to Robot Transfer in Vision-Language-Action Models",
+      "url": "http://arxiv.org/abs/2512.22414v1",
+      "pdf_url": "https://arxiv.org/pdf/2512.22414v1",
+      "authors": [
+        "Simar Kareer",
+        "Karl Pertsch",
+        "James Darpinian",
+        "Judy Hoffman",
+        "Danfei Xu",
+        "Sergey Levine",
+        "Chelsea Finn",
+        "Suraj Nair"
+      ],
+      "date": "2025-12-27",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 24,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 5,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Demonstrates that human-to-robot transfer is an emergent property of diverse VLA pretraining. Uses co-training on 14 hours of embodied human video (head/wrist-mounted cameras) with robot data to nearly double performance on generalization settings seen only in human data.",
+        "methodology": "Co-train π₀.₅ VLA on human video (with 6D head tracking via visual SLAM, 3D hand keypoints) and robot teleoperation data using identical objectives: flow matching for low-level actions, language annotations for high-level subtask prediction. Transfer emerges once model sees sufficient diversity across scenes, tasks, and embodiments.",
+        "results": "Substantial generalization improvements: Spice task 32%→71%, Dresser task 25%→50%, Egg sorting 57%→78%. T-SNE visualizations show human and robot embeddings naturally align as pretraining diversity increases without explicit alignment mechanisms. Transfer works for both high-level subtask and low-level action prediction.",
+        "implementations_found": ["https://github.com/Physical-Intelligence/openpi (9,800 stars, Apache 2.0)"],
+        "commercialized": true,
+        "limitations": "Requires diverse pretraining data across many embodiments to see emergence; models lacking diverse pretraining show negligible transfer. Human data collection requires specialized hardware (head/wrist cameras, SLAM tracking). 14 hours is modest compared to internet-scale human video potential."
+      },
+      "decision": "PRESENT",
+      "notes": "From Physical Intelligence ($5.6B valuation, $1B+ raised). Key insight: human-to-robot transfer emerges with sufficient pretraining diversity—no explicit alignment needed. Directly connected to π0.5 which powers real robots cleaning homes. Authors include Chelsea Finn and Sergey Levine (Stanford/Berkeley robotics leaders)."
+    },
+    {
+      "id": "arxiv_2512.21859",
+      "title": "TimeBill: Time-Budgeted Inference for Large Language Models",
+      "url": "http://arxiv.org/abs/2512.21859v1",
+      "pdf_url": "https://arxiv.org/pdf/2512.21859v1",
+      "authors": [
+        "Qi Fan",
+        "An Zou",
+        "Yehan Ma"
+      ],
+      "date": "2025-12-26",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "rejected",
+      "score": 15,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 2,
+        "defensibility": 2,
+        "adoption": 2
+      },
+      "analysis": {
+        "summary": "Framework for time-budgeted LLM inference combining Response Length Predictor (RLP), Execution Time Estimator (ETE), and adaptive KV cache eviction. Enables generating accurate responses within time constraints for time-critical applications like robotics and autonomous driving.",
+        "methodology": "RLP uses a small language model (Qwen2.5-0.5B) with knowledge distillation to predict output length as classification into 512 buckets. ETE combines FLOPs-based modeling with profiling-based coefficient fitting (MAPE 1.22% prefill, 1.69% decode). Adaptive KV cache eviction adjusts eviction ratio based on predicted execution time vs budget.",
+        "results": "RLP achieves MAE=42.71, RMSE=78.13, R²=0.723 on response length prediction, outperforming ProxyModel and S3 baselines. ETE achieves MAPE <2%. System maintains high response quality while meeting 5-10s time budgets, outperforming vanilla inference and fixed eviction methods.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Requires offline profiling per hardware/model combination. Pessimistic factor selection impacts performance. Predictor must be trained per target LLM. No robotics-specific evaluation—mentions robotics as motivation but evaluates on general NLP benchmarks only."
+      },
+      "decision": "REJECT",
+      "notes": "Generic LLM efficiency paper that mentions robotics as application domain but provides no robotics-specific methods or evaluation. While useful for time-critical LLM deployment, it doesn't advance the robotics+LLM field. Accepted to AAAI 2026 but no code released."
+    },
+    {
+      "id": "arxiv_2512.23739",
+      "title": "Break Out the Silverware -- Semantic Understanding of Stored Household Items",
+      "url": "http://arxiv.org/abs/2512.23739v1",
+      "pdf_url": "https://arxiv.org/pdf/2512.23739v1",
+      "authors": [
+        "Michaela Levi-Richter",
+        "Reuth Mirsky",
+        "Oren Glickman"
+      ],
+      "date": "2025-12-25",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "rejected",
+      "score": 16,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 2
+      },
+      "analysis": {
+        "summary": "Introduces NOAM (Non-visible Object Allocation Model), a hybrid pipeline that combines Grounding-DINO/SAM visual detection with LLM inference to predict where household items are stored in occluded containers. Addresses the practical robotics problem of locating items in drawers/cabinets when they're not visible.",
+        "methodology": "Nine-step pipeline: (1) detect storage containers via Grounding-DINO+SAM, (2) extract container features (type, position, dimensions, proximity to anchors), (3) convert to qualitative natural language descriptions, (4) construct structured prompts, (5) query LLM (GPT-4/LLaMA-3.3) to predict container ID, (6) map predictions back to 2D polygons. Evaluated on kitchen images with human-annotated ground truth.",
+        "results": "Real-world evaluation (100 items): NOAM GPT-4 achieves 23% accuracy and 0.230 avg IoU, vs human annotators at 27-38%. Development set (6,500 pairs): 28.11% accuracy. NOAM significantly outperforms Gemini-1.5/2.5-flash and Kosmos-2, but not statistically different from other baselines. 13s inference time (10s DINO + 2.9s LLM).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "13s inference too slow for real-time robotics. Kitchen-only evaluation—generalization untested. Below human performance (23% vs 27-38%). Fair inter-annotator agreement (κ=0.35) suggests inherent task subjectivity. No code release. Single static image input."
+      },
+      "decision": "REJECT",
+      "notes": "Novel problem formulation (inferring hidden object locations) but methodology is incremental—standard DINO+SAM+LLM pipeline. 23% accuracy and 13s latency far from deployable. Academic origin with no commercial backing."
+    },
+    {
+      "id": "arxiv_2512.21293",
+      "title": "Quadrupped-Legged Robot Movement Plan Generation using Large Language Model",
+      "url": "http://arxiv.org/abs/2512.21293v1",
+      "pdf_url": "https://arxiv.org/pdf/2512.21293v1",
+      "authors": [
+        " Muhtadin",
+        "Vincentius Gusti Putu A. B. M.",
+        "Ahmad Zaini",
+        "Mauridhi Hery Purnomo",
+        "I Ketut Eddy Purnama",
+        "Chastine Fatichah"
+      ],
+      "date": "2025-12-24",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "rejected",
+      "score": 13,
+      "score_breakdown": {
+        "novelty": 2,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 2,
+        "defensibility": 1,
+        "adoption": 2
+      },
+      "analysis": {
+        "summary": "Presents a distributed client-server architecture integrating Vertex AI Gemini with DeepRobotics Jueying Lite 3 quadruped robot for natural language navigation. LLM generates JSON action sequences converted to ROS navigation commands. Tested in structured indoor environments with >90% success across 4 scenarios.",
+        "methodology": "Three-tier architecture: motion host (actuators/sensors), perception host (NVIDIA Jetson Xavier NX for localization/planning), external server (LLM). Uses HDL-Localization 3D LiDAR SLAM with semantic waypoints. Flask web interface accepts Indonesian NL commands; Gemini generates JSON with command type and waypoint parameters published to ROS topics.",
+        "results": "Single-room: 100% success (45.26s avg). Multi-room short: 96% success (68.27s avg). Multi-room long: 90% success (89.71s avg). Cross-zone: 100% success (130.98s avg). Aggregate >90% success. JSON generation remained semantically accurate throughout testing.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No code release. Academic project from Indonesian university (ITS) as final project, not DeepRobotics commercial effort. External server dependency creates latency. Failures in multi-room scenarios due to local navigation handling during transition phases. Indonesian-specific NL interface limits broader adoption."
+      },
+      "decision": "REJECT",
+      "notes": "Standard LLM-to-ROS integration on commercial quadruped. Methodology is incremental over similar open-source projects (zsibot_vln, llm_mjx_go1_playground). Good success rate but no novel contribution. Academic final project without code release or commercial backing."
+    },
+    {
+      "id": "arxiv_2512.21243",
+      "title": "LookPlanGraph: Embodied Instruction Following Method with VLM Graph Augmentation",
+      "url": "http://arxiv.org/abs/2512.21243v1",
+      "pdf_url": "https://arxiv.org/pdf/2512.21243v1",
+      "authors": [
+        "Anatoly O. Onishchenko",
+        "Alexey K. Kovalev",
+        "Aleksandr I. Panov"
+      ],
+      "date": "2025-12-24",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 19,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Presents LookPlanGraph, a dynamic scene graph augmentation framework for embodied instruction following that uses VLMs to continuously verify/discover objects during execution rather than relying on static pre-built graphs. Achieves 60% success rate on VirtualHome and 80% real-world success (15 tasks, manual execution).",
+        "methodology": "Four-component system: (1) Memory Graph with three layers (scene structure, immovable assets, probable objects), (2) Scene Graph Simulator for action validation and error correction via reprompting, (3) VLM Graph Augmentation for real-time object discovery from egocentric views, (4) LM decision-making generating structured actions. Iterative algorithm marks all objects 'unseen' initially and updates as agent explores.",
+        "results": "VirtualHome: 60% SR with Llama3.2-90B, 52% with GPT-4o. OmniGibson: 35-42% SR. Ground-truth augmentation achieves 92% SR showing VLM bottleneck. GraSIF benchmark: 62% SayPlan Office, 60% BEHAVIOR-1K, 87% RobotHow. Real-world: 80% (12/15 tasks) with human-in-loop execution. Action correction critical: ablation shows 62% drop without it.",
+        "implementations_found": ["https://github.com/Onishenko-sci/LookPlanGraph (2 stars)"],
+        "commercialized": false,
+        "limitations": "VLM hallucinations cause redundant discovery and inappropriate operations. Struggles with semantic understanding (disposable vs reusable items). Models overestimate agent capabilities. Real-world evaluation limited to manual human execution of generated plans."
+      },
+      "decision": "PRESENT",
+      "notes": "Solid contribution addressing real limitation of static planners. GraSIF benchmark (514 tasks) is useful community artifact. Action correction mechanism critical insight. Limited commercial traction (2 GitHub stars, academic project from Moscow AIRI)."
+    },
+    {
+      "id": "arxiv_2512.20206",
+      "title": "TongSIM: A General Platform for Simulating Intelligent Machines",
+      "url": "http://arxiv.org/abs/2512.20206v1",
+      "pdf_url": "https://arxiv.org/pdf/2512.20206v1",
+      "authors": [
+        "Zhe Sun",
+        "Kunlun Wu",
+        "Chuanjian Fu",
+        "Zeming Song",
+        "Langyong Shi",
+        "Zihe Xue",
+        "Bohan Jing",
+        "Ying Yang",
+        "Xiaomeng Gao",
+        "Aijia Li",
+        "Tianyu Guo",
+        "Huiying Li",
+        "Xueyuan Yang",
+        "Rongkai Liu",
+        "Xinyi He",
+        "Yuxi Wang",
+        "Yue Li",
+        "Mingyuan Liu",
+        "Yujie Lu",
+        "Hongzhao Xie",
+        "Shiyun Zhao",
+        "Bo Dai",
+        "Wei Wang",
+        "Tao Yuan",
+        "Song-Chun Zhu",
+        "Yujia Peng",
+        "Zhenliang Zhang"
+      ],
+      "date": "2025-12-23",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 21,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 3,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Comprehensive simulation platform from BIGAI (Beijing Institute for General Artificial Intelligence) built on Unreal Engine 5.6. Features 115+ indoor scenes, continuous outdoor urban environment, 3,000+ interactive objects across 500+ categories, and five benchmark task categories spanning navigation, multi-agent cooperation, human-robot interaction, household tasks, and social intelligence.",
+        "methodology": "UE5.6 engine with Chaos physics, Python/C++ APIs, MuJoCo/Isaac Lab integration options. Procedural scene generation via coarse-to-fine synthesis with human-in-loop validation. Protocol-based interaction system with dual-layer control (powered state + activation state). Text-driven motion generation via diffusion models with voxel encoding. Hierarchical crowd simulation combining social force models with VLM-based decision-making. Supports 48+ parallel training environments with near-linear scaling.",
+        "results": "Navigation: PPO 60% success vs 100% human. Multi-agent (MAPPO): 19.24 mean return vs IPPO 14.75. Human-robot interaction: human teleoperation 92.7 score vs A*/DWA 10.4. Household tasks: Gemini-2.5-Pro best at 24.53/100 avg. Social intelligence (S3IT): Gemini-2.5-Pro 47.8/100. MLLMs struggle with spatial reasoning and embodied constraints.",
+        "implementations_found": ["https://github.com/bigai-ai/tongsim (159 stars)", "https://huggingface.co/datasets/bigai/TongSIM-Asset", "https://github.com/bigai-ai/tongsim-agiuc-sdk"],
+        "commercialized": false,
+        "limitations": "Non-commercial academic license limits commercial use. UE5.6 dependency creates steeper learning curve than Isaac Sim for robotics teams. Outdoor environments still under development. MLLMs show deficiencies in spatial reasoning. Traditional planners lack social contextual understanding."
+      },
+      "decision": "PRESENT",
+      "notes": "From BIGAI (Beijing Institute for General Artificial Intelligence), backed by Beijing municipal government. Led by Song-Chun Zhu (formerly UCLA). Connected to Tong Tong AGI agent project. Comprehensive benchmark suite but non-commercial license and UE5.6 dependency may limit adoption vs Isaac Sim alternatives."
+    },
+    {
+      "id": "arxiv_2512.17992",
+      "title": "Unifying Deep Predicate Invention with Pre-trained Foundation Models",
+      "url": "http://arxiv.org/abs/2512.17992v1",
+      "pdf_url": "https://arxiv.org/pdf/2512.17992v1",
+      "authors": [
+        "Qianwei Wang",
+        "Bowen Li",
+        "Zhanpeng Luo",
+        "Yifan Xu",
+        "Alexander Gray",
+        "Tom Silver",
+        "Sebastian Scherer",
+        "Katia Sycara",
+        "Yaqi Xie"
+      ],
+      "date": "2025-12-19",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 21,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 3,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "UniPred is a bilevel learning framework unifying top-down LLM proposals with bottom-up neural learning for predicate invention in robotic planning. Uses GPT-4o to propose predicate-effect distributions that supervise neural classifiers trained on demonstration data; classifier loss provides feedback to iteratively refine LLM hypotheses. Achieves 2-4x higher success than top-down methods and 3-4x faster learning than bottom-up approaches.",
+        "methodology": "Four-stage iterative pipeline: (1-3) LLM proposes PDDL predicate candidates, neural classifiers learn via effect-based supervision (invariant atom loss), training loss as 0-100 feedback score guides next LLM query; (4) Derived-aware hill-climbing selection distinguishes basic vs quantifier-derived predicates for Non-STRIPS support. DINOv3 features for visual domains. No ground-truth labels needed.",
+        "results": "Simulation (5 domains): ~99% training, 81-100% test success. Tools domain: 3.8x faster than IVNTR (11,779s vs 45,167s). Real robot (AgileX Piper, 20 demos): 94% training / 92% test offline, 77.7% real execution success vs 52.1% for ViLa. Ablation: single LLM call drops to 22.4% test; derived-aware selection essential for Non-STRIPS (96% vs 0%).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Requires deterministic STRIPS-compliant operators; depends on pre-specified low-level controller set; discovers only human-intuitive predicates (not emergent abstractions); assumes full observability. No code release yet."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong neuro-symbolic approach from Princeton/CMU team with Tom Silver. Addresses key limitation of prompt-dependent LLM brittleness via neural feedback loop. Real-robot validation with sparse demonstrations (20). PDDL expertise required limits broader adoption."
+    },
+    {
+      "id": "arxiv_2512.17435",
+      "title": "ImagineNav++: Prompting Vision-Language Models as Embodied Navigator through Scene Imagination",
+      "url": "http://arxiv.org/abs/2512.17435v2",
+      "pdf_url": "https://arxiv.org/pdf/2512.17435v2",
+      "authors": [
+        "Teng Wang",
+        "Xinxin Zhao",
+        "Wenzhe Cai",
+        "Changyin Sun"
+      ],
+      "date": "2025-12-19",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 20,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 3,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "ImagineNav++ transforms visual navigation into imagination-powered best-view selection using VLMs. The framework uses a Where2Imagine model (trained on 80K human trajectories) to predict future viewpoints, generates novel observations via diffusion synthesis, and employs GPT-4o-mini to select optimal exploration directions. Achieves SOTA mapless navigation: 72.4% SR on Gibson, 58.5% on HM3D (6% above VLFM).",
+        "methodology": "Four-component architecture: (1) Future-View Imagination via ResNet-18 predicting relative waypoints converted to views via diffusion, (2) Selective Foveation Memory using DINOv2 features with hierarchical keyframe extraction (~20 keyframes for 500-step episodes), (3) GPT-4o-mini high-level planner evaluating synthesized views via structured JSON prompts, (4) VER point-goal navigation controller for low-level execution.",
+        "results": "ObjectNav: Gibson 72.4% SR/42.8% SPL, HM3D 58.5% SR/26.6% SPL, HSSD 64.5% SR/27.9% SPL. InsINav HM3D: 52.4% SR/32.8% SPL (SOTA path efficiency). Ablation: imagination adds +12% SR, Where2Imagine adds +9%, memory adds +6%. Oracle images add 4-6% showing synthesis artifact impact.",
+        "implementations_found": ["https://github.com/200203Z/ImagineNav_plus (1 star, placeholder repo)"],
+        "commercialized": false,
+        "limitations": "Synthesis artifacts degrade performance (oracle adds 4-6% SR); angular constraints limit diffusion to <30° viewpoint changes; relies on GPT-4o-mini API calls; no real-robot validation reported."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong mapless navigation approach using imagination paradigm. Shanghai AI Lab collaboration with Southeast University. Key insight: imagining future views enables VLM-based navigation without explicit maps. Competitive with map-based methods while being more flexible."
+    },
+    {
+      "id": "arxiv_2512.17309",
+      "title": "RecipeMasterLLM: Revisiting RoboEarth in the Era of Large Language Models",
+      "url": "http://arxiv.org/abs/2512.17309v1",
+      "pdf_url": "https://arxiv.org/pdf/2512.17309v1",
+      "authors": [
+        "Asil Kaan Bozcuoglu",
+        "Ziyuan Liu"
+      ],
+      "date": "2025-12-19",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 19,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Modernizes the RoboEarth action recipe framework using fine-tuned CodeLLaMa 13B with QLoRA and RAG for environment-aware ontology generation. Generates OWL action ontologies validated via Prolog queries. Outperforms SMART-LLM (Llama2-70b) on 3/4 AI-THOR2 task categories despite 5x smaller model.",
+        "methodology": "Two-stage approach: (1) QLoRA fine-tuning on 350 curated action recipes (RoboEarth + GPT-4 generated), (2) RAG via LlamaIndex with bge-small-en-v1.5 embeddings injects digital twin knowledge during generation. Generated OWL/RDF triples validated against RoboEarth ontology via SWI-Prolog queries; invalid recipes flagged and regenerated.",
+        "results": "100 iterations: 88% serve drink, 76% red small fruit (commonsense inference), 97% perceive objects, 73% clean table. AI-THOR2 benchmark (1K tasks): Elemental 0.940, Simple 0.871 (vs SMART-LLM 0.75), Compound 0.745 (vs 0.64), Complex 0.781 (vs 0.63). Hallucinations detectable via Prolog validation.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Hallucinations remain primary challenge (73-97% success rates show variance). Elemental tasks underperform larger models. RoboEarth dependency limits adoption. No code release. Tested only in O3DE simulator with ROS2; no real-robot validation."
+      },
+      "decision": "PRESENT",
+      "notes": "Practical neuro-symbolic approach: formal ontology validation catches LLM hallucinations that would be invisible in end-to-end systems. QLoRA enables small-resource deployment. Builds on decade-old RoboEarth infrastructure—interesting revival but limits ecosystem growth."
+    },
+    {
+      "id": "arxiv_2512.17183",
+      "title": "Semantic Co-Speech Gesture Synthesis and Real-Time Control for Humanoid Robots",
+      "url": "http://arxiv.org/abs/2512.17183v1",
+      "pdf_url": "https://arxiv.org/pdf/2512.17183v1",
+      "authors": [
+        "Gang Zhang"
+      ],
+      "date": "2025-12-19",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 18,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "End-to-end framework for semantic co-speech gesture generation and real-time deployment on Unitree G1 humanoid. Combines LLM-based semantic retrieval, Residual VQ-VAE motion tokenization, autoregressive Motion-GPT for gesture prediction, and MotionTracker imitation learning controller for balanced execution.",
+        "methodology": "Three-stage pipeline: (1) General Motion Retargeting (GMR) bridges human MoCap to G1's 29-DoF morphology via key-body matching and differential IK, (2) RVQ-VAE encodes motion as discrete tokens (separate body/hand parts, multiple residual quantization layers), Motion-GPT autoregressively predicts gestures from audio features (MFCC, chromagram, onset, tempogram) + LLM-retrieved semantic candidates, (3) MotionTracker controller uses residual PD offsets relative to reference motion.",
+        "results": "RVQ-VAE reconstruction closely follows original motion over 120s sequences. Root position RMSE ~0.0006, hand joint errors higher (~0.2 wrist). Simulation tracking: joint RMSE 0.005-0.006. Real-world: successful gesture execution with balance maintenance. Trained on ZEGGS (2hr MoCap, 1 actor, 19 styles) and BEAT datasets.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Single actor training data (ZEGGS); no multi-party conversation support; LLM speech rhythm/prosody understanding needs enhancement; simple stroke-phase alignment limits complex gesture merging; no quantitative user study on perceived naturalness."
+      },
+      "decision": "PRESENT",
+      "notes": "Complete end-to-end pipeline from speech to physical robot gestures is valuable. Unitree G1 deployment shows real-world viability. LLM provides semantic retrieval for gesture selection. Limitations around single-actor data and simple merging strategies."
+    },
+    {
+      "id": "arxiv_2601.05248",
+      "title": "LaST₀: Latent Spatio-Temporal Chain-of-Thought for Robotic Vision-Language-Action Model",
+      "url": "http://arxiv.org/abs/2601.05248v1",
+      "pdf_url": "https://arxiv.org/pdf/2601.05248v1",
+      "authors": [
+        "Zhuoyang Liu",
+        "Jiaming Liu",
+        "Hao Chen",
+        "Ziyu Guo",
+        "Chengkai Hou",
+        "Chenyang Gu",
+        "Jiale Yu",
+        "Xiangju Mi",
+        "Renrui Zhang",
+        "Zhengping Che",
+        "Jian Tang",
+        "Pheng-Ann Heng",
+        "Shanghang Zhang"
+      ],
+      "date": "2026-01-08",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 21,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 3,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Introduces LaST₀, a VLA framework using latent spatio-temporal chain-of-thought reasoning instead of explicit linguistic or visual predictions. Dual-system MoT architecture with slow reasoning expert (low-frequency latent inference) and fast acting expert (high-frequency action generation) achieves 82% simulation success and 72% real-world success.",
+        "methodology": "Reasoning expert autoregressively predicts three latent modalities (visual via SigLIP, geometric via Uni3D, proprioceptive) in interleaved chronological order. Asynchronous frequency coordination (κ=2,4,8) decouples slow reasoning from fast action. Three-stage training: large-scale pretraining (400K trajectories from Open-X/DROID/RoboMIND), supervised fine-tuning of slow expert (40 epochs cosine similarity loss), action expert training (300 epochs flow matching). Built on DeepSeek-LLM 1B initialized from Janus-Pro.",
+        "results": "Simulation (RLBench, 10 tasks): 82% mean success, outperforming HybridVLA (74%), π0.5 (65%), CogACT (61%). Real-world (6 tasks): 72% success, outperforming SpatialVLA (39%), π0.5 (59%), CoT-VLA (53%). Nearly 5× higher success rate at final steps of multi-step tasks. Inference: 15.4Hz on RTX 4090 at 1:4 fast-slow ratio (14× faster than explicit CoT methods).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No code released yet (project website only). Point cloud data only available during training; inference uses RGB + proprioception only. Long-horizon performance still degrades at extended steps. Requires multiple camera viewpoints and Gello teleoperation for data collection."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong VLA contribution with novel latent reasoning approach. Key insight: latent CoT captures 'ineffable physical attributes' that explicit linguistic reasoning cannot. 14× speedup over explicit CoT methods addresses real-time constraint. Cross-reference with InternVLA-A1 (explicit visual foresight) and Dream-VLA (diffusion backbone) for architecture comparison."
+    }
+  ],
+  "insights": [
+    {
+      "id": "insight_001",
+      "paper_id": "arxiv_2601.06652",
+      "insight": "Directional predictions from LLMs can be stabilized by a decayed confidence grid and combined with frontier exploration to preserve completeness while exploiting textual cues.",
+      "tags": [
+        "navigation",
+        "llm-guidance",
+        "frontier-exploration",
+        "textual-cues"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_002",
+      "paper_id": "arxiv_2601.06552",
+      "insight": "LLM-based reconciliation that grounds explanations in robot world/action models can outperform vision-only baselines for failure explanations in assistive robotics.",
+      "tags": [
+        "explainability",
+        "model-reconciliation",
+        "assistive-robotics"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_003",
+      "paper_id": "arxiv_2601.06552",
+      "insight": "Semantic clarity of robot labels matters: adding a translation dictionary for uncommon terms boosted precondition explanation accuracy from 78.8% to 92.4% in their evaluation.",
+      "tags": [
+        "semantics",
+        "prompting",
+        "robot-representation"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_004",
+      "paper_id": "arxiv_2601.05529",
+      "insight": "Even 99% accuracy is dangerous in robotics: 1/100 catastrophic failures is unacceptable for safety-critical systems. Aggregate metrics hide worst-case failures that must be evaluated separately.",
+      "tags": [
+        "safety",
+        "evaluation",
+        "metrics"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_005",
+      "paper_id": "arxiv_2601.05529",
+      "insight": "ASCII map navigation isolates spatial reasoning from visual processing and reveals stark model differences: GPT-5 achieves 100% on hard tasks while LLaMA-3-8b achieves 0%, showing spatial reasoning capability varies dramatically across models.",
+      "tags": [
+        "spatial-reasoning",
+        "benchmark",
+        "model-comparison"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_006",
+      "paper_id": "arxiv_2601.03590",
+      "insight": "VLMs outperform pure LLMs on text-only spatial tasks, suggesting multimodal training embeds spatial priors into language weights even when visual input is absent.",
+      "tags": [
+        "spatial-reasoning",
+        "multimodal-training",
+        "benchmark"
+      ],
+      "cross_refs": [
+        "arxiv_2601.05529"
+      ]
+    },
+    {
+      "id": "insight_007",
+      "paper_id": "arxiv_2601.03590",
+      "insight": "Explicit reasoning modes (CoT) substantially boost spatial performance: Qwen3-8B improved from 37.91% to 45.04% with chain-of-thought enabled. But latency increases 35-70× are incompatible with real-time robotics.",
+      "tags": [
+        "chain-of-thought",
+        "latency",
+        "robotics-constraints"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_008",
+      "paper_id": "arxiv_2601.03590",
+      "insight": "LLMs excel at localized semantic spatial tasks but show a critical 'spatial gap' in global consistency: Cognitive Mapping task shows 8.34% best model accuracy vs 26.77% human baseline.",
+      "tags": [
+        "spatial-reasoning",
+        "global-consistency",
+        "cognitive-mapping"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_009",
+      "paper_id": "arxiv_2601.02456",
+      "insight": "Visual foresight prediction substantially improves dynamic manipulation: InternVLA-A1's generation expert contributed 19.4% success rate improvement in ablation, with biggest gains on moving-object tasks (conveyor sorting: +40%, in-motion picking: +73.3%).",
+      "tags": [
+        "visual-foresight",
+        "dynamic-manipulation",
+        "VLA"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_010",
+      "paper_id": "arxiv_2601.02456",
+      "insight": "Mixture-of-Transformers architecture with blockwise masked attention enables efficient multi-capability integration: understanding → generation → action flow enforces proper information dependencies while allowing parallel expert specialization.",
+      "tags": [
+        "architecture",
+        "mixture-of-experts",
+        "VLA"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_011",
+      "paper_id": "arxiv_2601.02456",
+      "insight": "Hybrid synthetic-real training synergizes strengths: synthetic data dominates simulation benchmarks while mixed data achieves best real-world performance. Pre-training contributes 51.6% performance gain, making large-scale diverse data critical.",
+      "tags": [
+        "sim2real",
+        "training-data",
+        "pre-training"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_012",
+      "paper_id": "arxiv_2601.02078",
+      "insight": "LLM-powered scene generation via a 4-stage pipeline (Intention Interpreter → RAG Assets Index → DSL Code Generator → Results Assembler) enables generating thousands of diverse simulation scenes in minutes from natural language prompts.",
+      "tags": [
+        "scene-generation",
+        "LLM",
+        "simulation",
+        "procedural-generation"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_013",
+      "paper_id": "arxiv_2601.02078",
+      "insight": "Sim-to-real correlation R²=0.924 validates that synthetic data can substitute for real-world data at scale, but equivalent-volume real data still outperforms synthetic due to higher physical fidelity—suggesting optimal strategies combine both.",
+      "tags": [
+        "sim2real",
+        "synthetic-data",
+        "validation"
+      ],
+      "cross_refs": [
+        "arxiv_2601.02456"
+      ]
+    },
+    {
+      "id": "insight_014",
+      "paper_id": "arxiv_2601.02078",
+      "insight": "VLM-based automated evaluation with LLM-generated task protocols reduces human annotation burden and enables large-scale benchmark creation for robotics manipulation tasks.",
+      "tags": [
+        "evaluation",
+        "VLM",
+        "automation",
+        "benchmark"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_015",
+      "paper_id": "arxiv_2601.01321",
+      "insight": "Four-stage framework for AI-digital twin integration (Modeling → Mirroring → Intervening → Autonomous Management) provides useful taxonomy but current LLM/world models 'do not guarantee physical fidelity or closed-loop stability' for robotics applications.",
+      "tags": [
+        "digital-twin",
+        "survey",
+        "framework",
+        "limitations"
+      ],
+      "cross_refs": [
+        "arxiv_2601.02078"
+      ]
+    },
+    {
+      "id": "insight_016",
+      "paper_id": "arxiv_2512.22615",
+      "insight": "Diffusion LLM backbones enable 27× inference speedup over autoregressive models through native parallel action generation, addressing a key bottleneck for real-time robot control.",
+      "tags": [
+        "diffusion-llm",
+        "inference-speed",
+        "VLA",
+        "architecture"
+      ],
+      "cross_refs": [
+        "arxiv_2601.02456"
+      ]
+    },
+    {
+      "id": "insight_017",
+      "paper_id": "arxiv_2512.22615",
+      "insight": "Bidirectional masked diffusion naturally supports action chunking without architectural modifications, unlike autoregressive models that require special handling for multi-step action prediction.",
+      "tags": [
+        "action-chunking",
+        "diffusion-llm",
+        "VLA"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_018",
+      "paper_id": "arxiv_2512.22615",
+      "insight": "Single diffusion step achieves competitive performance on robot manipulation tasks, enabling efficient inference without iterative refinement in time-critical scenarios.",
+      "tags": [
+        "diffusion-llm",
+        "inference-efficiency",
+        "robotics"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_019",
+      "paper_id": "arxiv_2512.22414",
+      "insight": "Human-to-robot transfer is an emergent property of diverse VLA pretraining: models naturally develop embodiment-agnostic representations (human/robot embeddings align in t-SNE) without explicit alignment mechanisms, but only after training on sufficient diversity across scenes, tasks, and embodiments.",
+      "tags": [
+        "human-to-robot-transfer",
+        "emergent-capability",
+        "VLA",
+        "pretraining-diversity"
+      ],
+      "cross_refs": [
+        "arxiv_2601.02456",
+        "arxiv_2512.22615"
+      ]
+    },
+    {
+      "id": "insight_020",
+      "paper_id": "arxiv_2512.22414",
+      "insight": "Co-training on human video data nearly doubles performance on out-of-distribution generalization settings (e.g., Spice task 32%→71%), suggesting human video can dramatically expand the effective training distribution for robotics without proportional robot data collection costs.",
+      "tags": [
+        "human-video-data",
+        "generalization",
+        "data-efficiency",
+        "VLA"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_021",
+      "paper_id": "arxiv_2601.05248",
+      "insight": "Latent CoT captures 'ineffable physical attributes' (fine-grained dynamics difficult to verbalize) that explicit linguistic reasoning cannot, enabling 14× speedup over explicit CoT methods while maintaining or improving performance.",
+      "tags": [
+        "latent-reasoning",
+        "chain-of-thought",
+        "inference-speed",
+        "VLA"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03590"
+      ]
+    },
+    {
+      "id": "insight_022",
+      "paper_id": "arxiv_2601.05248",
+      "insight": "Asynchronous frequency coordination (slow reasoning expert at keyframes, fast acting expert at control frequency) with KV caching enables efficient dual-expert VLAs: 15.4Hz on RTX 4090 while preserving reasoning quality.",
+      "tags": [
+        "dual-expert",
+        "frequency-coordination",
+        "inference-efficiency",
+        "VLA"
+      ],
+      "cross_refs": [
+        "arxiv_2601.02456"
+      ]
+    },
+    {
+      "id": "insight_023",
+      "paper_id": "arxiv_2601.05248",
+      "insight": "Long-horizon robustness in VLAs can be improved by latent spatio-temporal reasoning: LaST₀ achieves nearly 5× higher success rate at final steps of multi-step tasks compared to baselines, suggesting latent representations maintain coherence better than explicit predictions.",
+      "tags": [
+        "long-horizon",
+        "robustness",
+        "latent-reasoning",
+        "VLA"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_024",
+      "paper_id": "arxiv_2512.23739",
+      "insight": "Converting visual scene features to qualitative natural language descriptions (e.g., 'wider than tall' instead of aspect ratios) before LLM inference produces more reliable predictions than raw numerical features, as language-based tasks are more tractable for LLMs than compositional or arithmetic reasoning.",
+      "tags": [
+        "scene-representation",
+        "LLM-interface",
+        "qualitative-descriptions",
+        "household-robotics"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_025",
+      "paper_id": "arxiv_2512.21243",
+      "insight": "Action correction mechanisms are critical for LLM-based planners: ablation shows 62% success rate drop (0.62→0.24) when Scene Graph Simulator validation/reprompting is removed, suggesting error correction is not optional.",
+      "tags": [
+        "action-correction",
+        "error-recovery",
+        "LLM-planning",
+        "embodied-AI"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_026",
+      "paper_id": "arxiv_2512.21243",
+      "insight": "VLM grounding is the current bottleneck in dynamic scene graph methods: ground-truth object detection achieves 92% SR vs 60% with VLM augmentation, indicating 32% performance gap attributable to VLM errors.",
+      "tags": [
+        "VLM-bottleneck",
+        "scene-graph",
+        "grounding",
+        "performance-gap"
+      ],
+      "cross_refs": [
+        "arxiv_2601.06552"
+      ]
+    },
+    {
+      "id": "insight_027",
+      "paper_id": "arxiv_2512.21243",
+      "insight": "Natural language serialization of scene graphs outperforms JSON format by ~30% in token efficiency while maintaining or improving performance (0.60 SR vs 0.55 JSON), suggesting LLMs prefer natural text over structured formats.",
+      "tags": [
+        "scene-graph",
+        "serialization",
+        "token-efficiency",
+        "LLM-interface"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_028",
+      "paper_id": "arxiv_2512.20206",
+      "insight": "Protocol-based interaction systems with dual-layer control (powered state + activation state) more accurately model real-world device dependencies than simpler binary interaction models, improving sim-to-real transfer for household tasks.",
+      "tags": [
+        "simulation",
+        "interaction-modeling",
+        "sim2real",
+        "household-robotics"
+      ],
+      "cross_refs": [
+        "arxiv_2601.02078"
+      ]
+    },
+    {
+      "id": "insight_029",
+      "paper_id": "arxiv_2512.20206",
+      "insight": "MLLM benchmarks reveal spatial reasoning as weakest capability: Gemini-2.5-Pro achieves only 24.53/100 on household tasks with spatial intelligence identified as primary failure mode. Embodied constraints (physical reachability, occlusion) are most challenging.",
+      "tags": [
+        "MLLM",
+        "benchmark",
+        "spatial-reasoning",
+        "embodied-AI"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03590",
+        "arxiv_2601.05529"
+      ]
+    },
+    {
+      "id": "insight_030",
+      "paper_id": "arxiv_2512.20206",
+      "insight": "Hierarchical crowd simulation combining physics-based social force models with VLM-based high-level decision-making enables realistic human-robot interaction scenarios that traditional planners (A*/DWA) fail to handle (10.4 vs 92.7 human teleoperation score).",
+      "tags": [
+        "crowd-simulation",
+        "human-robot-interaction",
+        "VLM",
+        "social-navigation"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_031",
+      "paper_id": "arxiv_2512.17992",
+      "insight": "Neural feedback loops improve LLM reliability for symbolic reasoning: using classifier training loss as a 0-100 feedback score to guide iterative LLM queries achieves 92.3% test success vs 22.4% with single LLM call, addressing prompt-dependent brittleness without domain-specific prompt engineering.",
+      "tags": [
+        "LLM-feedback-loop",
+        "neuro-symbolic",
+        "predicate-learning",
+        "long-horizon-planning"
+      ],
+      "cross_refs": [
+        "arxiv_2512.21243"
+      ]
+    },
+    {
+      "id": "insight_032",
+      "paper_id": "arxiv_2512.17992",
+      "insight": "Effect-based supervision (penalizing deviations in atoms that should remain constant across transitions) eliminates need for ground-truth predicate labels, enabling learning from raw demonstrations—critical for domains where labeling is impractical.",
+      "tags": [
+        "self-supervised",
+        "predicate-learning",
+        "demonstration-learning"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_033",
+      "paper_id": "arxiv_2512.17435",
+      "insight": "Imagining future viewpoints via diffusion synthesis enables mapless VLM navigation that approaches map-based performance (72.4% vs 84% VLFM on Gibson): Where2Imagine waypoint prediction (trained on 80K human trajectories) plus selective foveation memory eliminates need for explicit occupancy maps.",
+      "tags": [
+        "mapless-navigation",
+        "imagination",
+        "VLM",
+        "novel-view-synthesis"
+      ],
+      "cross_refs": [
+        "arxiv_2601.06652"
+      ]
+    },
+    {
+      "id": "insight_034",
+      "paper_id": "arxiv_2512.17435",
+      "insight": "Selective foveation memory using DINOv2 features with hierarchical keyframe extraction (varying similarity thresholds for distant/medium/recent segments) efficiently maintains ~20 keyframes over 500-step episodes, enabling long-horizon spatial reasoning without explicit maps.",
+      "tags": [
+        "memory-architecture",
+        "keyframe-selection",
+        "long-horizon",
+        "navigation"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_035",
+      "paper_id": "arxiv_2512.17309",
+      "insight": "Formal ontology validation (OWL/Prolog) makes LLM hallucinations detectable and recoverable: invalid generated recipes trigger Prolog query failures, prompting automatic regeneration. This catches errors that would be invisible in end-to-end black-box systems.",
+      "tags": [
+        "neuro-symbolic",
+        "hallucination-detection",
+        "formal-validation",
+        "action-planning"
+      ],
+      "cross_refs": [
+        "arxiv_2512.17992"
+      ]
+    },
+    {
+      "id": "insight_036",
+      "paper_id": "arxiv_2512.17183",
+      "insight": "End-to-end co-speech gesture synthesis requires separate body/hand motion tokenization (RVQ-VAE) because hands have higher reconstruction error (~0.2 wrist RMSE) than body (~0.0006 root position), suggesting different granularity needs for expressive vs locomotion control.",
+      "tags": [
+        "gesture-synthesis",
+        "motion-representation",
+        "humanoid-control",
+        "embodied-communication"
+      ],
+      "cross_refs": []
+    }
+  ],
+  "visited_urls": [
+    "https://export.arxiv.org/api/query?search_query=all:vision-language-action&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all%3Arobot%20AND%20all%3A%22large%20language%20model%22&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://r.jina.ai/http://scholar.google.com/scholar?q=vision+language+action+robotics+2025+arXiv",
+    "https://export.arxiv.org/api/query?search_query=ti%3A%22Latent%20Spatio-Temporal%20Chain-of-Thought%22%20AND%20all%3Arobot&sortBy=submittedDate&sortOrder=descending&max_results=5",
+    "https://arxiv.org/pdf/2601.06652v1",
+    "https://api.github.com/search/repositories?q=%22Follow%20the%20Signs%22%20LLM%20robot%20navigation",
+    "https://api.github.com/search/repositories?q=2601.06652",
+    "https://duckduckgo.com/html/?q=Follow%20the%20Signs%20LLM%20robot%20navigation",
+    "https://arxiv.org/pdf/2601.06552v1",
+    "https://api.github.com/search/repositories?q=2601.06552",
+    "https://api.github.com/search/repositories?q=%22Model%20Reconciliation%20through%20Explainability%22",
+    "https://arxiv.org/abs/2601.05529",
+    "https://arxiv.org/html/2601.05529",
+    "https://api.github.com/search/repositories?q=2601.05529",
+    "https://api.github.com/search/repositories?q=%22Safety%20Not%20Found%22%20LLM%20robotics",
+    "https://arxiv.org/abs/2601.03590",
+    "https://arxiv.org/html/2601.03590",
+    "https://api.github.com/search/repositories?q=SiT-Bench+spatial+text",
+    "https://api.github.com/search/repositories?q=2601.03590",
+    "https://arxiv.org/abs/2601.02456",
+    "https://arxiv.org/html/2601.02456",
+    "https://api.github.com/search/repositories?q=InternVLA-A1",
+    "https://api.github.com/repos/InternRobotics/InternVLA-A1",
+    "https://arxiv.org/abs/2601.02078",
+    "https://arxiv.org/html/2601.02078",
+    "https://api.github.com/repos/AgibotTech/genie_sim",
+    "https://arxiv.org/abs/2601.01321",
+    "https://arxiv.org/html/2601.01321",
+    "https://api.github.com/search/repositories?q=2601.01321",
+    "https://arxiv.org/abs/2601.01196",
+    "https://arxiv.org/html/2601.01196",
+    "https://api.github.com/search/repositories?q=EduSim-LLM",
+    "https://api.github.com/search/repositories?q=2601.01196",
+    "https://arxiv.org/abs/2512.22615",
+    "https://api.github.com/search/repositories?q=Dream-VLA",
+    "https://api.github.com/repos/DreamLM/Dream-VLX",
+    "https://hkunlp.github.io/blog/2025/dream-vlx/",
+    "https://huggingface.co/Dream-org/Dream-VLA-7B",
+    "https://arxiv.org/abs/2512.22414",
+    "https://arxiv.org/html/2512.22414",
+    "https://api.github.com/search/repositories?q=2512.22414",
+    "https://api.github.com/repos/Physical-Intelligence/openpi",
+    "https://www.pi.website/blog/pi05",
+    "https://arxiv.org/abs/2601.05248",
+    "https://arxiv.org/html/2601.05248",
+    "https://api.github.com/search/repositories?q=LaST0+VLA+OR+2601.05248",
+    "https://api.github.com/search/repositories?q=%22Latent%20Spatio-Temporal%22+robot",
+    "https://sites.google.com/view/last0",
+    "https://arxiv.org/abs/2512.23739",
+    "https://arxiv.org/html/2512.23739",
+    "https://api.github.com/search/repositories?q=NOAM+household+robot+OR+2512.23739",
+    "https://api.github.com/search/repositories?q=%22Break%20Out%20the%20Silverware%22+OR+%22Non-visible%20Object%20Allocation%22",
+    "https://arxiv.org/abs/2512.21859",
+    "https://arxiv.org/html/2512.21859",
+    "https://api.github.com/search/repositories?q=TimeBill+LLM+OR+2512.21859",
+    "https://arxiv.org/abs/2512.21243",
+    "https://arxiv.org/html/2512.21243",
+    "https://api.github.com/search/repositories?q=LookPlanGraph+OR+2512.21243",
+    "https://api.github.com/repos/Onishenko-sci/LookPlanGraph",
+    "https://lookplangraph.github.io/",
+    "https://arxiv.org/abs/2512.20206",
+    "https://arxiv.org/html/2512.20206",
+    "https://api.github.com/repos/bigai-ai/tongsim",
+    "https://api.github.com/search/repositories?q=TongSIM+simulation+OR+2512.20206",
+    "https://huggingface.co/datasets/bigai/TongSIM-Asset",
+    "https://arxiv.org/abs/2512.17992",
+    "https://arxiv.org/html/2512.17992",
+    "https://api.github.com/search/repositories?q=UniPred+predicate",
+    "https://arxiv.org/abs/2512.17309",
+    "https://arxiv.org/html/2512.17309",
+    "https://api.github.com/search/repositories?q=RecipeMasterLLM+OR+2512.17309",
+    "https://api.github.com/search/repositories?q=RoboEarth+LLM",
+    "https://arxiv.org/abs/2512.17183",
+    "https://arxiv.org/html/2512.17183",
+    "https://api.github.com/search/repositories?q=Motion-GPT+gesture+OR+ZEGGS+robot"
+  ],
+  "blocked_sources": [],
+  "statistics": {
+    "total_discovered": 20,
+    "total_analyzed": 20,
+    "total_presented": 14,
+    "total_rejected": 5,
+    "total_insights_extracted": 1
+  }
+}

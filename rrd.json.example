@@ -1,0 +1,83 @@
+{
+  "project": "Research: Robotics & Embodied AI",
+  "branchName": "research/robotics-embodied-ai",
+  "description": "Scout recent advances in robotics, embodied AI, and sim2real transfer. Focus on papers with implementation potential for a small startup team.",
+
+  "requirements": {
+    "focus_area": "robotics",
+    "keywords": ["embodied AI", "manipulation", "sim2real", "robot learning", "dexterous manipulation"],
+    "time_window_days": 30,
+    "historical_lookback_days": 1095,
+    "target_papers": 20,
+    "sources": ["arXiv", "Google Scholar", "web"],
+    "min_score_to_present": 18
+  },
+
+  "domain_glossary": {
+    "enabled": false,
+    "terms": {
+      "DoF": "Degrees of Freedom",
+      "EEF": "End Effector",
+      "sim2real": "Simulation to Real-world Transfer",
+      "VLA": "Vision-Language-Action model"
+    }
+  },
+
+  "phase": "DISCOVERY",
+
+  "papers_pool": [
+    {
+      "id": "arxiv_2501.12345",
+      "title": "Example: Dexterous Manipulation via Sim2Real Transfer",
+      "url": "https://arxiv.org/abs/2501.12345",
+      "pdf_url": "https://arxiv.org/pdf/2501.12345.pdf",
+      "authors": ["Author A", "Author B"],
+      "date": "2025-01-10",
+      "source": "arXiv",
+      "priority": 4,
+      "status": "pending",
+      "score": null,
+      "score_breakdown": null,
+      "analysis": null,
+      "decision": null,
+      "notes": ""
+    }
+  ],
+
+  "insights": [
+    {
+      "id": "insight_001",
+      "paper_id": "arxiv_2501.12345",
+      "insight": "Key finding worth preserving even if paper rejected",
+      "tags": ["sim2real", "domain-randomization"],
+      "cross_refs": [],
+      "cross_cluster": null
+    }
+  ],
+
+  "visited_urls": [],
+  "blocked_sources": [],
+
+  "statistics": {
+    "total_discovered": 0,
+    "total_analyzed": 0,
+    "total_presented": 0,
+    "total_rejected": 0,
+    "total_insights_extracted": 0,
+    "discovery_metrics": {
+      "sources_tried": [],
+      "sources_successful": [],
+      "sources_blocked": [],
+      "source_failure_reasons": {}
+    },
+    "analysis_metrics": {
+      "avg_score": 0,
+      "score_distribution": {
+        "0-11": 0,
+        "12-17": 0,
+        "18-23": 0,
+        "24-30": 0
+      }
+    }
+  }
+}

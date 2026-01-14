@@ -1,0 +1,839 @@
+# Research-Ralph Progress Log
+Started: Tue Jan 13 16:42:36 CET 2026
+
+## Research Patterns
+- (Patterns discovered during research will be added here)
+
+## Cross-Reference Insights
+- **LLM spatial reasoning benchmarks:** arxiv_2601.05529 (ASCII maps) and arxiv_2601.03590 (coordinate-aware text) both isolate spatial reasoning from visual perception; both find significant model variance and failure modes in global/safety-critical scenarios.
+- **VLA landscape (2025-2026):** Three major approaches emerging: (1) MoT with visual foresight (InternVLA-A1/AgiBot), (2) Diffusion LLM backbone (Dream-VLA/HKU), (3) Flow matching with diverse co-training (π0.5/Physical Intelligence). All emphasize data diversity; Physical Intelligence ($5.6B) and AgiBot ($6.4B) lead commercially.
+
+---
+
+---
+
+## 2026-01-13 - Discovery Note
+Source: Google Scholar
+Issue: 403 Forbidden via r.jina.ai proxy while searching "vision language action robotics 2025 arXiv".
+Action: Logged as first failure; will retry in a later iteration before adding to blocked_sources.
+
+---
+
+## 2026-01-13 - Paper: Follow the Signs: Using Textual Cues and LLMs to Guide Efficient Robot Navigation
+ID: arxiv_2601.06652
+Status: PRESENTED
+Score: 19/30
+
+**Summary:** Proposes an LLM-guided semantic navigation framework that infers numbering/signage patterns to predict likely goal regions, then combines confidence-guided exploration with frontier exploration and A* for efficient goal finding in partially observed indoor maps. Experiments across synthetic, real floor-plan, and noisy environments show higher SPL and success rates than NavGPT, LLM-only, and frontier-only baselines, with a real-world Spot robot demo.
+
+**Key Method:** Maintain seen occupancy/semantic grids, prompt an LLM for directional goal-region predictions from textual cues, update a decayed confidence grid, and plan with A* to the highest-confidence region (fallback to nearest frontier when confidence is uniform).
+
+**Implementation Check:**
+- GitHub repos: no (GitHub search for title and arXiv ID returned none)
+- Commercial use: no public evidence found
+- Open questions: Any public code or supplementary material links beyond the paper; how robust is perception when signs are detected on-device instead of pre-annotated grids?
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Decision Rationale:** Combines LLM semantic reasoning with a confidence-grid + frontier exploration loop to improve navigation efficiency; practical but relies on pre-annotated semantics and struggles with ambiguous numbering.
+
+**Extracted Insights:**
+- Decayed confidence grids can stabilize noisy LLM directional predictions while preserving completeness via frontier exploration.
+- Textual signage/numbering is a strong cue for structured environments and can outperform object-centric heuristics for goal localization.
+
+**Cross-References:**
+- Related to: none yet
+
+**Learnings for Future Iterations:**
+- DuckDuckGo HTML search triggered an anti-bot challenge; prefer GitHub API and other sources for implementation checks when web search is blocked.
+
+**Doc Update:** Added a Common Gotchas note about DuckDuckGo HTML bot challenges in `AGENTS.md` and `CLAUDE.md`.
+---
+
+## 2026-01-13 - Paper: Model Reconciliation through Explainability and Collaborative Recovery in Assistive Robotics
+ID: arxiv_2601.06552
+Status: PRESENTED
+Score: 18/30
+
+**Summary:** Presents an LLM-driven model reconciliation framework for shared-control assistive robots that predicts and explains differences between human and robot mental models without requiring an explicit user model. After explanation, a recovery workflow lets the human correct the robot via rebuttals, supported by a VLM that matches objects in camera views or updates symbolic world states. Validation includes a real wheelchair-based mobile manipulator and a digital-twin evaluation dataset.
+
+**Key Method:** Use an LLM to extract objects/actions from user queries and match them against a robot's object database, world model, and action graph to classify divergence types (D_GO, D_SO, D_GA, D_SA, FD), then trigger recovery via VLM-based object matching, movement suggestions, or symbolic state overrides.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search for title and arXiv ID returned none)
+- Commercial use: no public evidence found
+- Open questions: Will code or datasets be released; how well does the recovery pipeline generalize beyond the small set of daily-living scenarios?
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 3/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Decision Rationale:** The framework is practical for explainability and recovery in assistive robotics with real-robot validation, but it relies on clean semantic labels and has limited scenario coverage, keeping the score at the threshold.
+
+**Extracted Insights:**
+- LLM-based reconciliation grounded in robot models outperforms vision-only baselines for failure explanations in the reported unit tests.
+- Adding a translation dictionary for uncommon robot labels boosted precondition explanation accuracy from 78.8% to 92.4%.
+
+**Cross-References:**
+- Related to: none yet
+
+**Learnings for Future Iterations:**
+- When evaluating LLM explainability for robots, check whether labels are semantically interpretable and whether a translation dictionary was needed.
+
+**Doc Update:** Added a Common Gotchas note about semantic label mismatches in `AGENTS.md` and `CLAUDE.md`.
+
+---
+
+## 2026-01-13 - Paper: Safety Not Found (404): Hidden Risks of LLM-Based Robotics Decision Making
+ID: arxiv_2601.05529
+Status: PRESENTED
+Score: 19/30
+
+**Summary:** First systematic safety benchmark for LLM-controlled robots, introducing seven tasks across three categories: Complete Information (ASCII map navigation), Incomplete Information (hallucination tests via sequence reasoning), and Safety-Oriented Spatial Reasoning (SOSR) for emergency decision-making. The fire evacuation scenario reveals catastrophic failures where models direct users toward hazards instead of exits.
+
+**Key Method:** Complete Information tasks use ASCII maps to isolate spatial reasoning from visual processing; Incomplete Information tasks test for hallucinations via trajectory validation and uncertain terrain navigation; SOSR tasks evaluate direction sense and emergency decisions in life-threatening contexts. Evaluated GPT-5, GPT-4o, Gemini-2.5 Flash, Gemini-2.0 Flash, and LLaMA-3-8b.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Commercial use: no public evidence found; this is primarily diagnostic research
+- Open questions: Will code/benchmark be released? How to extend beyond the 100-video preliminary dataset?
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Decision Rationale:** Provides actionable diagnostic insights for anyone building LLM-based robotics. The finding that Gemini-2.5 Flash directs users to wrong locations 33% of the time in fire emergencies is immediately useful for risk assessment. Lacks concrete mitigation strategies but the benchmark methodology is straightforward to implement.
+
+**Extracted Insights:**
+- Even 99% accuracy is dangerous in robotics: 1/100 catastrophic failures is unacceptable for safety-critical systems.
+- ASCII map navigation isolates spatial reasoning and reveals stark model differences (GPT-5: 100% vs LLaMA-3-8b: 0% on hard tasks).
+- In fire evacuation scenarios, Gemini-2.5 Flash directed users to professor's office (32%) or hallucinated server room (1%) instead of exits.
+
+**Cross-References:**
+- Related to: arxiv_2601.06652 (both address LLM spatial reasoning for navigation, but this focuses on failure modes rather than methods)
+
+**Learnings for Future Iterations:**
+- When evaluating LLM-robotics papers, look for worst-case failure analysis, not just aggregate accuracy.
+- Safety benchmarks for robotics should include emergency scenarios where errors have physical consequences.
+
+---
+
+## 2026-01-13 - Paper: Can LLMs See Without Pixels? Benchmarking Spatial Intelligence from Textual Descriptions
+ID: arxiv_2601.03590
+Status: INSIGHTS_EXTRACTED
+Score: 17/30
+
+**Summary:** Introduces SiT-Bench, the first large-scale benchmark to evaluate spatial intelligence of LLMs using text-only descriptions (no pixels). Tests whether spatial reasoning originates from visual encoders or language model backbones by converting scenes into coordinate-aware textual descriptions across 3,892 samples in 5 categories and 17 subtasks.
+
+**Key Method:** Data constructed via GPT-4o quality scoring on robotic, gaming, and simulated environments, plus adapted existing vision benchmarks converted to text. Two-phase verification with DeepSeek-R1 filtering and human review. Categories: Navigation & Planning (23.1%), Embodied & Fine-grained (28.4%), Multi-View & Geometric Reasoning (21.5%), Global Perception & Mapping (15.4%), Logic Detection (11.6%).
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Commercial use: no; this is research benchmark infrastructure
+- Open questions: Will the dataset be released? What's the plan for extending to more subtasks?
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 3/5
+- Value/Market: 2/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Decision Rationale:** Below threshold (17/30) but provides valuable diagnostic methodology. Key finding that VLMs outperform pure LLMs even on text-only spatial tasks suggests multimodal training embeds spatial priors. Latency concerns (35-70× slowdown with thinking modes) make it less directly actionable for real-time robotics.
+
+**Extracted Insights:**
+- VLMs outperform pure LLMs on text-only spatial tasks, suggesting multimodal training embeds spatial priors into language weights.
+- Explicit reasoning (CoT) boosts spatial performance significantly (Qwen3-8B: 37.91% → 45.04%) but 35-70× latency increase is incompatible with real-time robotics.
+- LLMs excel at localized semantic spatial tasks but show a critical "spatial gap" in global consistency (Cognitive Mapping: 8.34% best model vs 26.77% human).
+
+**Cross-References:**
+- Related to: arxiv_2601.05529 (both evaluate LLM spatial reasoning with text-based representations; this uses coordinate-aware descriptions, that uses ASCII maps)
+
+**Learnings for Future Iterations:**
+- Text-only spatial benchmarks can reveal model capabilities that visual benchmarks conflate with perception.
+- When evaluating embodied AI capabilities, distinguish between localized semantic tasks (where LLMs do well) and global consistency tasks (where they fail).
+
+---
+
+## 2026-01-13 - Paper: InternVLA-A1: Unifying Understanding, Generation and Action for Robotic Manipulation
+ID: arxiv_2601.02456
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** Presents InternVLA-A1, a Mixture-of-Transformers VLA architecture that unifies scene understanding, visual foresight generation, and action execution in a single model. Built on InternVL3/Qwen3-VL backbones, trained on 533M+ frames from InternData-A1 (synthetic) and AgiBot-World (real). Achieves 75.1% success on general manipulation tasks and 40-73% improvement over pi0/GR00T on dynamic manipulation.
+
+**Key Method:** Three coordinated transformer experts with blockwise masked self-attention:
+1. Understanding Expert: Semantic comprehension via multimodal LLM (InternVL3 or Qwen3-VL)
+2. Generation Expert: Visual foresight prediction using Cosmos VAE (256×256 → 4×4 latent)
+3. Action Expert: Flow matching for action prediction, combining semantic context + predicted dynamics
+
+Two-stage training: 700K steps pre-training (AdamW, constant 5×10⁻⁵ LR), 60K steps post-training (warmup/decay). Joint loss: λ·Lgen + Laction (λ=0.01).
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/InternRobotics/InternVLA-A1 (248 stars, active)
+- HuggingFace: model (InternRobotics/InternVLA-A1-3B) and dataset (InternRobotics/InternData-A1) released
+- Commercial use: yes - connected to AgiBot (Zhiyuan Robotics), ~$1B valuation, mass-producing humanoid robots
+- Open questions: License not specified; how does performance scale with smaller training data budgets?
+
+**Score Breakdown:**
+- Novelty: 4/5 - MoT architecture with visual foresight expert is meaningful; builds on established VLA paradigms
+- Feasibility: 4/5 - Proven real-world results, full open-source stack; requires 533M+ frames and significant compute
+- Time-to-POC: 4/5 - Pre-trained models available, 13Hz inference, needs robot hardware
+- Value/Market: 4/5 - Strong results on high-value dynamic manipulation; connected to commercial platform
+- Defensibility: 3/5 - Architecture is published openly; main moat is training data scale
+- Adoption: 4/5 - Complete open-source ecosystem (code, weights, dataset)
+
+**Decision Rationale:** Strong VLA contribution with practical implementation. Visual foresight prediction yields substantial gains on dynamic tasks. Full open-source release lowers barrier to entry. Commercial validation via AgiBot.
+
+**Extracted Insights:**
+- Visual foresight prediction improves dynamic manipulation by 19.4% (ablation); biggest gains on moving objects (+40-73%)
+- MoT with blockwise masked attention enables efficient multi-capability integration
+- Hybrid synthetic-real training: synthetic dominates simulation, mixed achieves best real-world; pre-training contributes 51.6% gain
+
+**Cross-References:**
+- Related to: arxiv_2512.22615 (Dream-VLA also uses diffusion for VLA), arxiv_2512.22414 (human-to-robot transfer in VLAs)
+
+**Learnings for Future Iterations:**
+- Visual foresight is particularly valuable for dynamic manipulation tasks; static pick-and-place shows smaller gains
+- Full open-source VLA releases (code + weights + data) are becoming industry standard for top research labs
+
+---
+
+## 2026-01-13 - Paper: Genie Sim 3.0: A High-Fidelity Comprehensive Simulation Platform for Humanoid Robot
+ID: arxiv_2601.02078
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** Introduces Genie Sim 3.0, an LLM-powered simulation platform for humanoid robots. The platform enables natural language scene generation, automated evaluation via VLM, and releases 10,000+ hours of synthetic training data across 200+ manipulation tasks. Demonstrates strong sim-to-real transfer with R²=0.924 correlation between simulated and real-world performance.
+
+**Key Method:** Four-stage scene generation pipeline:
+1. **Intention Interpreter:** CoT-enabled LLM parses NL prompts to JSON schemas
+2. **Assets Index:** RAG with 5,140 objects across 353 categories, QWEN embeddings in ChromaDB (~200ms retrieval)
+3. **DSL Code Generator:** LLM produces executable Python scene specifications
+4. **Results Assembler:** Creates hierarchical scene graphs via OpenUSD/Isaac Sim APIs
+
+Evaluation pipeline combines LLM-generated task protocols (ADER system) with VLM-based success assessment analyzing temporal visual sequences.
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/AgibotTech/genie_sim (490 stars, 37 forks)
+- Commercial use: yes - AgiBot (Zhiyuan Robotics), $6.4B valuation, planning HK IPO Q3 2026
+- Company backed by Tencent, HongShan, BYD, LG Electronics, Mirae Asset
+
+**Score Breakdown:**
+- Novelty: 4/5 - LLM-powered scene gen + VLM evaluation pipeline is meaningful; builds on Isaac Sim/procedural gen
+- Feasibility: 4/5 - Full open-source, 10K+ hours data; requires Isaac Sim + GPU
+- Time-to-POC: 4/5 - Pre-built scenes, 5,140 assets, NL interface lowers barrier
+- Value/Market: 4/5 - $6.4B company using this for commercial robot production
+- Defensibility: 3/5 - Open-source; moat is asset library + data scale
+- Adoption: 4/5 - Isaac Sim (industry standard), Python DSL, complete ecosystem
+
+**Decision Rationale:** Strong simulation platform with practical commercial validation. LLM-powered scene generation + VLM evaluation reduces manual effort. R²=0.924 sim-to-real correlation demonstrates synthetic data viability. Same team as InternVLA-A1, indicating coherent robotics stack.
+
+**Extracted Insights:**
+- LLM-powered 4-stage scene generation can produce thousands of diverse scenes in minutes from natural language
+- Sim-to-real R²=0.924 validates synthetic data at scale, but equivalent-volume real data still outperforms
+- VLM-based automated evaluation with LLM-generated protocols enables large-scale benchmark creation
+
+**Cross-References:**
+- Related to: arxiv_2601.02456 (InternVLA-A1 - same company, uses Genie Sim for training data)
+
+**Learnings for Future Iterations:**
+- AgiBot (AgibotTech) is building a coherent robotics stack: simulator (Genie Sim) + VLA model (InternVLA-A1) + dataset (AgiBot-World) - worth tracking their releases
+- Isaac Sim + OpenUSD is becoming the de facto standard for high-fidelity robot simulation
+
+---
+
+## 2026-01-13 - Paper: Digital Twin AI: Opportunities and Challenges from Large Language Models to World Models
+ID: arxiv_2601.01321
+Status: REJECTED
+Score: 10/30
+
+**Summary:** Comprehensive survey paper (27 authors from 12+ institutions) presenting a four-stage framework for AI integration in digital twins: (1) physics-based modeling, (2) real-time mirroring/synchronization, (3) intervention through prediction/optimization, and (4) autonomous management via LLMs and agents. Covers 11 application domains including healthcare, aerospace, manufacturing, and robotics.
+
+**Key Method:** Conceptual framework synthesizing existing technologies—no novel implementation. Reviews physics-informed AI (PINNs, Neural Operators), generative models for scene representation (NeRF, 3DGS), LLM-based autonomous management, and world models (NVIDIA Cosmos). The four-stage lifecycle (Modeling → Mirroring → Intervening → Autonomous Management) organizes existing work rather than proposing new methods.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Commercial use: no; this is a survey/review paper
+- Open questions: N/A—survey paper with no artifacts to release
+
+**Score Breakdown:**
+- Novelty: 2/5 - Survey organizing existing work, no new methods or architectures
+- Feasibility: 2/5 - No concrete implementation to build on
+- Time-to-POC: 1/5 - Conceptual framework with nothing directly actionable
+- Value/Market: 2/5 - Good reference for landscape understanding but no direct application
+- Defensibility: 1/5 - N/A for survey papers
+- Adoption: 2/5 - Useful as reference but no artifacts (code, models, datasets)
+
+**Decision Rationale:** Survey paper providing landscape overview but no actionable methodology or artifacts. The four-stage framework is conceptual rather than implementable. Useful for understanding digital twin + AI integration patterns, but low POC potential. Authors explicitly acknowledge LLM/world models "do not guarantee physical fidelity or closed-loop stability" and their role "remains largely exploratory."
+
+**Extracted Insights:**
+- Four-stage framework (Modeling → Mirroring → Intervening → Autonomous) provides useful taxonomy for organizing digital twin AI integration work
+- Key limitation: current LLM/world models "do not guarantee physical fidelity or closed-loop stability" for robotics applications
+- Missing from field: unified evaluation metrics, head-to-head comparisons, ablation studies, long-term robustness testing
+
+**Cross-References:**
+- Related to: arxiv_2601.02078 (Genie Sim - concrete implementation of LLM-powered digital twin generation that this survey would reference)
+
+**Learnings for Future Iterations:**
+- Survey papers rarely score above threshold due to lack of novel implementation; prioritize papers with code/weights/benchmarks
+- "Exploratory" framing in surveys indicates the field lacks mature solutions—be cautious of overclaiming in related application papers
+
+---
+
+## 2026-01-14 - Paper: EduSim-LLM: An Educational Platform Integrating Large Language Models and Robotic Simulation for Beginners
+ID: arxiv_2601.01196
+Status: REJECTED
+Score: 14/30
+
+**Summary:** Educational platform for zero-code robot control using LLMs with CoppeliaSim. Uses LangChain with Llama3 (70b via Groq, 8b via Ollama) to translate natural language instructions into executable Python control code. Four-module architecture: NL interface, LLM planner, simulation backend (CoppeliaSim remote API), and Gradio frontend.
+
+**Key Method:** Structured prompt templates convert natural language instructions to executable Python via executeActionCode function. Supports direct (step-by-step commands) and autonomous operation modes. RobotController class manages locomotion and manipulation. Multi-robot collaboration via sequential action generation across agents (tested on three YouBot configurations).
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search for title and arXiv ID returned none)
+- Commercial use: no; academic research project for educational accessibility
+- Open questions: Will code be released? How does it compare to Isaac Sim Academy or Robot Virtual Worlds?
+
+**Score Breakdown:**
+- Novelty: 2/5 - Incremental over GenSim and similar LLM-to-simulation work; educational focus is niche
+- Feasibility: 3/5 - Uses off-the-shelf tools but no code released
+- Time-to-POC: 4/5 - Well-documented architecture, could replicate in days
+- Value/Market: 2/5 - Educational niche is small; free alternatives exist
+- Defensibility: 1/5 - No unique tech or data; trivially replicable
+- Adoption: 2/5 - CoppeliaSim has smaller community than Isaac Sim; no code release
+
+**Decision Rationale:** Straightforward educational tool combining off-the-shelf components (CoppeliaSim, LangChain, Gradio, Llama3). While useful for teaching robotics to beginners, lacks novelty, defensibility, and commercial potential. Score 14/30 well below threshold.
+
+**Extracted Insights:**
+- (None significant - standard LLM-to-code pipeline applied to educational context)
+
+**Cross-References:**
+- Related to: arxiv_2601.02078 (Genie Sim) - same domain (LLM-powered simulation) but Genie Sim is far more sophisticated and commercially validated
+
+**Learnings for Future Iterations:**
+- Educational platforms tend to score low on defensibility and value/market unless they introduce novel pedagogical methods or achieve significant scale
+- CoppeliaSim-based work has smaller potential reach than Isaac Sim-based work due to community size
+
+---
+
+## 2026-01-14 - Paper: Dream-VL & Dream-VLA: Open Vision-Language and Vision-Language-Action Models with Diffusion Language Model Backbone
+ID: arxiv_2512.22615
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** First diffusion-based vision-language and vision-language-action models. Dream-VL and Dream-VLA use a discrete diffusion language model (Dream 7B) as backbone instead of autoregressive LLMs. Built by HKU NLP Group + Huawei Noah's Ark Lab. Key innovation: bidirectional masked diffusion enables parallel action generation with 27× speedup over autoregressive methods.
+
+**Key Method:** Dream 7B discrete diffusion LLM backbone with Qwen2ViT vision encoder. Dream-VL trained on 12M MAmmoTH-VL multimodal data. Dream-VLA pretrained on 970K Open-X Embodiment robot trajectories. Native action chunking support without architectural modifications. Supports both discrete diffusion loss (pretraining) and continuous losses (L1 regression, flow matching) for finetuning.
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/DreamLM/Dream-VLX (86 stars)
+- HuggingFace: Dream-org/Dream-VLA-7B, Dream-org/Dream-VL-7B
+- Commercial use: Apache 2.0 license allows commercial use; no known commercial deployment yet
+- Open questions: Real-world robot validation beyond SimplerEnv? Performance on more dynamic tasks?
+
+**Score Breakdown:**
+- Novelty: 4/5 - First diffusion LLM backbone for VLA; fundamentally different architecture
+- Feasibility: 4/5 - Full open-source stack, HuggingFace integration, clear documentation
+- Time-to-POC: 4/5 - Ready-to-use models, simple transformers API
+- Value/Market: 4/5 - Strong benchmark results, 27× speedup compelling for real-time robotics
+- Defensibility: 3/5 - Open-source (Apache 2.0); moat is diffusion LLM expertise
+- Adoption: 4/5 - HuggingFace integration, multi-robot support, active community
+
+**Decision Rationale:** Novel diffusion-based architecture with strong benchmarks and full open-source release. 27× inference speedup addresses critical real-time constraint in robotics. HKU NLP + Huawei backing suggests sustained development. Cross-reference with InternVLA-A1 for MoT vs diffusion architecture comparison.
+
+**Extracted Insights:**
+- Diffusion LLM backbone enables 27× speedup through native parallel action generation
+- Bidirectional masked diffusion supports action chunking without architectural changes
+- Single diffusion step achieves competitive performance, enabling efficient real-time inference
+- VLM trained on diffusion loss maintains strong benchmark performance (94.4% DocVQA)
+
+**Cross-References:**
+- Related to: arxiv_2601.02456 (InternVLA-A1) - both state-of-the-art VLAs with different architectures (MoT vs diffusion); Dream-VLA achieves higher LIBERO score (97.2% vs 75.1%) but InternVLA-A1 tested on real robots
+- Related to: arxiv_2512.22414 (Human-to-Robot Transfer) - both explore VLA architectures
+
+**Learnings for Future Iterations:**
+- Diffusion LLM is emerging as alternative to autoregressive backbone for VLAs; track HKU NLP's Dream family releases
+- Apache 2.0 licensing makes HKU NLP models more commercially accessible than some alternatives
+- SimplerEnv is becoming standard VLA benchmark; scores are directly comparable across papers
+
+---
+
+## 2026-01-14 - Paper: Emergence of Human to Robot Transfer in Vision-Language-Action Models
+ID: arxiv_2512.22414
+Status: PRESENTED
+Score: 24/30
+
+**Summary:** Demonstrates that human-to-robot transfer is an emergent property of diverse VLA pretraining. By co-training π₀.₅ on 14 hours of embodied human video (head/wrist-mounted cameras with SLAM tracking) alongside robot teleoperation data, the approach nearly doubles performance on generalization settings seen only in human data. Key finding: no explicit alignment mechanism needed—embodiment-agnostic representations emerge naturally with sufficient pretraining diversity.
+
+**Key Method:** Equip human demonstrators with head-mounted and wrist-worn cameras. Process via visual SLAM for 6D head motion tracking and 3D hand keypoint extraction. Co-train VLA on both human and robot data with identical objectives: flow matching for low-level action prediction, language annotations for high-level subtask prediction. Transfer emerges once model sees sufficient diversity across scenes, tasks, and embodiments.
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/Physical-Intelligence/openpi (9,800 stars, Apache 2.0)
+- Commercial use: yes - Physical Intelligence ($5.6B valuation, $1.07B raised total). Founders include Karol Hausman (CEO), Chelsea Finn, and Lachy Groom. Backed by CapitalG, Jeff Bezos, Thrive, Lux, Amazon, T. Rowe Price.
+- Open questions: Can human video scale to internet-video levels without specialized cameras? What's the minimum diversity threshold for emergence?
+
+**Score Breakdown:**
+- Novelty: 4/5 - First demonstration of emergent human-to-robot transfer; challenges assumption that explicit domain adaptation is required
+- Feasibility: 4/5 - Builds on π₀.₅ which is deployed in real homes; requires diverse pretraining data
+- Time-to-POC: 4/5 - openpi provides pretrained checkpoints and fine-tuning recipes
+- Value/Market: 5/5 - Physical Intelligence is highest-valued robotics AI startup; this enables leveraging abundant human video data
+- Defensibility: 3/5 - Research is public but data collection and scale create moat
+- Adoption: 4/5 - Apache 2.0 license, HuggingFace integration, 9.8K GitHub stars
+
+**Decision Rationale:** High-impact finding from leading robotics startup. The emergent alignment insight reduces the perceived complexity of human-to-robot transfer from "fundamental research challenge" to "scaling problem." Commercial validation through Physical Intelligence's real-world deployments. Strong author team (Finn, Levine, Nair from Stanford/Berkeley robotics).
+
+**Extracted Insights:**
+- Human-to-robot transfer emerges naturally with diverse VLA pretraining—no explicit alignment needed
+- Pretraining diversity is the key variable: models lacking diverse training show negligible transfer
+- Co-training on human video nearly doubles OOD generalization (32%→71% on some tasks)
+- T-SNE shows human/robot embeddings naturally align as diversity increases
+
+**Cross-References:**
+- Related to: arxiv_2601.02456 (InternVLA-A1) - different architecture but both explore scaling VLAs with diverse data
+- Related to: arxiv_2512.22615 (Dream-VLA) - both advance VLA architecture frontier
+- Related to: π0.5 paper (arxiv 2504.16054) - this paper contributes to that system's data strategy
+
+**Learnings for Future Iterations:**
+- Physical Intelligence is the dominant commercial player in VLA space ($5.6B valuation); track their releases closely
+- "Emergence" framing connects robotics to LLM scaling insights—may see more such crossover
+- Human video data is potentially transformative for robotics if collection/processing can scale
+
+---
+
+## 2026-01-14 - Paper: LaST₀: Latent Spatio-Temporal Chain-of-Thought for Robotic Vision-Language-Action Model
+ID: arxiv_2601.05248
+Status: PRESENTED
+Score: 21/30
+
+**Summary:** Introduces LaST₀, a VLA framework using latent spatio-temporal chain-of-thought reasoning instead of explicit linguistic or visual predictions. Key innovation: reasoning happens in a compact latent space that captures "ineffable physical attributes" difficult to verbalize, achieving 82% simulation success and 72% real-world success.
+
+**Key Method:** Dual-system Mixture-of-Transformers architecture:
+- **Slow reasoning expert:** Autoregressively predicts three interleaved latent modalities (visual via SigLIP, geometric via Uni3D, proprioceptive) at keyframes
+- **Fast acting expert:** High-frequency action generation conditioned on latent representations
+- **Asynchronous coordination:** Fixed ratio κ (2/4/8) decouples operating frequencies; KV caching eliminates redundant computation
+
+Three-stage training: (1) Large-scale pretraining on 400K+ trajectories from Open-X/DROID/RoboMIND, (2) SFT of slow expert with cosine similarity loss (40 epochs), (3) Action expert training with flow matching (300 epochs). Built on DeepSeek-LLM 1B initialized from Janus-Pro.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Project website: https://sites.google.com/view/last0
+- Commercial use: no public evidence found
+- Open questions: When will code/weights be released? How does latent CoT compare to explicit visual foresight (InternVLA-A1) on dynamic tasks?
+
+**Score Breakdown:**
+- Novelty: 4/5 - Latent CoT is meaningful architectural innovation over explicit linguistic/visual reasoning
+- Feasibility: 4/5 - Built on proven backbones; 400K trajectory pretraining is substantial but achievable
+- Time-to-POC: 3/5 - No code released yet; requires multi-camera setup and Gello teleoperation
+- Value/Market: 4/5 - 13% real-world improvement + 5× long-horizon robustness addresses key deployment gaps
+- Defensibility: 3/5 - Novel architecture but builds on public components
+- Adoption: 3/5 - No public code/weights yet; 15.4Hz inference on RTX 4090 is practical
+
+**Decision Rationale:** Strong VLA contribution with novel latent reasoning approach that achieves both quality improvement (13% real-world gain) and speed improvement (14× over explicit CoT). Long-horizon robustness (5× at final steps) is particularly valuable for practical deployment.
+
+**Extracted Insights:**
+- Latent CoT captures "ineffable physical attributes" that explicit linguistic reasoning cannot, enabling 14× speedup while improving performance
+- Asynchronous frequency coordination with KV caching enables efficient dual-expert VLAs at 15.4Hz
+- Long-horizon robustness improves dramatically (5× at final steps) with latent spatio-temporal reasoning
+
+**Cross-References:**
+- Related to: arxiv_2601.02456 (InternVLA-A1) - explicit visual foresight vs latent CoT; both use MoT architecture
+- Related to: arxiv_2512.22615 (Dream-VLA) - diffusion backbone vs latent reasoning; both achieve speedup over autoregressive
+- Related to: arxiv_2601.03590 (SiT-Bench) - both explore alternatives to explicit linguistic spatial reasoning
+
+**Learnings for Future Iterations:**
+- "Latent" vs "explicit" reasoning is emerging as key VLA architecture decision; track papers comparing these approaches
+- Long-horizon robustness is differentiating metric—not just single-step success rate
+- Janus-Pro (DeepSeek multimodal) is becoming popular foundation for VLAs alongside InternVL and Qwen
+
+---
+
+## 2026-01-14 - Paper: Break Out the Silverware -- Semantic Understanding of Stored Household Items
+ID: arxiv_2512.23739
+Status: REJECTED
+Score: 16/30
+
+**Summary:** Introduces NOAM (Non-visible Object Allocation Model), a hybrid pipeline that combines Grounding-DINO/SAM visual detection with LLM inference to predict where household items are stored in occluded containers (drawers, cabinets). Addresses the practical robotics problem of locating items that are not visible in a scene.
+
+**Key Method:** Nine-step pipeline: (1) detect storage containers via Grounding-DINO+SAM, (2) extract container features (type, position, dimensions, proximity to anchors like sink/oven), (3) convert to qualitative natural language descriptions (e.g., "wider than tall" instead of aspect ratios), (4) construct structured prompts, (5) query LLM (GPT-4/LLaMA-3.3) to predict container ID, (6) map predictions back to 2D polygons.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Commercial use: no; academic research from Bar Ilan University and Tufts
+- Open questions: Will code/dataset be released? How to generalize beyond kitchens?
+
+**Score Breakdown:**
+- Novelty: 3/5 - Novel problem formulation but incremental methodology (standard DINO+SAM+LLM pipeline)
+- Feasibility: 3/5 - Uses proven components but 13s inference too slow for real-time
+- Time-to-POC: 3/5 - No code release; would need to replicate from methodology description
+- Value/Market: 3/5 - Real problem for domestic robots but 23% accuracy far from deployable
+- Defensibility: 2/5 - No unique tech or data moat; trivially replicable
+- Adoption: 2/5 - No code release, kitchen-only, slow inference, below-human accuracy
+
+**Decision Rationale:** Novel problem formulation (inferring hidden object storage locations) addresses real domestic robotics need, but methodology is incremental—standard DINO+SAM vision pipeline feeding an LLM. 23% accuracy and 13s latency are far from deployable. Fair inter-annotator agreement (κ=0.35) suggests inherent task subjectivity that may limit achievable performance.
+
+**Extracted Insights:**
+- Converting visual features to qualitative natural language (e.g., "wider than tall" vs raw aspect ratios) improves LLM inference over numerical representations
+- Kitchen storage location prediction has inherent subjectivity (κ=0.35 human agreement); perfect accuracy may not be achievable
+- Task benchmark: 6,500 item-image pairs (SUN dataset) + 100 real-world kitchen images with human annotations
+
+**Cross-References:**
+- Related to: arxiv_2601.06652 (Follow the Signs) - both use LLMs for spatial inference in structured environments, but different domains (navigation vs storage)
+
+**Learnings for Future Iterations:**
+- "Semantic reasoning about occluded/hidden objects" is an underexplored robotics problem with practical value
+- Inter-annotator agreement (Fleiss' κ) is a useful metric for establishing task difficulty upper bounds
+- Kitchen-specific datasets may not generalize; multi-room evaluation is important for household robotics
+
+---
+
+## 2026-01-14 - Paper: TimeBill: Time-Budgeted Inference for Large Language Models
+ID: arxiv_2512.21859
+Status: REJECTED
+Score: 15/30
+
+**Summary:** Framework for time-budgeted LLM inference combining Response Length Predictor (RLP), Execution Time Estimator (ETE), and adaptive KV cache eviction. Mentions robotics and autonomous driving as motivating applications but evaluates only on general NLP benchmarks.
+
+**Key Method:** Three-component system: (1) RLP uses small language model (Qwen2.5-0.5B) with knowledge distillation to classify output length into 512 buckets; (2) ETE combines FLOPs-based modeling with profiling-based coefficient fitting; (3) Adaptive KV cache eviction adjusts eviction ratio based on time budget vs predicted execution time.
+
+**Implementation Check:**
+- GitHub repos: no (no relevant repositories found)
+- Commercial use: no
+- Open questions: Will code be released? Can the framework be adapted for robotics-specific latency requirements (control loop frequencies)?
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 2/5
+- Defensibility: 2/5
+- Adoption: 2/5
+
+**Decision Rationale:** Generic LLM efficiency paper. While it mentions robotics as a motivating application domain, the paper provides no robotics-specific methods, evaluation, or integration guidance. The techniques (response length prediction, adaptive KV cache eviction) are useful but tangential to the core robotics+LLM research focus.
+
+**Extracted Insights:**
+- (None significant for robotics—standard LLM optimization techniques)
+
+**Cross-References:**
+- Related to: arxiv_2601.03590 (SiT-Bench) - both address LLM latency concerns but SiT-Bench focuses on robotics-relevant spatial reasoning
+
+**Learnings for Future Iterations:**
+- Papers mentioning "robotics" as application domain may not actually contribute robotics-specific methods; check methodology section for domain-specific evaluation
+- Time-budgeted inference is relevant for robotics control loops but needs robotics-specific benchmarks (control frequencies, sensor latencies) to be actionable
+
+---
+
+## 2026-01-14 - Paper: Quadrupped-Legged Robot Movement Plan Generation using Large Language Model
+ID: arxiv_2512.21293
+Status: REJECTED
+Score: 13/30
+
+**Summary:** Distributed client-server architecture integrating Vertex AI Gemini with DeepRobotics Jueying Lite 3 quadruped robot for natural language navigation. LLM generates JSON action sequences that are converted to ROS navigation commands. Achieves >90% success rate across four indoor navigation scenarios. Academic project from Indonesian university (ITS) as a final project.
+
+**Key Method:** Three-tier computation: motion host (actuators/sensors), perception host (NVIDIA Jetson Xavier NX for localization/planning via HDL-Localization 3D LiDAR SLAM), external server (Gemini LLM). Semantic waypoints map to global coordinates. Flask web interface accepts Indonesian natural language commands; LLM generates JSON with command type and waypoint parameters published to ROS topics.
+
+**Implementation Check:**
+- GitHub repos: no direct repos found for this paper
+- Similar projects exist: zsibot_vln (6 stars), llm_mjx_go1_playground (10 stars)
+- Commercial use: no - this is academic research; DeepRobotics ($140M raised, planning 2026 IPO) makes the Jueying platform but this LLM work is from Indonesian university
+- Open questions: Will code be released? Can findings transfer to non-Indonesian language interfaces?
+
+**Score Breakdown:**
+- Novelty: 2/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 2/5
+- Defensibility: 1/5
+- Adoption: 2/5
+
+**Decision Rationale:** Standard LLM-to-ROS integration pattern on commercial quadruped platform. While >90% success rate is respectable, the methodology is incremental over existing open-source projects. No code release, academic final project without commercial backing, and Indonesian-specific NL interface limits broader applicability.
+
+**Extracted Insights:**
+- (None significant - standard LLM-to-ROS integration)
+
+**Cross-References:**
+- Related to: arxiv_2601.06652 (Follow the Signs) - both use LLMs for robot navigation but different platforms (wheeled vs quadruped)
+
+**Learnings for Future Iterations:**
+- Papers using commercial robot platforms (DeepRobotics, Unitree) may be academic research rather than commercial development; check author affiliations
+- Final project / thesis papers tend to score low on defensibility and adoption due to limited resources for code release and maintenance
+
+---
+
+## 2026-01-14 - Paper: LookPlanGraph: Embodied Instruction Following Method with VLM Graph Augmentation
+ID: arxiv_2512.21243
+Status: PRESENTED
+Score: 19/30
+
+**Summary:** Introduces LookPlanGraph, a dynamic scene graph augmentation framework for embodied instruction following that uses VLMs to continuously verify and discover objects during execution rather than relying on static pre-built graphs. Four-component architecture: Memory Graph (three-layer structure), Scene Graph Simulator (action validation), VLM Graph Augmentation (real-time discovery), and LM decision-making.
+
+**Key Method:** Iterative algorithm marks all objects as "unseen" initially and updates memory graph as agent explores. VLM processes egocentric camera views to discover/validate task-relevant objects. Scene Graph Simulator validates generated actions and corrects errors via reprompting or rule-based adjustments. Natural language serialization of scene graphs outperforms JSON by 30% in token efficiency.
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/Onishenko-sci/LookPlanGraph (2 stars, Python, 26.9MB)
+- Project page: https://lookplangraph.github.io/
+- Commercial use: no; academic project from Moscow AIRI
+- Open questions: When will GraSIF dataset be released on HuggingFace? No license specified on repo.
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Decision Rationale:** Solid contribution addressing real limitation of static planners in dynamic environments. Action correction mechanism is critical (62% SR drop without it). GraSIF benchmark (514 tasks) is useful community artifact. Limited commercial traction but full code release.
+
+**Extracted Insights:**
+- Action correction is critical: ablation shows 62% SR drop (0.62→0.24) without Scene Graph Simulator validation/reprompting
+- VLM grounding is current bottleneck: ground-truth detection achieves 92% SR vs 60% with VLM (32% gap)
+- Natural language serialization > JSON: 30% more token-efficient, maintains/improves performance
+
+**Cross-References:**
+- Related to: arxiv_2601.06652 (Follow the Signs) - both address dynamic environment navigation with LLM guidance
+- Related to: arxiv_2601.06552 (Model Reconciliation) - both handle robot-environment model mismatches
+
+**Learnings for Future Iterations:**
+- Error correction/reprompting mechanisms are critical for LLM-based planning; papers without them may underperform
+- VLM grounding remains the bottleneck in embodied AI; 30%+ performance gap between VLM and ground-truth detection
+
+---
+
+## 2026-01-14 - Paper: TongSIM: A General Platform for Simulating Intelligent Machines
+ID: arxiv_2512.20206
+Status: PRESENTED
+Score: 21/30
+
+**Summary:** Comprehensive embodied AI simulation platform from BIGAI (Beijing Institute for General Artificial Intelligence) built on Unreal Engine 5.6. Features 115+ indoor scenes, continuous outdoor urban environment, 3,000+ interactive objects across 500+ categories, and five benchmark task categories spanning navigation, multi-agent cooperation, human-robot interaction, household tasks, and social intelligence.
+
+**Key Method:** UE5.6 engine with Chaos physics for rigid body dynamics, fluids, and cloth simulation. Python/C++ APIs with MuJoCo/Isaac Lab integration options. Procedural scene generation via coarse-to-fine synthesis decomposing scenes into functional units, stochastically recombining, and applying micro-level variations with human-in-loop validation. Protocol-based interaction system with dual-layer control (powered state + activation state) mimicking real device electrical dependencies. Text-driven motion generation via diffusion models with environmental voxel encoding. Hierarchical crowd simulation combining social force models with VLM-based high-level decision-making.
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/bigai-ai/tongsim (159 stars, 9 forks, C++), plus SDK and indoor nav environment repos
+- HuggingFace: bigai/TongSIM-Asset (3,000+ objects, 100 indoor scenes, 10+ agents)
+- Commercial use: no - strictly non-commercial academic license
+- BIGAI is Beijing municipal government-backed research institute led by Song-Chun Zhu (formerly UCLA)
+- Connected to Tong Tong 2.0 AGI agent project
+
+**Score Breakdown:**
+- Novelty: 4/5 - Comprehensive UE5.6-based platform with unique features (protocol-based interactions, hierarchical crowd sim, VLM evaluation)
+- Feasibility: 4/5 - Full open-source release with assets and SDK; UE5.6 + significant compute required
+- Time-to-POC: 3/5 - More complex setup than Isaac Sim-based alternatives; UE5.6 learning curve
+- Value/Market: 4/5 - Comprehensive benchmark suite addresses real gaps; connected to major AGI research agenda
+- Defensibility: 3/5 - Open-source (non-commercial); moat is asset library + benchmark quality
+- Adoption: 3/5 - 159 stars; non-commercial license limits commercial use; UE5.6 vs Isaac Sim ecosystem
+
+**Decision Rationale:** Strong simulation platform with comprehensive benchmark suite and unique features. BIGAI backing provides credibility. However, non-commercial license and UE5.6 dependency may limit adoption compared to Isaac Sim alternatives (e.g., Genie Sim from AgiBot).
+
+**Extracted Insights:**
+- Protocol-based dual-layer interaction control (powered + activation state) more accurately models real device dependencies
+- MLLM spatial reasoning remains weak: Gemini-2.5-Pro achieves only 24.53/100 on household tasks, with embodied constraints most challenging
+- Hierarchical crowd simulation (physics + VLM) far outperforms traditional planners: human teleoperation 92.7 vs A*/DWA 10.4
+
+**Cross-References:**
+- Related to: arxiv_2601.02078 (Genie Sim) - both simulation platforms; Genie Sim uses Isaac Sim/OpenUSD vs TongSIM uses UE5.6; AgiBot has commercial backing vs BIGAI is research-focused
+- Related to: arxiv_2601.03590 (SiT-Bench), arxiv_2601.05529 (Safety Not Found) - all reveal MLLM spatial reasoning limitations
+
+**Learnings for Future Iterations:**
+- UE5.6-based platforms compete with Isaac Sim for robotics simulation; UE5.6 offers better rendering/environments, Isaac Sim offers better robotics integration
+- Non-commercial academic licenses significantly limit practical adoption potential
+- BIGAI is building a comprehensive embodied AI stack: Tong Tong agent + TongSIM simulator + benchmark suite
+
+---
+
+## 2026-01-14 - Paper: Unifying Deep Predicate Invention with Pre-trained Foundation Models (UniPred)
+ID: arxiv_2512.17992
+Status: PRESENTED
+Score: 21/30
+
+**Summary:** UniPred is a bilevel learning framework that unifies top-down LLM proposals with bottom-up neural learning for predicate invention in long-horizon robotic planning. The key innovation: using classifier training loss as neural feedback to iteratively refine LLM hypotheses, achieving 2-4x higher success than pure top-down methods and 3-4x faster learning than pure bottom-up approaches.
+
+**Key Method:** Four-stage iterative pipeline:
+1. GPT-4o proposes PDDL predicate candidates with effect distributions
+2. Neural classifiers train via effect-based supervision (atoms invariant across transitions when predicates absent from effects)
+3. Classifier training loss → 0-100 feedback score guides next LLM query
+4. Derived-aware hill-climbing selection distinguishes basic vs quantifier-derived predicates for Non-STRIPS support
+
+Uses DINOv3 features for visual domains. No ground-truth labels needed—effect-based supervision is self-supervised.
+
+**Implementation Check:**
+- GitHub repos: no (searched for UniPred, 2512.17992)
+- Commercial use: no
+- Open questions: Code release timeline? License?
+
+**Score Breakdown:**
+- Novelty: 4/5 - Novel bilevel framework addressing LLM prompt brittleness via neural feedback
+- Feasibility: 4/5 - Real-robot validation (AgileX Piper, 20 demos); standard components (GPT-4o, DINOv3)
+- Time-to-POC: 3/5 - No code released; requires PDDL expertise and teleoperation setup
+- Value/Market: 4/5 - Addresses core challenge in long-horizon planning; interpretable symbolic models
+- Defensibility: 3/5 - Novel architecture; Tom Silver leading researcher; published techniques
+- Adoption: 3/5 - No code; Princeton/CMU backing; PDDL expertise limits broader adoption
+
+**Decision Rationale:** Strong neuro-symbolic contribution that addresses the fundamental limitation of LLM prompt brittleness through neural feedback loops. Real-robot validation with sparse demonstrations (20). Key finding: single LLM call achieves only 22.4% vs 92.3% with iterative refinement.
+
+**Extracted Insights:**
+- Neural feedback loops improve LLM reliability: 92.3% vs 22.4% (single call) without domain-specific prompt engineering
+- Effect-based supervision eliminates ground-truth label requirement, enabling learning from raw demonstrations
+- Derived-aware selection essential for Non-STRIPS domains (96% vs 0% without it)
+
+**Cross-References:**
+- Related to: arxiv_2512.21243 (LookPlanGraph) - both use iterative LLM refinement with feedback; LookPlanGraph uses action correction, UniPred uses neural loss feedback
+
+**Learnings for Future Iterations:**
+- Iterative LLM refinement with neural feedback is emerging pattern for grounding LLM proposals in data (see also LookPlanGraph's reprompting)
+- PDDL-based approaches remain niche due to expertise requirements; track if UniPred releases a simplified interface
+- Tom Silver (Princeton) is leading researcher in predicate invention for robotics; track his lab's releases
+
+---
+
+## 2026-01-14 - Paper: ImagineNav++: Prompting Vision-Language Models as Embodied Navigator through Scene Imagination
+ID: arxiv_2512.17435
+Status: PRESENTED
+Score: 20/30
+
+**Summary:** ImagineNav++ transforms visual navigation into imagination-powered best-view selection using VLMs. A Where2Imagine model (trained on 80K human trajectories) predicts future viewpoints which are converted to images via diffusion synthesis. GPT-4o-mini evaluates synthesized views and historical memory to select optimal exploration directions. Achieves SOTA mapless navigation: 72.4% SR on Gibson, 58.5% on HM3D (6% above VLFM baseline).
+
+**Key Method:** Four-component architecture:
+1. Future-View Imagination: ResNet-18 predicts relative waypoints (Δx, Δy, Δθ) converted to views via diffusion synthesis
+2. Selective Foveation Memory: DINOv2 features with hierarchical keyframe extraction (~20 keyframes for 500-step episodes)
+3. GPT-4o-mini High-Level Planner: Evaluates synthesized views via structured JSON prompts
+4. VER Point-Goal Navigation: Low-level controller executes selected waypoints
+
+**Implementation Check:**
+- GitHub repos: yes (https://github.com/200203Z/ImagineNav_plus) - placeholder with 1 star
+- Commercial use: no public evidence found
+- Open questions: When will full code be released? Real-robot validation?
+
+**Score Breakdown:**
+- Novelty: 4/5 - Imagination paradigm for mapless navigation is meaningful
+- Feasibility: 3/5 - Depends on diffusion synthesis quality; synthesis artifacts degrade performance
+- Time-to-POC: 3/5 - Placeholder repo only; requires Habitat setup
+- Value/Market: 3/5 - Strong academic results but no real-robot or commercial validation
+- Defensibility: 3/5 - Novel architecture but components are standard (diffusion, VLM, DINOv2)
+- Adoption: 4/5 - Clear methodology; builds on established benchmarks (Gibson, HM3D, HSSD)
+
+**Decision Rationale:** Strong mapless navigation approach using imagination paradigm. Competitive with map-based methods (72.4% vs 84% VLFM on Gibson) while being more flexible. Shanghai AI Lab collaboration indicates institutional backing. Key limitation: no real-robot validation reported.
+
+**Extracted Insights:**
+- Imagining future viewpoints via diffusion synthesis enables mapless VLM navigation approaching map-based performance
+- Selective foveation memory with hierarchical DINOv2 keyframe extraction efficiently maintains spatial context over long horizons
+- Optimal imagination horizon is ~2 meters (T=11 steps), balancing local semantics and long-range context
+- GPT-4o-mini achieves comparable performance to GPT-4-Turbo at 98% lower cost for navigation decisions
+
+**Cross-References:**
+- Related to: arxiv_2601.06652 (Follow the Signs) - both address LLM-guided navigation, but this uses imagination vs textual cues
+- Related to: arxiv_2512.21243 (LookPlanGraph) - both use VLM-based planning with memory, different domains
+
+**Learnings for Future Iterations:**
+- "Imagination" paradigm (synthesizing future observations for planning) is emerging approach for mapless navigation
+- DINOv2 features are becoming standard for visual memory/keyframe selection in embodied AI
+- Diffusion-based novel view synthesis quality directly impacts downstream navigation performance (4-6% gap vs oracle)
+
+---
+
+## 2026-01-14 - Paper: RecipeMasterLLM: Revisiting RoboEarth in the Era of Large Language Models
+ID: arxiv_2512.17309
+Status: PRESENTED
+Score: 19/30
+
+**Summary:** Modernizes the decade-old RoboEarth action recipe framework using fine-tuned CodeLLaMa 13B with QLoRA and RAG. Generates OWL action ontologies validated via Prolog queries—a neuro-symbolic approach that catches LLM hallucinations through formal verification. Outperforms SMART-LLM (Llama2-70b) on 3/4 AI-THOR2 task categories despite being 5x smaller.
+
+**Key Method:** Two-stage approach: (1) QLoRA fine-tuning on 350 curated action recipes (RoboEarth + GPT-4 generated), (2) RAG via LlamaIndex with bge-small-en-v1.5 embeddings injects digital twin environmental knowledge during generation. Generated OWL/RDF triples validated against RoboEarth ontology via SWI-Prolog queries; invalid recipes flagged and regenerated automatically.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Commercial use: no public evidence found
+- Open questions: Will code be released? How does this compare to modern alternatives like UniPred for predicate learning?
+
+**Score Breakdown:**
+- Novelty: 3/5 - Revival of RoboEarth with LLM is incremental; formal validation layer is useful
+- Feasibility: 4/5 - QLoRA enables small-resource deployment; uses proven components
+- Time-to-POC: 4/5 - Clear methodology, RoboEarth infrastructure exists; no code release
+- Value/Market: 3/5 - Practical approach but RoboEarth ecosystem is dormant
+- Defensibility: 2/5 - Built on public infrastructure; no unique data or model moat
+- Adoption: 3/5 - RoboEarth dependency limits ecosystem growth; ROS2 integration
+
+**Decision Rationale:** Practical neuro-symbolic approach with formal ontology validation. The key insight is that hallucinations caught via Prolog queries (73-97% success rates) would be invisible in end-to-end systems. Outperforming 70B model with 13B validates QLoRA efficiency. However, building on decade-old RoboEarth infrastructure limits ecosystem growth potential.
+
+**Extracted Insights:**
+- Formal ontology validation (OWL/Prolog) makes LLM hallucinations detectable, unlike black-box approaches
+- QLoRA fine-tuning on small curated datasets (350 recipes) enables competitive performance vs much larger models
+- Commonsense inference works: "red small fruit" → strawberry despite no explicit color attributes in knowledge graph
+
+**Cross-References:**
+- Related to: arxiv_2512.17992 (UniPred) - both address LLM-based symbolic reasoning for robot planning; UniPred uses neural feedback, RecipeMasterLLM uses formal ontology validation
+- Related to: arxiv_2512.21243 (LookPlanGraph) - both use structured knowledge representations for planning
+
+**Learnings for Future Iterations:**
+- Formal validation layers (OWL/Prolog, PDDL) make LLM errors detectable but require domain expertise
+- RoboEarth-based work is niche due to dormant ecosystem; prefer approaches building on active infrastructure
+- AI-THOR2 benchmark is useful for comparing high-level planners across task complexity levels
+
+---
+
+## 2026-01-14 - Paper: Semantic Co-Speech Gesture Synthesis and Real-Time Control for Humanoid Robots
+ID: arxiv_2512.17183
+Status: PRESENTED
+Score: 18/30
+
+**Summary:** End-to-end framework for semantic co-speech gesture generation and real-time deployment on Unitree G1 humanoid robot. Combines LLM-based semantic retrieval, Residual VQ-VAE motion tokenization, autoregressive Motion-GPT for gesture prediction, and MotionTracker imitation learning controller for balanced physical execution.
+
+**Key Method:** Three-stage pipeline:
+1. **Motion Retargeting:** GMR bridges human MoCap (ZEGGS, BEAT datasets) to G1's 29-DoF morphology via key-body matching and differential inverse kinematics
+2. **Gesture Generation:** RVQ-VAE encodes motion as discrete tokens (separate body/hand parts). Motion-GPT autoregressively predicts gestures from audio features (MFCC, chromagram, onset, tempogram) + LLM-retrieved semantic gesture candidates
+3. **Physical Control:** MotionTracker uses residual PD offsets relative to reference motion via two-stage RL imitation learning
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no direct results; related repos like liamreneroy/LLM_motion exist but are different projects)
+- Commercial use: no public evidence found
+- Open questions: Will code be released? Can the approach scale beyond single-actor training data?
+
+**Score Breakdown:**
+- Novelty: 3/5 - Integration is valuable but components (VQ-VAE, Motion-GPT, imitation learning) are established
+- Feasibility: 3/5 - Real-robot deployment proven but requires Unitree G1, MoCap setup, and significant compute
+- Time-to-POC: 3/5 - No code release; would need to replicate complex multi-stage pipeline
+- Value/Market: 3/5 - Social robots and humanoid communication is growing market; niche but valuable
+- Defensibility: 2/5 - Components are standard; no unique data or model moat
+- Adoption: 4/5 - Unitree G1 is commercially available; end-to-end demo shows practical viability
+
+**Decision Rationale:** Complete end-to-end pipeline from speech to physical robot gestures addresses real gap in humanoid communication. Real-world Unitree G1 deployment demonstrates practical viability. LLM provides semantic retrieval for contextually appropriate gesture selection. At threshold (18/30) due to single-actor training data limitation and lack of user study.
+
+**Extracted Insights:**
+- Separate body/hand motion tokenization needed: hands show ~0.2 wrist RMSE vs ~0.0006 root position, suggesting different granularity for expressive vs locomotion control
+- Residual PD offsets (predicting corrections rather than absolute targets) improve motion tracking fidelity
+- Audio features (MFCC, chromagram, onset, tempogram) combined with LLM semantic retrieval bridges rhythm and meaning
+
+**Cross-References:**
+- Related to: arxiv_2601.02078 (Genie Sim) - both deploy on humanoid platforms; different focus (manipulation vs communication)
+- Related to: arxiv_2512.20206 (TongSIM) - both address humanoid simulation; TongSIM includes text-driven motion generation
+
+**Learnings for Future Iterations:**
+- Humanoid gesture synthesis is emerging research area as social/service robots gain traction (Unitree, Figure, etc.)
+- MoCap-to-robot retargeting is critical infrastructure; watch for unified approaches across platforms
+- User studies for perceived naturalness are important for gesture quality evaluation; papers without them should note the limitation
+
+---
+
+## Research Complete
+
+All 20 papers in papers_pool have been analyzed:
+- **Presented:** 14 papers (≥18/30 threshold)
+- **Rejected:** 5 papers (<18/30)
+- **Insights Extracted:** 1 paper (EXTRACT_INSIGHTS decision)
+- **Total Insights:** 36 cross-paper insights logged
