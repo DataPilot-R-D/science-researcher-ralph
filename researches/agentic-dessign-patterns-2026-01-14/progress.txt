@@ -6,6 +6,8 @@ Started: śro 14 sty 12:37:38 2026 CET
 - **Human oversight persistence**: MAS should augment not replace humans in high-stakes/regulated domains
 - **Cost efficiency via specialization**: Proper LLM-based agent architecture can achieve 6x cost reduction over regex baselines
 - **Framework selection heuristic**: Graph-based (LangGraph) for branching workflows; Role-based (CrewAI) for team collaboration; Conversational (AutoGen) for prototyping
+- **Control-flow integrity for security**: Generate plans in trusted state BEFORE ingesting untrusted data - P-t-E pattern provides inherent prompt injection resistance
+- **Dual LLM pattern**: Separate privileged (planning) from quarantined (untrusted input) LLMs for architectural isolation
 
 ## Cross-Reference Insights
 - arxiv_2601.03624 and arxiv_2601.03328 both emphasize governance/accountability patterns
@@ -305,5 +307,65 @@ Score: 19/30
 - Educational synthesis papers score lower on novelty/defensibility but high on feasibility/adoption
 - Quantified benchmark gaps (72% vs 43%) are valuable for setting expectations
 - Agent vs workflow distinction is foundational for avoiding over-engineered solutions
+
+---
+
+## 2026-01-14 - Paper: Architecting Resilient LLM Agents: Secure Plan-then-Execute
+ID: arxiv_2509.08646
+Status: PRESENTED
+Score: 25/30
+
+**Summary:** Security-first guide to Plan-then-Execute (P-t-E) architecture for LLM agents. Separates strategic planning (powerful LLM generates structured plan) from tactical execution (simpler Executor carries out steps). Core innovation is framing P-t-E as inherent defense against indirect prompt injection through control-flow integrity - plans generated in trusted state before ingesting untrusted external data.
+
+**Key Method:** Defense-in-depth strategy with multiple layers:
+1. Control-flow integrity - locked execution sequences resist manipulation
+2. Principle of least privilege - executors receive only task-scoped tools
+3. Dual LLM pattern - separate privileged (planning) and quarantined (untrusted input) LLMs
+4. Input sanitization and output filtering (PII, policy violations)
+5. Docker containerization mandatory for code execution
+6. Human-in-the-loop verification for critical actions
+
+**Implementation Check:**
+- GitHub repos: Yes
+  - https://github.com/RichardHGL/CHI2025_Plan-then-Execute_LLMAgent (CHI 2025 user study, 248 participants)
+  - https://github.com/dasiths/llm-plan-and-execute-knowledge-provider-mesh (Dapr-based distributed implementation)
+  - https://github.com/gitcommitshow/resilient-llm (resilient multi-LLM orchestration library)
+- Commercial use: Yes - SAP under review as recommended architecture pattern for multi-agent solutions
+- Framework blueprints: LangGraph (state machines), CrewAI (hierarchical/declarative), AutoGen (GroupChat + Docker)
+- Open questions: How to minimize upfront latency? Optimal re-planning trigger conditions?
+
+**Score Breakdown:**
+- Novelty: 4/5 (Security-first framing of P-t-E is novel; control-flow integrity concept unique)
+- Feasibility: 5/5 (Framework implementations provided; practical guidance immediately usable)
+- Time-to-POC: 4/5 (Code blueprints for 3 frameworks; SAP adoption accelerates enterprise path)
+- Value/Market: 5/5 (SAP adoption validates enterprise demand; security focus critical post-CVE-2025-53773)
+- Defensibility: 3/5 (Pattern is public knowledge; security integration approach differentiates)
+- Adoption: 4/5 (Works with LangGraph, CrewAI, AutoGen; SAP enterprise validation)
+
+**Decision Rationale:** Highest-scoring paper so far (25/30). Security-first framing addresses critical production gap identified in earlier papers. SAP enterprise adoption validates market readiness. CHI 2025 user study provides human factors data on trust calibration.
+
+**Extracted Insights:**
+- Control-flow integrity: Plans generated in trusted state BEFORE ingesting untrusted data - prevents prompt injection by design
+- Principle of least privilege: Task-scoped tool access prevents unauthorized function calls even under attack
+- Dual LLM pattern: Architectural isolation between privileged/quarantined LLMs prevents privilege escalation
+- Trade-offs: Better reasoning/security vs upfront latency and wasted effort on early failures
+
+**Cross-References:**
+- Complements arxiv_2506.08837 (security design patterns) - both address prompt injection
+- Extends Plan-then-Execute (#41) from arxiv_2601.03624 three-tier pattern catalogue
+- Framework implementations relate to arxiv_2508.10146 framework comparison
+- Human trust calibration finding connects to human oversight requirements from arxiv_2601.03328
+
+**Security Landscape Context:**
+- OWASP 2025: Prompt injection is fundamental architectural vulnerability requiring defense-in-depth
+- Recent research (NAACL 2025): Adaptive attacks bypass 12 published defenses with >90% success rate
+- Microsoft FIDES: Information-flow control techniques for deterministic prompt injection prevention
+- GitHub Copilot CVE-2025-53773: Remote code execution (CVSS 9.6) demonstrates real-world risk
+
+**Learnings for Future Iterations:**
+- Papers with enterprise adoption (SAP) validation score higher on market value
+- Security-focused papers increasingly relevant as agent systems move to production
+- CHI user studies provide valuable human factors data beyond technical benchmarks
+- Cross-referencing security literature (OWASP, CVEs) provides real-world context
 
 ---
