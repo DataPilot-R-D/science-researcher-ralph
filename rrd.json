@@ -412,12 +412,26 @@
       "date": "2025-12-27",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "presented",
+      "score": 23,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "First diffusion-based vision-language and vision-language-action models. Dream-VL and Dream-VLA use a discrete diffusion language model (Dream 7B) as backbone instead of autoregressive LLMs. Achieves 97.2% on LIBERO, 71.4% on SimplerEnv-Bridge, and 60.5% on SimplerEnv-Fractal, outperforming π₀ and GR00T-N1.",
+        "methodology": "Built on Dream 7B discrete diffusion LLM. Dream-VL trained on 12M MAmmoTH-VL multimodal data. Dream-VLA pretrained on 970K Open-X Embodiment robot trajectories. Bidirectional masked diffusion enables parallel action generation. Key advantage: 27× speedup over autoregressive generation through native action chunking support without architectural modifications.",
+        "results": "VLM benchmarks: MMMU 52.2%, MathVista 63.1%, DocVQA 94.4%. VLA benchmarks: LIBERO 97.2% avg success (vs π₀ 93.9%), SimplerEnv-Bridge 71.4% (vs GR00T 49.5%), SimplerEnv-Fractal 60.5% (vs GR00T 48.27%). Single diffusion step achieves competitive performance.",
+        "implementations_found": ["https://github.com/DreamLM/Dream-VLX (86 stars)", "https://huggingface.co/Dream-org/Dream-VLA-7B", "https://huggingface.co/Dream-org/Dream-VL-7B"],
+        "commercialized": false,
+        "limitations": "Authors note 'substantial room for improvement' but don't detail specific limitations. 7B model size requires significant GPU memory. Diffusion LLM backbone is less mature than autoregressive alternatives."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong VLA with novel diffusion backbone. HKU NLP + Huawei collaboration. Apache 2.0 license enables commercial use. 27× inference speedup is compelling for real-time robotics. Cross-reference with InternVLA-A1 for architecture comparison."
     },
     {
       "id": "arxiv_2512.22414",
@@ -861,6 +875,42 @@
       "cross_refs": [
         "arxiv_2601.02078"
       ]
+    },
+    {
+      "id": "insight_016",
+      "paper_id": "arxiv_2512.22615",
+      "insight": "Diffusion LLM backbones enable 27× inference speedup over autoregressive models through native parallel action generation, addressing a key bottleneck for real-time robot control.",
+      "tags": [
+        "diffusion-llm",
+        "inference-speed",
+        "VLA",
+        "architecture"
+      ],
+      "cross_refs": [
+        "arxiv_2601.02456"
+      ]
+    },
+    {
+      "id": "insight_017",
+      "paper_id": "arxiv_2512.22615",
+      "insight": "Bidirectional masked diffusion naturally supports action chunking without architectural modifications, unlike autoregressive models that require special handling for multi-step action prediction.",
+      "tags": [
+        "action-chunking",
+        "diffusion-llm",
+        "VLA"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_018",
+      "paper_id": "arxiv_2512.22615",
+      "insight": "Single diffusion step achieves competitive performance on robot manipulation tasks, enabling efficient inference without iterative refinement in time-critical scenarios.",
+      "tags": [
+        "diffusion-llm",
+        "inference-efficiency",
+        "robotics"
+      ],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -896,13 +946,18 @@
     "https://arxiv.org/abs/2601.01196",
     "https://arxiv.org/html/2601.01196",
     "https://api.github.com/search/repositories?q=EduSim-LLM",
-    "https://api.github.com/search/repositories?q=2601.01196"
+    "https://api.github.com/search/repositories?q=2601.01196",
+    "https://arxiv.org/abs/2512.22615",
+    "https://api.github.com/search/repositories?q=Dream-VLA",
+    "https://api.github.com/repos/DreamLM/Dream-VLX",
+    "https://hkunlp.github.io/blog/2025/dream-vlx/",
+    "https://huggingface.co/Dream-org/Dream-VLA-7B"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 8,
-    "total_presented": 5,
+    "total_analyzed": 9,
+    "total_presented": 6,
     "total_rejected": 2,
     "total_insights_extracted": 1
   }

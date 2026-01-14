@@ -328,3 +328,45 @@ Score: 14/30
 **Learnings for Future Iterations:**
 - Educational platforms tend to score low on defensibility and value/market unless they introduce novel pedagogical methods or achieve significant scale
 - CoppeliaSim-based work has smaller potential reach than Isaac Sim-based work due to community size
+
+---
+
+## 2026-01-14 - Paper: Dream-VL & Dream-VLA: Open Vision-Language and Vision-Language-Action Models with Diffusion Language Model Backbone
+ID: arxiv_2512.22615
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** First diffusion-based vision-language and vision-language-action models. Dream-VL and Dream-VLA use a discrete diffusion language model (Dream 7B) as backbone instead of autoregressive LLMs. Built by HKU NLP Group + Huawei Noah's Ark Lab. Key innovation: bidirectional masked diffusion enables parallel action generation with 27× speedup over autoregressive methods.
+
+**Key Method:** Dream 7B discrete diffusion LLM backbone with Qwen2ViT vision encoder. Dream-VL trained on 12M MAmmoTH-VL multimodal data. Dream-VLA pretrained on 970K Open-X Embodiment robot trajectories. Native action chunking support without architectural modifications. Supports both discrete diffusion loss (pretraining) and continuous losses (L1 regression, flow matching) for finetuning.
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/DreamLM/Dream-VLX (86 stars)
+- HuggingFace: Dream-org/Dream-VLA-7B, Dream-org/Dream-VL-7B
+- Commercial use: Apache 2.0 license allows commercial use; no known commercial deployment yet
+- Open questions: Real-world robot validation beyond SimplerEnv? Performance on more dynamic tasks?
+
+**Score Breakdown:**
+- Novelty: 4/5 - First diffusion LLM backbone for VLA; fundamentally different architecture
+- Feasibility: 4/5 - Full open-source stack, HuggingFace integration, clear documentation
+- Time-to-POC: 4/5 - Ready-to-use models, simple transformers API
+- Value/Market: 4/5 - Strong benchmark results, 27× speedup compelling for real-time robotics
+- Defensibility: 3/5 - Open-source (Apache 2.0); moat is diffusion LLM expertise
+- Adoption: 4/5 - HuggingFace integration, multi-robot support, active community
+
+**Decision Rationale:** Novel diffusion-based architecture with strong benchmarks and full open-source release. 27× inference speedup addresses critical real-time constraint in robotics. HKU NLP + Huawei backing suggests sustained development. Cross-reference with InternVLA-A1 for MoT vs diffusion architecture comparison.
+
+**Extracted Insights:**
+- Diffusion LLM backbone enables 27× speedup through native parallel action generation
+- Bidirectional masked diffusion supports action chunking without architectural changes
+- Single diffusion step achieves competitive performance, enabling efficient real-time inference
+- VLM trained on diffusion loss maintains strong benchmark performance (94.4% DocVQA)
+
+**Cross-References:**
+- Related to: arxiv_2601.02456 (InternVLA-A1) - both state-of-the-art VLAs with different architectures (MoT vs diffusion); Dream-VLA achieves higher LIBERO score (97.2% vs 75.1%) but InternVLA-A1 tested on real robots
+- Related to: arxiv_2512.22414 (Human-to-Robot Transfer) - both explore VLA architectures
+
+**Learnings for Future Iterations:**
+- Diffusion LLM is emerging as alternative to autoregressive backbone for VLAs; track HKU NLP's Dream family releases
+- Apache 2.0 licensing makes HKU NLP models more commercially accessible than some alternatives
+- SimplerEnv is becoming standard VLA benchmark; scores are directly comparable across papers
