@@ -340,12 +340,31 @@
       "date": "2024-04-17",
       "source": "arXiv",
       "priority": 4,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "Comprehensive survey of single and multi-agent architectures. Leadership, communication, planning-execution-evaluation patterns."
+      "status": "presented",
+      "score": 20,
+      "score_breakdown": {
+        "novelty": 2,
+        "feasibility": 5,
+        "time_to_poc": 4,
+        "value_market": 4,
+        "defensibility": 1,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Foundational survey examining AI agent implementations for reasoning, planning, and tool execution. Establishes taxonomy of single-agent vs multi-agent architectures (vertical/hierarchical vs horizontal/egalitarian), identifies five major planning approaches (task decomposition, multi-plan selection, external module-aided, reflection/refinement, memory-augmented), and evaluates critical success factors for agent systems.",
+        "methodology": "Systematic review of agent implementations including ReAct, RAISE, Reflexion, LATS (single-agent) and AgentVerse, MetaGPT, DyLAN (multi-agent). Identifies key design patterns around leadership impact, communication styles, and planning-execution-evaluation phases. Evaluates benchmarks and limitations.",
+        "results": "Key finding: agent teams with organized leader complete tasks ~10% faster. Multi-agent discussion does not necessarily enhance reasoning when single-agent prompts are sufficiently robust. Single-agent best for well-defined problems; multi-agent for collaborative feedback and parallel execution. Identifies major evaluation challenges: inconsistent benchmarks, data contamination, limited real-world applicability.",
+        "implementations_found": [
+          "https://github.com/luo-junyu/Awesome-Agent-Papers",
+          "https://github.com/tmgthb/Autonomous-Agents",
+          "https://github.com/AGI-Edgerunners/LLM-Agents-Papers",
+          "https://github.com/yoheinakajima/babyagi"
+        ],
+        "commercialized": false,
+        "limitations": "Published April 2024 - landscape has evolved significantly (LangGraph, CrewAI enterprise adoption). Does not cover newer protocols (A2A, ANP). Benchmark criticism still relevant but solutions emerging. Survey synthesis without novel techniques."
+      },
+      "decision": "PRESENT",
+      "notes": "Foundational survey establishing core taxonomy still referenced in 2025-2026 papers. Five planning approaches and single vs multi-agent decision framework remain authoritative. Well-cited (252+ citations). Limitations on eval/benchmarks directly addressed by subsequent papers. Cross-references: taxonomy aligns with arxiv_2508.10146 framework comparison; planning patterns relate to arxiv_2601.03624 three-tier model."
     },
     {
       "id": "arxiv_2511.03023",
@@ -788,6 +807,34 @@
       "insight": "Context-Minimization pattern: Remove user prompts from context after driving initial actions but before processing tool results. Simple to implement, prevents user-injected instructions from manipulating responses to tool outputs.",
       "tags": ["security", "patterns", "context-management"],
       "cross_refs": ["arxiv_2509.08646"]
+    },
+    {
+      "id": "insight_027",
+      "paper_id": "arxiv_2404.11584",
+      "insight": "Single vs multi-agent architecture selection: Single-agent for well-defined problems with clear tool sets; multi-agent for collaborative feedback, parallel execution, or diverse problem-solving - not determined by reasoning complexity alone",
+      "tags": ["architecture", "decision-guidance", "taxonomy"],
+      "cross_refs": ["arxiv_2508.10146", "arxiv_2601.03328"]
+    },
+    {
+      "id": "insight_028",
+      "paper_id": "arxiv_2404.11584",
+      "insight": "Leadership impact on agent teams: Organized leader enables ~10% faster task completion, particularly when human oversight is involved - supports hierarchical/vertical multi-agent architectures",
+      "tags": ["multi-agent", "leadership", "coordination"],
+      "cross_refs": ["arxiv_2601.03624"]
+    },
+    {
+      "id": "insight_029",
+      "paper_id": "arxiv_2404.11584",
+      "insight": "Five major planning approaches: (1) Task decomposition, (2) Multi-plan selection, (3) External module-aided planning, (4) Reflection and refinement, (5) Memory-augmented planning - foundation for structured agent reasoning",
+      "tags": ["planning", "taxonomy", "reasoning"],
+      "cross_refs": ["arxiv_2510.09244", "arxiv_2601.03624"]
+    },
+    {
+      "id": "insight_030",
+      "paper_id": "arxiv_2404.11584",
+      "insight": "Multi-agent discussion does not necessarily enhance reasoning when single-agent prompts are sufficiently robust - avoid over-engineering with multi-agent when simpler solutions suffice",
+      "tags": ["multi-agent", "efficiency", "decision-guidance"],
+      "cross_refs": ["arxiv_2511.02303"]
     }
   ],
   "visited_urls": [
@@ -825,15 +872,19 @@
     "https://arxiv.org/html/2506.08837v3",
     "https://pondevelopment.github.io/llm-prompt-injection-mitigation-patterns/",
     "https://github.com/tldrsec/prompt-injection-defenses",
-    "https://simonwillison.net/2025/Jun/13/prompt-injection-design-patterns/"
+    "https://simonwillison.net/2025/Jun/13/prompt-injection-design-patterns/",
+    "https://arxiv.org/html/2404.11584v1",
+    "https://github.com/luo-junyu/Awesome-Agent-Papers",
+    "https://github.com/tmgthb/Autonomous-Agents",
+    "https://github.com/AGI-Edgerunners/LLM-Agents-Papers"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 7,
-    "total_presented": 7,
+    "total_analyzed": 8,
+    "total_presented": 8,
     "total_rejected": 0,
-    "total_insights_extracted": 26,
+    "total_insights_extracted": 30,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -849,11 +900,11 @@
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 22.43,
+      "avg_score": 22.13,
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
-        "18-23": 5,
+        "18-23": 6,
         "24-30": 2
       }
     }

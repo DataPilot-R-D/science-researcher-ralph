@@ -499,3 +499,64 @@ Score: 26/30
 - "Provable resistance" claims require careful examination of assumptions and threat models
 
 ---
+
+## 2026-01-14 - Paper: The Landscape of Emerging AI Agent Architectures for Reasoning, Planning, and Tool Calling
+ID: arxiv_2404.11584
+Status: PRESENTED
+Score: 20/30
+
+**Summary:** Foundational survey (April 2024) establishing taxonomy of AI agent implementations for reasoning, planning, and tool execution. Classifies architectures into single-agent vs multi-agent (vertical/hierarchical vs horizontal/egalitarian), identifies five major planning approaches, and evaluates critical success factors including leadership impact and communication styles.
+
+**Key Method:** Systematic review of agent implementations across both paradigms. Single-agent: ReAct (reasoning-action interleaving), RAISE (memory augmentation), Reflexion (self-reflection via linguistic feedback), LATS (tree-based search). Multi-agent: AgentVerse (four-stage execution), MetaGPT (structured outputs + pub-sub), DyLAN (dynamic team rotation). Evaluates planning-execution-evaluation phases as core success pattern.
+
+**Implementation Check:**
+- GitHub repos: Yes
+  - https://github.com/luo-junyu/Awesome-Agent-Papers (tracks survey papers including this one)
+  - https://github.com/tmgthb/Autonomous-Agents (daily-updated research papers)
+  - https://github.com/AGI-Edgerunners/LLM-Agents-Papers (paper + code links)
+  - BabyAGI (https://github.com/yoheinakajima/babyagi) referenced as example
+- Commercial use: No direct commercialization; influenced framework designs
+- Open questions: How to build standardized eval benchmarks? Dynamic evaluation resistant to memorization?
+
+**Five Planning Approaches Identified:**
+1. Task decomposition - Break tasks into subtasks
+2. Multi-plan selection - Generate and select from multiple plans
+3. External module-aided planning - Leverage external planners
+4. Reflection and refinement - Revise based on feedback
+5. Memory-augmented planning - Incorporate past experiences
+
+**Key Findings:**
+- Agent teams with organized leader complete tasks ~10% faster (with human oversight)
+- Multi-agent discussion doesn't necessarily enhance reasoning when single-agent prompts are robust
+- Single-agent best for well-defined problems; multi-agent for collaborative/parallel needs
+- Major eval limitations: inconsistent benchmarks, data contamination, limited real-world applicability
+
+**Score Breakdown:**
+- Novelty: 2/5 (Survey synthesis; published April 2024, somewhat dated)
+- Feasibility: 5/5 (Clear taxonomy immediately usable for architecture decisions)
+- Time-to-POC: 4/5 (Framework recommendations enable quick prototyping)
+- Value/Market: 4/5 (Well-cited 252+; taxonomy still referenced in 2025-2026 papers)
+- Defensibility: 1/5 (Public knowledge synthesis; no proprietary advantage)
+- Adoption: 4/5 (Framework-agnostic; principles broadly applicable)
+
+**Decision Rationale:** Meets threshold as foundational reference. Taxonomy of single vs multi-agent and five planning approaches remain authoritative. Benchmark/eval criticisms prescient and still being addressed by community.
+
+**Extracted Insights:**
+- Single vs multi-agent selection based on task characteristics, not reasoning complexity
+- Leadership in multi-agent systems provides measurable efficiency gains
+- Five planning approaches form foundation for structured agent reasoning
+- Over-engineering warning: multi-agent not always better than robust single-agent
+
+**Cross-References:**
+- Taxonomy aligns with arxiv_2508.10146 framework comparison (2025)
+- Planning patterns relate to arxiv_2601.03624 three-tier model
+- Single/multi-agent decision guidance complements arxiv_2601.03328 empirical findings
+- Leadership pattern connects to hierarchical patterns in arxiv_2601.03624
+
+**Learnings for Future Iterations:**
+- Foundational surveys remain valuable even after 20+ months - core concepts endure
+- Well-cited papers (252+) indicate lasting community influence
+- Eval/benchmark criticisms are recurring themes across agent literature
+- 2024 landscape has evolved significantly but taxonomies remain stable
+
+---
