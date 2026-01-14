@@ -685,7 +685,7 @@
     },
     {
       "id": "arxiv_2601.05248",
-      "title": "LaST$_{0}$: Latent Spatio-Temporal Chain-of-Thought for Robotic Vision-Language-Action Model",
+      "title": "LaST₀: Latent Spatio-Temporal Chain-of-Thought for Robotic Vision-Language-Action Model",
       "url": "http://arxiv.org/abs/2601.05248v1",
       "pdf_url": "https://arxiv.org/pdf/2601.05248v1",
       "authors": [
@@ -706,12 +706,26 @@
       "date": "2026-01-08",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "presented",
+      "score": 21,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 3,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Introduces LaST₀, a VLA framework using latent spatio-temporal chain-of-thought reasoning instead of explicit linguistic or visual predictions. Dual-system MoT architecture with slow reasoning expert (low-frequency latent inference) and fast acting expert (high-frequency action generation) achieves 82% simulation success and 72% real-world success.",
+        "methodology": "Reasoning expert autoregressively predicts three latent modalities (visual via SigLIP, geometric via Uni3D, proprioceptive) in interleaved chronological order. Asynchronous frequency coordination (κ=2,4,8) decouples slow reasoning from fast action. Three-stage training: large-scale pretraining (400K trajectories from Open-X/DROID/RoboMIND), supervised fine-tuning of slow expert (40 epochs cosine similarity loss), action expert training (300 epochs flow matching). Built on DeepSeek-LLM 1B initialized from Janus-Pro.",
+        "results": "Simulation (RLBench, 10 tasks): 82% mean success, outperforming HybridVLA (74%), π0.5 (65%), CogACT (61%). Real-world (6 tasks): 72% success, outperforming SpatialVLA (39%), π0.5 (59%), CoT-VLA (53%). Nearly 5× higher success rate at final steps of multi-step tasks. Inference: 15.4Hz on RTX 4090 at 1:4 fast-slow ratio (14× faster than explicit CoT methods).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No code released yet (project website only). Point cloud data only available during training; inference uses RGB + proprioception only. Long-horizon performance still degrades at extended steps. Requires multiple camera viewpoints and Gello teleoperation for data collection."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong VLA contribution with novel latent reasoning approach. Key insight: latent CoT captures 'ineffable physical attributes' that explicit linguistic reasoning cannot. 14× speedup over explicit CoT methods addresses real-time constraint. Cross-reference with InternVLA-A1 (explicit visual foresight) and Dream-VLA (diffusion backbone) for architecture comparison."
     }
   ],
   "insights": [
@@ -952,6 +966,46 @@
         "VLA"
       ],
       "cross_refs": []
+    },
+    {
+      "id": "insight_021",
+      "paper_id": "arxiv_2601.05248",
+      "insight": "Latent CoT captures 'ineffable physical attributes' (fine-grained dynamics difficult to verbalize) that explicit linguistic reasoning cannot, enabling 14× speedup over explicit CoT methods while maintaining or improving performance.",
+      "tags": [
+        "latent-reasoning",
+        "chain-of-thought",
+        "inference-speed",
+        "VLA"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03590"
+      ]
+    },
+    {
+      "id": "insight_022",
+      "paper_id": "arxiv_2601.05248",
+      "insight": "Asynchronous frequency coordination (slow reasoning expert at keyframes, fast acting expert at control frequency) with KV caching enables efficient dual-expert VLAs: 15.4Hz on RTX 4090 while preserving reasoning quality.",
+      "tags": [
+        "dual-expert",
+        "frequency-coordination",
+        "inference-efficiency",
+        "VLA"
+      ],
+      "cross_refs": [
+        "arxiv_2601.02456"
+      ]
+    },
+    {
+      "id": "insight_023",
+      "paper_id": "arxiv_2601.05248",
+      "insight": "Long-horizon robustness in VLAs can be improved by latent spatio-temporal reasoning: LaST₀ achieves nearly 5× higher success rate at final steps of multi-step tasks compared to baselines, suggesting latent representations maintain coherence better than explicit predictions.",
+      "tags": [
+        "long-horizon",
+        "robustness",
+        "latent-reasoning",
+        "VLA"
+      ],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -997,13 +1051,18 @@
     "https://arxiv.org/html/2512.22414",
     "https://api.github.com/search/repositories?q=2512.22414",
     "https://api.github.com/repos/Physical-Intelligence/openpi",
-    "https://www.pi.website/blog/pi05"
+    "https://www.pi.website/blog/pi05",
+    "https://arxiv.org/abs/2601.05248",
+    "https://arxiv.org/html/2601.05248",
+    "https://api.github.com/search/repositories?q=LaST0+VLA+OR+2601.05248",
+    "https://api.github.com/search/repositories?q=%22Latent%20Spatio-Temporal%22+robot",
+    "https://sites.google.com/view/last0"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 10,
-    "total_presented": 7,
+    "total_analyzed": 11,
+    "total_presented": 8,
     "total_rejected": 2,
     "total_insights_extracted": 1
   }

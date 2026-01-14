@@ -413,3 +413,50 @@ Score: 24/30
 - Physical Intelligence is the dominant commercial player in VLA space ($5.6B valuation); track their releases closely
 - "Emergence" framing connects robotics to LLM scaling insights—may see more such crossover
 - Human video data is potentially transformative for robotics if collection/processing can scale
+
+---
+
+## 2026-01-14 - Paper: LaST₀: Latent Spatio-Temporal Chain-of-Thought for Robotic Vision-Language-Action Model
+ID: arxiv_2601.05248
+Status: PRESENTED
+Score: 21/30
+
+**Summary:** Introduces LaST₀, a VLA framework using latent spatio-temporal chain-of-thought reasoning instead of explicit linguistic or visual predictions. Key innovation: reasoning happens in a compact latent space that captures "ineffable physical attributes" difficult to verbalize, achieving 82% simulation success and 72% real-world success.
+
+**Key Method:** Dual-system Mixture-of-Transformers architecture:
+- **Slow reasoning expert:** Autoregressively predicts three interleaved latent modalities (visual via SigLIP, geometric via Uni3D, proprioceptive) at keyframes
+- **Fast acting expert:** High-frequency action generation conditioned on latent representations
+- **Asynchronous coordination:** Fixed ratio κ (2/4/8) decouples operating frequencies; KV caching eliminates redundant computation
+
+Three-stage training: (1) Large-scale pretraining on 400K+ trajectories from Open-X/DROID/RoboMIND, (2) SFT of slow expert with cosine similarity loss (40 epochs), (3) Action expert training with flow matching (300 epochs). Built on DeepSeek-LLM 1B initialized from Janus-Pro.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Project website: https://sites.google.com/view/last0
+- Commercial use: no public evidence found
+- Open questions: When will code/weights be released? How does latent CoT compare to explicit visual foresight (InternVLA-A1) on dynamic tasks?
+
+**Score Breakdown:**
+- Novelty: 4/5 - Latent CoT is meaningful architectural innovation over explicit linguistic/visual reasoning
+- Feasibility: 4/5 - Built on proven backbones; 400K trajectory pretraining is substantial but achievable
+- Time-to-POC: 3/5 - No code released yet; requires multi-camera setup and Gello teleoperation
+- Value/Market: 4/5 - 13% real-world improvement + 5× long-horizon robustness addresses key deployment gaps
+- Defensibility: 3/5 - Novel architecture but builds on public components
+- Adoption: 3/5 - No public code/weights yet; 15.4Hz inference on RTX 4090 is practical
+
+**Decision Rationale:** Strong VLA contribution with novel latent reasoning approach that achieves both quality improvement (13% real-world gain) and speed improvement (14× over explicit CoT). Long-horizon robustness (5× at final steps) is particularly valuable for practical deployment.
+
+**Extracted Insights:**
+- Latent CoT captures "ineffable physical attributes" that explicit linguistic reasoning cannot, enabling 14× speedup while improving performance
+- Asynchronous frequency coordination with KV caching enables efficient dual-expert VLAs at 15.4Hz
+- Long-horizon robustness improves dramatically (5× at final steps) with latent spatio-temporal reasoning
+
+**Cross-References:**
+- Related to: arxiv_2601.02456 (InternVLA-A1) - explicit visual foresight vs latent CoT; both use MoT architecture
+- Related to: arxiv_2512.22615 (Dream-VLA) - diffusion backbone vs latent reasoning; both achieve speedup over autoregressive
+- Related to: arxiv_2601.03590 (SiT-Bench) - both explore alternatives to explicit linguistic spatial reasoning
+
+**Learnings for Future Iterations:**
+- "Latent" vs "explicit" reasoning is emerging as key VLA architecture decision; track papers comparing these approaches
+- Long-horizon robustness is differentiating metric—not just single-step success rate
+- Janus-Pro (DeepSeek multimodal) is becoming popular foundation for VLAs alongside InternVL and Qwen
