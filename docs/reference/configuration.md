@@ -64,7 +64,8 @@ jq '.requirements.min_score_to_present = 20' researches/your-folder/rrd.json > t
 | Option | Default | Description |
 |--------|---------|-------------|
 | `<research_folder>` | (required) | Path to research folder |
-| `[max_iterations]` | 10 | Maximum loop iterations |
+| `-p, --papers <N>` | from rrd.json | Target papers (auto-sets iterations to N+5) |
+| `-i, --iterations <N>` | auto | Override max iterations |
 | `--agent <name>` | claude | Agent: claude, amp, codex |
 
 ### skill.sh

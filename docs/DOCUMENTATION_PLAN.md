@@ -155,7 +155,7 @@
 
 ### 1. Update README.md (Priority: CRITICAL)
 
-The README is outdated and shows the old workflow. Update to reflect v2.1:
+The README is outdated and shows the old workflow. Update to reflect v2.2:
 
 **Current (wrong):**
 ```bash
@@ -165,7 +165,7 @@ The README is outdated and shows the old workflow. Update to reflect v2.1:
 **Should be:**
 ```bash
 ./skill.sh rrd "Topic"  # Creates researches/{topic}-{date}/
-./ralph.sh researches/{folder} [iterations]
+./ralph.sh researches/{folder} [-p papers] [-i iterations]
 ```
 
 **Changes needed:**

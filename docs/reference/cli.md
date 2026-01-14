@@ -9,7 +9,7 @@ Main research loop script that runs autonomous research sessions.
 ### Usage
 
 ```bash
-./ralph.sh <research_folder> [max_iterations] [--agent amp|claude|codex]
+./ralph.sh <research_folder> [-p papers] [-i iterations] [--agent name]
 ```
 
 ### Arguments
@@ -17,24 +17,25 @@ Main research loop script that runs autonomous research sessions.
 | Argument | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `<research_folder>` | Yes | - | Path to research folder containing `rrd.json` |
-| `[max_iterations]` | No | 10 | Maximum number of agent iterations |
+| `-p, --papers <N>` | No | from rrd.json | Target papers count (auto-sets iterations to N+5) |
+| `-i, --iterations <N>` | No | auto-calculated | Override max iterations |
 | `--agent <name>` | No | claude | AI agent to use: `claude`, `amp`, or `codex` |
 | `-h, --help` | No | - | Show help message |
 
 ### Examples
 
 ```bash
-# Basic usage with defaults (10 iterations, Claude)
+# Basic usage with defaults (papers from rrd.json, auto iterations)
 ./ralph.sh researches/robotics-2026-01-14
 
-# Run 20 iterations
-./ralph.sh researches/robotics-2026-01-14 20
+# Set 30 target papers (iterations auto = 35)
+./ralph.sh researches/robotics-2026-01-14 -p 30
+
+# Override iterations if needed
+./ralph.sh researches/robotics-2026-01-14 -p 30 -i 100
 
 # Use Amp agent
 ./ralph.sh researches/robotics-2026-01-14 --agent amp
-
-# Use Codex agent with 15 iterations
-./ralph.sh researches/robotics-2026-01-14 15 --agent codex
 
 # Short folder name (resolved to researches/)
 ./ralph.sh robotics-2026-01-14

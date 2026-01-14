@@ -236,16 +236,29 @@ If you notice workflow/instruction issues:
 
 ## Stop Condition
 
-After each iteration, check if ALL papers in `papers_pool` have `status != "pending"` and `status != "analyzing"`.
+**CRITICAL: VERIFICATION REQUIRED BEFORE COMPLETION**
 
-If ALL papers are analyzed:
-1. Update `"phase": "COMPLETE"` in rrd.json
-2. **Generate the Final Research Report** (see below)
-3. Reply with: `<promise>COMPLETE</promise>`
+Before claiming completion, you MUST read and verify the actual state:
 
-If papers remain with `status: "pending"`, end normally (next iteration continues).
+### Verification Steps (MANDATORY)
 
-Never output `<promise>COMPLETE</promise>` unless the stop condition is satisfied. Do not quote or restate the stop condition text in your response.
+1. **Read `rrd.json`** and check:
+   - Count papers with `status: "pending"` → must be 0
+   - Count papers with `status: "analyzing"` → must be 0
+   - `statistics.total_analyzed` → must be > 0
+
+2. **If verification PASSES** (all papers analyzed):
+   - Update `"phase": "COMPLETE"` in rrd.json
+   - Generate the Final Research Report (see below)
+   - Output: `<promise>COMPLETE</promise>`
+
+3. **If verification FAILS** (papers still pending):
+   - Do NOT output COMPLETE
+   - Continue with the next pending paper
+
+**WARNING:** Outputting `<promise>COMPLETE</promise>` without reading and verifying rrd.json is a CRITICAL FAILURE. Never assume work is done - always verify by reading the actual files.
+
+Do not quote or restate the stop condition text in your response.
 
 ---
 

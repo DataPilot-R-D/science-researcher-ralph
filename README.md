@@ -1,7 +1,7 @@
 # Research-Ralph
 
 [![Status: Active](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/DataPilot-R-D/science-researcher-ralph)
-[![Version: 2.1.0](https://img.shields.io/badge/version-2.1.0-blue)](https://github.com/DataPilot-R-D/science-researcher-ralph/releases)
+[![Version: 2.2.0](https://img.shields.io/badge/version-2.2.0-blue)](https://github.com/DataPilot-R-D/science-researcher-ralph/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
 Research-Ralph is an autonomous AI research scouting agent that discovers, analyzes, and evaluates research papers. Each research project gets its own folder with all artifacts, and each iteration spawns a fresh agent instance with clean context.
@@ -47,8 +47,11 @@ Answer the clarifying questions to configure your research parameters.
 # Run with Claude Code (default)
 ./ralph.sh researches/research-robotics-and-embodied-2026-01-14
 
-# Run with more iterations
-./ralph.sh researches/research-robotics-and-embodied-2026-01-14 20
+# Set target papers (iterations auto-calculated as papers + 5)
+./ralph.sh researches/research-robotics-and-embodied-2026-01-14 -p 30
+
+# Override iterations if needed
+./ralph.sh researches/research-robotics-and-embodied-2026-01-14 -p 30 -i 100
 
 # Run with Amp
 ./ralph.sh researches/research-robotics-and-embodied-2026-01-14 --agent amp
@@ -57,11 +60,16 @@ Answer the clarifying questions to configure your research parameters.
 ./ralph.sh researches/research-robotics-and-embodied-2026-01-14 --agent codex
 ```
 
-Default is 10 iterations. Default agent is Claude Code CLI.
+**Options:**
+| Option | Description |
+|--------|-------------|
+| `-p, --papers <N>` | Target papers count (auto-sets iterations to N+5) |
+| `-i, --iterations <N>` | Override max iterations (default: auto-calculated) |
+| `--agent <name>` | AI agent: claude, amp, or codex (default: claude) |
 
 You'll see output like:
 ```
-Starting Research-Ralph v2.1.0
+Starting Research-Ralph v2.2.0
   Research: researches/research-robotics-and-embodied-2026-01-14
   Agent: claude
   Project: Research: Robotics and Embodied AI

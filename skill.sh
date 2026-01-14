@@ -177,7 +177,7 @@ if [[ "$SKILL_NAME" == "rrd" && -n "$RESEARCH_DIR" ]]; then
   echo "Research folder ready: $RESEARCH_DIR"
   echo ""
   echo "Next step:"
-  echo "  ./ralph.sh $RESEARCH_DIR [max_iterations]"
+  echo "  ./ralph.sh $RESEARCH_DIR [-p papers] [-i iterations]"
 fi
 
 exit 0

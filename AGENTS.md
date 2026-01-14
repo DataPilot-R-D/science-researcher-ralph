@@ -16,11 +16,17 @@ Keep research patterns and gotchas in this file in sync with `CLAUDE.md`. When u
 # Creates: researches/{topic}-{date}/rrd.json
 
 # Run research on a folder
-./ralph.sh researches/{folder-name} [max_iterations]
+./ralph.sh researches/{folder-name} [options]
+
+# Options:
+#   -p, --papers <N>      Target papers count (auto-sets iterations to N+5)
+#   -i, --iterations <N>  Override max iterations (default: auto-calculated)
+#   --agent <name>        AI agent: 'claude', 'amp', or 'codex' (default: claude)
 
 # Examples
 ./ralph.sh researches/robotics-llms-2026-01-14
-./ralph.sh researches/robotics-llms-2026-01-14 20
+./ralph.sh researches/robotics-llms-2026-01-14 -p 30          # 30 papers, 35 iterations
+./ralph.sh researches/robotics-llms-2026-01-14 -p 30 -i 100   # Override iterations
 ./ralph.sh researches/robotics-llms-2026-01-14 --agent amp
 
 # List available skills

@@ -1,39 +1,45 @@
 #!/bin/bash
 # Research-Ralph - Autonomous research scouting agent loop
-# Usage: ./ralph.sh <research_folder> [max_iterations] [--agent amp|claude|codex]
+# Usage: ./ralph.sh <research_folder> [-p papers] [-i iterations] [--agent amp|claude|codex]
 
 set -e
 
 # Version
-RALPH_VERSION="2.1.0"
+RALPH_VERSION="2.2.0"
 
 # Help function
 show_help() {
   echo "Research-Ralph v$RALPH_VERSION - Autonomous research scouting agent"
   echo ""
-  echo "Usage: ./ralph.sh <research_folder> [max_iterations] [--agent amp|claude|codex]"
+  echo "Usage: ./ralph.sh <research_folder> [options]"
   echo ""
   echo "Arguments:"
   echo "  <research_folder>   Path to research folder (required)"
-  echo "  [max_iterations]    Maximum number of iterations (default: 10)"
-  echo "  --agent <name>      AI agent: 'claude', 'amp', or 'codex' (default: claude)"
-  echo "  -h, --help          Show this help message"
+  echo ""
+  echo "Options:"
+  echo "  -p, --papers <N>      Target papers count (auto-sets iterations to N+5)"
+  echo "  -i, --iterations <N>  Override max iterations (default: auto-calculated)"
+  echo "  --agent <name>        AI agent: 'claude', 'amp', or 'codex' (default: claude)"
+  echo "  -h, --help            Show this help message"
   echo ""
   echo "Examples:"
   echo "  ./ralph.sh researches/robotics-2026-01-14"
-  echo "  ./ralph.sh researches/robotics-2026-01-14 20"
+  echo "  ./ralph.sh researches/robotics-2026-01-14 -p 30          # 30 papers, 35 iterations"
+  echo "  ./ralph.sh researches/robotics-2026-01-14 -p 30 -i 100   # Override iterations"
   echo "  ./ralph.sh researches/robotics-2026-01-14 --agent amp"
   echo ""
   echo "Workflow:"
   echo "  1. Create research: ./skill.sh rrd \"Research topic description\""
-  echo "  2. Run research: ./ralph.sh researches/<folder-name> [iterations]"
+  echo "  2. Run research: ./ralph.sh researches/<folder-name> [-p N] [-i N]"
   echo "  3. Check results: cat researches/<folder-name>/progress.txt"
 }
 
 # Default values
 MAX_ITERATIONS=10
+ITERATIONS_EXPLICIT=false  # Track if user explicitly set iterations
 AGENT="claude"  # Default to Claude Code CLI
 RESEARCH_DIR=""
+TARGET_PAPERS=""  # Empty = use rrd.json value
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -61,6 +67,23 @@ while [[ $# -gt 0 ]]; do
       AGENT="$2"
       shift 2
       ;;
+    -p|--papers)
+      if [[ -z "${2:-}" || ! "$2" =~ ^[0-9]+$ ]]; then
+        echo "Error: --papers requires a number"
+        exit 1
+      fi
+      TARGET_PAPERS="$2"
+      shift 2
+      ;;
+    -i|--iterations)
+      if [[ -z "${2:-}" || ! "$2" =~ ^[0-9]+$ ]]; then
+        echo "Error: --iterations requires a number"
+        exit 1
+      fi
+      MAX_ITERATIONS="$2"
+      ITERATIONS_EXPLICIT=true
+      shift 2
+      ;;
     -*)
       echo "Error: Unknown option '$1'. Use --help for usage."
       exit 1
@@ -86,6 +109,7 @@ while [[ $# -gt 0 ]]; do
         fi
       elif [[ "$1" =~ ^[0-9]+$ ]]; then
         MAX_ITERATIONS="$1"
+        ITERATIONS_EXPLICIT=true
       else
         echo "Warning: Ignoring unexpected argument '$1'"
       fi
@@ -98,7 +122,7 @@ done
 if [[ -z "$RESEARCH_DIR" ]]; then
   echo "Error: Research folder required."
   echo ""
-  echo "Usage: ./ralph.sh <research_folder> [max_iterations] [--agent amp|claude|codex]"
+  echo "Usage: ./ralph.sh <research_folder> [-p papers] [-i iterations] [--agent name]"
   echo ""
   echo "Available researches:"
   list_researches
@@ -201,6 +225,20 @@ if ! jq -e '.requirements.target_papers' "$RRD_FILE" >/dev/null 2>&1; then
   exit 1
 fi
 
+# Override target_papers if --papers flag provided
+if [[ -n "$TARGET_PAPERS" ]]; then
+  echo "Overriding target_papers: $TARGET_PAPERS"
+  jq ".requirements.target_papers = $TARGET_PAPERS" "$RRD_FILE" > "$RRD_FILE.tmp" \
+    && mv "$RRD_FILE.tmp" "$RRD_FILE"
+fi
+
+# Auto-calculate iterations if not explicitly set
+# Formula: papers + 5 (1 for discovery + papers for analysis + 4 buffer)
+if [[ "$ITERATIONS_EXPLICIT" == "false" ]]; then
+  PAPERS_COUNT=$(jq -r '.requirements.target_papers // 20' "$RRD_FILE")
+  MAX_ITERATIONS=$((PAPERS_COUNT + 5))
+fi
+
 # Verify prompt.md exists
 PROMPT_FILE="$SCRIPT_DIR/prompt.md"
 if [[ ! -f "$PROMPT_FILE" ]]; then
@@ -298,6 +336,20 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 
   # Check for completion signal
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
+    # Server-side validation: verify agent isn't hallucinating completion
+    PENDING_COUNT=$(jq '[.papers_pool[] | select(.status == "pending" or .status == "analyzing")] | length' "$RRD_FILE" 2>/dev/null || echo "999")
+    ANALYZED_COUNT=$(jq -r '.statistics.total_analyzed // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+
+    if [[ "$PENDING_COUNT" -gt 0 || "$ANALYZED_COUNT" -eq 0 ]]; then
+      echo ""
+      echo "Warning: Agent claimed COMPLETE but verification failed!"
+      echo "  Pending/analyzing papers: $PENDING_COUNT (should be 0)"
+      echo "  Total analyzed: $ANALYZED_COUNT (should be > 0)"
+      echo "Ignoring false completion signal, continuing..."
+      sleep 2
+      continue
+    fi
+
     echo ""
     echo "Research-Ralph completed all research tasks!"
     echo ""
