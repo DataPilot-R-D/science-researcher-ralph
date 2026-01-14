@@ -86,9 +86,15 @@ Generate the RRD with these fields:
     "focus_area": "Primary domain (robotics, NLP, etc.)",
     "keywords": ["keyword1", "keyword2", "keyword3"],
     "time_window_days": 30,
+    "historical_lookback_days": 1095,
     "target_papers": 20,
     "sources": ["arXiv", "Google Scholar", "web"],
     "min_score_to_present": 18
+  },
+
+  "domain_glossary": {
+    "enabled": false,
+    "terms": {}
   },
 
   "phase": "DISCOVERY",
@@ -101,7 +107,17 @@ Generate the RRD with these fields:
     "total_analyzed": 0,
     "total_presented": 0,
     "total_rejected": 0,
-    "total_insights_extracted": 0
+    "total_insights_extracted": 0,
+    "discovery_metrics": {
+      "sources_tried": [],
+      "sources_successful": [],
+      "sources_blocked": [],
+      "source_failure_reasons": {}
+    },
+    "analysis_metrics": {
+      "avg_score": 0,
+      "score_distribution": {"0-11": 0, "12-17": 0, "18-23": 0, "24-30": 0}
+    }
   }
 }
 ```
@@ -116,10 +132,14 @@ Generate the RRD with these fields:
 | `focus_area` | Primary research domain |
 | `keywords` | Search terms for paper discovery |
 | `time_window_days` | How recent papers should be |
+| `historical_lookback_days` | Fallback window for foundational papers (optional, default: 1095 = 3 years) |
 | `target_papers` | How many papers to collect |
 | `sources` | Where to search (arXiv, Scholar, web) |
 | `min_score_to_present` | Threshold score (0-30) for PRESENT decision |
 | `phase` | Current phase: DISCOVERY, ANALYSIS, or COMPLETE |
+| `domain_glossary` | Optional: domain-specific term definitions to improve LLM reasoning |
+| `discovery_metrics` | Tracks which sources were tried, succeeded, or blocked |
+| `analysis_metrics` | Tracks average score and score distribution |
 
 ---
 
@@ -167,9 +187,20 @@ Include this rubric explanation in the RRD description or notes if the user need
       "visuomotor policy"
     ],
     "time_window_days": 30,
+    "historical_lookback_days": 1095,
     "target_papers": 20,
     "sources": ["arXiv", "Google Scholar", "web"],
     "min_score_to_present": 18
+  },
+
+  "domain_glossary": {
+    "enabled": true,
+    "terms": {
+      "DoF": "Degrees of Freedom",
+      "EEF": "End Effector",
+      "sim2real": "Simulation to Real-world Transfer",
+      "VLA": "Vision-Language-Action model"
+    }
   },
 
   "phase": "DISCOVERY",
@@ -182,7 +213,17 @@ Include this rubric explanation in the RRD description or notes if the user need
     "total_analyzed": 0,
     "total_presented": 0,
     "total_rejected": 0,
-    "total_insights_extracted": 0
+    "total_insights_extracted": 0,
+    "discovery_metrics": {
+      "sources_tried": [],
+      "sources_successful": [],
+      "sources_blocked": [],
+      "source_failure_reasons": {}
+    },
+    "analysis_metrics": {
+      "avg_score": 0,
+      "score_distribution": {"0-11": 0, "12-17": 0, "18-23": 0, "24-30": 0}
+    }
   }
 }
 ```

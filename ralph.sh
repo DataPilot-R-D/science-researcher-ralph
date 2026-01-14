@@ -114,7 +114,13 @@ run_agent() {
   if [[ "$AGENT" == "amp" ]]; then
     echo "$prompt_content" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr
   elif [[ "$AGENT" == "codex" ]]; then
-    echo "$prompt_content" | codex exec --dangerously-bypass-approvals-and-sandbox - 2>&1 | tee /dev/stderr
+    local last_message_file
+    last_message_file="$(mktemp)"
+    echo "$prompt_content" | codex exec --dangerously-bypass-approvals-and-sandbox --output-last-message "$last_message_file" - 2>&1 | tee /dev/stderr >/dev/null
+    local codex_exit=${PIPESTATUS[1]}
+    cat "$last_message_file"
+    rm -f "$last_message_file"
+    return $codex_exit
   else
     claude -p "$prompt_content" \
       --dangerously-skip-permissions \
@@ -228,6 +234,19 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     echo "Error: Agent '$AGENT' failed (exit code $EXIT_CODE)."
     echo "  Consecutive failures: $CONSECUTIVE_FAILURES/$MAX_CONSECUTIVE_FAILURES"
     [[ -n "$OUTPUT" ]] && echo "  Last 20 lines:" && echo "$OUTPUT" | tail -20
+
+    # Classify error type for debugging
+    if echo "$OUTPUT" | grep -qi "403\|Forbidden"; then
+      echo "  Error type: HTTP 403 Forbidden (source block - try fallback sources)"
+    elif echo "$OUTPUT" | grep -qi "429\|Too Many Requests\|rate.limit"; then
+      echo "  Error type: Rate limit (429) - will retry with backoff"
+    elif echo "$OUTPUT" | grep -qi "bot\|challenge\|captcha\|blocked"; then
+      echo "  Error type: Bot challenge detected - use GitHub API instead"
+    elif echo "$OUTPUT" | grep -qi "timeout\|timed.out"; then
+      echo "  Error type: Request timeout - retry may help"
+    elif echo "$OUTPUT" | grep -qi "network\|connection\|DNS"; then
+      echo "  Error type: Network error - check connectivity"
+    fi
 
     if [[ $CONSECUTIVE_FAILURES -ge $MAX_CONSECUTIVE_FAILURES ]]; then
       echo ""

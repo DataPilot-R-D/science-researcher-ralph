@@ -4,6 +4,10 @@
 
 Research-Ralph is an autonomous research scouting agent that discovers, analyzes, and evaluates research papers. It runs an AI agent (Claude Code, Amp, or Codex) repeatedly until all papers are analyzed.
 
+## Sync Policy
+
+Keep research patterns and gotchas in this file in sync with `CLAUDE.md`. When updating one, update the other.
+
 ## Commands
 
 ```bash
@@ -66,7 +70,7 @@ Score 0-5 on each dimension (total 0-30):
 | Defensibility | What's the competitive advantage? |
 | Adoption | How easy to deploy? |
 
-**Threshold:** Score >= 18 = PRESENT, otherwise REJECT or EXTRACT_INSIGHTS
+**Threshold:** Score >= `min_score_to_present` (default: 18) = PRESENT, otherwise REJECT or EXTRACT_INSIGHTS
 
 ## Source Access Patterns
 
@@ -97,9 +101,54 @@ https://export.arxiv.org/api/query?search_query=all:{keyword}&sortBy=submittedDa
 - **Rate limits:** arXiv blocks rapid requests; add delays between searches
 - **Paywalls:** Some papers not freely accessible; note in `blocked_sources`
 - **Stale data:** Scholar results can be cached; check dates
+- **Web search blocks:** DuckDuckGo HTML can trigger bot challenges; use GitHub API or alternate sources
 - **Duplicate papers:** Same paper on arXiv and publisher site; dedupe by title
 - **PDF parsing:** Some PDFs are image-only; note limitations
+- **Semantic label mismatch:** Robot object/action labels that do not map cleanly to English can degrade LLM explanations; consider a translation dictionary
 - **Hallucination risk:** unless you enforce "only claim what you can cite/link", the agent can invent details when it can't read the paper properly
+
+## Source Fallback Strategy
+
+When searching for papers and implementations, use this fallback hierarchy:
+
+**Implementation checks:** GitHub API → arXiv → Semantic Scholar → WebSearch
+**Paper discovery:** arXiv API → Google Scholar → web
+
+**Rate limit handling:**
+- 429/503 → wait 60s, retry (max 2 retries)
+- 403 → skip to next source, log in progress.txt
+- 3 consecutive blocks → add to `blocked_sources`
+
+**GitHub API (preferred for implementation checks):**
+```
+https://api.github.com/search/repositories?q="{paper_title}"+language:python
+```
+
+**If all sources blocked:** Extract URLs from paper's Related Work section
+
+## Rate Limiting Configuration
+
+| Source | Delay | Retry on 429 | Retry on 403 |
+|--------|-------|--------------|--------------|
+| arXiv API | 3s | Yes (60s backoff) | No |
+| Google Scholar | 5s | Yes | No (use fallback) |
+| GitHub API | 1s | Yes | No |
+| WebSearch | 2s | Yes | No |
+
+If a source is blocked 3 consecutive iterations → move to `blocked_sources` and use fallback.
+
+## Cross-Reference Patterns
+
+When analyzing papers, actively identify cross-reference clusters:
+- **Same benchmark:** e.g., LIBERO used by InternVLA-A1, Dream-VLA, π₀.₅
+- **Same dataset:** e.g., Open-X Embodiment
+- **Same authors/institutions:** Track prolific labs and researchers
+- **Competing approaches:** e.g., MoT vs Diffusion vs Flow Matching for VLA backbone
+
+Add `cross_cluster` field to insights when patterns emerge:
+```json
+{"cross_cluster": "VLA_ARCHITECTURES", "papers": ["arxiv_X", "arxiv_Y"]}
+```
 
 ## Operational Rules
 
