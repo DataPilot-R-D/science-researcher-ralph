@@ -654,3 +654,48 @@ Score: 21/30
 - UE5.6-based platforms compete with Isaac Sim for robotics simulation; UE5.6 offers better rendering/environments, Isaac Sim offers better robotics integration
 - Non-commercial academic licenses significantly limit practical adoption potential
 - BIGAI is building a comprehensive embodied AI stack: Tong Tong agent + TongSIM simulator + benchmark suite
+
+---
+
+## 2026-01-14 - Paper: Unifying Deep Predicate Invention with Pre-trained Foundation Models (UniPred)
+ID: arxiv_2512.17992
+Status: PRESENTED
+Score: 21/30
+
+**Summary:** UniPred is a bilevel learning framework that unifies top-down LLM proposals with bottom-up neural learning for predicate invention in long-horizon robotic planning. The key innovation: using classifier training loss as neural feedback to iteratively refine LLM hypotheses, achieving 2-4x higher success than pure top-down methods and 3-4x faster learning than pure bottom-up approaches.
+
+**Key Method:** Four-stage iterative pipeline:
+1. GPT-4o proposes PDDL predicate candidates with effect distributions
+2. Neural classifiers train via effect-based supervision (atoms invariant across transitions when predicates absent from effects)
+3. Classifier training loss → 0-100 feedback score guides next LLM query
+4. Derived-aware hill-climbing selection distinguishes basic vs quantifier-derived predicates for Non-STRIPS support
+
+Uses DINOv3 features for visual domains. No ground-truth labels needed—effect-based supervision is self-supervised.
+
+**Implementation Check:**
+- GitHub repos: no (searched for UniPred, 2512.17992)
+- Commercial use: no
+- Open questions: Code release timeline? License?
+
+**Score Breakdown:**
+- Novelty: 4/5 - Novel bilevel framework addressing LLM prompt brittleness via neural feedback
+- Feasibility: 4/5 - Real-robot validation (AgileX Piper, 20 demos); standard components (GPT-4o, DINOv3)
+- Time-to-POC: 3/5 - No code released; requires PDDL expertise and teleoperation setup
+- Value/Market: 4/5 - Addresses core challenge in long-horizon planning; interpretable symbolic models
+- Defensibility: 3/5 - Novel architecture; Tom Silver leading researcher; published techniques
+- Adoption: 3/5 - No code; Princeton/CMU backing; PDDL expertise limits broader adoption
+
+**Decision Rationale:** Strong neuro-symbolic contribution that addresses the fundamental limitation of LLM prompt brittleness through neural feedback loops. Real-robot validation with sparse demonstrations (20). Key finding: single LLM call achieves only 22.4% vs 92.3% with iterative refinement.
+
+**Extracted Insights:**
+- Neural feedback loops improve LLM reliability: 92.3% vs 22.4% (single call) without domain-specific prompt engineering
+- Effect-based supervision eliminates ground-truth label requirement, enabling learning from raw demonstrations
+- Derived-aware selection essential for Non-STRIPS domains (96% vs 0% without it)
+
+**Cross-References:**
+- Related to: arxiv_2512.21243 (LookPlanGraph) - both use iterative LLM refinement with feedback; LookPlanGraph uses action correction, UniPred uses neural loss feedback
+
+**Learnings for Future Iterations:**
+- Iterative LLM refinement with neural feedback is emerging pattern for grounding LLM proposals in data (see also LookPlanGraph's reprompting)
+- PDDL-based approaches remain niche due to expertise requirements; track if UniPred releases a simplified interface
+- Tom Silver (Princeton) is leading researcher in predicate invention for robotics; track his lab's releases

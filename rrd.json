@@ -688,12 +688,26 @@
       "date": "2025-12-19",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "presented",
+      "score": 21,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 3,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "UniPred is a bilevel learning framework unifying top-down LLM proposals with bottom-up neural learning for predicate invention in robotic planning. Uses GPT-4o to propose predicate-effect distributions that supervise neural classifiers trained on demonstration data; classifier loss provides feedback to iteratively refine LLM hypotheses. Achieves 2-4x higher success than top-down methods and 3-4x faster learning than bottom-up approaches.",
+        "methodology": "Four-stage iterative pipeline: (1-3) LLM proposes PDDL predicate candidates, neural classifiers learn via effect-based supervision (invariant atom loss), training loss as 0-100 feedback score guides next LLM query; (4) Derived-aware hill-climbing selection distinguishes basic vs quantifier-derived predicates for Non-STRIPS support. DINOv3 features for visual domains. No ground-truth labels needed.",
+        "results": "Simulation (5 domains): ~99% training, 81-100% test success. Tools domain: 3.8x faster than IVNTR (11,779s vs 45,167s). Real robot (AgileX Piper, 20 demos): 94% training / 92% test offline, 77.7% real execution success vs 52.1% for ViLa. Ablation: single LLM call drops to 22.4% test; derived-aware selection essential for Non-STRIPS (96% vs 0%).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Requires deterministic STRIPS-compliant operators; depends on pre-specified low-level controller set; discovers only human-intuitive predicates (not emergent abstractions); assumes full observability. No code release yet."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong neuro-symbolic approach from Princeton/CMU team with Tom Silver. Addresses key limitation of prompt-dependent LLM brittleness via neural feedback loop. Real-robot validation with sparse demonstrations (20). PDDL expertise required limits broader adoption."
     },
     {
       "id": "arxiv_2512.17435",
@@ -1167,6 +1181,31 @@
         "social-navigation"
       ],
       "cross_refs": []
+    },
+    {
+      "id": "insight_031",
+      "paper_id": "arxiv_2512.17992",
+      "insight": "Neural feedback loops improve LLM reliability for symbolic reasoning: using classifier training loss as a 0-100 feedback score to guide iterative LLM queries achieves 92.3% test success vs 22.4% with single LLM call, addressing prompt-dependent brittleness without domain-specific prompt engineering.",
+      "tags": [
+        "LLM-feedback-loop",
+        "neuro-symbolic",
+        "predicate-learning",
+        "long-horizon-planning"
+      ],
+      "cross_refs": [
+        "arxiv_2512.21243"
+      ]
+    },
+    {
+      "id": "insight_032",
+      "paper_id": "arxiv_2512.17992",
+      "insight": "Effect-based supervision (penalizing deviations in atoms that should remain constant across transitions) eliminates need for ground-truth predicate labels, enabling learning from raw demonstrations—critical for domains where labeling is impractical.",
+      "tags": [
+        "self-supervised",
+        "predicate-learning",
+        "demonstration-learning"
+      ],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -1234,13 +1273,16 @@
     "https://arxiv.org/html/2512.20206",
     "https://api.github.com/repos/bigai-ai/tongsim",
     "https://api.github.com/search/repositories?q=TongSIM+simulation+OR+2512.20206",
-    "https://huggingface.co/datasets/bigai/TongSIM-Asset"
+    "https://huggingface.co/datasets/bigai/TongSIM-Asset",
+    "https://arxiv.org/abs/2512.17992",
+    "https://arxiv.org/html/2512.17992",
+    "https://api.github.com/search/repositories?q=UniPred+predicate"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 16,
-    "total_presented": 10,
+    "total_analyzed": 17,
+    "total_presented": 11,
     "total_rejected": 5,
     "total_insights_extracted": 1
   }
