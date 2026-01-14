@@ -572,3 +572,43 @@ Score: 13/30
 **Learnings for Future Iterations:**
 - Papers using commercial robot platforms (DeepRobotics, Unitree) may be academic research rather than commercial development; check author affiliations
 - Final project / thesis papers tend to score low on defensibility and adoption due to limited resources for code release and maintenance
+
+---
+
+## 2026-01-14 - Paper: LookPlanGraph: Embodied Instruction Following Method with VLM Graph Augmentation
+ID: arxiv_2512.21243
+Status: PRESENTED
+Score: 19/30
+
+**Summary:** Introduces LookPlanGraph, a dynamic scene graph augmentation framework for embodied instruction following that uses VLMs to continuously verify and discover objects during execution rather than relying on static pre-built graphs. Four-component architecture: Memory Graph (three-layer structure), Scene Graph Simulator (action validation), VLM Graph Augmentation (real-time discovery), and LM decision-making.
+
+**Key Method:** Iterative algorithm marks all objects as "unseen" initially and updates memory graph as agent explores. VLM processes egocentric camera views to discover/validate task-relevant objects. Scene Graph Simulator validates generated actions and corrects errors via reprompting or rule-based adjustments. Natural language serialization of scene graphs outperforms JSON by 30% in token efficiency.
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/Onishenko-sci/LookPlanGraph (2 stars, Python, 26.9MB)
+- Project page: https://lookplangraph.github.io/
+- Commercial use: no; academic project from Moscow AIRI
+- Open questions: When will GraSIF dataset be released on HuggingFace? No license specified on repo.
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Decision Rationale:** Solid contribution addressing real limitation of static planners in dynamic environments. Action correction mechanism is critical (62% SR drop without it). GraSIF benchmark (514 tasks) is useful community artifact. Limited commercial traction but full code release.
+
+**Extracted Insights:**
+- Action correction is critical: ablation shows 62% SR drop (0.62→0.24) without Scene Graph Simulator validation/reprompting
+- VLM grounding is current bottleneck: ground-truth detection achieves 92% SR vs 60% with VLM (32% gap)
+- Natural language serialization > JSON: 30% more token-efficient, maintains/improves performance
+
+**Cross-References:**
+- Related to: arxiv_2601.06652 (Follow the Signs) - both address dynamic environment navigation with LLM guidance
+- Related to: arxiv_2601.06552 (Model Reconciliation) - both handle robot-environment model mismatches
+
+**Learnings for Future Iterations:**
+- Error correction/reprompting mechanisms are critical for LLM-based planning; papers without them may underperform
+- VLM grounding remains the bottleneck in embodied AI; 30%+ performance gap between VLM and ground-truth detection

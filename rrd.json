@@ -590,12 +590,26 @@
       "date": "2025-12-24",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "presented",
+      "score": 19,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Presents LookPlanGraph, a dynamic scene graph augmentation framework for embodied instruction following that uses VLMs to continuously verify/discover objects during execution rather than relying on static pre-built graphs. Achieves 60% success rate on VirtualHome and 80% real-world success (15 tasks, manual execution).",
+        "methodology": "Four-component system: (1) Memory Graph with three layers (scene structure, immovable assets, probable objects), (2) Scene Graph Simulator for action validation and error correction via reprompting, (3) VLM Graph Augmentation for real-time object discovery from egocentric views, (4) LM decision-making generating structured actions. Iterative algorithm marks all objects 'unseen' initially and updates as agent explores.",
+        "results": "VirtualHome: 60% SR with Llama3.2-90B, 52% with GPT-4o. OmniGibson: 35-42% SR. Ground-truth augmentation achieves 92% SR showing VLM bottleneck. GraSIF benchmark: 62% SayPlan Office, 60% BEHAVIOR-1K, 87% RobotHow. Real-world: 80% (12/15 tasks) with human-in-loop execution. Action correction critical: ablation shows 62% drop without it.",
+        "implementations_found": ["https://github.com/Onishenko-sci/LookPlanGraph (2 stars)"],
+        "commercialized": false,
+        "limitations": "VLM hallucinations cause redundant discovery and inappropriate operations. Struggles with semantic understanding (disposable vs reusable items). Models overestimate agent capabilities. Real-world evaluation limited to manual human execution of generated plans."
+      },
+      "decision": "PRESENT",
+      "notes": "Solid contribution addressing real limitation of static planners. GraSIF benchmark (514 tasks) is useful community artifact. Action correction mechanism critical insight. Limited commercial traction (2 GitHub stars, academic project from Moscow AIRI)."
     },
     {
       "id": "arxiv_2512.20206",
@@ -1060,6 +1074,44 @@
         "household-robotics"
       ],
       "cross_refs": []
+    },
+    {
+      "id": "insight_025",
+      "paper_id": "arxiv_2512.21243",
+      "insight": "Action correction mechanisms are critical for LLM-based planners: ablation shows 62% success rate drop (0.62→0.24) when Scene Graph Simulator validation/reprompting is removed, suggesting error correction is not optional.",
+      "tags": [
+        "action-correction",
+        "error-recovery",
+        "LLM-planning",
+        "embodied-AI"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_026",
+      "paper_id": "arxiv_2512.21243",
+      "insight": "VLM grounding is the current bottleneck in dynamic scene graph methods: ground-truth object detection achieves 92% SR vs 60% with VLM augmentation, indicating 32% performance gap attributable to VLM errors.",
+      "tags": [
+        "VLM-bottleneck",
+        "scene-graph",
+        "grounding",
+        "performance-gap"
+      ],
+      "cross_refs": [
+        "arxiv_2601.06552"
+      ]
+    },
+    {
+      "id": "insight_027",
+      "paper_id": "arxiv_2512.21243",
+      "insight": "Natural language serialization of scene graphs outperforms JSON format by ~30% in token efficiency while maintaining or improving performance (0.60 SR vs 0.55 JSON), suggesting LLMs prefer natural text over structured formats.",
+      "tags": [
+        "scene-graph",
+        "serialization",
+        "token-efficiency",
+        "LLM-interface"
+      ],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -1117,13 +1169,18 @@
     "https://api.github.com/search/repositories?q=%22Break%20Out%20the%20Silverware%22+OR+%22Non-visible%20Object%20Allocation%22",
     "https://arxiv.org/abs/2512.21859",
     "https://arxiv.org/html/2512.21859",
-    "https://api.github.com/search/repositories?q=TimeBill+LLM+OR+2512.21859"
+    "https://api.github.com/search/repositories?q=TimeBill+LLM+OR+2512.21859",
+    "https://arxiv.org/abs/2512.21243",
+    "https://arxiv.org/html/2512.21243",
+    "https://api.github.com/search/repositories?q=LookPlanGraph+OR+2512.21243",
+    "https://api.github.com/repos/Onishenko-sci/LookPlanGraph",
+    "https://lookplangraph.github.io/"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 14,
-    "total_presented": 8,
+    "total_analyzed": 15,
+    "total_presented": 9,
     "total_rejected": 5,
     "total_insights_extracted": 1
   }
