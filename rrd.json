@@ -723,12 +723,26 @@
       "date": "2025-12-19",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "presented",
+      "score": 20,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 3,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "ImagineNav++ transforms visual navigation into imagination-powered best-view selection using VLMs. The framework uses a Where2Imagine model (trained on 80K human trajectories) to predict future viewpoints, generates novel observations via diffusion synthesis, and employs GPT-4o-mini to select optimal exploration directions. Achieves SOTA mapless navigation: 72.4% SR on Gibson, 58.5% on HM3D (6% above VLFM).",
+        "methodology": "Four-component architecture: (1) Future-View Imagination via ResNet-18 predicting relative waypoints converted to views via diffusion, (2) Selective Foveation Memory using DINOv2 features with hierarchical keyframe extraction (~20 keyframes for 500-step episodes), (3) GPT-4o-mini high-level planner evaluating synthesized views via structured JSON prompts, (4) VER point-goal navigation controller for low-level execution.",
+        "results": "ObjectNav: Gibson 72.4% SR/42.8% SPL, HM3D 58.5% SR/26.6% SPL, HSSD 64.5% SR/27.9% SPL. InsINav HM3D: 52.4% SR/32.8% SPL (SOTA path efficiency). Ablation: imagination adds +12% SR, Where2Imagine adds +9%, memory adds +6%. Oracle images add 4-6% showing synthesis artifact impact.",
+        "implementations_found": ["https://github.com/200203Z/ImagineNav_plus (1 star, placeholder repo)"],
+        "commercialized": false,
+        "limitations": "Synthesis artifacts degrade performance (oracle adds 4-6% SR); angular constraints limit diffusion to <30° viewpoint changes; relies on GPT-4o-mini API calls; no real-robot validation reported."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong mapless navigation approach using imagination paradigm. Shanghai AI Lab collaboration with Southeast University. Key insight: imagining future views enables VLM-based navigation without explicit maps. Competitive with map-based methods while being more flexible."
     },
     {
       "id": "arxiv_2512.17309",
@@ -1206,6 +1220,32 @@
         "demonstration-learning"
       ],
       "cross_refs": []
+    },
+    {
+      "id": "insight_033",
+      "paper_id": "arxiv_2512.17435",
+      "insight": "Imagining future viewpoints via diffusion synthesis enables mapless VLM navigation that approaches map-based performance (72.4% vs 84% VLFM on Gibson): Where2Imagine waypoint prediction (trained on 80K human trajectories) plus selective foveation memory eliminates need for explicit occupancy maps.",
+      "tags": [
+        "mapless-navigation",
+        "imagination",
+        "VLM",
+        "novel-view-synthesis"
+      ],
+      "cross_refs": [
+        "arxiv_2601.06652"
+      ]
+    },
+    {
+      "id": "insight_034",
+      "paper_id": "arxiv_2512.17435",
+      "insight": "Selective foveation memory using DINOv2 features with hierarchical keyframe extraction (varying similarity thresholds for distant/medium/recent segments) efficiently maintains ~20 keyframes over 500-step episodes, enabling long-horizon spatial reasoning without explicit maps.",
+      "tags": [
+        "memory-architecture",
+        "keyframe-selection",
+        "long-horizon",
+        "navigation"
+      ],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -1281,8 +1321,8 @@
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 17,
-    "total_presented": 11,
+    "total_analyzed": 18,
+    "total_presented": 12,
     "total_rejected": 5,
     "total_insights_extracted": 1
   }

@@ -699,3 +699,48 @@ Uses DINOv3 features for visual domains. No ground-truth labels needed—effect-
 - Iterative LLM refinement with neural feedback is emerging pattern for grounding LLM proposals in data (see also LookPlanGraph's reprompting)
 - PDDL-based approaches remain niche due to expertise requirements; track if UniPred releases a simplified interface
 - Tom Silver (Princeton) is leading researcher in predicate invention for robotics; track his lab's releases
+
+---
+
+## 2026-01-14 - Paper: ImagineNav++: Prompting Vision-Language Models as Embodied Navigator through Scene Imagination
+ID: arxiv_2512.17435
+Status: PRESENTED
+Score: 20/30
+
+**Summary:** ImagineNav++ transforms visual navigation into imagination-powered best-view selection using VLMs. A Where2Imagine model (trained on 80K human trajectories) predicts future viewpoints which are converted to images via diffusion synthesis. GPT-4o-mini evaluates synthesized views and historical memory to select optimal exploration directions. Achieves SOTA mapless navigation: 72.4% SR on Gibson, 58.5% on HM3D (6% above VLFM baseline).
+
+**Key Method:** Four-component architecture:
+1. Future-View Imagination: ResNet-18 predicts relative waypoints (Δx, Δy, Δθ) converted to views via diffusion synthesis
+2. Selective Foveation Memory: DINOv2 features with hierarchical keyframe extraction (~20 keyframes for 500-step episodes)
+3. GPT-4o-mini High-Level Planner: Evaluates synthesized views via structured JSON prompts
+4. VER Point-Goal Navigation: Low-level controller executes selected waypoints
+
+**Implementation Check:**
+- GitHub repos: yes (https://github.com/200203Z/ImagineNav_plus) - placeholder with 1 star
+- Commercial use: no public evidence found
+- Open questions: When will full code be released? Real-robot validation?
+
+**Score Breakdown:**
+- Novelty: 4/5 - Imagination paradigm for mapless navigation is meaningful
+- Feasibility: 3/5 - Depends on diffusion synthesis quality; synthesis artifacts degrade performance
+- Time-to-POC: 3/5 - Placeholder repo only; requires Habitat setup
+- Value/Market: 3/5 - Strong academic results but no real-robot or commercial validation
+- Defensibility: 3/5 - Novel architecture but components are standard (diffusion, VLM, DINOv2)
+- Adoption: 4/5 - Clear methodology; builds on established benchmarks (Gibson, HM3D, HSSD)
+
+**Decision Rationale:** Strong mapless navigation approach using imagination paradigm. Competitive with map-based methods (72.4% vs 84% VLFM on Gibson) while being more flexible. Shanghai AI Lab collaboration indicates institutional backing. Key limitation: no real-robot validation reported.
+
+**Extracted Insights:**
+- Imagining future viewpoints via diffusion synthesis enables mapless VLM navigation approaching map-based performance
+- Selective foveation memory with hierarchical DINOv2 keyframe extraction efficiently maintains spatial context over long horizons
+- Optimal imagination horizon is ~2 meters (T=11 steps), balancing local semantics and long-range context
+- GPT-4o-mini achieves comparable performance to GPT-4-Turbo at 98% lower cost for navigation decisions
+
+**Cross-References:**
+- Related to: arxiv_2601.06652 (Follow the Signs) - both address LLM-guided navigation, but this uses imagination vs textual cues
+- Related to: arxiv_2512.21243 (LookPlanGraph) - both use VLM-based planning with memory, different domains
+
+**Learnings for Future Iterations:**
+- "Imagination" paradigm (synthesizing future observations for planning) is emerging approach for mapless navigation
+- DINOv2 features are becoming standard for visual memory/keyframe selection in embodied AI
+- Diffusion-based novel view synthesis quality directly impacts downstream navigation performance (4-6% gap vs oracle)
