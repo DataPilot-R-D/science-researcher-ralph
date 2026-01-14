@@ -705,3 +705,66 @@ Score: 20/30
 - EM metric limitations (penalizes correct answers for formatting) suggest benchmark skepticism warranted
 
 ---
+
+## 2026-01-14 - Paper: The Lighthouse of Language: Enhancing LLM Agents via Critique-Guided Improvement
+ID: arxiv_2503.16024
+Status: PRESENTED
+Score: 21/30
+
+**Summary:** Two-player actor-critic framework for LLM agents where a critic model generates structured natural language feedback (grades + revision suggestions) and an actor model learns to incorporate critiques through iterative supervised fine-tuning. Key finding: small Llama-3-8B critic substantially outperforms GPT-4 (+29.16% on feedback quality), demonstrating task-specific fine-tuned critics beat general-purpose models.
+
+**Key Method:** Critique-Guided Improvement (CGI) operates in two stages:
+1. **Critique Generation:** Critic evaluates actions across three dimensions (task contribution, feasibility, efficiency) and produces structured assessments with grades (Excellent/Good/Neutral/Poor/Very Poor) plus actionable revision suggestions
+2. **Action Refinement:** Actor learns to leverage critiques through iterative SFT with exploration-learning cycles
+
+Addresses 'policy misalignment' by matching critiques to actor's current policy level - critiques designed for experts fail when applied to novices.
+
+**Implementation Check:**
+- GitHub repos: Placeholder only
+  - https://github.com/rhyang2021/CGI (placeholder - no code released yet)
+  - https://github.com/drdh/LAC (related LLM Actor-Critic framework with code)
+- Commercial use: No direct commercialization
+  - Authors from Fudan University and Tencent Hunyuan
+  - Tencent has commercial agent products (QBot, Yuanbao with 41.64M MAU) but CGI pattern not directly productized
+- Open questions: When will official implementation be released? How to reduce 4x cost overhead? Minimal training data requirements?
+
+**Benchmark Results:**
+
+| Environment | No Critique | GPT-4o | CGI (3 iterations) | CGI Gain |
+|-------------|-------------|--------|-------------------|----------|
+| WebShop | 13.49% | 17.78% | 76.17% | +326% |
+| ScienceWorld | 14.48% | 33.06% | 78.43% | +137% |
+| TextCraft | 10.00% | 46.00% | 68.00% | +48% |
+| **Average** | 12.65% | 32.28% | **74.20%** | +130% |
+
+Training: 32K expert-annotated examples (14K ScienceWorld, 10K WebShop, 8K TextCraft) on 8 A100 GPUs for 3 epochs.
+
+**Score Breakdown:**
+- Novelty: 4/5 (Actor-critic with NL feedback novel; small model beating GPT-4 is significant contribution)
+- Feasibility: 4/5 (Clear methodology; standard fine-tuning approach; 8 A100s accessible)
+- Time-to-POC: 3/5 (No working implementation yet; ~32K training examples required; GPT-4o needed for annotation)
+- Value/Market: 4/5 (NeurIPS 2025 acceptance validates quality; Tencent affiliation suggests enterprise applicability)
+- Defensibility: 2/5 (Technique builds on existing actor-critic; critic training approach is documented)
+- Adoption: 4/5 (Works with open-source models; 4x cost increase manageable; framework-agnostic)
+
+**Decision Rationale:** NeurIPS 2025 accepted paper with strong empirical results. Novel contribution: task-specific fine-tuned critic substantially outperforms GPT-4 on feedback quality. Two-player framework separates evaluation from action, enabling independent optimization. 4x cost overhead is significant but 130%+ performance gains justify for high-value tasks.
+
+**Extracted Insights:**
+- Task-specific fine-tuned critics beat general-purpose models: 8B critic > GPT-4o on evaluation tasks
+- Critique-guided architecture decouples evaluation from action - each component independently optimizable
+- Policy misalignment: critics must match actor's current policy level; iterative co-training addresses this
+- Early exploration benefit: highest revision frequency in stage 1, critiques primarily guide initial search
+
+**Cross-References:**
+- Extends Reflexion pattern from arxiv_2505.07087 with structured external feedback
+- Critique approach complements multi-agent debate from arxiv_2512.20845 (both address self-reflection limitations)
+- Iterative refinement relates to step-wise reflection pattern (arxiv_2505.07087)
+- Specialist beats generalist finding aligns with Universal agent taxonomy from arxiv_2511.03023
+
+**Learnings for Future Iterations:**
+- NeurIPS/top-tier venue acceptance strongly validates research quality
+- Tencent affiliation suggests potential for enterprise adoption pathway
+- Placeholder GitHub repos common for recent papers - check back later for code releases
+- 4x cost overhead is emerging theme in improved feedback patterns (cf. 3x for MAR arxiv_2512.20845)
+
+---
