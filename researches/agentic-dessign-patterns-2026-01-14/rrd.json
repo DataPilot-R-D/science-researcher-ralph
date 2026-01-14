@@ -379,12 +379,30 @@
       "date": "2025-11-04",
       "source": "arXiv",
       "priority": 4,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "Five core design principles from empirical evaluation. Agent specialization, universal vs conditional agents, failure mode analysis."
+      "status": "presented",
+      "score": 22,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 4,
+        "defensibility": 2,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Empirically-validated multi-agent framework for open data analysis deriving five design principles from evaluation across 5 LLMs and 50 queries. Decomposes analytical workflows into four specialized agents (Intent, Discovery, Analysis, Report) coordinated by orchestrator. Key distinction: Universal agents (Discovery, Analysis) show consistent value across models; Conditional agents (Intent, Report) vary by model capability.",
+        "methodology": "Four-agent sequential architecture: Intent Clarifying Agent (ambiguity resolution), Data Discovery Agent (semantic search across repositories like data.gov), Data Analysis Agent (Python code generation with validation), Report Generation Agent (synthesis with traceability). Evaluation via LLM-as-Judge protocol measuring Factual Consistency, Completeness, Relevance, Coherence across 50 queries spanning health, environment, transportation, finance, COVID-19.",
+        "results": "Five models tested: GPT OSS 120B (8.2/10), Gemini 2.5 Pro (7.2/10), GPT-4o Mini (6.8/10), Grok 3 Mini (5.8/10), Llama 3.3 70B (4.7/10). Universal agents show 12.4% std dev (consistent); Conditional agents show 20.5% std dev (model-dependent). Removing Discovery/Analysis causes catastrophic failures (243-280 instances); removing Intent/Report causes quality degradation. Agent win rates stable across task complexity (84-94%).",
+        "implementations_found": [
+          "https://github.com/AMA-CMFAI/LAMBDA",
+          "https://github.com/zjunlp/DataMind",
+          "https://github.com/crazycloud/data-analysis-llm-agent"
+        ],
+        "commercialized": false,
+        "limitations": "50-query benchmark limited in scope. LLM-as-Judge methodology may have residual bias. No public implementation of PublicAgent itself. Principles validated for data analysis domain - generalization to other domains not tested. Model profiling (20-50 queries) required before production deployment."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong empirical validation of multi-agent specialization principles. Key contribution: Universal vs Conditional agent taxonomy enables principled agent deployment decisions. Model size poorly predicts performance (120B: 8.2/10 vs 70B: 4.7/10) - architecture matters more than scale. Cross-references: failure mode analysis complements resilience patterns from arxiv_2509.08646; agent specialization relates to SIE pattern from arxiv_2601.03328."
     },
     {
       "id": "arxiv_2512.20845",
@@ -835,6 +853,34 @@
       "insight": "Multi-agent discussion does not necessarily enhance reasoning when single-agent prompts are sufficiently robust - avoid over-engineering with multi-agent when simpler solutions suffice",
       "tags": ["multi-agent", "efficiency", "decision-guidance"],
       "cross_refs": ["arxiv_2511.02303"]
+    },
+    {
+      "id": "insight_031",
+      "paper_id": "arxiv_2511.03023",
+      "insight": "Universal vs Conditional agent taxonomy: Universal agents (Discovery, Analysis) provide consistent value across all models (12.4% std dev); Conditional agents (Intent, Report) show model-dependent value (20.5% std dev) - deploy Universal agents always, Conditional only if profiling shows >60% win rate",
+      "tags": ["multi-agent", "deployment-strategy", "agent-taxonomy"],
+      "cross_refs": ["arxiv_2601.03328", "arxiv_2508.10146"]
+    },
+    {
+      "id": "insight_032",
+      "paper_id": "arxiv_2511.03023",
+      "insight": "Agent failure modes differ: Removing Universal agents (Discovery, Analysis) causes catastrophic failures (243-280 instances); removing Conditional agents (Intent, Report) causes quality degradation - prioritize Universal agents in resource-constrained deployments",
+      "tags": ["failure-modes", "robustness", "architecture"],
+      "cross_refs": ["arxiv_2509.08646"]
+    },
+    {
+      "id": "insight_033",
+      "paper_id": "arxiv_2511.03023",
+      "insight": "Model size poorly predicts multi-agent performance: 120B params scored 8.2/10 vs 70B scored 4.7/10 - architecture design matters more than raw model scale for agent systems",
+      "tags": ["model-selection", "architecture", "benchmarks"],
+      "cross_refs": ["arxiv_2510.09244"]
+    },
+    {
+      "id": "insight_034",
+      "paper_id": "arxiv_2511.03023",
+      "insight": "Model profiling guidance: Run 20-50 representative queries to profile model-agent fit before production; Analysis agent shows 42-96% win rate variance across models requiring explicit evaluation",
+      "tags": ["deployment", "profiling", "production-guidance"],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -881,10 +927,10 @@
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 8,
-    "total_presented": 8,
+    "total_analyzed": 9,
+    "total_presented": 9,
     "total_rejected": 0,
-    "total_insights_extracted": 30,
+    "total_insights_extracted": 34,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -900,11 +946,11 @@
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 22.13,
+      "avg_score": 22.11,
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
-        "18-23": 6,
+        "18-23": 7,
         "24-30": 2
       }
     }

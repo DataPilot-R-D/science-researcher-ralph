@@ -560,3 +560,75 @@ Score: 20/30
 - 2024 landscape has evolved significantly but taxonomies remain stable
 
 ---
+
+## 2026-01-14 - Paper: PublicAgent: Multi-Agent Design Principles From an LLM-Based Open Data Analysis Framework
+ID: arxiv_2511.03023
+Status: PRESENTED
+Score: 22/30
+
+**Summary:** Multi-agent framework for open data analysis deriving five empirically-validated design principles from evaluation across 5 LLMs and 50 queries. Decomposes analytical workflows into four specialized agents (Intent, Discovery, Analysis, Report) coordinated by orchestrator. Key distinction: Universal agents provide consistent value; Conditional agents vary by model capability.
+
+**Key Method:** Four-agent sequential architecture:
+1. Intent Clarifying Agent - resolves query ambiguities
+2. Data Discovery Agent - semantic search across repositories (data.gov)
+3. Data Analysis Agent - Python code generation with validation
+4. Report Generation Agent - synthesis with traceability
+
+Evaluation via LLM-as-Judge protocol measuring Factual Consistency, Completeness, Relevance, Coherence.
+
+**Implementation Check:**
+- GitHub repos: No direct PublicAgent implementation; related projects:
+  - LAMBDA (https://github.com/AMA-CMFAI/LAMBDA) - code-free multi-agent data analysis
+  - DataMind (https://github.com/zjunlp/DataMind) - AAAI 2026 open-source data agents
+- Commercial use: No - academic research (University of North Texas)
+- Open questions: How do principles generalize beyond data analysis domain? Optimal orchestrator design for agent routing?
+
+**Five Design Principles:**
+
+| Principle | Finding |
+|-----------|---------|
+| 1. Model-Independent Value | Even strongest model shows 97.5% agent win rates |
+| 2. Universal vs Conditional | Universal agents (Discovery, Analysis): 12.4% std dev; Conditional (Intent, Report): 20.5% std dev |
+| 3. Non-Redundant Specialization | Removing Discovery/Analysis = catastrophic (243-280 failures); Intent/Report = quality degradation |
+| 4. Complexity-Independent Benefits | Win rates stable across difficulty: 84-94% |
+| 5. Model-Agent Fit Dependency | Analysis agent: 42-96% win rate variance across models |
+
+**Model Comparison:**
+
+| Model | Score |
+|-------|-------|
+| GPT OSS 120B | 8.2/10 |
+| Gemini 2.5 Pro | 7.2/10 |
+| GPT-4o Mini | 6.8/10 |
+| Grok 3 Mini | 5.8/10 |
+| Llama 3.3 70B | 4.7/10 |
+
+**Score Breakdown:**
+- Novelty: 4/5 (Five empirically-validated principles; Universal/Conditional taxonomy)
+- Feasibility: 4/5 (Clear agent roles; requires orchestrator)
+- Time-to-POC: 4/5 (Architecture well-defined; deployment guidance provided)
+- Value/Market: 4/5 (Open data accessibility real need; principles generalizable)
+- Defensibility: 2/5 (Principles publicly documented)
+- Adoption: 4/5 (Framework-agnostic principles)
+
+**Decision Rationale:** Strong empirical validation distinguishes from theoretical pattern papers. Universal vs Conditional taxonomy provides concrete deployment guidance. Model profiling requirement (20-50 queries) is practical production advice.
+
+**Extracted Insights:**
+- Universal vs Conditional agent taxonomy enables principled deployment decisions
+- Model size poorly predicts performance (120B: 8.2/10 vs 70B: 4.7/10) - architecture matters more
+- Catastrophic vs degradation failure modes guide agent prioritization
+- Profile 20-50 queries before production to assess model-agent fit
+
+**Cross-References:**
+- Agent specialization relates to SIE pattern from arxiv_2601.03328
+- Failure mode analysis complements resilience patterns from arxiv_2509.08646
+- Framework selection heuristics from arxiv_2508.10146 apply to agent deployment
+- Four-agent architecture parallels four-component model from arxiv_2510.09244
+
+**Learnings for Future Iterations:**
+- Empirical validation across multiple models strengthens design principle claims
+- LLM-as-Judge methodology increasingly common for agent evaluation
+- Model profiling before deployment is emerging production best practice
+- Lead author (Montazeri) has industry background - principles likely grounded in practical experience
+
+---
