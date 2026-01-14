@@ -612,3 +612,45 @@ Score: 19/30
 **Learnings for Future Iterations:**
 - Error correction/reprompting mechanisms are critical for LLM-based planning; papers without them may underperform
 - VLM grounding remains the bottleneck in embodied AI; 30%+ performance gap between VLM and ground-truth detection
+
+---
+
+## 2026-01-14 - Paper: TongSIM: A General Platform for Simulating Intelligent Machines
+ID: arxiv_2512.20206
+Status: PRESENTED
+Score: 21/30
+
+**Summary:** Comprehensive embodied AI simulation platform from BIGAI (Beijing Institute for General Artificial Intelligence) built on Unreal Engine 5.6. Features 115+ indoor scenes, continuous outdoor urban environment, 3,000+ interactive objects across 500+ categories, and five benchmark task categories spanning navigation, multi-agent cooperation, human-robot interaction, household tasks, and social intelligence.
+
+**Key Method:** UE5.6 engine with Chaos physics for rigid body dynamics, fluids, and cloth simulation. Python/C++ APIs with MuJoCo/Isaac Lab integration options. Procedural scene generation via coarse-to-fine synthesis decomposing scenes into functional units, stochastically recombining, and applying micro-level variations with human-in-loop validation. Protocol-based interaction system with dual-layer control (powered state + activation state) mimicking real device electrical dependencies. Text-driven motion generation via diffusion models with environmental voxel encoding. Hierarchical crowd simulation combining social force models with VLM-based high-level decision-making.
+
+**Implementation Check:**
+- GitHub repos: yes - https://github.com/bigai-ai/tongsim (159 stars, 9 forks, C++), plus SDK and indoor nav environment repos
+- HuggingFace: bigai/TongSIM-Asset (3,000+ objects, 100 indoor scenes, 10+ agents)
+- Commercial use: no - strictly non-commercial academic license
+- BIGAI is Beijing municipal government-backed research institute led by Song-Chun Zhu (formerly UCLA)
+- Connected to Tong Tong 2.0 AGI agent project
+
+**Score Breakdown:**
+- Novelty: 4/5 - Comprehensive UE5.6-based platform with unique features (protocol-based interactions, hierarchical crowd sim, VLM evaluation)
+- Feasibility: 4/5 - Full open-source release with assets and SDK; UE5.6 + significant compute required
+- Time-to-POC: 3/5 - More complex setup than Isaac Sim-based alternatives; UE5.6 learning curve
+- Value/Market: 4/5 - Comprehensive benchmark suite addresses real gaps; connected to major AGI research agenda
+- Defensibility: 3/5 - Open-source (non-commercial); moat is asset library + benchmark quality
+- Adoption: 3/5 - 159 stars; non-commercial license limits commercial use; UE5.6 vs Isaac Sim ecosystem
+
+**Decision Rationale:** Strong simulation platform with comprehensive benchmark suite and unique features. BIGAI backing provides credibility. However, non-commercial license and UE5.6 dependency may limit adoption compared to Isaac Sim alternatives (e.g., Genie Sim from AgiBot).
+
+**Extracted Insights:**
+- Protocol-based dual-layer interaction control (powered + activation state) more accurately models real device dependencies
+- MLLM spatial reasoning remains weak: Gemini-2.5-Pro achieves only 24.53/100 on household tasks, with embodied constraints most challenging
+- Hierarchical crowd simulation (physics + VLM) far outperforms traditional planners: human teleoperation 92.7 vs A*/DWA 10.4
+
+**Cross-References:**
+- Related to: arxiv_2601.02078 (Genie Sim) - both simulation platforms; Genie Sim uses Isaac Sim/OpenUSD vs TongSIM uses UE5.6; AgiBot has commercial backing vs BIGAI is research-focused
+- Related to: arxiv_2601.03590 (SiT-Bench), arxiv_2601.05529 (Safety Not Found) - all reveal MLLM spatial reasoning limitations
+
+**Learnings for Future Iterations:**
+- UE5.6-based platforms compete with Isaac Sim for robotics simulation; UE5.6 offers better rendering/environments, Isaac Sim offers better robotics integration
+- Non-commercial academic licenses significantly limit practical adoption potential
+- BIGAI is building a comprehensive embodied AI stack: Tong Tong agent + TongSIM simulator + benchmark suite

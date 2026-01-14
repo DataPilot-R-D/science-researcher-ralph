@@ -648,12 +648,26 @@
       "date": "2025-12-23",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "presented",
+      "score": 21,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 3,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Comprehensive simulation platform from BIGAI (Beijing Institute for General Artificial Intelligence) built on Unreal Engine 5.6. Features 115+ indoor scenes, continuous outdoor urban environment, 3,000+ interactive objects across 500+ categories, and five benchmark task categories spanning navigation, multi-agent cooperation, human-robot interaction, household tasks, and social intelligence.",
+        "methodology": "UE5.6 engine with Chaos physics, Python/C++ APIs, MuJoCo/Isaac Lab integration options. Procedural scene generation via coarse-to-fine synthesis with human-in-loop validation. Protocol-based interaction system with dual-layer control (powered state + activation state). Text-driven motion generation via diffusion models with voxel encoding. Hierarchical crowd simulation combining social force models with VLM-based decision-making. Supports 48+ parallel training environments with near-linear scaling.",
+        "results": "Navigation: PPO 60% success vs 100% human. Multi-agent (MAPPO): 19.24 mean return vs IPPO 14.75. Human-robot interaction: human teleoperation 92.7 score vs A*/DWA 10.4. Household tasks: Gemini-2.5-Pro best at 24.53/100 avg. Social intelligence (S3IT): Gemini-2.5-Pro 47.8/100. MLLMs struggle with spatial reasoning and embodied constraints.",
+        "implementations_found": ["https://github.com/bigai-ai/tongsim (159 stars)", "https://huggingface.co/datasets/bigai/TongSIM-Asset", "https://github.com/bigai-ai/tongsim-agiuc-sdk"],
+        "commercialized": false,
+        "limitations": "Non-commercial academic license limits commercial use. UE5.6 dependency creates steeper learning curve than Isaac Sim for robotics teams. Outdoor environments still under development. MLLMs show deficiencies in spatial reasoning. Traditional planners lack social contextual understanding."
+      },
+      "decision": "PRESENT",
+      "notes": "From BIGAI (Beijing Institute for General Artificial Intelligence), backed by Beijing municipal government. Led by Song-Chun Zhu (formerly UCLA). Connected to Tong Tong AGI agent project. Comprehensive benchmark suite but non-commercial license and UE5.6 dependency may limit adoption vs Isaac Sim alternatives."
     },
     {
       "id": "arxiv_2512.17992",
@@ -1112,6 +1126,47 @@
         "LLM-interface"
       ],
       "cross_refs": []
+    },
+    {
+      "id": "insight_028",
+      "paper_id": "arxiv_2512.20206",
+      "insight": "Protocol-based interaction systems with dual-layer control (powered state + activation state) more accurately model real-world device dependencies than simpler binary interaction models, improving sim-to-real transfer for household tasks.",
+      "tags": [
+        "simulation",
+        "interaction-modeling",
+        "sim2real",
+        "household-robotics"
+      ],
+      "cross_refs": [
+        "arxiv_2601.02078"
+      ]
+    },
+    {
+      "id": "insight_029",
+      "paper_id": "arxiv_2512.20206",
+      "insight": "MLLM benchmarks reveal spatial reasoning as weakest capability: Gemini-2.5-Pro achieves only 24.53/100 on household tasks with spatial intelligence identified as primary failure mode. Embodied constraints (physical reachability, occlusion) are most challenging.",
+      "tags": [
+        "MLLM",
+        "benchmark",
+        "spatial-reasoning",
+        "embodied-AI"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03590",
+        "arxiv_2601.05529"
+      ]
+    },
+    {
+      "id": "insight_030",
+      "paper_id": "arxiv_2512.20206",
+      "insight": "Hierarchical crowd simulation combining physics-based social force models with VLM-based high-level decision-making enables realistic human-robot interaction scenarios that traditional planners (A*/DWA) fail to handle (10.4 vs 92.7 human teleoperation score).",
+      "tags": [
+        "crowd-simulation",
+        "human-robot-interaction",
+        "VLM",
+        "social-navigation"
+      ],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -1174,13 +1229,18 @@
     "https://arxiv.org/html/2512.21243",
     "https://api.github.com/search/repositories?q=LookPlanGraph+OR+2512.21243",
     "https://api.github.com/repos/Onishenko-sci/LookPlanGraph",
-    "https://lookplangraph.github.io/"
+    "https://lookplangraph.github.io/",
+    "https://arxiv.org/abs/2512.20206",
+    "https://arxiv.org/html/2512.20206",
+    "https://api.github.com/repos/bigai-ai/tongsim",
+    "https://api.github.com/search/repositories?q=TongSIM+simulation+OR+2512.20206",
+    "https://huggingface.co/datasets/bigai/TongSIM-Asset"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 15,
-    "total_presented": 9,
+    "total_analyzed": 16,
+    "total_presented": 10,
     "total_rejected": 5,
     "total_insights_extracted": 1
   }
