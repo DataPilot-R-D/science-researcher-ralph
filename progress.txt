@@ -499,3 +499,39 @@ Score: 16/30
 - "Semantic reasoning about occluded/hidden objects" is an underexplored robotics problem with practical value
 - Inter-annotator agreement (Fleiss' κ) is a useful metric for establishing task difficulty upper bounds
 - Kitchen-specific datasets may not generalize; multi-room evaluation is important for household robotics
+
+---
+
+## 2026-01-14 - Paper: TimeBill: Time-Budgeted Inference for Large Language Models
+ID: arxiv_2512.21859
+Status: REJECTED
+Score: 15/30
+
+**Summary:** Framework for time-budgeted LLM inference combining Response Length Predictor (RLP), Execution Time Estimator (ETE), and adaptive KV cache eviction. Mentions robotics and autonomous driving as motivating applications but evaluates only on general NLP benchmarks.
+
+**Key Method:** Three-component system: (1) RLP uses small language model (Qwen2.5-0.5B) with knowledge distillation to classify output length into 512 buckets; (2) ETE combines FLOPs-based modeling with profiling-based coefficient fitting; (3) Adaptive KV cache eviction adjusts eviction ratio based on time budget vs predicted execution time.
+
+**Implementation Check:**
+- GitHub repos: no (no relevant repositories found)
+- Commercial use: no
+- Open questions: Will code be released? Can the framework be adapted for robotics-specific latency requirements (control loop frequencies)?
+
+**Score Breakdown:**
+- Novelty: 3/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 2/5
+- Defensibility: 2/5
+- Adoption: 2/5
+
+**Decision Rationale:** Generic LLM efficiency paper. While it mentions robotics as a motivating application domain, the paper provides no robotics-specific methods, evaluation, or integration guidance. The techniques (response length prediction, adaptive KV cache eviction) are useful but tangential to the core robotics+LLM research focus.
+
+**Extracted Insights:**
+- (None significant for robotics—standard LLM optimization techniques)
+
+**Cross-References:**
+- Related to: arxiv_2601.03590 (SiT-Bench) - both address LLM latency concerns but SiT-Bench focuses on robotics-relevant spatial reasoning
+
+**Learnings for Future Iterations:**
+- Papers mentioning "robotics" as application domain may not actually contribute robotics-specific methods; check methodology section for domain-specific evaluation
+- Time-budgeted inference is relevant for robotics control loops but needs robotics-specific benchmarks (control frequencies, sensor latencies) to be actionable

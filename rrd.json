@@ -485,12 +485,26 @@
       "date": "2025-12-26",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "rejected",
+      "score": 15,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 2,
+        "defensibility": 2,
+        "adoption": 2
+      },
+      "analysis": {
+        "summary": "Framework for time-budgeted LLM inference combining Response Length Predictor (RLP), Execution Time Estimator (ETE), and adaptive KV cache eviction. Enables generating accurate responses within time constraints for time-critical applications like robotics and autonomous driving.",
+        "methodology": "RLP uses a small language model (Qwen2.5-0.5B) with knowledge distillation to predict output length as classification into 512 buckets. ETE combines FLOPs-based modeling with profiling-based coefficient fitting (MAPE 1.22% prefill, 1.69% decode). Adaptive KV cache eviction adjusts eviction ratio based on predicted execution time vs budget.",
+        "results": "RLP achieves MAE=42.71, RMSE=78.13, R²=0.723 on response length prediction, outperforming ProxyModel and S3 baselines. ETE achieves MAPE <2%. System maintains high response quality while meeting 5-10s time budgets, outperforming vanilla inference and fixed eviction methods.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Requires offline profiling per hardware/model combination. Pessimistic factor selection impacts performance. Predictor must be trained per target LLM. No robotics-specific evaluation—mentions robotics as motivation but evaluates on general NLP benchmarks only."
+      },
+      "decision": "REJECT",
+      "notes": "Generic LLM efficiency paper that mentions robotics as application domain but provides no robotics-specific methods or evaluation. While useful for time-critical LLM deployment, it doesn't advance the robotics+LLM field. Accepted to AAAI 2026 but no code released."
     },
     {
       "id": "arxiv_2512.23739",
@@ -1086,14 +1100,17 @@
     "https://arxiv.org/abs/2512.23739",
     "https://arxiv.org/html/2512.23739",
     "https://api.github.com/search/repositories?q=NOAM+household+robot+OR+2512.23739",
-    "https://api.github.com/search/repositories?q=%22Break%20Out%20the%20Silverware%22+OR+%22Non-visible%20Object%20Allocation%22"
+    "https://api.github.com/search/repositories?q=%22Break%20Out%20the%20Silverware%22+OR+%22Non-visible%20Object%20Allocation%22",
+    "https://arxiv.org/abs/2512.21859",
+    "https://arxiv.org/html/2512.21859",
+    "https://api.github.com/search/repositories?q=TimeBill+LLM+OR+2512.21859"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 12,
+    "total_analyzed": 13,
     "total_presented": 8,
-    "total_rejected": 3,
+    "total_rejected": 4,
     "total_insights_extracted": 1
   }
 }
