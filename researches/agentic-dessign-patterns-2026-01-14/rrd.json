@@ -246,17 +246,46 @@
         "Beat Buesser",
         "Ana-Maria Cretu",
         "Edoardo Debenedetti",
-        "et al."
+        "Daniel Dobos",
+        "Daniel Fabian",
+        "Marc Fischer",
+        "David Froelicher",
+        "Kathrin Grosse",
+        "Daniel Naeff",
+        "Ezinwanne Ozoani",
+        "Andrew Paverd",
+        "Florian Tramèr",
+        "Václav Volhejn"
       ],
       "date": "2025-06-10",
       "source": "arXiv",
       "priority": 4,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "Security-focused design patterns with provable resistance. Critical for production agent systems."
+      "status": "presented",
+      "score": 26,
+      "score_breakdown": {
+        "novelty": 5,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 5,
+        "defensibility": 4,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Comprehensive security framework proposing six principled design patterns for building AI agents with provable resistance to prompt injection: Action-Selector, Plan-Then-Execute, LLM Map-Reduce, Dual LLM, Code-Then-Execute, and Context-Minimization. Each pattern provides architectural guarantees against specific threat vectors by constraining agent capabilities in controlled ways.",
+        "methodology": "Threat modeling for 10 application scenarios (OS Assistant, SQL Agent, Email/Calendar, Customer Service, Booking, Product Recommender, Resume Screening, Medication Chatbot, Medical Diagnosis, Software Engineering). Each pattern analyzed for: attacker capabilities, trust boundaries, harm vectors, and security-utility trade-offs.",
+        "results": "Six patterns formalized with provable security properties. Action-Selector provides immunity via no feedback loops. Plan-Then-Execute implements control-flow integrity. Map-Reduce prevents cross-document manipulation. Dual LLM achieves privilege separation. Code-Then-Execute makes manipulation visible through formal syntax. Context-Minimization removes injection surface after initial processing.",
+        "implementations_found": [
+          "https://pondevelopment.github.io/llm-prompt-injection-mitigation-patterns/",
+          "https://github.com/tldrsec/prompt-injection-defenses",
+          "https://github.com/Joe-B-Security/awesome-prompt-injection",
+          "https://www.archestra.ai/blog/dual-llm"
+        ],
+        "commercialized": true,
+        "commercialized_by": "Authors from IBM, Invariant Labs, ETH Zurich, Google, Microsoft. Archestra AI offers commercial Dual LLM implementation. Multiple guardrail products (LLM Guard, NeMo-Guardrails, IBM Granite Guardian) implement related patterns.",
+        "limitations": "Patterns designed for application-specific rather than general-purpose agents. Quarantined LLMs remain vulnerable to manipulation (no tools mitigates but doesn't eliminate). User confirmation suffers from alert fatigue. Data attribution imperfect. Applicability depends on task decomposability."
+      },
+      "decision": "PRESENT",
+      "notes": "Highest-scoring paper (26/30). Multi-institution collaboration (IBM, Google, Microsoft, ETH Zurich) validates rigor. Key assertion: general-purpose agents cannot provide meaningful security guarantees - application-specific patterns with constrained capabilities are the path forward. Directly complements arxiv_2509.08646 (P-t-E security focus). Six patterns form authoritative reference for production agent security."
     },
     {
       "id": "arxiv_2505.07087",
@@ -731,6 +760,34 @@
       "insight": "Step-wise Reflection is a novel LLM-specific pattern: Iterative self-evaluation during reasoning distinguishes itself from traditional metacognitive reflection in cognitive architectures - enables improved reliability without explicit commitment mechanisms",
       "tags": ["cognitive-patterns", "reflection", "novel-pattern"],
       "cross_refs": ["arxiv_2512.20845", "arxiv_2503.16024"]
+    },
+    {
+      "id": "insight_023",
+      "paper_id": "arxiv_2506.08837",
+      "insight": "General-purpose agents cannot provide meaningful security guarantees - application-specific agents with constrained capabilities following secure design patterns are the only path to production-grade security",
+      "tags": ["security", "architecture", "fundamental-principle"],
+      "cross_refs": ["arxiv_2509.08646"]
+    },
+    {
+      "id": "insight_024",
+      "paper_id": "arxiv_2506.08837",
+      "insight": "Six security patterns hierarchy: Action-Selector (max security, min flexibility) → Plan-Then-Execute (good balance) → Map-Reduce (parallel safe) → Dual LLM (privilege separation) → Code-Then-Execute (explicit reasoning) → Context-Minimization (simple implementation)",
+      "tags": ["security", "patterns", "trade-offs"],
+      "cross_refs": ["arxiv_2509.08646", "arxiv_2601.03624"]
+    },
+    {
+      "id": "insight_025",
+      "paper_id": "arxiv_2506.08837",
+      "insight": "LLM Map-Reduce pattern: Isolated LLM instances process individual data chunks independently with outputs constrained to safe formats (booleans, categories). Prevents cross-document manipulation and limits blast radius to single items - ideal for batch classification, review aggregation, resume screening.",
+      "tags": ["security", "patterns", "parallel-processing"],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_026",
+      "paper_id": "arxiv_2506.08837",
+      "insight": "Context-Minimization pattern: Remove user prompts from context after driving initial actions but before processing tool results. Simple to implement, prevents user-injected instructions from manipulating responses to tool outputs.",
+      "tags": ["security", "patterns", "context-management"],
+      "cross_refs": ["arxiv_2509.08646"]
     }
   ],
   "visited_urls": [
@@ -764,15 +821,19 @@
     "https://link.springer.com/chapter/10.1007/978-3-032-00800-8_28",
     "https://github.com/SoarGroup/Soar",
     "https://github.com/soartech/jsoar",
-    "https://github.com/ysymyth/awesome-language-agents"
+    "https://github.com/ysymyth/awesome-language-agents",
+    "https://arxiv.org/html/2506.08837v3",
+    "https://pondevelopment.github.io/llm-prompt-injection-mitigation-patterns/",
+    "https://github.com/tldrsec/prompt-injection-defenses",
+    "https://simonwillison.net/2025/Jun/13/prompt-injection-design-patterns/"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 6,
-    "total_presented": 6,
+    "total_analyzed": 7,
+    "total_presented": 7,
     "total_rejected": 0,
-    "total_insights_extracted": 22,
+    "total_insights_extracted": 26,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -788,12 +849,12 @@
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 21.83,
+      "avg_score": 22.43,
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
         "18-23": 5,
-        "24-30": 1
+        "24-30": 2
       }
     }
   }

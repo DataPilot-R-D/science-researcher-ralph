@@ -8,6 +8,8 @@ Started: śro 14 sty 12:37:38 2026 CET
 - **Framework selection heuristic**: Graph-based (LangGraph) for branching workflows; Role-based (CrewAI) for team collaboration; Conversational (AutoGen) for prototyping
 - **Control-flow integrity for security**: Generate plans in trusted state BEFORE ingesting untrusted data - P-t-E pattern provides inherent prompt injection resistance
 - **Dual LLM pattern**: Separate privileged (planning) from quarantined (untrusted input) LLMs for architectural isolation
+- **Security through constrained capabilities**: General-purpose agents cannot provide meaningful security guarantees - application-specific agents with pattern-based constraints are the path to production security
+- **Six security patterns hierarchy**: Action-Selector (max security) → Plan-Then-Execute → Map-Reduce → Dual LLM → Code-Then-Execute → Context-Minimization (simplest)
 
 ## Cross-Reference Insights
 - arxiv_2601.03624 and arxiv_2601.03328 both emphasize governance/accountability patterns
@@ -424,5 +426,76 @@ Score: 18/30
 - AGI conference papers (AGI25) tend to focus on theoretical frameworks vs practical implementations
 - Soar has 40+ years of research history - rich source for pattern identification
 - CoALA framework provides good synthesis of cognitive architecture + language agent intersection
+
+---
+
+## 2026-01-14 - Paper: Design Patterns for Securing LLM Agents against Prompt Injections
+ID: arxiv_2506.08837
+Status: PRESENTED
+Score: 26/30
+
+**Summary:** Comprehensive security framework proposing six principled design patterns for building AI agents with provable resistance to prompt injection. Multi-institution collaboration from IBM, Invariant Labs, ETH Zurich, Google, and Microsoft. Core assertion: general-purpose agents cannot provide meaningful security guarantees - application-specific agents with constrained capabilities are the path forward.
+
+**Six Design Patterns:**
+
+| Pattern | Security Mechanism | Trade-off |
+|---------|-------------------|-----------|
+| Action-Selector | No feedback loops; LLM selects from fixed action menu | Maximum security; minimum flexibility |
+| Plan-Then-Execute | Control-flow integrity; plan locked before untrusted data | Good balance; requires predetermined sequences |
+| LLM Map-Reduce | Isolated LLM instances per chunk; safe output formats | Parallel safety; task must be decomposable |
+| Dual LLM | Privilege separation; quarantined LLM has no tools | Strong isolation; architectural complexity |
+| Code-Then-Execute | Explicit formal syntax makes manipulation visible | Requires code generation capability |
+| Context-Minimization | User prompt removed before processing results | Simple; limits personalization |
+
+**Implementation Check:**
+- GitHub repos: Yes
+  - https://pondevelopment.github.io/llm-prompt-injection-mitigation-patterns/ (interactive guide)
+  - https://github.com/tldrsec/prompt-injection-defenses (comprehensive defense catalogue)
+  - https://github.com/Joe-B-Security/awesome-prompt-injection (curated references)
+- Commercial use: Yes
+  - Authors from IBM, Google, Microsoft, ETH Zurich
+  - Archestra AI offers commercial Dual LLM implementation
+  - LLM Guard, NeMo-Guardrails, IBM Granite Guardian implement related patterns
+- Open questions: How to evaluate security-utility trade-offs for specific applications? Optimal pattern combinations for different threat models?
+
+**Ten Case Study Applications:**
+1. OS Assistant - Malicious filenames/contents executing shell commands
+2. SQL Agent - Database-injected queries; Python interpreter exploitation
+3. Email/Calendar - Third-party emails/invitations; data exfiltration
+4. Customer Service - User prompt injection; screenshot attacks
+5. Booking - Third-party content in calendar/service descriptions
+6. Product Recommender - User reviews containing ranking manipulation
+7. Resume Screening - Resume content discrediting/boosting candidates
+8. Medication Chatbot - User prompts requesting off-label statements
+9. Medical Diagnosis - Patient prompt injection in diagnosis summaries
+10. Software Engineering - Malicious documentation/packages; code injection
+
+**Score Breakdown:**
+- Novelty: 5/5 (Provable security properties for each pattern; novel formalization)
+- Feasibility: 4/5 (Patterns immediately implementable; architectural discipline required)
+- Time-to-POC: 4/5 (Interactive guides available; pattern selection requires threat modeling)
+- Value/Market: 5/5 (Critical for production agents; multi-institution validation)
+- Defensibility: 4/5 (Patterns public; implementation expertise differentiates)
+- Adoption: 4/5 (Framework-agnostic; works with LangGraph, CrewAI, AutoGen)
+
+**Decision Rationale:** Highest-scoring paper (26/30). Authoritative reference from leading AI security researchers. Six patterns form foundational toolkit for production agent security. Key insight: security comes from constrained capabilities, not from making LLMs more robust.
+
+**Extracted Insights:**
+- General-purpose agents cannot provide meaningful security guarantees
+- Six patterns form hierarchy from max security/min flexibility to simple/moderate protection
+- LLM Map-Reduce ideal for batch classification, review aggregation, resume screening
+- Context-Minimization simplest pattern to implement for preventing output manipulation
+
+**Cross-References:**
+- Directly complements arxiv_2509.08646 (Plan-then-Execute security guide)
+- Security patterns integrate with three-tier framework from arxiv_2601.03624
+- Dual LLM pattern extends privilege separation from arxiv_2509.08646
+- Map-Reduce pattern relates to SIE architecture from arxiv_2601.03328
+
+**Learnings for Future Iterations:**
+- Multi-institution papers (IBM, Google, Microsoft, ETH Zurich) indicate high research rigor
+- Security patterns are increasingly critical as agents move to production
+- Interactive implementation guides (like pondevelopment.github.io) accelerate adoption
+- "Provable resistance" claims require careful examination of assumptions and threat models
 
 ---
