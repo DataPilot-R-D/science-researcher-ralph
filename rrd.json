@@ -505,12 +505,26 @@
       "date": "2025-12-25",
       "source": "arXiv",
       "priority": 5,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": ""
+      "status": "rejected",
+      "score": 16,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 2
+      },
+      "analysis": {
+        "summary": "Introduces NOAM (Non-visible Object Allocation Model), a hybrid pipeline that combines Grounding-DINO/SAM visual detection with LLM inference to predict where household items are stored in occluded containers. Addresses the practical robotics problem of locating items in drawers/cabinets when they're not visible.",
+        "methodology": "Nine-step pipeline: (1) detect storage containers via Grounding-DINO+SAM, (2) extract container features (type, position, dimensions, proximity to anchors), (3) convert to qualitative natural language descriptions, (4) construct structured prompts, (5) query LLM (GPT-4/LLaMA-3.3) to predict container ID, (6) map predictions back to 2D polygons. Evaluated on kitchen images with human-annotated ground truth.",
+        "results": "Real-world evaluation (100 items): NOAM GPT-4 achieves 23% accuracy and 0.230 avg IoU, vs human annotators at 27-38%. Development set (6,500 pairs): 28.11% accuracy. NOAM significantly outperforms Gemini-1.5/2.5-flash and Kosmos-2, but not statistically different from other baselines. 13s inference time (10s DINO + 2.9s LLM).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "13s inference too slow for real-time robotics. Kitchen-only evaluation—generalization untested. Below human performance (23% vs 27-38%). Fair inter-annotator agreement (κ=0.35) suggests inherent task subjectivity. No code release. Single static image input."
+      },
+      "decision": "REJECT",
+      "notes": "Novel problem formulation (inferring hidden object locations) but methodology is incremental—standard DINO+SAM+LLM pipeline. 23% accuracy and 13s latency far from deployable. Academic origin with no commercial backing."
     },
     {
       "id": "arxiv_2512.21293",
@@ -1006,6 +1020,18 @@
         "VLA"
       ],
       "cross_refs": []
+    },
+    {
+      "id": "insight_024",
+      "paper_id": "arxiv_2512.23739",
+      "insight": "Converting visual scene features to qualitative natural language descriptions (e.g., 'wider than tall' instead of aspect ratios) before LLM inference produces more reliable predictions than raw numerical features, as language-based tasks are more tractable for LLMs than compositional or arithmetic reasoning.",
+      "tags": [
+        "scene-representation",
+        "LLM-interface",
+        "qualitative-descriptions",
+        "household-robotics"
+      ],
+      "cross_refs": []
     }
   ],
   "visited_urls": [
@@ -1056,14 +1082,18 @@
     "https://arxiv.org/html/2601.05248",
     "https://api.github.com/search/repositories?q=LaST0+VLA+OR+2601.05248",
     "https://api.github.com/search/repositories?q=%22Latent%20Spatio-Temporal%22+robot",
-    "https://sites.google.com/view/last0"
+    "https://sites.google.com/view/last0",
+    "https://arxiv.org/abs/2512.23739",
+    "https://arxiv.org/html/2512.23739",
+    "https://api.github.com/search/repositories?q=NOAM+household+robot+OR+2512.23739",
+    "https://api.github.com/search/repositories?q=%22Break%20Out%20the%20Silverware%22+OR+%22Non-visible%20Object%20Allocation%22"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 11,
+    "total_analyzed": 12,
     "total_presented": 8,
-    "total_rejected": 2,
+    "total_rejected": 3,
     "total_insights_extracted": 1
   }
 }

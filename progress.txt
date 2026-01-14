@@ -460,3 +460,42 @@ Three-stage training: (1) Large-scale pretraining on 400K+ trajectories from Ope
 - "Latent" vs "explicit" reasoning is emerging as key VLA architecture decision; track papers comparing these approaches
 - Long-horizon robustness is differentiating metric—not just single-step success rate
 - Janus-Pro (DeepSeek multimodal) is becoming popular foundation for VLAs alongside InternVL and Qwen
+
+---
+
+## 2026-01-14 - Paper: Break Out the Silverware -- Semantic Understanding of Stored Household Items
+ID: arxiv_2512.23739
+Status: REJECTED
+Score: 16/30
+
+**Summary:** Introduces NOAM (Non-visible Object Allocation Model), a hybrid pipeline that combines Grounding-DINO/SAM visual detection with LLM inference to predict where household items are stored in occluded containers (drawers, cabinets). Addresses the practical robotics problem of locating items that are not visible in a scene.
+
+**Key Method:** Nine-step pipeline: (1) detect storage containers via Grounding-DINO+SAM, (2) extract container features (type, position, dimensions, proximity to anchors like sink/oven), (3) convert to qualitative natural language descriptions (e.g., "wider than tall" instead of aspect ratios), (4) construct structured prompts, (5) query LLM (GPT-4/LLaMA-3.3) to predict container ID, (6) map predictions back to 2D polygons.
+
+**Implementation Check:**
+- GitHub repos: no (GitHub API search returned no results)
+- Commercial use: no; academic research from Bar Ilan University and Tufts
+- Open questions: Will code/dataset be released? How to generalize beyond kitchens?
+
+**Score Breakdown:**
+- Novelty: 3/5 - Novel problem formulation but incremental methodology (standard DINO+SAM+LLM pipeline)
+- Feasibility: 3/5 - Uses proven components but 13s inference too slow for real-time
+- Time-to-POC: 3/5 - No code release; would need to replicate from methodology description
+- Value/Market: 3/5 - Real problem for domestic robots but 23% accuracy far from deployable
+- Defensibility: 2/5 - No unique tech or data moat; trivially replicable
+- Adoption: 2/5 - No code release, kitchen-only, slow inference, below-human accuracy
+
+**Decision Rationale:** Novel problem formulation (inferring hidden object storage locations) addresses real domestic robotics need, but methodology is incremental—standard DINO+SAM vision pipeline feeding an LLM. 23% accuracy and 13s latency are far from deployable. Fair inter-annotator agreement (κ=0.35) suggests inherent task subjectivity that may limit achievable performance.
+
+**Extracted Insights:**
+- Converting visual features to qualitative natural language (e.g., "wider than tall" vs raw aspect ratios) improves LLM inference over numerical representations
+- Kitchen storage location prediction has inherent subjectivity (κ=0.35 human agreement); perfect accuracy may not be achievable
+- Task benchmark: 6,500 item-image pairs (SUN dataset) + 100 real-world kitchen images with human annotations
+
+**Cross-References:**
+- Related to: arxiv_2601.06652 (Follow the Signs) - both use LLMs for spatial inference in structured environments, but different domains (navigation vs storage)
+
+**Learnings for Future Iterations:**
+- "Semantic reasoning about occluded/hidden objects" is an underexplored robotics problem with practical value
+- Inter-annotator agreement (Fleiss' κ) is a useful metric for establishing task difficulty upper bounds
+- Kitchen-specific datasets may not generalize; multi-room evaluation is important for household robotics
