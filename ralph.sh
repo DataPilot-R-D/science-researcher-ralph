@@ -209,6 +209,43 @@ cmd_status() {
   fi
   echo ""
 
+  # Timing information
+  local timing_started=$(jq -r '.timing.research_started_at // empty' "$rrd" 2>/dev/null)
+  local timing_analysis_started=$(jq -r '.timing.analysis.started_at // empty' "$rrd" 2>/dev/null)
+  local avg_per_paper=$(jq -r '.timing.analysis.avg_seconds_per_paper // 0' "$rrd" 2>/dev/null)
+
+  if [[ -n "$timing_started" && "$timing_started" != "null" ]]; then
+    echo -e "  ${BLUE}Timing:${NC}"
+
+    # Calculate elapsed time
+    local start_epoch=$(date -j -f "%Y-%m-%dT%H:%M:%SZ" "$timing_started" "+%s" 2>/dev/null || date -d "$timing_started" "+%s" 2>/dev/null || echo "0")
+    local now_epoch=$(date "+%s")
+
+    if [[ "$start_epoch" -gt 0 ]]; then
+      local elapsed=$((now_epoch - start_epoch))
+      local elapsed_h=$((elapsed / 3600))
+      local elapsed_m=$(((elapsed % 3600) / 60))
+      echo "    Started:   $timing_started"
+      printf "    Elapsed:   %dh %dm\n" "$elapsed_h" "$elapsed_m"
+    fi
+
+    # Calculate ETA if in ANALYSIS phase and have average
+    if [[ "$phase" == "ANALYSIS" && -n "$avg_per_paper" && "$avg_per_paper" != "null" && "$avg_per_paper" != "0" ]]; then
+      # Ensure avg_per_paper is an integer
+      avg_per_paper=$(printf "%.0f" "$avg_per_paper" 2>/dev/null || echo "0")
+      if [[ "$avg_per_paper" -gt 0 ]]; then
+        local remaining=$((target - analyzed))
+        [[ "$remaining" -lt 0 ]] && remaining=0
+        local eta_seconds=$((remaining * avg_per_paper))
+        local eta_h=$((eta_seconds / 3600))
+        local eta_m=$(((eta_seconds % 3600) / 60))
+        printf "    Avg/paper: %dm %ds\n" "$((avg_per_paper / 60))" "$((avg_per_paper % 60))"
+        printf "    ETA:       %dh %dm (%d papers remaining)\n" "$eta_h" "$eta_m" "$remaining"
+      fi
+    fi
+    echo ""
+  fi
+
   # Recommendations
   if [[ "$phase" == "COMPLETE" ]]; then
     echo -e "  ${GREEN}✓ Research complete!${NC}"

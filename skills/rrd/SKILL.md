@@ -104,6 +104,26 @@ Generate the RRD with these fields:
   "open_questions": [],
 
   "phase": "DISCOVERY",
+
+  "timing": {
+    "research_started_at": "<ISO8601 timestamp when RRD created>",
+    "discovery": {
+      "started_at": "<same as research_started_at>",
+      "ended_at": null,
+      "duration_seconds": null
+    },
+    "analysis": {
+      "started_at": null,
+      "ended_at": null,
+      "duration_seconds": null,
+      "papers_analyzed": 0,
+      "avg_seconds_per_paper": null
+    },
+    "complete": {
+      "ended_at": null
+    }
+  },
+
   "papers_pool": [],
   "insights": [],
   "visited_urls": [],
@@ -147,6 +167,7 @@ Generate the RRD with these fields:
 | `sources` | Where to search (arXiv, Scholar, web) |
 | `min_score_to_present` | Threshold score (0-30) for PRESENT decision (legacy, use mission.min_combined_score) |
 | `phase` | Current phase: DISCOVERY, ANALYSIS, or COMPLETE |
+| `timing` | Phase timestamps for progress tracking (see Timing Configuration below) |
 | `domain_glossary` | Optional: domain-specific term definitions to improve LLM reasoning |
 | `open_questions` | Questions for user to answer if topic was ambiguous |
 | `discovery_metrics` | Tracks which sources were tried, succeeded, or blocked |
@@ -160,6 +181,23 @@ Generate the RRD with these fields:
 | `mission.min_blue_ocean_score` | Minimum blue ocean score (0-20) for EXTRACT_INSIGHTS (default: 12) |
 | `mission.min_combined_score` | Minimum combined score (0-50) for PRESENT (default: 25) |
 | `mission.strategic_focus` | Focus preset: "balanced", "market_creation", "defensibility", "speed" |
+
+#### Timing Configuration
+
+| Field | Description |
+|-------|-------------|
+| `timing.research_started_at` | ISO8601 timestamp when RRD was created |
+| `timing.discovery.started_at` | When DISCOVERY phase began (same as research_started_at) |
+| `timing.discovery.ended_at` | When DISCOVERY phase ended |
+| `timing.discovery.duration_seconds` | Calculated duration of DISCOVERY phase |
+| `timing.analysis.started_at` | When ANALYSIS phase began |
+| `timing.analysis.ended_at` | When ANALYSIS phase ended |
+| `timing.analysis.duration_seconds` | Calculated duration of ANALYSIS phase |
+| `timing.analysis.papers_analyzed` | Count of papers analyzed (for avg calculation) |
+| `timing.analysis.avg_seconds_per_paper` | Average time per paper analysis |
+| `timing.complete.ended_at` | When research was fully completed |
+
+**RRD Generator initializes:** `research_started_at` and `discovery.started_at` with current ISO8601 timestamp.
 
 ---
 
@@ -245,6 +283,26 @@ Include this rubric explanation in the RRD description or notes if the user need
   "open_questions": [],
 
   "phase": "DISCOVERY",
+
+  "timing": {
+    "research_started_at": "2025-01-15T10:00:00Z",
+    "discovery": {
+      "started_at": "2025-01-15T10:00:00Z",
+      "ended_at": null,
+      "duration_seconds": null
+    },
+    "analysis": {
+      "started_at": null,
+      "ended_at": null,
+      "duration_seconds": null,
+      "papers_analyzed": 0,
+      "avg_seconds_per_paper": null
+    },
+    "complete": {
+      "ended_at": null
+    }
+  },
+
   "papers_pool": [],
   "insights": [],
   "visited_urls": [],

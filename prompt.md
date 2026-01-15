@@ -75,7 +75,10 @@ You are an autonomous research scouting agent. Your job is to discover, analyze,
    - `target_papers` count reached, OR
    - All sources exhausted
 
-   Set `"phase": "ANALYSIS"` in `{{RESEARCH_DIR}}/rrd.json`
+   Set `"phase": "ANALYSIS"` in `{{RESEARCH_DIR}}/rrd.json` and **update timing**:
+   - Set `timing.discovery.ended_at` to current ISO8601 timestamp
+   - Calculate `timing.discovery.duration_seconds` = (ended_at - started_at) in seconds
+   - Set `timing.analysis.started_at` to current ISO8601 timestamp
 
 ---
 
@@ -195,9 +198,13 @@ You are an autonomous research scouting agent. Your job is to discover, analyze,
    }
    ```
 
-10. **Update `{{RESEARCH_DIR}}/progress.txt`** (see format below)
+10. **Update timing metrics:**
+    - Increment `timing.analysis.papers_analyzed`
+    - Calculate `timing.analysis.avg_seconds_per_paper` = (now - timing.analysis.started_at) / papers_analyzed
 
-11. **Update AGENTS.md** if you discover research patterns
+11. **Update `{{RESEARCH_DIR}}/progress.txt`** (see format below)
+
+12. **Update AGENTS.md** if you discover research patterns
 
 ---
 
@@ -296,6 +303,10 @@ Before claiming completion, you MUST read and verify the actual state:
 
 2. **If verification PASSES** (all papers analyzed):
    - Update `"phase": "COMPLETE"` in `{{RESEARCH_DIR}}/rrd.json`
+   - **Update timing:**
+     - Set `timing.analysis.ended_at` to current ISO8601 timestamp
+     - Calculate `timing.analysis.duration_seconds` = (ended_at - started_at) in seconds
+     - Set `timing.complete.ended_at` to current ISO8601 timestamp
    - Generate the Final Research Report and save to `{{RESEARCH_DIR}}/research-report.md`
    - **OUTPUT THIS EXACT TAG (required for loop to exit):**
      ```

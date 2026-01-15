@@ -34,6 +34,25 @@
 
   "phase": "DISCOVERY",
 
+  "timing": {
+    "research_started_at": null,
+    "discovery": {
+      "started_at": null,
+      "ended_at": null,
+      "duration_seconds": null
+    },
+    "analysis": {
+      "started_at": null,
+      "ended_at": null,
+      "duration_seconds": null,
+      "papers_analyzed": 0,
+      "avg_seconds_per_paper": null
+    },
+    "complete": {
+      "ended_at": null
+    }
+  },
+
   "papers_pool": [
     {
       "id": "arxiv_2501.12345",
