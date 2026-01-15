@@ -12,6 +12,7 @@ Started: śro 14 sty 12:37:38 2026 CET
 - **Six security patterns hierarchy**: Action-Selector (max security) → Plan-Then-Execute → Map-Reduce → Dual LLM → Code-Then-Execute → Context-Minimization (simplest)
 - **Lazy agent failure mode**: GRPO loss normalization (1/T_i) inadvertently favors shorter trajectories, causing multi-agent collapse to single-agent behavior - mitigate with causal influence measurement + restart mechanisms
 - **CoT explainability illusion**: Chain-of-Thought produces "explanations without explainability" - non-reasoning models outperform CoT variants; use architecture for traceability rather than CoT for transparency
+- **Agent Contracts for resource governance**: Formal framework C = (I, O, S, R, T, Φ, Ψ) with conservation laws ∑c_j^(r) ≤ B^(r) for hierarchical delegation - achieves 90% token reduction with 525x lower variance
 
 ## Cross-Reference Insights
 - arxiv_2601.03624 and arxiv_2601.03328 both emphasize governance/accountability patterns
@@ -1161,5 +1162,71 @@ Cognitive overload ablation: Naive collaborative agents plateau at 0.39 H@1 vs M
 - Information Bottleneck theory provides principled approach to context compression
 - Multiple deployment configurations are increasingly important for production adoption
 - Recommendation domain provides clear benchmarks for agentic system evaluation
+
+---
+
+## 2026-01-15 - Paper: Agent Contracts: A Formal Framework for Resource-Bounded Autonomous AI Systems
+ID: arxiv_2601.08815
+Status: PRESENTED
+Score: 24/30
+
+**Summary:** Formal framework extending Contract Net Protocol to modern LLM agents with unified governance structure: C = (I, O, S, R, T, Φ, Ψ) combining input/output specifications, resource constraints, temporal boundaries, and success criteria. Conservation laws ensure hierarchical delegation respects parent budgets. Demonstrated 90% token reduction with 525x lower variance.
+
+**Key Method:**
+- **Contract Definition:** C = (Input spec, Output spec, Skills, Resources, Time, Success criteria, Termination conditions)
+- **Lifecycle:** DRAFTED → ACTIVE → (FULFILLED | VIOLATED | EXPIRED | TERMINATED)
+- **Token Tracking:** R_tok = (r_in, r_r, r_out) for input/reasoning/output tokens
+- **Conservation Law:** ∑_j c_j^(r) ≤ B^(r) ensures delegated budgets respect parent constraints
+- **Allocation Strategies:** Proportional, equal, or negotiated with unused budget returning to pools
+
+**Implementation Check:**
+- GitHub repos: Yes - https://github.com/flyersworder/agent-contracts (official)
+- Commercial use: No, but addresses Gartner's 40% project cancellation prediction
+- Open questions: How to enforce mid-call budget limits? Production overhead?
+
+**Experimental Results:**
+
+| Experiment | Sample | Key Finding |
+|------------|--------|-------------|
+| Code Review | 70 problems | 90% token reduction; 525x lower variance |
+| Research Pipeline | 50 topics | Zero conservation violations; runaway agent detected/halted |
+| Crisis Communication | 24 scenarios | 23% token reduction; prevented failures |
+| Strategy Modes | 50 puzzles | 70%→86% success (+16pp for 75% more tokens) |
+
+All experiments used Gemini 2.5 Flash/Flash-Lite via Google ADK or LiteLLM.
+
+**Score Breakdown:**
+- Novelty: 4/5 (Extends Contract Net Protocol to LLM resource governance with formal semantics)
+- Feasibility: 5/5 (GitHub implementation; tested with Gemini models)
+- Time-to-POC: 4/5 (Reference implementation; clear API usage)
+- Value/Market: 4/5 (Addresses escalating costs - Gartner predicts 40% cancellation by 2027)
+- Defensibility: 3/5 (Framework transferable; formal semantics add differentiation)
+- Adoption: 4/5 (Works with Google ADK and LiteLLM; drop-in governance layer)
+
+**Decision Rationale:** High-scoring governance pattern with working implementation. Key insight: transforms unpredictable agent behavior into bounded, auditable operations. Conservation laws enable safe hierarchical multi-agent delegation. Addresses critical industry problem of runaway costs.
+
+**Extracted Insights:**
+- Agent Contracts formal structure unifies resource governance with task specs
+- Conservation laws enable safe recursive multi-agent delegation
+- Contract lifecycle state machine provides audit trails
+- Token enforcement limitation: can't prevent single oversized calls, only multi-call protection
+
+**Enforcement Limitation (Critical):**
+Token consumption only known AFTER API calls complete - cannot prevent single oversized calls. Primary value is multi-call protection. Future infrastructure needs:
+- Interruptible generation (mid-call cancellation)
+- Token reservation (guaranteed hard limits)
+- Native budget-aware inference
+
+**Cross-References:**
+- Governance patterns from arxiv_2601.03328 (Enterprise Agent Infrastructure)
+- Resource budgeting relates to arxiv_2508.10146 framework constraints
+- Plan-then-Execute (arxiv_2509.08646) benefits from resource contracts
+- Complements observability from arxiv_2510.09244
+
+**Learnings for Future Iterations:**
+- Formal frameworks for agent governance are emerging as critical infrastructure
+- Conservation laws provide mathematical foundation for hierarchical agent systems
+- Token-level enforcement requires future LLM infrastructure support
+- Gartner predictions about agentic AI failures create urgency for governance patterns
 
 ---
