@@ -1098,3 +1098,68 @@ Score: 18/30
 - Weak LLM-as-Judge reliability (Cohen's Kappa 0.28-0.48) is an ongoing evaluation challenge
 
 ---
+
+## 2026-01-15 - Paper: MemRec: Collaborative Memory-Augmented Agentic Recommender System
+ID: arxiv_2601.08816
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** Two-agent architecture decoupling reasoning (LLM_Rec) from memory management (LM_Mem) for agentic recommender systems. Uses collaborative memory graph with asynchronous propagation for efficient collaborative signal integration without cognitive overload. Achieves state-of-art on four benchmarks.
+
+**Key Method:** Three-stage pipeline:
+1. **Stage-R (Retrieval):** Curate-then-Synthesize strategy with LLM-guided context curation (k=16 neighbors, zero-shot domain rules) + synthesis into preference facets within 1800 token budget
+2. **Stage-ReRank:** Grounded reasoning with collaborative memory for relevance scoring and rationale generation
+3. **Stage-W (Write):** Asynchronous O(1) batch propagation for graph updates without disrupting online interactions
+
+**Implementation Check:**
+- GitHub repos: Yes - https://github.com/rutgerswiselab/memrec (official)
+- Project homepage: https://memrec.weixinchen.com
+- Commercial use: Authors from Rutgers + Snap Research (Neil Shah, Tong Zhao)
+- Open questions: How to reduce ~16.5s latency? Generalization beyond recommendation domain?
+
+**Benchmark Results:**
+
+| Dataset | MemRec H@1 | Improvement |
+|---------|------------|-------------|
+| Goodreads | - | +28.98% |
+| MovieTV | - | +19.75% |
+| Books | 0.52 | +14.91% |
+| Yelp | - | +15.77% |
+
+Cognitive overload ablation: Naive collaborative agents plateau at 0.39 H@1 vs MemRec's 0.52 (+34% improvement).
+
+**Deployment Configurations:**
+- gpt-4o-mini: H@1 0.524 (standard)
+- Cloud-OSS 120B: H@1 0.561 (moderate cost)
+- Local Qwen-2.5-7B: H@1 0.470 (fixed hardware)
+- Vector-only: H@1 0.209 (ultra-low latency)
+
+**Score Breakdown:**
+- Novelty: 4/5 (Two-agent decoupling + Information Bottleneck-inspired curation)
+- Feasibility: 4/5 (GitHub implementation; multiple deployment configs)
+- Time-to-POC: 4/5 (Code available; clear hyperparameters k=16, N_f=7, τ=1800)
+- Value/Market: 4/5 (Recommendation systems have clear commercial value)
+- Defensibility: 3/5 (Architecture transferable; Snap Research involvement adds credibility)
+- Adoption: 4/5 (Multiple deployment options from cloud to local; Qwen support)
+
+**Decision Rationale:** High-quality architectural contribution with working implementation. Key insight: dedicated memory management agent reduces cognitive overload enabling +34% improvement over naive approaches. Asynchronous O(1) propagation addresses production latency requirements.
+
+**Extracted Insights:**
+- Decoupled memory management: separate LM_Mem handles graph ops while LLM_Rec focuses on reasoning
+- Curate-then-Synthesize: Information Bottleneck theory for context compression
+- Asynchronous batch propagation: O(1) graph updates as single prompt
+- Pareto frontier deployments: same architecture, multiple cost/quality trade-offs
+
+**Cross-References:**
+- Memory patterns relate to arxiv_2508.10146 framework comparison
+- Agent specialization aligns with Universal/Conditional taxonomy from arxiv_2511.03023
+- Decoupling pattern complements Dual LLM security pattern from arxiv_2506.08837
+- Async processing relates to production requirements from arxiv_2601.03328
+
+**Learnings for Future Iterations:**
+- Snap Research involvement indicates industry applicability
+- Information Bottleneck theory provides principled approach to context compression
+- Multiple deployment configurations are increasingly important for production adoption
+- Recommendation domain provides clear benchmarks for agentic system evaluation
+
+---

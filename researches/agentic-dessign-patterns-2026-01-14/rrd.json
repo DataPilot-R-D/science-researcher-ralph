@@ -708,17 +708,42 @@
         "Weixin Chen",
         "Yuhan Zhao",
         "Jingyuan Huang",
-        "et al."
+        "Zihe Ye",
+        "Clark Mingxuan Ju",
+        "Tong Zhao",
+        "Neil Shah",
+        "Li Chen",
+        "Yongfeng Zhang"
       ],
       "date": "2026-01-13",
       "source": "arXiv",
       "priority": 4,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "Decouples reasoning from memory management. Dedicated memory management LLM pattern. Async background processing."
+      "status": "presented",
+      "score": 23,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 4,
+        "time_to_poc": 4,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "Two-agent architecture decoupling reasoning (LLM_Rec) from memory management (LM_Mem) for agentic recommender systems. Uses collaborative memory graph with asynchronous propagation for efficient collaborative signal integration without cognitive overload. Achieves state-of-art on four benchmarks with +15-29% relative gains.",
+        "methodology": "Three-stage pipeline: (1) Stage-R: Curate-then-Synthesize strategy with LLM-guided context curation filtering k=16 neighbors using zero-shot domain rules, then synthesis into preference facets within 1800 token budget, (2) Stage-ReRank: Grounded reasoning with collaborative memory for relevance scoring and rationale generation, (3) Stage-W: Asynchronous O(1) batch propagation for graph updates without disrupting online interactions. Tested on Amazon Books, Goodreads, MovieTV, Yelp datasets.",
+        "results": "Goodreads: +28.98% Hit@1, MovieTV: +19.75% Hit@1, Books: +14.91%, Yelp: +15.77%. Cognitive overload ablation: naive collaborative agents plateau at 0.39 H@1 vs MemRec's 0.52 (+34%). Multiple deployment configs: gpt-4o-mini (H@1: 0.524), Cloud-OSS 120B (H@1: 0.561), Local Qwen-2.5-7B (H@1: 0.470).",
+        "implementations_found": [
+          "https://github.com/rutgerswiselab/memrec (official implementation)",
+          "https://memrec.weixinchen.com (project homepage)",
+          "https://github.com/agiresearch/A-mem (related A-MEM agentic memory)",
+          "https://github.com/Shichun-Liu/Agent-Memory-Paper-List (agent memory papers list)"
+        ],
+        "commercialized": false,
+        "commercialized_by": "Authors from Rutgers University and Snap Research (Neil Shah, Tong Zhao)",
+        "limitations": "Domain-specific to recommendation; ~16.5s latency in sequential execution; relies on LLM for curation rules (quality varies with model); sparse interaction scenarios still challenging; evaluation focused on ranking metrics."
+      },
+      "decision": "PRESENT",
+      "notes": "Key architectural contribution: dedicated memory management agent (LM_Mem) decoupled from reasoning agent (LLM_Rec). Information Bottleneck theory inspires Curate-then-Synthesize pattern. Asynchronous graph propagation achieves O(1) interaction complexity. Cross-references: memory patterns relate to arxiv_2508.10146 framework comparison; agent specialization aligns with Universal/Conditional taxonomy from arxiv_2511.03023; decoupling pattern complements Dual LLM security pattern from arxiv_2506.08837."
     },
     {
       "id": "arxiv_2601.08815",
@@ -1232,6 +1257,34 @@
       "insight": "Architecture FOR traceability, not CoT FOR explainability: Use agentic system architecture to trace information flow through agent handoffs rather than relying on CoT verbalization. Decompose transparency problem into architectural observability",
       "tags": ["architecture", "traceability", "design-pattern"],
       "cross_refs": ["arxiv_2509.08646", "arxiv_2506.08837"]
+    },
+    {
+      "id": "insight_065",
+      "paper_id": "arxiv_2601.08816",
+      "insight": "Decoupled memory management pattern: Separate memory manager agent (LM_Mem) handles graph operations and context curation while reasoning agent (LLM_Rec) focuses solely on decision-making. Reduces cognitive overload - naive collaborative agents plateau while decoupled architecture achieves +34% improvement",
+      "tags": ["memory", "architecture", "decoupling", "cognitive-load"],
+      "cross_refs": ["arxiv_2508.10146", "arxiv_2506.08837"]
+    },
+    {
+      "id": "insight_066",
+      "paper_id": "arxiv_2601.08816",
+      "insight": "Curate-then-Synthesize pattern inspired by Information Bottleneck theory: First filter k=16 neighbors using LLM-generated domain-specific heuristic rules (zero-shot), then synthesize into preference facets within token budget (1800 tokens). Balances information preservation with computational tractability",
+      "tags": ["memory", "context-management", "efficiency", "design-pattern"],
+      "cross_refs": ["arxiv_2511.03023", "arxiv_2505.07087"]
+    },
+    {
+      "id": "insight_067",
+      "paper_id": "arxiv_2601.08816",
+      "insight": "Asynchronous O(1) batch propagation: Graph updates (direct node updates + neighbor propagation) execute as single unified prompt asynchronously, enabling continuous memory evolution without disrupting online interactions. Critical for production recommendation latency requirements",
+      "tags": ["async", "efficiency", "production", "memory"],
+      "cross_refs": ["arxiv_2601.03328", "arxiv_2509.08646"]
+    },
+    {
+      "id": "insight_068",
+      "paper_id": "arxiv_2601.08816",
+      "insight": "Pareto frontier deployment configurations: Same architecture supports cloud (gpt-4o-mini: 0.524 H@1), cloud-OSS (120B: 0.561 H@1), local (Qwen-2.5-7B: 0.470 H@1), and vector-only (0.209 H@1) deployments - enables cost/quality/privacy trade-off optimization",
+      "tags": ["deployment", "flexibility", "cost-optimization", "production"],
+      "cross_refs": ["arxiv_2508.10146", "arxiv_2510.09244"]
     }
   ],
   "visited_urls": [
@@ -1303,15 +1356,21 @@
     "https://www.researchgate.net/publication/391444390_Thoughts_without_Thinking_Reconsidering_the_Explanatory_Value_of_Chain-of-Thought_Reasoning_in_LLMs_through_Agentic_Pipelines",
     "https://github.com/IntelLabs",
     "https://aigi.ox.ac.uk/wp-content/uploads/2025/07/Cot_Is_Not_Explainability.pdf",
-    "https://long-cot.github.io/"
+    "https://long-cot.github.io/",
+    "https://arxiv.org/abs/2601.08816",
+    "https://arxiv.org/html/2601.08816v1",
+    "https://github.com/rutgerswiselab/memrec",
+    "https://memrec.weixinchen.com",
+    "https://github.com/agiresearch/A-mem",
+    "https://github.com/Shichun-Liu/Agent-Memory-Paper-List"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 16,
-    "total_presented": 16,
+    "total_analyzed": 17,
+    "total_presented": 17,
     "total_rejected": 0,
-    "total_insights_extracted": 64,
+    "total_insights_extracted": 68,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -1327,11 +1386,11 @@
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 21.75,
+      "avg_score": 21.82,
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
-        "18-23": 13,
+        "18-23": 14,
         "24-30": 3
       }
     }
