@@ -11,29 +11,21 @@ Create detailed Research Requirements Documents that guide autonomous research s
 
 ## The Job
 
-1. Receive a research topic/area description from the user
-2. Infer focus area and keywords from the topic
-3. Generate RRD with sensible defaults
-4. Add `open_questions` if topic is ambiguous
-5. Save to `rrd.json`
+1. **Generate TOPIC_SLUG first** (REQUIRED for directory naming):
+   - Format: kebab-case, 3-5 words max
+   - Content: Core research focus (not full description)
+   - Output on its own line: `TOPIC_SLUG: your-slug-here`
+   - Examples: `blockchain-kvm-remote-ops`, `llm-agent-patterns`, `robotics-sim2real`
+
+2. Receive a research topic/area description from the user
+3. Infer focus area and keywords from the topic
+4. Generate RRD with sensible defaults
+5. Add `open_questions` if topic is ambiguous
+6. Save to `rrd.json`
 
 **Important:** Do NOT start researching. Just create the RRD.
 
----
-
-## Topic Slug
-
-Before saving the RRD, generate a short topic slug for the directory name:
-- **Format:** kebab-case, 3-5 words
-- **Content:** Core topic/focus of the research (not the full description)
-- **Example:** `robotics-sim2real-transfer`, `llm-agent-patterns`, `vision-language-models`
-
-Output the slug on a separate line before saving:
-```
-TOPIC_SLUG: your-generated-slug
-```
-
-This will be used for the research folder name: `researches/{topic_slug}-{date}/`
+⚠️ **CRITICAL:** You MUST output `TOPIC_SLUG: your-slug` before saving. The research folder name depends on it. Without it, the directory will have an unreadable auto-generated name.
 
 ---
 

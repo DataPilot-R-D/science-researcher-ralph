@@ -180,15 +180,15 @@ fi
 
 # For rrd skill: rename temp directory to final name based on topic slug
 if [[ "$SKILL_NAME" == "rrd" && -d "$TEMP_DIR" ]]; then
-  # Try to extract agent-generated topic slug
-  TOPIC_SLUG=$(echo "$OUTPUT" | grep -oE 'TOPIC_SLUG:[[:space:]]*[a-z0-9-]+' | sed 's/TOPIC_SLUG:[[:space:]]*//' | head -1)
+  # Try to extract agent-generated topic slug (case-insensitive)
+  TOPIC_SLUG=$(echo "$OUTPUT" | grep -ioE 'TOPIC_SLUG:[[:space:]]*[a-zA-Z0-9-]+' | sed 's/.*TOPIC_SLUG:[[:space:]]*//' | tr '[:upper:]' '[:lower:]' | head -1)
 
   if [[ -n "$TOPIC_SLUG" && "$TOPIC_SLUG" != "" ]]; then
     # Use agent-generated slug (sanitize and limit)
     RESEARCH_NAME=$(echo "$TOPIC_SLUG" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g' | sed 's/--*/-/g' | cut -c1-50)
   else
-    # Fallback: truncate task description
-    RESEARCH_NAME=$(echo "$TASK" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//' | cut -c1-40)
+    # Fallback: truncate task description (convert newlines to spaces first)
+    RESEARCH_NAME=$(printf '%s' "$TASK" | tr '\n' ' ' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//' | cut -c1-40)
   fi
 
   RESEARCH_DIR="$SCRIPT_DIR/researches/${RESEARCH_NAME}-${RESEARCH_DATE}"
