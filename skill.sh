@@ -154,11 +154,7 @@ Save all files to the research folder: $TEMP_DIR/
 - Save rrd.json to: $TEMP_DIR/rrd.json
 - progress.txt will be created automatically by ralph.sh
 
-**IMPORTANT:** Before saving, output a short topic slug for the directory name:
-\`\`\`
-TOPIC_SLUG: your-short-topic-name
-\`\`\`
-Format: kebab-case, 3-5 words, e.g., \`robotics-sim2real-transfer\`, \`llm-agent-patterns\`"
+**Note:** The \`project\` field in rrd.json will be used for the directory name, so make it concise and descriptive (3-6 words)."
 fi
 
 echo "Running skill '$SKILL_NAME' with $AGENT..."
@@ -178,16 +174,21 @@ else
   echo "$OUTPUT"
 fi
 
-# For rrd skill: rename temp directory to final name based on topic slug
+# For rrd skill: rename temp directory to final name based on project name from rrd.json
 if [[ "$SKILL_NAME" == "rrd" && -d "$TEMP_DIR" ]]; then
-  # Try to extract agent-generated topic slug (case-insensitive)
-  TOPIC_SLUG=$(echo "$OUTPUT" | grep -ioE 'TOPIC_SLUG:[[:space:]]*[a-zA-Z0-9-]+' | sed 's/.*TOPIC_SLUG:[[:space:]]*//' | tr '[:upper:]' '[:lower:]' | head -1)
+  RESEARCH_NAME=""
 
-  if [[ -n "$TOPIC_SLUG" && "$TOPIC_SLUG" != "" ]]; then
-    # Use agent-generated slug (sanitize and limit)
-    RESEARCH_NAME=$(echo "$TOPIC_SLUG" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g' | sed 's/--*/-/g' | cut -c1-50)
-  else
-    # Fallback: truncate task description (convert newlines to spaces first)
+  # Try to extract project name from rrd.json (most reliable - agent always generates this)
+  if [[ -f "$TEMP_DIR/rrd.json" ]] && command -v jq &> /dev/null; then
+    # Extract project field, remove "Research: " prefix, convert to kebab-case
+    PROJECT_NAME=$(jq -r '.project // empty' "$TEMP_DIR/rrd.json" 2>/dev/null | sed 's/^Research: //')
+    if [[ -n "$PROJECT_NAME" ]]; then
+      RESEARCH_NAME=$(echo "$PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//' | cut -c1-50)
+    fi
+  fi
+
+  # Fallback: truncate task description (convert newlines to spaces first)
+  if [[ -z "$RESEARCH_NAME" ]]; then
     RESEARCH_NAME=$(printf '%s' "$TASK" | tr '\n' ' ' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//' | cut -c1-40)
   fi
 

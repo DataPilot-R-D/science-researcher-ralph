@@ -11,21 +11,16 @@ Create detailed Research Requirements Documents that guide autonomous research s
 
 ## The Job
 
-1. **Generate TOPIC_SLUG first** (REQUIRED for directory naming):
-   - Format: kebab-case, 3-5 words max
-   - Content: Core research focus (not full description)
-   - Output on its own line: `TOPIC_SLUG: your-slug-here`
-   - Examples: `blockchain-kvm-remote-ops`, `llm-agent-patterns`, `robotics-sim2real`
-
-2. Receive a research topic/area description from the user
-3. Infer focus area and keywords from the topic
-4. Generate RRD with sensible defaults
+1. Receive a research topic/area description from the user
+2. Infer focus area and keywords from the topic
+3. Generate RRD with sensible defaults
+4. **Set a clear, concise `project` name** (3-6 words describing the research focus)
+   - Example: `"project": "Research: Blockchain KVM Robot Operations"`
+   - This becomes the directory name, so make it meaningful
 5. Add `open_questions` if topic is ambiguous
 6. Save to `rrd.json`
 
 **Important:** Do NOT start researching. Just create the RRD.
-
-⚠️ **CRITICAL:** You MUST output `TOPIC_SLUG: your-slug` before saving. The research folder name depends on it. Without it, the directory will have an unreadable auto-generated name.
 
 ---
 
@@ -283,11 +278,10 @@ Include this rubric explanation in the RRD description or notes if the user need
 
 Before saving the RRD:
 
-- [ ] Generated TOPIC_SLUG (kebab-case, 3-5 words)
+- [ ] Set concise `project` name (3-6 words, becomes directory name)
 - [ ] Inferred focus_area from topic description
 - [ ] Generated 5-8 specific, searchable keywords
 - [ ] Used sensible defaults for time_window, target_papers, sources
 - [ ] Added open_questions if any ambiguity exists
-- [ ] Output TOPIC_SLUG line before saving
 - [ ] Saved to the research folder path provided in the prompt
 - [ ] Printed warning if open_questions is non-empty
