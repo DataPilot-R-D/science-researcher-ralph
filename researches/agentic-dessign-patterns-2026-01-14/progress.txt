@@ -1290,3 +1290,84 @@ Score: 23/30
 - Multi-hop QA is strong benchmark for agentic RAG evaluation
 
 ---
+
+## 2026-01-15 - Paper: RAGShaper: Eliciting Sophisticated Agentic RAG Skills via Automated Data Synthesis
+ID: arxiv_2601.08699
+Status: PRESENTED
+Score: 20/30
+
+**Summary:** Automated data synthesis framework for training robust agentic RAG agents. InfoCurator module builds dense information trees from seed entities with adversarial distractors at perception and cognition levels. Constrained navigation forces teacher agent to confront distractors, producing trajectories demonstrating error correction and noise rejection.
+
+**Key Method:**
+- **InfoCurator Module:** Depth-first traversal from seed entities using E5 embeddings for dense retrieval
+- **Distractor Generation:** Directly generates adversarial documents rather than relying on KB candidates
+- **Constrained Navigation:** Forces encounters with distractors (100% at first step, p^e probability thereafter)
+- **Training:** SFT on trajectories with F1≥0.9 using Megatron-LM with 128k context
+
+**Distractor Taxonomy:**
+
+| Level | Type | Description |
+|-------|------|-------------|
+| Perception | Doppelgänger | Adjacent metadata variants requiring precision |
+| Cognition | False Shortcut | Forged direct connections skipping reasoning |
+| Cognition | Fragmented Puzzle | Distributed answers requiring completeness |
+| Cognition | Subjective Fallacy | Opinion-laden content with factual errors |
+
+**Implementation Check:**
+- GitHub repos: No public code repository found
+- Teacher agent: gpt-oss-120b (expensive)
+- Model checkpoints: Referenced on HuggingFace (not linked in abstract)
+- Infrastructure: Megatron-LM + 128k context
+
+**Benchmark Results:**
+
+| Metric | RAGShaper (6.5k) | Key Finding |
+|--------|------------------|-------------|
+| Average EM | 50.3 | Outperforms human-labeled baselines |
+| Average F1 | 62.0 | Strong on noise-intensive tasks |
+| Bamboogle EM | 60.0 | Best on adversarial QA |
+| AmbigQA EM | 61.1 | Handles ambiguous queries |
+
+**Ablation:** Removing distractor training drops EM from 48.8 to 33.8 (-15pp).
+**Trajectory Quality:** 66.90% demonstrate distractor rejection; average 10-40+ steps vs 2-3 for human annotations.
+
+**Score Breakdown:**
+- Novelty: 4/5 (InfoCurator + systematic distractor taxonomy)
+- Feasibility: 3/5 (Requires gpt-oss-120b teacher; complex pipeline)
+- Time-to-POC: 3/5 (Multi-phase pipeline; significant infrastructure)
+- Value/Market: 4/5 (Addresses critical training data scarcity for agentic RAG)
+- Defensibility: 3/5 (Framework reproducible; taxonomy transferable)
+- Adoption: 3/5 (HuggingFace checkpoints but needs Megatron-LM + 128k context)
+
+**Decision Rationale:** Valuable methodology for training robust agentic RAG despite implementation complexity. Key insight: systematic adversarial distractor taxonomy provides principled framework for noise-robust training. Constrained navigation is clever technique for eliciting error-correction demonstrations.
+
+**Extracted Insights:**
+- Distractor taxonomy: Perception (Doppelgänger) + Cognition (False Shortcut, Fragmented Puzzle, Subjective Fallacy)
+- Constrained navigation forces error-correction training
+- InfoCurator builds dense information trees with explicit dependency chains
+- Synthesized trajectories are 3-20x longer than human annotations
+
+**Cross-References:**
+- Complements ARG discussion in arxiv_2508.10146 (framework comparison)
+- Distractor handling relates to noise filtering in arxiv_2601.08747 (ACE)
+- Training methodology relates to data synthesis patterns
+- Robustness concerns connect to lazy agent failures in arxiv_2511.02303
+
+**Learnings for Future Iterations:**
+- Adversarial data synthesis can produce superior training data vs human annotation
+- Distractor taxonomy provides principled approach to robustness training
+- Teacher-student distillation with constrained exploration is effective pattern
+- Complex training infrastructure limits adoption of research advances
+
+---
+
+## RESEARCH COMPLETE
+
+All 20 papers in papers_pool have been analyzed:
+- Total Presented: 20 (100%)
+- Total Rejected: 0 (0%)
+- Total Insights: 78
+- Average Score: 21.9/30
+- Score Distribution: 18-23 (16 papers), 24-30 (4 papers)
+
+Research phase transitioning to COMPLETE.

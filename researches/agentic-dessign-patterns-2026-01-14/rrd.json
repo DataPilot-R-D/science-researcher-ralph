@@ -37,7 +37,7 @@
     }
   },
   "open_questions": [],
-  "phase": "ANALYSIS",
+  "phase": "COMPLETE",
   "papers_pool": [
     {
       "id": "arxiv_2601.03624",
@@ -833,17 +833,39 @@
         "Bo Li",
         "Jialong Wu",
         "Guochen Yan",
-        "et al."
+        "Huanyao Zhang",
+        "Jiahao Xu",
+        "Haitao Mi",
+        "Wentao Zhang"
       ],
       "date": "2026-01-13",
       "source": "arXiv",
       "priority": 3,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "Agentic RAG skill training via data synthesis. Adversarial distractor navigation pattern."
+      "status": "presented",
+      "score": 20,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 3,
+        "time_to_poc": 3,
+        "value_market": 4,
+        "defensibility": 3,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Automated data synthesis framework for training robust agentic RAG agents. InfoCurator module builds dense information trees from seed entities with adversarial distractors at perception (Doppelgänger) and cognition (False Shortcut, Fragmented Puzzle, Subjective Fallacy) levels. Constrained navigation forces teacher agent to confront distractors, producing trajectories demonstrating error correction and noise rejection.",
+        "methodology": "Four-phase pipeline: (1) Information Curation via depth-first traversal from seed entities using E5 embeddings for dense retrieval, (2) Question-Answer Synthesis from information trees, (3) Behavior Elicitation with constrained navigation forcing distractor encounters (probability p^e), (4) SFT Training on trajectories with F1≥0.9. Teacher agent: gpt-oss-120b. Trained Qwen3-30B-A3B-Think and Qwen3-4B-Think using Megatron-LM with 128k context.",
+        "results": "6.5k data setting: 50.3 Average EM, 62.0 Average F1. Outperforms human-labeled baselines. Strongest on noise-intensive tasks (Bamboogle: 60.0 EM, AmbigQA: 61.1 EM). Ablation: removing distractor training drops EM from 48.8 to 33.8. 66.90% trajectories demonstrate distractor rejection. Synthesized trajectories average 10-40+ steps vs human annotations at 2-3 steps.",
+        "implementations_found": [
+          "https://arxiv.org/html/2601.08699v1 (paper with methodology)",
+          "HuggingFace model checkpoints referenced (not linked in abstract)",
+          "https://github.com/asinghcsu/AgenticRAG-Survey (related survey)"
+        ],
+        "commercialized": false,
+        "commercialized_by": null,
+        "limitations": "Requires gpt-oss-120b teacher agent (expensive). Complex multi-phase pipeline. Needs Megatron-LM + 128k context training infrastructure. Wikipedia-based evaluation may not generalize to domain-specific KBs. No public code repository found."
+      },
+      "decision": "PRESENT",
+      "notes": "Key contribution: systematic distractor taxonomy (Perception: Doppelgänger; Cognition: False Shortcut, Fragmented Puzzle, Subjective Fallacy) for training robust agentic RAG. Constrained navigation is clever technique for forcing error-correction demonstrations. Cross-references: complements ARG discussion in arxiv_2508.10146; distractor handling relates to noise filtering in arxiv_2601.08747 ACE; training methodology relates to data synthesis patterns."
     }
   ],
   "insights": [
@@ -1371,6 +1393,27 @@
       "insight": "Token efficiency through strategic retrieval avoidance: 42% fewer tokens than IterDRAG while achieving superior accuracy (+8.7pp on MultiHop-RAG). Optimal iteration depth N=3-5 varies by dataset - requires tuning",
       "tags": ["efficiency", "token-optimization", "RAG", "cost-reduction"],
       "cross_refs": ["arxiv_2601.08815", "arxiv_2601.08816"]
+    },
+    {
+      "id": "insight_076",
+      "paper_id": "arxiv_2601.08699",
+      "insight": "Distractor taxonomy for RAG training: Perception level (Doppelgänger - adjacent metadata variants) and Cognition level (False Shortcut - forged direct connections; Fragmented Puzzle - distributed answers; Subjective Fallacy - opinion-laden factual errors). Systematic framework for training robust distractor rejection",
+      "tags": ["RAG", "training", "robustness", "taxonomy"],
+      "cross_refs": ["arxiv_2601.08747", "arxiv_2508.10146"]
+    },
+    {
+      "id": "insight_077",
+      "paper_id": "arxiv_2601.08699",
+      "insight": "Constrained navigation for error-correction training: Force teacher agent to encounter distractors (probability p^e at each step, 100% at first step), producing trajectories that explicitly demonstrate error correction and noise rejection. Ablation shows removing distractor training drops EM from 48.8 to 33.8",
+      "tags": ["training", "data-synthesis", "error-correction", "methodology"],
+      "cross_refs": ["arxiv_2511.02303", "arxiv_2512.20845"]
+    },
+    {
+      "id": "insight_078",
+      "paper_id": "arxiv_2601.08699",
+      "insight": "InfoCurator module: Depth-first traversal from seed entities builds dense information trees with explicit dependency chains (each retrieval step unlocks NEW entity/relation for NEXT hop). Uses E5 embeddings for semantic retrieval + generates adversarial distractors directly",
+      "tags": ["data-synthesis", "knowledge-graph", "RAG", "automation"],
+      "cross_refs": ["arxiv_2601.08816", "arxiv_2502.05078"]
     }
   ],
   "visited_urls": [
@@ -1454,15 +1497,18 @@
     "https://github.com/flyersworder/agent-contracts",
     "https://thenewstack.io/5-key-trends-shaping-agentic-development-in-2026/",
     "https://arxiv.org/abs/2601.08747",
-    "https://arxiv.org/html/2601.08747v2"
+    "https://arxiv.org/html/2601.08747v2",
+    "https://arxiv.org/abs/2601.08699",
+    "https://arxiv.org/html/2601.08699v1",
+    "https://github.com/asinghcsu/AgenticRAG-Survey"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 19,
-    "total_presented": 19,
+    "total_analyzed": 20,
+    "total_presented": 20,
     "total_rejected": 0,
-    "total_insights_extracted": 75,
+    "total_insights_extracted": 78,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -1478,11 +1524,11 @@
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 22.0,
+      "avg_score": 21.9,
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
-        "18-23": 15,
+        "18-23": 16,
         "24-30": 4
       }
     }
