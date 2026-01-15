@@ -16,7 +16,7 @@
     ],
     "time_window_days": 90,
     "historical_lookback_days": 1095,
-    "target_papers": 30,
+    "target_papers": 20,
     "sources": [
       "arXiv",
       "Google Scholar",
@@ -873,547 +873,1049 @@
       "id": "insight_001",
       "paper_id": "arxiv_2601.03624",
       "insight": "Three-tier agent classification (LLM Agents→Agentic AI→Agentic Communities) provides clear scoping for incremental system development",
-      "tags": ["architecture", "taxonomy", "incremental-development"],
+      "tags": [
+        "architecture",
+        "taxonomy",
+        "incremental-development"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_002",
       "paper_id": "arxiv_2601.03624",
       "insight": "Deontic tokens (burden/permit/embargo) enable formal accountability chains in multi-agent systems - critical for regulated industries",
-      "tags": ["governance", "compliance", "formal-methods"],
+      "tags": [
+        "governance",
+        "compliance",
+        "formal-methods"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_003",
       "paper_id": "arxiv_2601.03624",
       "insight": "Pattern composition strategies: Vertical (foundational→sophisticated), Horizontal (peer patterns), Cross-Cutting (governance overlay)",
-      "tags": ["composition", "architecture", "patterns"],
+      "tags": [
+        "composition",
+        "architecture",
+        "patterns"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_004",
       "paper_id": "arxiv_2601.03624",
       "insight": "Intent vs Obligation distinction: Internal intent (non-transferable) vs External obligation (delegable with traceability) preserves agent autonomy while enabling responsibility chains",
-      "tags": ["governance", "delegation", "accountability"],
+      "tags": [
+        "governance",
+        "delegation",
+        "accountability"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_005",
       "paper_id": "arxiv_2601.03328",
       "insight": "Prototype-to-production gap: MAS prototypes can be delivered in 2 weeks, but production maturity requires extensive tuning for LLM variability - plan for 3-6x longer stabilization phase",
-      "tags": ["development-velocity", "production", "planning"],
-      "cross_refs": ["arxiv_2601.03624"]
+      "tags": [
+        "development-velocity",
+        "production",
+        "planning"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_006",
       "paper_id": "arxiv_2601.03328",
       "insight": "Single Information Environment (SIE) pattern: Data-centric design where specialist agents handle unique datasets with coordinators routing queries - effective for knowledge-intensive domains",
-      "tags": ["architecture", "patterns", "data-centric"],
+      "tags": [
+        "architecture",
+        "patterns",
+        "data-centric"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_007",
       "paper_id": "arxiv_2601.03328",
       "insight": "Human oversight is a persistent requirement across all tested domains - MAS should augment not replace human decision-making, especially in high-stakes/regulated environments",
-      "tags": ["governance", "human-in-loop", "production"],
-      "cross_refs": ["arxiv_2601.03624"]
+      "tags": [
+        "governance",
+        "human-in-loop",
+        "production"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_008",
       "paper_id": "arxiv_2601.03328",
       "insight": "Cost efficiency pattern: LLM-based specialist agents can achieve 6x cost reduction (£0.05 vs £0.33/email) and 66% throughput improvement over regex baselines when properly architected",
-      "tags": ["cost", "efficiency", "benchmarks"],
+      "tags": [
+        "cost",
+        "efficiency",
+        "benchmarks"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_009",
       "paper_id": "arxiv_2508.10146",
       "insight": "Framework selection heuristic: Graph-based (LangGraph) for complex branching workflows; Role-based (CrewAI) for team-oriented collaboration; Conversational (AutoGen) for rapid prototyping and human-in-loop scenarios",
-      "tags": ["framework-selection", "architecture", "decision-guidance"],
-      "cross_refs": ["arxiv_2601.03328"]
+      "tags": [
+        "framework-selection",
+        "architecture",
+        "decision-guidance"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03328"
+      ]
     },
     {
       "id": "insight_010",
       "paper_id": "arxiv_2508.10146",
       "insight": "Five critical design challenges in current frameworks: (1) Rigid architectures limit mid-execution adaptation, (2) No runtime peer discovery, (3) Code safety risks in generated code, (4) Framework-specific abstractions block interop, (5) Missing universal communication standards",
-      "tags": ["challenges", "limitations", "production"],
-      "cross_refs": ["arxiv_2601.03624"]
+      "tags": [
+        "challenges",
+        "limitations",
+        "production"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_011",
       "paper_id": "arxiv_2508.10146",
       "insight": "A2A vs ANP protocol positioning: A2A (Google/Linux Foundation) for enterprise peer-to-peer task orchestration via Agent Cards; ANP for decentralized discovery using DIDs and semantic JSON-LD - complementary not competing",
-      "tags": ["protocols", "interoperability", "standards"],
+      "tags": [
+        "protocols",
+        "interoperability",
+        "standards"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_012",
       "paper_id": "arxiv_2508.10146",
       "insight": "Memory implementation patterns vary by framework: LangGraph uses stateful graph nodes; CrewAI provides agent-level memory (ChromaDB short-term, SQLite long-term); AutoGen maintains shared dialogue context; Semantic Kernel offers modular semantic/procedural/episodic variants",
-      "tags": ["memory", "architecture", "patterns"],
-      "cross_refs": ["arxiv_2601.08816"]
+      "tags": [
+        "memory",
+        "architecture",
+        "patterns"
+      ],
+      "cross_refs": [
+        "arxiv_2601.08816"
+      ]
     },
     {
       "id": "insight_013",
       "paper_id": "arxiv_2510.09244",
       "insight": "Four-component agent architecture: Perception (environmental sensing), Reasoning (planning/adaptation), Memory (short/long-term storage), Execution (action translation) - provides foundational mental model for agent design",
-      "tags": ["architecture", "fundamentals", "cognitive-patterns"],
-      "cross_refs": ["arxiv_2601.03624", "arxiv_2508.10146"]
+      "tags": [
+        "architecture",
+        "fundamentals",
+        "cognitive-patterns"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03624",
+        "arxiv_2508.10146"
+      ]
     },
     {
       "id": "insight_014",
       "paper_id": "arxiv_2510.09244",
       "insight": "Human-AI performance gap quantified: 72%+ task completion for humans vs ~43% for leading AI on OSWorld benchmarks - sets realistic expectations for agent capabilities",
-      "tags": ["benchmarks", "limitations", "expectations"],
+      "tags": [
+        "benchmarks",
+        "limitations",
+        "expectations"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_015",
       "paper_id": "arxiv_2510.09244",
       "insight": "Agent vs workflow distinction: 'Simply augmenting an LLM with modules, tools, or predefined steps does not make it an agent' - agents act according to feedback rather than following fixed workflows",
-      "tags": ["definitions", "fundamentals", "autonomy"],
-      "cross_refs": ["arxiv_2601.03624"]
+      "tags": [
+        "definitions",
+        "fundamentals",
+        "autonomy"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_016",
       "paper_id": "arxiv_2509.08646",
       "insight": "Control-flow integrity for prompt injection defense: Generate plans in trusted state BEFORE ingesting untrusted external data via tools - once established, plan sequence cannot be altered by malicious tool outputs",
-      "tags": ["security", "prompt-injection", "control-flow"],
-      "cross_refs": ["arxiv_2506.08837"]
+      "tags": [
+        "security",
+        "prompt-injection",
+        "control-flow"
+      ],
+      "cross_refs": [
+        "arxiv_2506.08837"
+      ]
     },
     {
       "id": "insight_017",
       "paper_id": "arxiv_2509.08646",
       "insight": "Principle of least privilege for agents: Executors receive only task-scoped tools for immediate step - frameworks like CrewAI enable dynamic tool provisioning, preventing unauthorized function calls even under prompt injection",
-      "tags": ["security", "least-privilege", "tool-access"],
-      "cross_refs": ["arxiv_2508.10146"]
+      "tags": [
+        "security",
+        "least-privilege",
+        "tool-access"
+      ],
+      "cross_refs": [
+        "arxiv_2508.10146"
+      ]
     },
     {
       "id": "insight_018",
       "paper_id": "arxiv_2509.08646",
       "insight": "Dual LLM pattern: Separate 'privileged' LLM for planning/sensitive operations from 'quarantined' LLM that processes untrusted inputs - architectural isolation prevents privilege escalation",
-      "tags": ["security", "architecture", "isolation"],
+      "tags": [
+        "security",
+        "architecture",
+        "isolation"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_019",
       "paper_id": "arxiv_2509.08646",
       "insight": "P-t-E trade-offs: Improved reasoning quality, cost efficiency, predictability, and prompt injection resistance vs upfront latency, high token consumption in planning, and wasted effort if early steps fail without re-planning",
-      "tags": ["architecture", "trade-offs", "planning"],
-      "cross_refs": ["arxiv_2601.03624"]
+      "tags": [
+        "architecture",
+        "trade-offs",
+        "planning"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_020",
       "paper_id": "arxiv_2505.07087",
       "insight": "Commitment & Reconsideration pattern is underexplored in LLM agents: ReAct implements observe-decide-act but lacks explicit commitment stage - introducing commitment may improve reasoning outcomes by enabling principled reconsidering of prior choices",
-      "tags": ["cognitive-patterns", "reasoning", "gap-analysis"],
-      "cross_refs": ["arxiv_2510.09244", "arxiv_2601.03624"]
+      "tags": [
+        "cognitive-patterns",
+        "reasoning",
+        "gap-analysis"
+      ],
+      "cross_refs": [
+        "arxiv_2510.09244",
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_021",
       "paper_id": "arxiv_2505.07087",
       "insight": "Knowledge Compilation pattern is strategically important: Caching LLM reasoning into reusable forms (ExpeL, Reflexion, Voyager) becomes increasingly valuable as reasoning model computational costs rise",
-      "tags": ["cognitive-patterns", "efficiency", "caching"],
-      "cross_refs": ["arxiv_2508.10146"]
+      "tags": [
+        "cognitive-patterns",
+        "efficiency",
+        "caching"
+      ],
+      "cross_refs": [
+        "arxiv_2508.10146"
+      ]
     },
     {
       "id": "insight_022",
       "paper_id": "arxiv_2505.07087",
       "insight": "Step-wise Reflection is a novel LLM-specific pattern: Iterative self-evaluation during reasoning distinguishes itself from traditional metacognitive reflection in cognitive architectures - enables improved reliability without explicit commitment mechanisms",
-      "tags": ["cognitive-patterns", "reflection", "novel-pattern"],
-      "cross_refs": ["arxiv_2512.20845", "arxiv_2503.16024"]
+      "tags": [
+        "cognitive-patterns",
+        "reflection",
+        "novel-pattern"
+      ],
+      "cross_refs": [
+        "arxiv_2512.20845",
+        "arxiv_2503.16024"
+      ]
     },
     {
       "id": "insight_023",
       "paper_id": "arxiv_2506.08837",
       "insight": "General-purpose agents cannot provide meaningful security guarantees - application-specific agents with constrained capabilities following secure design patterns are the only path to production-grade security",
-      "tags": ["security", "architecture", "fundamental-principle"],
-      "cross_refs": ["arxiv_2509.08646"]
+      "tags": [
+        "security",
+        "architecture",
+        "fundamental-principle"
+      ],
+      "cross_refs": [
+        "arxiv_2509.08646"
+      ]
     },
     {
       "id": "insight_024",
       "paper_id": "arxiv_2506.08837",
       "insight": "Six security patterns hierarchy: Action-Selector (max security, min flexibility) → Plan-Then-Execute (good balance) → Map-Reduce (parallel safe) → Dual LLM (privilege separation) → Code-Then-Execute (explicit reasoning) → Context-Minimization (simple implementation)",
-      "tags": ["security", "patterns", "trade-offs"],
-      "cross_refs": ["arxiv_2509.08646", "arxiv_2601.03624"]
+      "tags": [
+        "security",
+        "patterns",
+        "trade-offs"
+      ],
+      "cross_refs": [
+        "arxiv_2509.08646",
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_025",
       "paper_id": "arxiv_2506.08837",
       "insight": "LLM Map-Reduce pattern: Isolated LLM instances process individual data chunks independently with outputs constrained to safe formats (booleans, categories). Prevents cross-document manipulation and limits blast radius to single items - ideal for batch classification, review aggregation, resume screening.",
-      "tags": ["security", "patterns", "parallel-processing"],
+      "tags": [
+        "security",
+        "patterns",
+        "parallel-processing"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_026",
       "paper_id": "arxiv_2506.08837",
       "insight": "Context-Minimization pattern: Remove user prompts from context after driving initial actions but before processing tool results. Simple to implement, prevents user-injected instructions from manipulating responses to tool outputs.",
-      "tags": ["security", "patterns", "context-management"],
-      "cross_refs": ["arxiv_2509.08646"]
+      "tags": [
+        "security",
+        "patterns",
+        "context-management"
+      ],
+      "cross_refs": [
+        "arxiv_2509.08646"
+      ]
     },
     {
       "id": "insight_027",
       "paper_id": "arxiv_2404.11584",
       "insight": "Single vs multi-agent architecture selection: Single-agent for well-defined problems with clear tool sets; multi-agent for collaborative feedback, parallel execution, or diverse problem-solving - not determined by reasoning complexity alone",
-      "tags": ["architecture", "decision-guidance", "taxonomy"],
-      "cross_refs": ["arxiv_2508.10146", "arxiv_2601.03328"]
+      "tags": [
+        "architecture",
+        "decision-guidance",
+        "taxonomy"
+      ],
+      "cross_refs": [
+        "arxiv_2508.10146",
+        "arxiv_2601.03328"
+      ]
     },
     {
       "id": "insight_028",
       "paper_id": "arxiv_2404.11584",
       "insight": "Leadership impact on agent teams: Organized leader enables ~10% faster task completion, particularly when human oversight is involved - supports hierarchical/vertical multi-agent architectures",
-      "tags": ["multi-agent", "leadership", "coordination"],
-      "cross_refs": ["arxiv_2601.03624"]
+      "tags": [
+        "multi-agent",
+        "leadership",
+        "coordination"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_029",
       "paper_id": "arxiv_2404.11584",
       "insight": "Five major planning approaches: (1) Task decomposition, (2) Multi-plan selection, (3) External module-aided planning, (4) Reflection and refinement, (5) Memory-augmented planning - foundation for structured agent reasoning",
-      "tags": ["planning", "taxonomy", "reasoning"],
-      "cross_refs": ["arxiv_2510.09244", "arxiv_2601.03624"]
+      "tags": [
+        "planning",
+        "taxonomy",
+        "reasoning"
+      ],
+      "cross_refs": [
+        "arxiv_2510.09244",
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_030",
       "paper_id": "arxiv_2404.11584",
       "insight": "Multi-agent discussion does not necessarily enhance reasoning when single-agent prompts are sufficiently robust - avoid over-engineering with multi-agent when simpler solutions suffice",
-      "tags": ["multi-agent", "efficiency", "decision-guidance"],
-      "cross_refs": ["arxiv_2511.02303"]
+      "tags": [
+        "multi-agent",
+        "efficiency",
+        "decision-guidance"
+      ],
+      "cross_refs": [
+        "arxiv_2511.02303"
+      ]
     },
     {
       "id": "insight_031",
       "paper_id": "arxiv_2511.03023",
       "insight": "Universal vs Conditional agent taxonomy: Universal agents (Discovery, Analysis) provide consistent value across all models (12.4% std dev); Conditional agents (Intent, Report) show model-dependent value (20.5% std dev) - deploy Universal agents always, Conditional only if profiling shows >60% win rate",
-      "tags": ["multi-agent", "deployment-strategy", "agent-taxonomy"],
-      "cross_refs": ["arxiv_2601.03328", "arxiv_2508.10146"]
+      "tags": [
+        "multi-agent",
+        "deployment-strategy",
+        "agent-taxonomy"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03328",
+        "arxiv_2508.10146"
+      ]
     },
     {
       "id": "insight_032",
       "paper_id": "arxiv_2511.03023",
       "insight": "Agent failure modes differ: Removing Universal agents (Discovery, Analysis) causes catastrophic failures (243-280 instances); removing Conditional agents (Intent, Report) causes quality degradation - prioritize Universal agents in resource-constrained deployments",
-      "tags": ["failure-modes", "robustness", "architecture"],
-      "cross_refs": ["arxiv_2509.08646"]
+      "tags": [
+        "failure-modes",
+        "robustness",
+        "architecture"
+      ],
+      "cross_refs": [
+        "arxiv_2509.08646"
+      ]
     },
     {
       "id": "insight_033",
       "paper_id": "arxiv_2511.03023",
       "insight": "Model size poorly predicts multi-agent performance: 120B params scored 8.2/10 vs 70B scored 4.7/10 - architecture design matters more than raw model scale for agent systems",
-      "tags": ["model-selection", "architecture", "benchmarks"],
-      "cross_refs": ["arxiv_2510.09244"]
+      "tags": [
+        "model-selection",
+        "architecture",
+        "benchmarks"
+      ],
+      "cross_refs": [
+        "arxiv_2510.09244"
+      ]
     },
     {
       "id": "insight_034",
       "paper_id": "arxiv_2511.03023",
       "insight": "Model profiling guidance: Run 20-50 representative queries to profile model-agent fit before production; Analysis agent shows 42-96% win rate variance across models requiring explicit evaluation",
-      "tags": ["deployment", "profiling", "production-guidance"],
+      "tags": [
+        "deployment",
+        "profiling",
+        "production-guidance"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_035",
       "paper_id": "arxiv_2512.20845",
       "insight": "Degeneration-of-thought in single-agent Reflexion: Same LLM reflecting on itself repeats errors across iterations despite knowing they're wrong - confirmation bias and mode collapse persist even with explicit failure feedback",
-      "tags": ["reflection", "failure-modes", "cognitive-patterns"],
-      "cross_refs": ["arxiv_2505.07087", "arxiv_2404.11584"]
+      "tags": [
+        "reflection",
+        "failure-modes",
+        "cognitive-patterns"
+      ],
+      "cross_refs": [
+        "arxiv_2505.07087",
+        "arxiv_2404.11584"
+      ]
     },
     {
       "id": "insight_036",
       "paper_id": "arxiv_2512.20845",
       "insight": "Multi-persona debate pattern: Replace single self-reflector with diverse persona-based critics (Verifier, Skeptic, Logician, Creative, Meta-Reflector) that analyze failures from different perspectives - Judge synthesizes consensus reflection",
-      "tags": ["reflection", "multi-agent", "patterns"],
-      "cross_refs": ["arxiv_2511.03023", "arxiv_2601.03328"]
+      "tags": [
+        "reflection",
+        "multi-agent",
+        "patterns"
+      ],
+      "cross_refs": [
+        "arxiv_2511.03023",
+        "arxiv_2601.03328"
+      ]
     },
     {
       "id": "insight_037",
       "paper_id": "arxiv_2512.20845",
       "insight": "Persona engineering template: Reasoning personas vary on exploit/explore/strictness axes; Programming personas mirror real-world roles (Senior Engineer, QA, Algorithm Expert, Code Reviewer) - domain-specific persona design required for new applications",
-      "tags": ["persona-design", "patterns", "domain-adaptation"],
+      "tags": [
+        "persona-design",
+        "patterns",
+        "domain-adaptation"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_038",
       "paper_id": "arxiv_2512.20845",
       "insight": "Multi-agent reflection cost-benefit: ~3x API cost increase (300-400 calls/task) for 3-6 point accuracy improvement - evaluate whether marginal gains justify computational overhead for specific use case",
-      "tags": ["cost-benefit", "trade-offs", "deployment"],
-      "cross_refs": ["arxiv_2601.03328", "arxiv_2509.08646"]
+      "tags": [
+        "cost-benefit",
+        "trade-offs",
+        "deployment"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03328",
+        "arxiv_2509.08646"
+      ]
     },
     {
       "id": "insight_039",
       "paper_id": "arxiv_2503.16024",
       "insight": "Task-specific fine-tuned critics outperform general-purpose models: Llama-3-8B critic trained on 32K examples beats GPT-4o by 29.16% on feedback quality - specialist beats generalist for evaluation tasks",
-      "tags": ["critic-pattern", "fine-tuning", "evaluation"],
-      "cross_refs": ["arxiv_2512.20845", "arxiv_2511.03023"]
+      "tags": [
+        "critic-pattern",
+        "fine-tuning",
+        "evaluation"
+      ],
+      "cross_refs": [
+        "arxiv_2512.20845",
+        "arxiv_2511.03023"
+      ]
     },
     {
       "id": "insight_040",
       "paper_id": "arxiv_2503.16024",
       "insight": "Critique-guided improvement architecture: Separate critic model generates structured feedback (grade + revision suggestions) before actor incorporates - decouples evaluation from action enabling independent optimization of each component",
-      "tags": ["architecture", "patterns", "actor-critic"],
-      "cross_refs": ["arxiv_2506.08837", "arxiv_2509.08646"]
+      "tags": [
+        "architecture",
+        "patterns",
+        "actor-critic"
+      ],
+      "cross_refs": [
+        "arxiv_2506.08837",
+        "arxiv_2509.08646"
+      ]
     },
     {
       "id": "insight_041",
       "paper_id": "arxiv_2503.16024",
       "insight": "Policy misalignment in critique systems: Critics must be matched to actor's current policy level - critiques designed for expert-level actors fail when applied to novice actors. Iterative co-training addresses this via exploration-learning cycles",
-      "tags": ["training", "alignment", "patterns"],
-      "cross_refs": ["arxiv_2505.07087"]
+      "tags": [
+        "training",
+        "alignment",
+        "patterns"
+      ],
+      "cross_refs": [
+        "arxiv_2505.07087"
+      ]
     },
     {
       "id": "insight_042",
       "paper_id": "arxiv_2503.16024",
       "insight": "Critique-guided early exploration: Highest action revision frequency occurs in stage 1 (early exploration), with revision ratio dropping sharply in later stages - critiques primarily guide initial search, reducing ineffective exploration",
-      "tags": ["exploration", "efficiency", "patterns"],
-      "cross_refs": ["arxiv_2404.11584"]
+      "tags": [
+        "exploration",
+        "efficiency",
+        "patterns"
+      ],
+      "cross_refs": [
+        "arxiv_2404.11584"
+      ]
     },
     {
       "id": "insight_043",
       "paper_id": "arxiv_2511.02303",
       "insight": "Lazy agent problem root cause: GRPO loss normalization (1/T_i) inadvertently favors shorter trajectories - agents are implicitly incentivized to minimize turns, bypassing collaborative reflection and collapsing multi-agent to single-agent behavior",
-      "tags": ["multi-agent", "training", "failure-modes"],
-      "cross_refs": ["arxiv_2404.11584", "arxiv_2512.20845"]
+      "tags": [
+        "multi-agent",
+        "training",
+        "failure-modes"
+      ],
+      "cross_refs": [
+        "arxiv_2404.11584",
+        "arxiv_2512.20845"
+      ]
     },
     {
       "id": "insight_044",
       "paper_id": "arxiv_2511.02303",
       "insight": "Shapley-style causal influence measurement: Group semantically similar steps across rollouts (0.9 cosine threshold) to overcome phrasing bias; measure probability differences between full and masked histories for trajectory-independent contribution estimates",
-      "tags": ["credit-assignment", "multi-agent", "patterns"],
-      "cross_refs": ["arxiv_2503.16024"]
+      "tags": [
+        "credit-assignment",
+        "multi-agent",
+        "patterns"
+      ],
+      "cross_refs": [
+        "arxiv_2503.16024"
+      ]
     },
     {
       "id": "insight_045",
       "paper_id": "arxiv_2511.02303",
       "insight": "Verifiable restart mechanism: Allow reasoning agent to discard noisy outputs and restart when earlier reasoning decreases confidence in correct answer - critical for multi-turn contexts where accumulated errors compound",
-      "tags": ["deliberation", "error-recovery", "patterns"],
-      "cross_refs": ["arxiv_2509.08646", "arxiv_2505.07087"]
+      "tags": [
+        "deliberation",
+        "error-recovery",
+        "patterns"
+      ],
+      "cross_refs": [
+        "arxiv_2509.08646",
+        "arxiv_2505.07087"
+      ]
     },
     {
       "id": "insight_046",
       "paper_id": "arxiv_2511.02303",
       "insight": "Multi-agent RL training stability: Dr. MAMR maintains stable training while baseline (ReMA) collapsed after 150 steps - causal influence + restart rewards prevent training instability from lazy agent emergence",
-      "tags": ["training", "stability", "multi-agent"],
+      "tags": [
+        "training",
+        "stability",
+        "multi-agent"
+      ],
       "cross_refs": []
     },
     {
       "id": "insight_047",
       "paper_id": "arxiv_2512.14474",
       "insight": "Hallucination as representational deficiency: Many LLM planning failures arise not from reasoning limitations but from absence of explicit problem representation - reasoning over implicit, unstable internal models causes constraint violations and inconsistent solutions",
-      "tags": ["hallucination", "representation", "planning"],
-      "cross_refs": ["arxiv_2509.08646", "arxiv_2510.09244"]
+      "tags": [
+        "hallucination",
+        "representation",
+        "planning"
+      ],
+      "cross_refs": [
+        "arxiv_2509.08646",
+        "arxiv_2510.09244"
+      ]
     },
     {
       "id": "insight_048",
       "paper_id": "arxiv_2512.14474",
       "insight": "Model-First Reasoning (MFR) pattern: Two-phase paradigm separating model construction (entities, state variables, actions, constraints) from solution generation. LLM prohibited from generating solutions until model is complete, enforcing clean representational-inferential separation",
-      "tags": ["patterns", "planning", "architecture"],
-      "cross_refs": ["arxiv_2509.08646", "arxiv_2601.03624"]
+      "tags": [
+        "patterns",
+        "planning",
+        "architecture"
+      ],
+      "cross_refs": [
+        "arxiv_2509.08646",
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_049",
       "paper_id": "arxiv_2512.14474",
       "insight": "Prompt-only implementation pattern: MFR requires no architectural modifications, fine-tuning, or external symbolic solvers - operates purely through prompting mechanisms, making it immediately applicable to existing LLM deployments",
-      "tags": ["implementation", "prompting", "adoption"],
-      "cross_refs": ["arxiv_2505.07087", "arxiv_2404.11584"]
+      "tags": [
+        "implementation",
+        "prompting",
+        "adoption"
+      ],
+      "cross_refs": [
+        "arxiv_2505.07087",
+        "arxiv_2404.11584"
+      ]
     },
     {
       "id": "insight_050",
       "paper_id": "arxiv_2512.14474",
       "insight": "Representational commitment as reasoning constraint: Explicit problem model is 'not merely an intermediate reasoning step, but a representational commitment that constrains all downstream reasoning' - constraining solution space improves consistency",
-      "tags": ["reasoning", "constraints", "planning"],
-      "cross_refs": ["arxiv_2506.08837", "arxiv_2509.08646"]
+      "tags": [
+        "reasoning",
+        "constraints",
+        "planning"
+      ],
+      "cross_refs": [
+        "arxiv_2506.08837",
+        "arxiv_2509.08646"
+      ]
     },
     {
       "id": "insight_051",
       "paper_id": "arxiv_2502.05078",
       "insight": "Adaptive reasoning structure unification: AGoT dynamically adapts from chain-like (simple problems) to tree-like (branching needed) to graph-like (DAG interdependencies) based on LLM-driven complexity classification - one framework covers all reasoning topologies",
-      "tags": ["reasoning", "architecture", "unification"],
-      "cross_refs": ["arxiv_2404.11584", "arxiv_2401.14295"]
+      "tags": [
+        "reasoning",
+        "architecture",
+        "unification"
+      ],
+      "cross_refs": [
+        "arxiv_2404.11584",
+        "arxiv_2401.14295"
+      ]
     },
     {
       "id": "insight_052",
       "paper_id": "arxiv_2502.05078",
       "insight": "Test-time adaptive inference matches RL-based training: AGoT achieves +46.2% on GPQA through inference restructuring alone, comparable to DeepSeek-R1's RL-based gains - demonstrates reasoning improvements possible without expensive training",
-      "tags": ["efficiency", "inference", "cost-benefit"],
-      "cross_refs": ["arxiv_2512.20845", "arxiv_2503.16024"]
+      "tags": [
+        "efficiency",
+        "inference",
+        "cost-benefit"
+      ],
+      "cross_refs": [
+        "arxiv_2512.20845",
+        "arxiv_2503.16024"
+      ]
     },
     {
       "id": "insight_053",
       "paper_id": "arxiv_2502.05078",
       "insight": "Heritage-based indexing for nested reasoning: Unique node identification via position sequence through nested graphs enables hierarchical tracking of reasoning steps - critical for debugging and interpretability of complex decompositions",
-      "tags": ["interpretability", "debugging", "architecture"],
-      "cross_refs": ["arxiv_2512.14474"]
+      "tags": [
+        "interpretability",
+        "debugging",
+        "architecture"
+      ],
+      "cross_refs": [
+        "arxiv_2512.14474"
+      ]
     },
     {
       "id": "insight_054",
       "paper_id": "arxiv_2502.05078",
       "insight": "Selective expansion pattern: Only expand subproblems requiring deeper analysis based on complexity check function - avoids unnecessary computation while maintaining reasoning rigor, key for cost-effective multi-step reasoning",
-      "tags": ["efficiency", "patterns", "cost-optimization"],
-      "cross_refs": ["arxiv_2509.08646", "arxiv_2511.03023"]
+      "tags": [
+        "efficiency",
+        "patterns",
+        "cost-optimization"
+      ],
+      "cross_refs": [
+        "arxiv_2509.08646",
+        "arxiv_2511.03023"
+      ]
     },
     {
       "id": "insight_055",
       "paper_id": "arxiv_2502.05078",
       "insight": "Position bias vulnerability in benchmarks: AGoT gains dropped from +46.2% to +0.9% on unshuffled vs shuffled GPQA, indicating training data exposure effects - always evaluate on shuffled/modified benchmarks to detect true reasoning vs memorization",
-      "tags": ["benchmarks", "evaluation", "limitations"],
-      "cross_refs": ["arxiv_2404.11584", "arxiv_2510.09244"]
+      "tags": [
+        "benchmarks",
+        "evaluation",
+        "limitations"
+      ],
+      "cross_refs": [
+        "arxiv_2404.11584",
+        "arxiv_2510.09244"
+      ]
     },
     {
       "id": "insight_056",
       "paper_id": "arxiv_2401.14295",
       "insight": "Three-topology hierarchy for LLM reasoning: Chains (linear sequential), Trees (branching exploration with k candidates), Graphs (arbitrary connections with aggregation) - each with distinct cost-quality trade-offs; graphs achieve 62% quality gains over trees at >31% cost reduction",
-      "tags": ["reasoning", "topology", "taxonomy", "fundamentals"],
-      "cross_refs": ["arxiv_2502.05078", "arxiv_2404.11584"]
+      "tags": [
+        "reasoning",
+        "topology",
+        "taxonomy",
+        "fundamentals"
+      ],
+      "cross_refs": [
+        "arxiv_2502.05078",
+        "arxiv_2404.11584"
+      ]
     },
     {
       "id": "insight_057",
       "paper_id": "arxiv_2401.14295",
       "insight": "Seven-dimensional framework for evaluating reasoning schemes: Topology class, Scope (single/multi-prompt), Representation (implicit/explicit), Derivation (manual/automatic), Reasoning schedule (BFS/DFS/parallel), Schedule representation (NL/code/examples), Pipeline integration (retrieval/tools/fine-tuning)",
-      "tags": ["taxonomy", "evaluation-framework", "architecture"],
-      "cross_refs": ["arxiv_2508.10146", "arxiv_2601.03624"]
+      "tags": [
+        "taxonomy",
+        "evaluation-framework",
+        "architecture"
+      ],
+      "cross_refs": [
+        "arxiv_2508.10146",
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_058",
       "paper_id": "arxiv_2401.14295",
       "insight": "Practitioner heuristic for topology selection: Match topology to task decomposability - easily decomposable problems benefit from tree/graph structures; simple linear reasoning favors chains. Prefer single-prompt approaches when feasible for resource efficiency",
-      "tags": ["decision-guidance", "architecture", "cost-optimization"],
-      "cross_refs": ["arxiv_2509.08646", "arxiv_2511.03023"]
+      "tags": [
+        "decision-guidance",
+        "architecture",
+        "cost-optimization"
+      ],
+      "cross_refs": [
+        "arxiv_2509.08646",
+        "arxiv_2511.03023"
+      ]
     },
     {
       "id": "insight_059",
       "paper_id": "arxiv_2401.14295",
       "insight": "Branching factor optimization: 'Most advantageous branching factor depends on specific problem' - requires empirical tuning rather than fixed defaults. Increasing branching improves diversity but exponentially increases computational costs",
-      "tags": ["optimization", "configuration", "cost-benefit"],
-      "cross_refs": ["arxiv_2512.20845", "arxiv_2503.16024"]
+      "tags": [
+        "optimization",
+        "configuration",
+        "cost-benefit"
+      ],
+      "cross_refs": [
+        "arxiv_2512.20845",
+        "arxiv_2503.16024"
+      ]
     },
     {
       "id": "insight_060",
       "paper_id": "arxiv_2401.14295",
       "insight": "Enterprise adoption pattern for structured reasoning: ToT for complex branching with strategic lookahead (legal routing, compliance analysis, QA diagnostics); GoT for workflows requiring merging partial answers, attaching evidence, and combining multi-stakeholder perspectives",
-      "tags": ["enterprise", "adoption", "use-cases"],
-      "cross_refs": ["arxiv_2601.03328", "arxiv_2509.08646"]
+      "tags": [
+        "enterprise",
+        "adoption",
+        "use-cases"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03328",
+        "arxiv_2509.08646"
+      ]
     },
     {
       "id": "insight_061",
       "paper_id": "arxiv_2505.00875",
       "insight": "CoT produces 'explanations without explainability': Non-reasoning models outperformed CoT-generating variants with statistical significance. Verbalized reasoning steps do not improve user understanding or task completion - showing steps is not equivalent to transparency",
-      "tags": ["explainability", "CoT-limitations", "critical-finding"],
-      "cross_refs": ["arxiv_2401.14295", "arxiv_2512.14474"]
+      "tags": [
+        "explainability",
+        "CoT-limitations",
+        "critical-finding"
+      ],
+      "cross_refs": [
+        "arxiv_2401.14295",
+        "arxiv_2512.14474"
+      ]
     },
     {
       "id": "insight_062",
       "paper_id": "arxiv_2505.00875",
       "insight": "Three barriers to CoT explainability: (1) Einstellung paradigm - fixation on familiar but irrelevant concepts, (2) Logical fallacies - hasty generalizations unsupported by context, (3) Information overload - excessive text obscures rather than clarifies reasoning",
-      "tags": ["explainability", "failure-modes", "CoT-limitations"],
-      "cross_refs": ["arxiv_2512.20845", "arxiv_2505.07087"]
+      "tags": [
+        "explainability",
+        "failure-modes",
+        "CoT-limitations"
+      ],
+      "cross_refs": [
+        "arxiv_2512.20845",
+        "arxiv_2505.07087"
+      ]
     },
     {
       "id": "insight_063",
       "paper_id": "arxiv_2505.00875",
       "insight": "Agentic systems risk 'telephone game' distortion: Multi-agent architectures where LLMs pass information between agents create cascading risks where message gets inevitably distorted. Humans cede control to multi-actor systems with unpredictable error propagation",
-      "tags": ["multi-agent", "cascading-risks", "error-propagation"],
-      "cross_refs": ["arxiv_2511.02303", "arxiv_2512.20845"]
+      "tags": [
+        "multi-agent",
+        "cascading-risks",
+        "error-propagation"
+      ],
+      "cross_refs": [
+        "arxiv_2511.02303",
+        "arxiv_2512.20845"
+      ]
     },
     {
       "id": "insight_064",
       "paper_id": "arxiv_2505.00875",
       "insight": "Architecture FOR traceability, not CoT FOR explainability: Use agentic system architecture to trace information flow through agent handoffs rather than relying on CoT verbalization. Decompose transparency problem into architectural observability",
-      "tags": ["architecture", "traceability", "design-pattern"],
-      "cross_refs": ["arxiv_2509.08646", "arxiv_2506.08837"]
+      "tags": [
+        "architecture",
+        "traceability",
+        "design-pattern"
+      ],
+      "cross_refs": [
+        "arxiv_2509.08646",
+        "arxiv_2506.08837"
+      ]
     },
     {
       "id": "insight_065",
       "paper_id": "arxiv_2601.08816",
       "insight": "Decoupled memory management pattern: Separate memory manager agent (LM_Mem) handles graph operations and context curation while reasoning agent (LLM_Rec) focuses solely on decision-making. Reduces cognitive overload - naive collaborative agents plateau while decoupled architecture achieves +34% improvement",
-      "tags": ["memory", "architecture", "decoupling", "cognitive-load"],
-      "cross_refs": ["arxiv_2508.10146", "arxiv_2506.08837"]
+      "tags": [
+        "memory",
+        "architecture",
+        "decoupling",
+        "cognitive-load"
+      ],
+      "cross_refs": [
+        "arxiv_2508.10146",
+        "arxiv_2506.08837"
+      ]
     },
     {
       "id": "insight_066",
       "paper_id": "arxiv_2601.08816",
       "insight": "Curate-then-Synthesize pattern inspired by Information Bottleneck theory: First filter k=16 neighbors using LLM-generated domain-specific heuristic rules (zero-shot), then synthesize into preference facets within token budget (1800 tokens). Balances information preservation with computational tractability",
-      "tags": ["memory", "context-management", "efficiency", "design-pattern"],
-      "cross_refs": ["arxiv_2511.03023", "arxiv_2505.07087"]
+      "tags": [
+        "memory",
+        "context-management",
+        "efficiency",
+        "design-pattern"
+      ],
+      "cross_refs": [
+        "arxiv_2511.03023",
+        "arxiv_2505.07087"
+      ]
     },
     {
       "id": "insight_067",
       "paper_id": "arxiv_2601.08816",
       "insight": "Asynchronous O(1) batch propagation: Graph updates (direct node updates + neighbor propagation) execute as single unified prompt asynchronously, enabling continuous memory evolution without disrupting online interactions. Critical for production recommendation latency requirements",
-      "tags": ["async", "efficiency", "production", "memory"],
-      "cross_refs": ["arxiv_2601.03328", "arxiv_2509.08646"]
+      "tags": [
+        "async",
+        "efficiency",
+        "production",
+        "memory"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03328",
+        "arxiv_2509.08646"
+      ]
     },
     {
       "id": "insight_068",
       "paper_id": "arxiv_2601.08816",
       "insight": "Pareto frontier deployment configurations: Same architecture supports cloud (gpt-4o-mini: 0.524 H@1), cloud-OSS (120B: 0.561 H@1), local (Qwen-2.5-7B: 0.470 H@1), and vector-only (0.209 H@1) deployments - enables cost/quality/privacy trade-off optimization",
-      "tags": ["deployment", "flexibility", "cost-optimization", "production"],
-      "cross_refs": ["arxiv_2508.10146", "arxiv_2510.09244"]
+      "tags": [
+        "deployment",
+        "flexibility",
+        "cost-optimization",
+        "production"
+      ],
+      "cross_refs": [
+        "arxiv_2508.10146",
+        "arxiv_2510.09244"
+      ]
     },
     {
       "id": "insight_069",
       "paper_id": "arxiv_2601.08815",
       "insight": "Agent Contracts formal structure C = (I, O, S, R, T, Φ, Ψ): Unified governance combining input/output specs (I/O), skill set (S), multi-dimensional resource constraints (R), temporal boundaries (T), success criteria (Φ), and termination conditions (Ψ). Transforms unpredictable agent behavior into bounded, auditable operations",
-      "tags": ["governance", "formal-framework", "contracts", "resource-management"],
-      "cross_refs": ["arxiv_2601.03328", "arxiv_2510.09244"]
+      "tags": [
+        "governance",
+        "formal-framework",
+        "contracts",
+        "resource-management"
+      ],
+      "cross_refs": [
+        "arxiv_2601.03328",
+        "arxiv_2510.09244"
+      ]
     },
     {
       "id": "insight_070",
       "paper_id": "arxiv_2601.08815",
       "insight": "Conservation laws for hierarchical delegation: ∑_j c_j^(r) ≤ B^(r) ensures delegated budgets respect parent constraints. Three allocation strategies (proportional/equal/negotiated) with unused budget returning to shared pools. Enables safe recursive multi-agent delegation",
-      "tags": ["multi-agent", "delegation", "resource-management", "hierarchy"],
-      "cross_refs": ["arxiv_2511.03023", "arxiv_2512.20845"]
+      "tags": [
+        "multi-agent",
+        "delegation",
+        "resource-management",
+        "hierarchy"
+      ],
+      "cross_refs": [
+        "arxiv_2511.03023",
+        "arxiv_2512.20845"
+      ]
     },
     {
       "id": "insight_071",
       "paper_id": "arxiv_2601.08815",
       "insight": "Contract lifecycle state machine: DRAFTED→ACTIVE→(FULFILLED|VIOLATED|EXPIRED|TERMINATED). Explicit guard conditions for transitions ensure clear accountability and audit trails. Token tracking R_tok = (r_in, r_r, r_out) enables runtime monitoring",
-      "tags": ["lifecycle", "state-machine", "observability", "governance"],
-      "cross_refs": ["arxiv_2509.08646", "arxiv_2601.03624"]
+      "tags": [
+        "lifecycle",
+        "state-machine",
+        "observability",
+        "governance"
+      ],
+      "cross_refs": [
+        "arxiv_2509.08646",
+        "arxiv_2601.03624"
+      ]
     },
     {
       "id": "insight_072",
       "paper_id": "arxiv_2601.08815",
       "insight": "Token enforcement limitation: consumption only known AFTER API calls complete - cannot prevent single oversized calls. Value is multi-call protection across iterative workflows (90% reduction, 525x lower variance). Future infrastructure needs: interruptible generation, token reservation, budget-aware inference",
-      "tags": ["limitations", "token-management", "infrastructure", "production"],
-      "cross_refs": ["arxiv_2508.10146", "arxiv_2601.08816"]
+      "tags": [
+        "limitations",
+        "token-management",
+        "infrastructure",
+        "production"
+      ],
+      "cross_refs": [
+        "arxiv_2508.10146",
+        "arxiv_2601.08816"
+      ]
     },
     {
       "id": "insight_073",
       "paper_id": "arxiv_2601.08747",
       "insight": "Metacognition-inspired orchestration: Dynamically decide RETRIEVE (external search) vs THINK (internal reasoning) based on current context sufficiency. 50-73% of decisions are THINK, confirming strategic reasoning prevents runaway retrieval costs while maintaining accuracy",
-      "tags": ["metacognition", "orchestration", "RAG", "efficiency"],
-      "cross_refs": ["arxiv_2505.07087", "arxiv_2508.10146"]
+      "tags": [
+        "metacognition",
+        "orchestration",
+        "RAG",
+        "efficiency"
+      ],
+      "cross_refs": [
+        "arxiv_2505.07087",
+        "arxiv_2508.10146"
+      ]
     },
     {
       "id": "insight_074",
       "paper_id": "arxiv_2601.08747",
       "insight": "Majority voting for agent decisions: Committee of agents independently evaluate then vote for action. Aggregation prevents single-agent hallucinations from derailing entire process - a key multi-agent robustness pattern",
-      "tags": ["voting", "robustness", "multi-agent", "error-handling"],
-      "cross_refs": ["arxiv_2512.20845", "arxiv_2511.02303"]
+      "tags": [
+        "voting",
+        "robustness",
+        "multi-agent",
+        "error-handling"
+      ],
+      "cross_refs": [
+        "arxiv_2512.20845",
+        "arxiv_2511.02303"
+      ]
     },
     {
       "id": "insight_075",
       "paper_id": "arxiv_2601.08747",
       "insight": "Token efficiency through strategic retrieval avoidance: 42% fewer tokens than IterDRAG while achieving superior accuracy (+8.7pp on MultiHop-RAG). Optimal iteration depth N=3-5 varies by dataset - requires tuning",
-      "tags": ["efficiency", "token-optimization", "RAG", "cost-reduction"],
-      "cross_refs": ["arxiv_2601.08815", "arxiv_2601.08816"]
+      "tags": [
+        "efficiency",
+        "token-optimization",
+        "RAG",
+        "cost-reduction"
+      ],
+      "cross_refs": [
+        "arxiv_2601.08815",
+        "arxiv_2601.08816"
+      ]
     },
     {
       "id": "insight_076",
       "paper_id": "arxiv_2601.08699",
       "insight": "Distractor taxonomy for RAG training: Perception level (Doppelgänger - adjacent metadata variants) and Cognition level (False Shortcut - forged direct connections; Fragmented Puzzle - distributed answers; Subjective Fallacy - opinion-laden factual errors). Systematic framework for training robust distractor rejection",
-      "tags": ["RAG", "training", "robustness", "taxonomy"],
-      "cross_refs": ["arxiv_2601.08747", "arxiv_2508.10146"]
+      "tags": [
+        "RAG",
+        "training",
+        "robustness",
+        "taxonomy"
+      ],
+      "cross_refs": [
+        "arxiv_2601.08747",
+        "arxiv_2508.10146"
+      ]
     },
     {
       "id": "insight_077",
       "paper_id": "arxiv_2601.08699",
       "insight": "Constrained navigation for error-correction training: Force teacher agent to encounter distractors (probability p^e at each step, 100% at first step), producing trajectories that explicitly demonstrate error correction and noise rejection. Ablation shows removing distractor training drops EM from 48.8 to 33.8",
-      "tags": ["training", "data-synthesis", "error-correction", "methodology"],
-      "cross_refs": ["arxiv_2511.02303", "arxiv_2512.20845"]
+      "tags": [
+        "training",
+        "data-synthesis",
+        "error-correction",
+        "methodology"
+      ],
+      "cross_refs": [
+        "arxiv_2511.02303",
+        "arxiv_2512.20845"
+      ]
     },
     {
       "id": "insight_078",
       "paper_id": "arxiv_2601.08699",
       "insight": "InfoCurator module: Depth-first traversal from seed entities builds dense information trees with explicit dependency chains (each retrieval step unlocks NEW entity/relation for NEXT hop). Uses E5 embeddings for semantic retrieval + generates adversarial distractors directly",
-      "tags": ["data-synthesis", "knowledge-graph", "RAG", "automation"],
-      "cross_refs": ["arxiv_2601.08816", "arxiv_2502.05078"]
+      "tags": [
+        "data-synthesis",
+        "knowledge-graph",
+        "RAG",
+        "automation"
+      ],
+      "cross_refs": [
+        "arxiv_2601.08816",
+        "arxiv_2502.05078"
+      ]
     }
   ],
   "visited_urls": [
