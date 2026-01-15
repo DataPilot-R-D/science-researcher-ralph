@@ -266,11 +266,16 @@ Before claiming completion, you MUST read and verify the actual state:
 2. **If verification PASSES** (all papers analyzed):
    - Update `"phase": "COMPLETE"` in `{{RESEARCH_DIR}}/rrd.json`
    - Generate the Final Research Report and save to `{{RESEARCH_DIR}}/research-report.md`
-   - Output: `<promise>COMPLETE</promise>`
+   - **OUTPUT THIS EXACT TAG (required for loop to exit):**
+     ```
+     <promise>COMPLETE</promise>
+     ```
 
 3. **If verification FAILS** (papers still pending):
    - Do NOT output COMPLETE
    - Continue with the next pending paper
+
+**CRITICAL:** The loop ONLY exits when it sees the EXACT string `<promise>COMPLETE</promise>` in your output. Saying "research is complete" or "all papers analyzed" in plain English will NOT work. You MUST output the exact XML-style tag above.
 
 **WARNING:** Outputting `<promise>COMPLETE</promise>` without reading and verifying `{{RESEARCH_DIR}}/rrd.json` is a CRITICAL FAILURE. Never assume work is done - always verify by reading the actual files. Do NOT read rrd.json from any other folder!
 

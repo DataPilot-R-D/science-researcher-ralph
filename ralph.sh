@@ -228,11 +228,21 @@ if ! jq -e '.requirements.target_papers' "$RRD_FILE" >/dev/null 2>&1; then
   exit 1
 fi
 
-# Override target_papers if --papers flag provided
+# Override target_papers if --papers flag provided (only if research not in progress)
 if [[ -n "$TARGET_PAPERS" ]]; then
-  echo "Overriding target_papers: $TARGET_PAPERS"
-  jq ".requirements.target_papers = $TARGET_PAPERS" "$RRD_FILE" > "$RRD_FILE.tmp" \
-    && mv "$RRD_FILE.tmp" "$RRD_FILE"
+  # Check if research is already in progress
+  CURRENT_PHASE=$(jq -r '.phase // "DISCOVERY"' "$RRD_FILE" 2>/dev/null)
+  CURRENT_ANALYZED=$(jq -r '.statistics.total_analyzed // 0' "$RRD_FILE" 2>/dev/null)
+
+  if [[ "$CURRENT_PHASE" != "DISCOVERY" || "$CURRENT_ANALYZED" -gt 0 ]]; then
+    CURRENT_TARGET=$(jq -r '.requirements.target_papers // 20' "$RRD_FILE" 2>/dev/null)
+    echo "Warning: Research already in progress (phase: $CURRENT_PHASE, analyzed: $CURRENT_ANALYZED)"
+    echo "  Keeping existing target_papers: $CURRENT_TARGET (ignoring -p $TARGET_PAPERS)"
+  else
+    echo "Setting target_papers: $TARGET_PAPERS"
+    jq ".requirements.target_papers = $TARGET_PAPERS" "$RRD_FILE" > "$RRD_FILE.tmp" \
+      && mv "$RRD_FILE.tmp" "$RRD_FILE"
+  fi
 fi
 
 # Auto-calculate iterations if not explicitly set
@@ -278,6 +288,21 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   # Show current phase
   PHASE=$(jq -r '.phase // "DISCOVERY"' "$RRD_FILE" 2>/dev/null || echo "DISCOVERY")
   echo "  Phase: $PHASE"
+
+  # Validate DISCOVERY phase has enough papers before allowing ANALYSIS
+  if [[ "$PHASE" == "ANALYSIS" ]]; then
+    POOL_COUNT=$(jq '.papers_pool | length' "$RRD_FILE" 2>/dev/null || echo "0")
+    TARGET_COUNT=$(jq -r '.requirements.target_papers // 20' "$RRD_FILE" 2>/dev/null || echo "20")
+
+    if [[ "$POOL_COUNT" -lt "$TARGET_COUNT" ]]; then
+      echo ""
+      echo "  Warning: Only $POOL_COUNT papers in pool, but target is $TARGET_COUNT"
+      echo "  Reverting phase to DISCOVERY to collect more papers..."
+      jq '.phase = "DISCOVERY"' "$RRD_FILE" > "$RRD_FILE.tmp" && mv "$RRD_FILE.tmp" "$RRD_FILE"
+      PHASE="DISCOVERY"
+      echo "  Phase: $PHASE (reverted)"
+    fi
+  fi
 
   set +e
   OUTPUT=$(run_agent "$PROMPT_FILE")
