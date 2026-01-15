@@ -1,10 +1,17 @@
 # Evaluation Rubric Explained
 
-Research-Ralph evaluates papers using a 6-dimension scoring rubric. This document explains each dimension and how scores translate to decisions.
+Research-Ralph evaluates papers using a **dual scoring system**: an Execution rubric (0-30) and a Blue Ocean rubric (0-20), giving a combined score of 0-50.
 
 ## Overview
 
-Each paper is scored 0-5 on six dimensions, giving a total score of 0-30:
+Papers are scored on **TWO rubrics**:
+
+1. **Execution Rubric (0-30)**: Can we build this? Is it feasible?
+2. **Blue Ocean Rubric (0-20)**: Should we build this? Is it strategically valuable?
+
+### Score Meanings
+
+Each dimension is scored 0-5:
 
 | Score | Meaning |
 |-------|---------|
@@ -15,7 +22,9 @@ Each paper is scored 0-5 on six dimensions, giving a total score of 0-30:
 | 4 | Good |
 | 5 | Excellent |
 
-## The Six Dimensions
+## Execution Rubric (0-30)
+
+The six execution dimensions assess implementation viability:
 
 ### 1. Novelty / Differentiation (0-5)
 
@@ -136,38 +145,138 @@ Each paper is scored 0-5 on six dimensions, giving a total score of 0-30:
 - Training requirements for users
 - Regulatory considerations
 
+---
+
+## Blue Ocean Rubric (0-20)
+
+The four blue ocean dimensions assess strategic value and market positioning. See `MISSION.md` for the full framework.
+
+### 7. Market Creation (0-5)
+
+**Question**: Does this create a new market or compete in existing?
+
+| Score | Criteria |
+|-------|----------|
+| 5 | Creates entirely new category |
+| 4 | Opens adjacent market |
+| 3 | Serves underserved segment |
+| 2 | Better mousetrap in known market |
+| 1 | Me-too product |
+| 0 | Saturated/commodity market |
+
+**What to look for**:
+- Is this solving a problem no one else is solving?
+- Does it create new demand vs serving existing demand?
+- Could this define a new product category?
+
+### 8. First-Mover Window (0-5)
+
+**Question**: How long before competitors can replicate?
+
+| Score | Criteria |
+|-------|----------|
+| 5 | 24+ months |
+| 4 | 18-24 months |
+| 3 | 12-18 months |
+| 2 | 6-12 months |
+| 1 | 3-6 months |
+| 0 | <3 months |
+
+**What to look for**:
+- How novel is the architecture?
+- Are there proprietary data requirements?
+- How complex is the training/implementation?
+- Is the paper already widely cited/replicated?
+
+### 9. Network/Data Effects (0-5)
+
+**Question**: Does value compound over time?
+
+| Score | Criteria |
+|-------|----------|
+| 5 | Strong network effects (each user adds value) |
+| 4 | Data flywheel (more data = better product) |
+| 3 | High switching costs |
+| 2 | Brand loyalty only |
+| 1 | Weak lock-in |
+| 0 | No compounding effects |
+
+**What to look for**:
+- Does usage generate valuable data?
+- Do more users make the product better?
+- Is there ecosystem integration potential?
+- What are the switching costs?
+
+### 10. Strategic Clarity (0-5)
+
+**Question**: How focused is the opportunity?
+
+| Score | Criteria |
+|-------|----------|
+| 5 | Single, clear use case |
+| 4 | 2-3 related applications |
+| 3 | Platform potential |
+| 2 | Too broad / unfocused |
+| 1 | Unclear positioning |
+| 0 | Confused / contradictory |
+
+**What to look for**:
+- Can you explain the use case in one sentence?
+- Is the target customer clear?
+- Are there too many potential applications (lack of focus)?
+
+---
+
 ## Decision Thresholds
 
-Based on total score (0-30):
+Based on combined score (0-50):
 
-| Score Range | Decision | Meaning |
-|-------------|----------|---------|
-| >= 18 | **PRESENT** | Worth investigating further |
-| 12-17 | **EXTRACT_INSIGHTS** | Not a primary candidate, but has valuable learnings |
-| < 12 | **REJECT** | Not relevant or not feasible |
+| Combined Score | Decision | Meaning |
+|----------------|----------|---------|
+| >= 35 | **PRESENT (Priority)** | Blue ocean opportunity — high strategic value |
+| >= 25 | **PRESENT** | Strong overall score |
+| 18-24 | **EXTRACT_INSIGHTS** | Not a primary candidate, but valuable learnings |
+| < 18 | **REJECT** | Not relevant or not feasible |
 
-The default threshold (`min_score_to_present`) is 18, but can be adjusted in `rrd.json`.
+**Alternative paths to EXTRACT_INSIGHTS** (even if combined < 25):
+- Execution score >= 18 (technically solid, weak strategy)
+- Blue Ocean score >= 12 (strategic potential, execution challenges)
+
+The default threshold (`min_combined_score`) is 25, but can be adjusted in `rrd.json`.
 
 ## Score Distribution
 
 Track how papers are distributed across score ranges:
 
 ```json
-"score_distribution": {
-  "0-11": 3,   // Rejected
-  "12-17": 5, // Extract insights
-  "18-23": 4, // Presented (solid)
-  "24-30": 2  // Presented (excellent)
+"analysis_metrics": {
+  "avg_combined_score": 32,
+  "avg_execution_score": 21,
+  "avg_blue_ocean_score": 11,
+  "combined_score_distribution": {
+    "0-17": 2,    // Rejected
+    "18-24": 5,   // Extract insights
+    "25-34": 8,   // Presented (solid)
+    "35-50": 5    // Presented (priority)
+  },
+  "blue_ocean_distribution": {
+    "0-7": 3,     // Red ocean
+    "8-11": 7,    // Purple ocean
+    "12-15": 6,   // Blue ocean adjacent
+    "16-20": 4    // True blue ocean
+  }
 }
 ```
 
 ## Customizing Thresholds
 
-Adjust `min_score_to_present` in your `rrd.json`:
+Adjust thresholds in your `rrd.json`:
 
 ```json
-"requirements": {
-  "min_score_to_present": 20  // Stricter (default: 18)
+"mission": {
+  "blue_ocean_scoring": true,
+  "min_combined_score": 30,   // Stricter (default: 25)
+  "min_blue_ocean_score": 14  // Require stronger strategic value (default: 12)
 }
 ```
 
@@ -180,6 +289,10 @@ Adjust `min_score_to_present` in your `rrd.json`:
 - Exploring a new domain
 - Want broader coverage
 - Papers are consistently scoring low
+
+**When to disable blue ocean scoring**:
+- For pure technical research (no commercialization focus)
+- Set `"blue_ocean_scoring": false` in the mission config
 
 ## Tips for Consistent Scoring
 

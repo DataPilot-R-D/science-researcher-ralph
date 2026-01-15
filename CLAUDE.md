@@ -24,7 +24,7 @@ Use git commits as checkpoints so research progress is easy to track and revert:
 - Stage files from the research folder: `researches/{name}/rrd.json`, `researches/{name}/progress.txt`
 - Commit message examples:
   - `discovery: add N papers`
-  - `analysis: <paper_id> <PRESENT|REJECT|EXTRACT_INSIGHTS> (<score>/30)`
+  - `analysis: <paper_id> <PRESENT|REJECT|EXTRACT_INSIGHTS> (<score>/50)`
   - `docs: update research patterns/workflow`
   - `milestone: phase -> <DISCOVERY|ANALYSIS|COMPLETE>`
 
@@ -109,6 +109,7 @@ researches/
 | `ralph.sh` | Main research loop script |
 | `skill.sh` | Skill runner (creates research folders for rrd skill) |
 | `prompt.md` | Agent instructions for research workflow |
+| `MISSION.md` | Agent objectives, success metrics, blue ocean scoring |
 | `researches/` | Per-research artifact folders |
 | `researches/{name}/rrd.json` | Research Requirements Document |
 | `researches/{name}/progress.txt` | Research findings log |
@@ -130,12 +131,14 @@ researches/
 - Read full paper content (not just abstract)
 - Search for implementations (GitHub, blogs)
 - Check if commercialized
-- Score using rubric (0-30)
+- Score using dual rubric (Execution 0-30 + Blue Ocean 0-20 = 0-50 combined)
 - Decide: PRESENT / REJECT / EXTRACT_INSIGHTS
 
 ### Evaluation Rubric
 
-Papers scored 0-5 on each dimension (total 0-30):
+Papers scored on **TWO rubrics** (see `MISSION.md` for full criteria):
+
+**Execution Rubric (0-30):**
 
 | Dimension | Question |
 |-----------|----------|
@@ -146,12 +149,26 @@ Papers scored 0-5 on each dimension (total 0-30):
 | Defensibility | What's the competitive advantage? |
 | Adoption | How easy to deploy? |
 
-**Threshold:** Score >= `min_score_to_present` (default: 18) = PRESENT
+**Blue Ocean Rubric (0-20):**
+
+| Dimension | Question |
+|-----------|----------|
+| Market Creation | New market or existing competition? |
+| First-Mover Window | Time until competitors replicate? |
+| Network/Data Effects | Does value compound over time? |
+| Strategic Clarity | How focused is the opportunity? |
+
+**Decision Thresholds:**
+- Combined >= 35 = **PRESENT (Priority)** — Blue ocean opportunity
+- Combined >= 25 = **PRESENT** — Strong overall score
+- Combined 18-24 with Execution >= 18 OR Blue Ocean >= 12 = **EXTRACT_INSIGHTS**
+- Otherwise = **REJECT**
 
 ## RRD Format
 
 The `rrd.json` file contains:
 - `project`, `branchName`, `description` - Research metadata
+- `mission` - Blue ocean scoring config (optional, enables strategic scoring)
 - `requirements` - Keywords, time window, target papers, sources
 - `phase` - DISCOVERY, ANALYSIS, or COMPLETE
 - `papers_pool` - All discovered papers with status and analysis

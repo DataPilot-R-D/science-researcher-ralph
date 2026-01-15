@@ -142,6 +142,7 @@ researches/
 | `ralph.sh` | Main research loop script |
 | `skill.sh` | Skill runner (creates research folders) |
 | `prompt.md` | Instructions given to each agent instance |
+| `MISSION.md` | Agent objectives, success metrics, blue ocean scoring |
 | `researches/` | Per-research artifact folders |
 | `researches/{name}/rrd.json` | Research Requirements Document |
 | `researches/{name}/progress.txt` | Research findings log |
@@ -172,7 +173,9 @@ researches/
 
 ### Evaluation Rubric
 
-Papers are scored 0-5 on each dimension (total 0-30):
+Papers are scored on **TWO rubrics** (see `MISSION.md` for full criteria):
+
+**Execution Rubric (0-30):**
 
 | Dimension | Question |
 |-----------|----------|
@@ -183,7 +186,20 @@ Papers are scored 0-5 on each dimension (total 0-30):
 | **Defensibility** | What's the competitive advantage? |
 | **Adoption** | How easy to deploy? |
 
-**Threshold:** Score >= `min_score_to_present` (default: 18) = PRESENT, otherwise REJECT or EXTRACT_INSIGHTS
+**Blue Ocean Rubric (0-20):**
+
+| Dimension | Question |
+|-----------|----------|
+| **Market Creation** | New market or existing competition? |
+| **First-Mover Window** | Time until competitors replicate? |
+| **Network/Data Effects** | Does value compound over time? |
+| **Strategic Clarity** | How focused is the opportunity? |
+
+**Decision Thresholds (Combined 0-50):**
+- Combined >= 35 = **PRESENT (Priority)** — Blue ocean opportunity
+- Combined >= 25 = **PRESENT** — Strong overall score
+- Combined 18-24 with Execution >= 18 OR Blue Ocean >= 12 = **EXTRACT_INSIGHTS**
+- Otherwise = **REJECT**
 
 ## Critical Concepts
 
@@ -273,7 +289,7 @@ To make research progress easy to track and revert, commit state/doc updates reg
 - Stage files from the research folder: `researches/{name}/rrd.json`, `researches/{name}/progress.txt`
 - Commit message examples:
   - `discovery: add N papers`
-  - `analysis: <paper_id> <PRESENT|REJECT|EXTRACT_INSIGHTS> (<score>/30)`
+  - `analysis: <paper_id> <PRESENT|REJECT|EXTRACT_INSIGHTS> (<score>/50)`
   - `docs: update research patterns/workflow`
   - `milestone: phase -> <DISCOVERY|ANALYSIS|COMPLETE>`
 
@@ -312,6 +328,10 @@ The Research Requirements Document (`rrd.json`) contains:
   "project": "Research: [Topic]",
   "branchName": "research/[topic-slug]",
   "description": "Research objective and scope",
+  "mission": {
+    "blue_ocean_scoring": true,
+    "min_combined_score": 25
+  },
   "requirements": {
     "focus_area": "robotics",
     "keywords": ["embodied AI", "manipulation", "sim2real"],
