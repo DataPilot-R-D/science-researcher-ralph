@@ -21,6 +21,22 @@ Create detailed Research Requirements Documents that guide autonomous research s
 
 ---
 
+## Topic Slug
+
+Before saving the RRD, generate a short topic slug for the directory name:
+- **Format:** kebab-case, 3-5 words
+- **Content:** Core topic/focus of the research (not the full description)
+- **Example:** `robotics-sim2real-transfer`, `llm-agent-patterns`, `vision-language-models`
+
+Output the slug on a separate line before saving:
+```
+TOPIC_SLUG: your-generated-slug
+```
+
+This will be used for the research folder name: `researches/{topic_slug}-{date}/`
+
+---
+
 ## Autonomous Generation
 
 Generate the RRD immediately without asking questions. Use these defaults:
@@ -275,9 +291,11 @@ Include this rubric explanation in the RRD description or notes if the user need
 
 Before saving the RRD:
 
+- [ ] Generated TOPIC_SLUG (kebab-case, 3-5 words)
 - [ ] Inferred focus_area from topic description
 - [ ] Generated 5-8 specific, searchable keywords
 - [ ] Used sensible defaults for time_window, target_papers, sources
 - [ ] Added open_questions if any ambiguity exists
+- [ ] Output TOPIC_SLUG line before saving
 - [ ] Saved to the research folder path provided in the prompt
 - [ ] Printed warning if open_questions is non-empty

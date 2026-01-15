@@ -128,6 +128,7 @@ fi
 
 # Special handling for rrd skill: create research folder
 RESEARCH_DIR=""
+TEMP_DIR=""
 if [[ "$SKILL_NAME" == "rrd" ]]; then
   if [[ -z "$TASK" ]]; then
     echo "Error: RRD skill requires a task description"
@@ -135,15 +136,12 @@ if [[ "$SKILL_NAME" == "rrd" ]]; then
     exit 1
   fi
 
-  # Generate folder name from task description
-  # Format: researches/{sanitized-name}-{date}
-  RESEARCH_NAME=$(echo "$TASK" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//' | cut -c1-40)
   RESEARCH_DATE=$(date +%Y-%m-%d)
-  RESEARCH_DIR="$SCRIPT_DIR/researches/${RESEARCH_NAME}-${RESEARCH_DATE}"
 
-  mkdir -p "$RESEARCH_DIR"
-  echo "Created research folder: $RESEARCH_DIR"
-  echo ""
+  # Create temp directory (will be renamed after agent generates topic slug)
+  TEMP_NAME="rrd-temp-$$-$(date +%s)"
+  TEMP_DIR="$SCRIPT_DIR/researches/$TEMP_NAME"
+  mkdir -p "$TEMP_DIR"
 
   # Add folder path to prompt so agent knows where to save
   FULL_PROMPT="$FULL_PROMPT
@@ -152,27 +150,66 @@ if [[ "$SKILL_NAME" == "rrd" ]]; then
 
 ## Output Location
 
-Save all files to the research folder: $RESEARCH_DIR/
-- Save rrd.json to: $RESEARCH_DIR/rrd.json
-- progress.txt will be created automatically by ralph.sh"
+Save all files to the research folder: $TEMP_DIR/
+- Save rrd.json to: $TEMP_DIR/rrd.json
+- progress.txt will be created automatically by ralph.sh
+
+**IMPORTANT:** Before saving, output a short topic slug for the directory name:
+\`\`\`
+TOPIC_SLUG: your-short-topic-name
+\`\`\`
+Format: kebab-case, 3-5 words, e.g., \`robotics-sim2real-transfer\`, \`llm-agent-patterns\`"
 fi
 
 echo "Running skill '$SKILL_NAME' with $AGENT..."
 echo ""
 
-# Run with appropriate agent
+# Run with appropriate agent and capture output
 if [[ "$AGENT" == "amp" ]]; then
-  echo "$FULL_PROMPT" | amp --dangerously-allow-all
+  OUTPUT=$(echo "$FULL_PROMPT" | amp --dangerously-allow-all 2>&1) || true
+  echo "$OUTPUT"
 elif [[ "$AGENT" == "codex" ]]; then
-  echo "$FULL_PROMPT" | codex exec --dangerously-bypass-approvals-and-sandbox -
+  OUTPUT=$(echo "$FULL_PROMPT" | codex exec --dangerously-bypass-approvals-and-sandbox - 2>&1) || true
+  echo "$OUTPUT"
 else
-  claude -p "$FULL_PROMPT" \
+  OUTPUT=$(claude -p "$FULL_PROMPT" \
     --dangerously-skip-permissions \
-    --allowedTools "Bash,Read,Edit,Write,Grep,Glob,WebFetch,WebSearch"
+    --allowedTools "Bash,Read,Edit,Write,Grep,Glob,WebFetch,WebSearch" 2>&1) || true
+  echo "$OUTPUT"
 fi
 
-# Show next steps for rrd skill
-if [[ "$SKILL_NAME" == "rrd" && -n "$RESEARCH_DIR" ]]; then
+# For rrd skill: rename temp directory to final name based on topic slug
+if [[ "$SKILL_NAME" == "rrd" && -d "$TEMP_DIR" ]]; then
+  # Try to extract agent-generated topic slug
+  TOPIC_SLUG=$(echo "$OUTPUT" | grep -oE 'TOPIC_SLUG:[[:space:]]*[a-z0-9-]+' | sed 's/TOPIC_SLUG:[[:space:]]*//' | head -1)
+
+  if [[ -n "$TOPIC_SLUG" && "$TOPIC_SLUG" != "" ]]; then
+    # Use agent-generated slug (sanitize and limit)
+    RESEARCH_NAME=$(echo "$TOPIC_SLUG" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g' | sed 's/--*/-/g' | cut -c1-50)
+  else
+    # Fallback: truncate task description
+    RESEARCH_NAME=$(echo "$TASK" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//' | cut -c1-40)
+  fi
+
+  RESEARCH_DIR="$SCRIPT_DIR/researches/${RESEARCH_NAME}-${RESEARCH_DATE}"
+
+  # Rename temp to final (handle collision by appending number)
+  if [[ -d "$RESEARCH_DIR" ]]; then
+    i=1
+    while [[ -d "${RESEARCH_DIR}-$i" ]]; do ((i++)); done
+    RESEARCH_DIR="${RESEARCH_DIR}-$i"
+  fi
+
+  mv "$TEMP_DIR" "$RESEARCH_DIR"
+
+  # Update branchName in rrd.json to match new directory
+  if [[ -f "$RESEARCH_DIR/rrd.json" ]]; then
+    # Use jq if available
+    if command -v jq &> /dev/null; then
+      jq --arg bn "research/${RESEARCH_NAME}" '.branchName = $bn' "$RESEARCH_DIR/rrd.json" > "$RESEARCH_DIR/rrd.json.tmp" && mv "$RESEARCH_DIR/rrd.json.tmp" "$RESEARCH_DIR/rrd.json"
+    fi
+  fi
+
   echo ""
   echo "Research folder ready: $RESEARCH_DIR"
   echo ""
