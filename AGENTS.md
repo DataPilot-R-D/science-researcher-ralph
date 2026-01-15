@@ -15,19 +15,39 @@ Keep research patterns and gotchas in this file in sync with `CLAUDE.md`. When u
 ./skill.sh rrd "Your research topic description"
 # Creates: researches/{topic}-{date}/rrd.json
 
+# List all research projects with status
+./ralph.sh --list
+
+# Show detailed status of a specific research
+./ralph.sh --status researches/{folder-name}
+
+# Reset research to DISCOVERY phase (creates backup)
+./ralph.sh --reset researches/{folder-name}
+
 # Run research on a folder
 ./ralph.sh researches/{folder-name} [options]
 
-# Options:
+# Commands:
+#   --list                List all research projects with color-coded status
+#   --status <folder>     Show detailed status with progress bar
+#   --reset <folder>      Reset research to DISCOVERY phase (creates backup)
+#   -h, --help            Show help message
+
+# Run Options:
 #   -p, --papers <N>      Target papers count (auto-sets iterations to N+5)
 #   -i, --iterations <N>  Override max iterations (default: auto-calculated)
 #   --agent <name>        AI agent: 'claude', 'amp', or 'codex' (default: claude)
+#   --force               Allow -p to change target_papers on in-progress research
 
 # Examples
-./ralph.sh researches/robotics-llms-2026-01-14
+./ralph.sh --list                                             # List all researches
+./ralph.sh --status researches/robotics-llms-2026-01-14       # Check status
+./ralph.sh --reset researches/robotics-llms-2026-01-14        # Reset to start
+./ralph.sh researches/robotics-llms-2026-01-14                # Run research
 ./ralph.sh researches/robotics-llms-2026-01-14 -p 30          # 30 papers, 35 iterations
 ./ralph.sh researches/robotics-llms-2026-01-14 -p 30 -i 100   # Override iterations
-./ralph.sh researches/robotics-llms-2026-01-14 --agent amp
+./ralph.sh researches/robotics-llms-2026-01-14 --agent amp    # Use Amp agent
+./ralph.sh researches/robotics-llms-2026-01-14 -p 50 --force  # Force change target
 
 # List available skills
 ./skill.sh --list

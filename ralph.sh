@@ -85,9 +85,16 @@ cmd_list() {
     local rrd="$dir/rrd.json"
 
     if [[ -f "$rrd" ]]; then
-      local phase=$(jq -r '.phase // "UNKNOWN"' "$rrd" 2>/dev/null)
-      local target=$(jq -r '.requirements.target_papers // 0' "$rrd" 2>/dev/null)
-      local analyzed=$(jq -r '.statistics.total_analyzed // 0' "$rrd" 2>/dev/null)
+      # Issue 6: Check if jq can parse the file first
+      if ! jq empty "$rrd" 2>/dev/null; then
+        printf "  %-40s ${RED}INVALID JSON${NC}\n" "$name"
+        count=$((count + 1))  # Issue 12: Use safe increment
+        continue
+      fi
+
+      local phase=$(jq -r '.phase // "UNKNOWN"' "$rrd")
+      local target=$(jq -r '.requirements.target_papers // 0' "$rrd")
+      local analyzed=$(jq -r '.statistics.total_analyzed // 0' "$rrd")
       local pending=$(jq '[.papers_pool[] | select(.status == "pending")] | length' "$rrd" 2>/dev/null || echo "?")
 
       # Color-code by phase
@@ -99,10 +106,10 @@ cmd_list() {
       esac
 
       printf "  %-40s %b  %s/%s analyzed, %s pending\n" "$name" "$phase_color" "$analyzed" "$target" "$pending"
-      ((count++))
+      count=$((count + 1))  # Issue 12: Use safe increment
     else
       printf "  %-40s ${RED}NO RRD${NC}\n" "$name"
-      ((count++))
+      count=$((count + 1))  # Issue 12: Use safe increment
     fi
   done
 
@@ -136,17 +143,33 @@ cmd_status() {
     exit 1
   fi
 
-  # Extract data
-  local project=$(jq -r '.project // "Unknown"' "$rrd")
-  local phase=$(jq -r '.phase // "UNKNOWN"' "$rrd")
-  local target=$(jq -r '.requirements.target_papers // 0' "$rrd")
+  # Issue 7: Validate JSON before extracting values
+  if ! jq empty "$rrd" 2>/dev/null; then
+    echo -e "${RED}Error:${NC} rrd.json is corrupted or malformed"
+    echo "  File: $rrd"
+    echo "  Try: ./ralph.sh --reset $folder to start fresh"
+    exit 1
+  fi
+
+  # Extract data (with fallbacks for jq failures - Issue 7, 10)
+  local project=$(jq -r '.project // "Unknown"' "$rrd" 2>/dev/null || echo "Unknown")
+  local phase=$(jq -r '.phase // "UNKNOWN"' "$rrd" 2>/dev/null || echo "UNKNOWN")
+  local target=$(jq -r '.requirements.target_papers // 0' "$rrd" 2>/dev/null || echo "0")
   local pool=$(jq '.papers_pool | length' "$rrd" 2>/dev/null || echo "0")
-  local analyzed=$(jq -r '.statistics.total_analyzed // 0' "$rrd")
-  local presented=$(jq -r '.statistics.total_presented // 0' "$rrd")
-  local rejected=$(jq -r '.statistics.total_rejected // 0' "$rrd")
+  local analyzed=$(jq -r '.statistics.total_analyzed // 0' "$rrd" 2>/dev/null || echo "0")
+  local presented=$(jq -r '.statistics.total_presented // 0' "$rrd" 2>/dev/null || echo "0")
+  local rejected=$(jq -r '.statistics.total_rejected // 0' "$rrd" 2>/dev/null || echo "0")
   local pending=$(jq '[.papers_pool[] | select(.status == "pending")] | length' "$rrd" 2>/dev/null || echo "0")
   local analyzing=$(jq '[.papers_pool[] | select(.status == "analyzing")] | length' "$rrd" 2>/dev/null || echo "0")
-  local insights=$(jq -r '.statistics.total_insights_extracted // 0' "$rrd")
+  local insights=$(jq -r '.statistics.total_insights_extracted // 0' "$rrd" 2>/dev/null || echo "0")
+
+  # Issue 10: Ensure target is a valid integer for division
+  if ! [[ "$target" =~ ^[0-9]+$ ]]; then
+    target=0
+  fi
+  if ! [[ "$analyzed" =~ ^[0-9]+$ ]]; then
+    analyzed=0
+  fi
 
   # Color-code phase
   case $phase in
@@ -199,7 +222,7 @@ cmd_status() {
   exit 0
 }
 
-# Reset research to DISCOVERY phase
+# Reset research to DISCOVERY phase (backs up rrd.json and progress.txt)
 cmd_reset() {
   local folder="$1"
 
@@ -221,12 +244,30 @@ cmd_reset() {
     exit 1
   fi
 
-  # Create backup
-  cp "$rrd" "$rrd.backup.$(date +%Y%m%d_%H%M%S)"
-  echo -e "${BLUE}Backup created${NC}"
+  local timestamp=$(date +%Y%m%d_%H%M%S)
 
-  # Reset rrd.json
-  jq '
+  # Create backup of rrd.json (Issue 1: verify success)
+  local rrd_backup="$rrd.backup.$timestamp"
+  if ! cp "$rrd" "$rrd_backup"; then
+    echo -e "${RED}Error:${NC} Failed to create rrd.json backup"
+    echo "  Check disk space and permissions: $RESEARCH_DIR"
+    exit 1
+  fi
+  echo -e "${BLUE}Backup created:${NC} $rrd_backup"
+
+  # Create backup of progress.txt (Issue 9: backup progress.txt too)
+  local progress="$RESEARCH_DIR/progress.txt"
+  if [[ -f "$progress" ]]; then
+    local progress_backup="$progress.backup.$timestamp"
+    if ! cp "$progress" "$progress_backup"; then
+      echo -e "${RED}Error:${NC} Failed to create progress.txt backup"
+      exit 1
+    fi
+    echo -e "${BLUE}Backup created:${NC} $progress_backup"
+  fi
+
+  # Reset rrd.json (Issue 2: verify jq success)
+  if ! jq '
     .phase = "DISCOVERY" |
     .papers_pool = [] |
     .insights = [] |
@@ -235,20 +276,38 @@ cmd_reset() {
     .statistics.total_presented = 0 |
     .statistics.total_rejected = 0 |
     .statistics.total_insights_extracted = 0
-  ' "$rrd" > "$rrd.tmp" && mv "$rrd.tmp" "$rrd"
+  ' "$rrd" > "$rrd.tmp"; then
+    echo -e "${RED}Error:${NC} Failed to reset rrd.json"
+    rm -f "$rrd.tmp"
+    exit 1
+  fi
 
-  # Reset progress.txt
-  local progress="$RESEARCH_DIR/progress.txt"
-  echo "# Research-Ralph Progress Log" > "$progress"
-  echo "Reset: $(date)" >> "$progress"
-  echo "" >> "$progress"
-  echo "## Research Patterns" >> "$progress"
-  echo "- (Patterns discovered during research will be added here)" >> "$progress"
-  echo "" >> "$progress"
-  echo "## Cross-Reference Insights" >> "$progress"
-  echo "- (Connections between papers will be added here)" >> "$progress"
-  echo "" >> "$progress"
-  echo "---" >> "$progress"
+  # Verify output is valid JSON
+  if ! jq empty "$rrd.tmp" 2>/dev/null; then
+    echo -e "${RED}Error:${NC} Reset produced invalid JSON"
+    rm -f "$rrd.tmp"
+    exit 1
+  fi
+
+  mv "$rrd.tmp" "$rrd"
+
+  # Reset progress.txt (with error checking)
+  {
+    echo "# Research-Ralph Progress Log"
+    echo "Reset: $(date)"
+    echo ""
+    echo "## Research Patterns"
+    echo "- (Patterns discovered during research will be added here)"
+    echo ""
+    echo "## Cross-Reference Insights"
+    echo "- (Connections between papers will be added here)"
+    echo ""
+    echo "---"
+  } > "$progress" || {
+    echo -e "${RED}Error:${NC} Failed to reset progress.txt"
+    echo "  Check disk space and permissions"
+    exit 1
+  }
 
   echo -e "${GREEN}Research reset to DISCOVERY phase${NC}"
   echo "  Papers pool cleared"
@@ -326,7 +385,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     --agent)
       if [[ -z "${2:-}" || "$2" == -* ]]; then
-        echo "Error: --agent requires a value (claude, amp, or codex)"
+        echo -e "${RED}Error:${NC} --agent requires a value (claude, amp, or codex)"
         exit 1
       fi
       AGENT="$2"
@@ -334,7 +393,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     -p|--papers)
       if [[ -z "${2:-}" || ! "$2" =~ ^[0-9]+$ ]]; then
-        echo "Error: --papers requires a number"
+        echo -e "${RED}Error:${NC} --papers requires a number"
         exit 1
       fi
       TARGET_PAPERS="$2"
@@ -342,7 +401,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     -i|--iterations)
       if [[ -z "${2:-}" || ! "$2" =~ ^[0-9]+$ ]]; then
-        echo "Error: --iterations requires a number"
+        echo -e "${RED}Error:${NC} --iterations requires a number"
         exit 1
       fi
       MAX_ITERATIONS="$2"
@@ -350,7 +409,7 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     -*)
-      echo "Error: Unknown option '$1'. Use --help for usage."
+      echo -e "${RED}Error:${NC} Unknown option '$1'. Use --help for usage."
       exit 1
       ;;
     *)
@@ -364,7 +423,7 @@ while [[ $# -gt 0 ]]; do
         elif [[ -d "$SCRIPT_DIR/$1" ]]; then
           RESEARCH_DIR="$SCRIPT_DIR/$1"
         else
-          echo "Error: Research folder not found: $1"
+          echo -e "${RED}Error:${NC} Research folder not found: $1"
           echo ""
           echo "Available researches:"
           list_researches
@@ -385,7 +444,7 @@ done
 
 # Require research folder
 if [[ -z "$RESEARCH_DIR" ]]; then
-  echo "Error: Research folder required."
+  echo -e "${RED}Error:${NC} Research folder required."
   echo ""
   echo "Usage: ./ralph.sh <research_folder> [-p papers] [-i iterations] [--agent name]"
   echo ""
@@ -398,13 +457,13 @@ fi
 
 # Validate agent
 if [[ "$AGENT" != "claude" && "$AGENT" != "amp" && "$AGENT" != "codex" ]]; then
-  echo "Error: Invalid agent '$AGENT'. Must be 'claude', 'amp', or 'codex'."
+  echo -e "${RED}Error:${NC} Invalid agent '$AGENT'. Must be 'claude', 'amp', or 'codex'."
   exit 1
 fi
 
 # Verify CLI is installed before starting
 if ! command -v "$AGENT" &> /dev/null; then
-  echo "Error: '$AGENT' CLI not found in PATH."
+  echo -e "${RED}Error:${NC} '$AGENT' CLI not found in PATH."
   [[ "$AGENT" == "amp" ]] && echo "Install it from: https://ampcode.com"
   [[ "$AGENT" == "claude" ]] && echo "Install it from: https://claude.ai/code"
   [[ "$AGENT" == "codex" ]] && echo "Install it from: https://openai.com/codex"
@@ -413,7 +472,7 @@ fi
 
 # Verify jq is installed (needed for parsing rrd.json)
 if ! command -v jq &> /dev/null; then
-  echo "Error: 'jq' not found in PATH."
+  echo -e "${RED}Error:${NC} 'jq' not found in PATH."
   echo "Install it with: brew install jq (macOS) or apt install jq (Linux)"
   exit 1
 fi
@@ -468,7 +527,7 @@ run_agent() {
 
 # Verify RRD file exists before starting
 if [[ ! -f "$RRD_FILE" ]]; then
-  echo "Error: rrd.json not found in research folder: $RESEARCH_DIR"
+  echo -e "${RED}Error:${NC} rrd.json not found in research folder: $RESEARCH_DIR"
   echo ""
   echo "Expected file: $RRD_FILE"
   echo "Create an RRD first using: ./skill.sh rrd \"Your research topic description\""
@@ -477,19 +536,19 @@ fi
 
 # Validate RRD file is valid JSON
 if ! jq empty "$RRD_FILE" 2>/dev/null; then
-  echo "Error: rrd.json is not valid JSON"
+  echo -e "${RED}Error:${NC} rrd.json is not valid JSON"
   echo "Please check the file for syntax errors: $RRD_FILE"
   exit 1
 fi
 
 # Validate required fields exist
 if ! jq -e '.project' "$RRD_FILE" >/dev/null 2>&1; then
-  echo "Error: rrd.json missing required field 'project'"
+  echo -e "${RED}Error:${NC} rrd.json missing required field 'project'"
   exit 1
 fi
 
 if ! jq -e '.requirements.target_papers' "$RRD_FILE" >/dev/null 2>&1; then
-  echo "Error: rrd.json missing required field 'requirements.target_papers'"
+  echo -e "${RED}Error:${NC} rrd.json missing required field 'requirements.target_papers'"
   exit 1
 fi
 
@@ -504,10 +563,20 @@ if [[ -n "$TARGET_PAPERS" ]]; then
     if [[ "$FORCE_FLAG" == "true" ]]; then
       echo -e "${YELLOW}Warning:${NC} Research in progress - forcing target_papers change"
       echo "  Previous: $CURRENT_TARGET → New: $TARGET_PAPERS"
-      # Create backup before modifying
-      cp "$RRD_FILE" "$RRD_FILE.backup.$(date +%Y%m%d_%H%M%S)"
-      jq ".requirements.target_papers = $TARGET_PAPERS" "$RRD_FILE" > "$RRD_FILE.tmp" \
-        && mv "$RRD_FILE.tmp" "$RRD_FILE"
+      # Create backup before modifying (Issue 3: verify success)
+      local backup_file="$RRD_FILE.backup.$(date +%Y%m%d_%H%M%S)"
+      if ! cp "$RRD_FILE" "$backup_file"; then
+        echo -e "${RED}Error:${NC} Failed to create backup"
+        echo "  Check disk space and permissions: $RESEARCH_DIR"
+        exit 1
+      fi
+      echo -e "${BLUE}Backup created:${NC} $backup_file"
+      if ! jq ".requirements.target_papers = $TARGET_PAPERS" "$RRD_FILE" > "$RRD_FILE.tmp"; then
+        echo -e "${RED}Error:${NC} Failed to update target_papers"
+        rm -f "$RRD_FILE.tmp"
+        exit 1
+      fi
+      mv "$RRD_FILE.tmp" "$RRD_FILE"
     else
       echo -e "${RED}Error:${NC} Cannot change target_papers - research already in progress"
       echo "  Phase: $CURRENT_PHASE, Analyzed: $CURRENT_ANALYZED papers"
@@ -536,7 +605,7 @@ fi
 # Verify prompt.md exists
 PROMPT_FILE="$SCRIPT_DIR/prompt.md"
 if [[ ! -f "$PROMPT_FILE" ]]; then
-  echo "Error: prompt.md not found at $PROMPT_FILE"
+  echo -e "${RED}Error:${NC} prompt.md not found at $PROMPT_FILE"
   echo "This file contains the agent instructions and is required."
   exit 1
 fi
@@ -593,7 +662,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   if [[ $EXIT_CODE -ne 0 ]]; then
     CONSECUTIVE_FAILURES=$((CONSECUTIVE_FAILURES + 1))
     echo ""
-    echo "Error: Agent '$AGENT' failed (exit code $EXIT_CODE)."
+    echo -e "${RED}Error:${NC} Agent '$AGENT' failed (exit code $EXIT_CODE)."
     echo "  Consecutive failures: $CONSECUTIVE_FAILURES/$MAX_CONSECUTIVE_FAILURES"
     [[ -n "$OUTPUT" ]] && echo "  Last 20 lines:" && echo "$OUTPUT" | tail -20
 
@@ -627,7 +696,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 
     if [[ $CONSECUTIVE_FAILURES -ge $MAX_CONSECUTIVE_FAILURES ]]; then
       echo ""
-      echo "Error: $MAX_CONSECUTIVE_FAILURES consecutive failures. Aborting."
+      echo -e "${RED}Error:${NC} $MAX_CONSECUTIVE_FAILURES consecutive failures. Aborting."
       echo "Possible causes:"
       echo "  - Agent CLI not properly configured"
       echo "  - Network connectivity issues"
@@ -666,12 +735,16 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   fi
 
   # Fallback check: agent said "complete" in plain English AND state is actually complete
+  # Issue 8: More robust regex - check for positive completion phrases but exclude negations
   if echo "$OUTPUT" | grep -qi "research.*complete\|all.*papers.*analyzed\|research is complete"; then
-    if [[ "$PENDING_COUNT" -eq 0 && "$ANALYZED_COUNT" -gt 0 ]]; then
-      echo ""
-      echo -e "${YELLOW}Note:${NC} Agent indicated completion without exact tag, but state is verified complete"
-      show_completion_summary
-      exit 0
+    # Make sure it's not a negation like "research is NOT complete"
+    if ! echo "$OUTPUT" | grep -qi "not.*complete\|isn't complete\|is not complete\|aren't.*analyzed\|not.*analyzed"; then
+      if [[ "$PENDING_COUNT" -eq 0 && "$ANALYZED_COUNT" -gt 0 ]]; then
+        echo ""
+        echo -e "${YELLOW}Note:${NC} Agent indicated completion without exact tag, but state is verified complete"
+        show_completion_summary
+        exit 0
+      fi
     fi
   fi
 
@@ -683,11 +756,17 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     exit 0
   fi
 
-  # Show iteration delta
+  # Show iteration delta (Issue 5: track per-iteration progress correctly)
   NEW_ANALYZED=$(jq -r '.statistics.total_analyzed // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+  # Ensure it's a valid integer
+  if ! [[ "$NEW_ANALYZED" =~ ^[0-9]+$ ]]; then
+    NEW_ANALYZED=0
+  fi
   if [[ "$NEW_ANALYZED" -gt "$ANALYZED" ]]; then
     echo -e "  ${GREEN}+$((NEW_ANALYZED - ANALYZED)) paper(s) analyzed this iteration${NC}"
   fi
+  # Issue 5: Update baseline for next iteration
+  ANALYZED=$NEW_ANALYZED
 
   echo "Iteration $i complete. Continuing..."
   sleep 2
