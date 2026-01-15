@@ -20,7 +20,7 @@ You are an autonomous research scouting agent. Your job is to discover, analyze,
 
 ## Your Task This Iteration
 
-1. Read state files using FULL PATHS: `{{RESEARCH_DIR}}/rrd.json`, `{{RESEARCH_DIR}}/progress.txt`, `AGENTS.md`, `CLAUDE.md` (system rules/workflows live there; follow them)
+1. Read state files using FULL PATHS: `{{RESEARCH_DIR}}/rrd.json`, `{{RESEARCH_DIR}}/progress.txt`, `MISSION.md` (agent objectives & blue ocean scoring), `AGENTS.md`, `CLAUDE.md` (system rules/workflows live there; follow them)
 2. Check the current `phase` in `{{RESEARCH_DIR}}/rrd.json`
 3. Execute the appropriate phase workflow
 4. Update state files in `{{RESEARCH_DIR}}/` with your findings
@@ -113,7 +113,9 @@ You are an autonomous research scouting agent. Your job is to discover, analyze,
    - Write small tests or prototype code to validate key claims
    - Log results in `progress.txt` and remove temp files (or note where the code lives)
 
-6. **Score the paper** (0-5 each, total 0-30):
+6. **Score the paper using BOTH rubrics:**
+
+   **Execution Rubric** (0-5 each, total 0-30):
 
    | Dimension | Question |
    |-----------|----------|
@@ -124,29 +126,50 @@ You are an autonomous research scouting agent. Your job is to discover, analyze,
    | **Defensibility** | What's the competitive advantage? |
    | **Adoption** | How easy to deploy? |
 
+   **Blue Ocean Rubric** (0-5 each, total 0-20) — See `MISSION.md` for full criteria:
+
+   | Dimension | Question |
+   |-----------|----------|
+   | **Market Creation** | New market or existing competition? (5=new category, 0=saturated) |
+   | **First-Mover Window** | Time until competitors replicate? (5=>24mo, 0=<3mo) |
+   | **Network/Data Effects** | Does value compound over time? (5=strong network effects, 0=none) |
+   | **Strategic Clarity** | How focused is the opportunity? (5=single use case, 0=confused) |
+
    Store in `score_breakdown`:
    ```json
    {
-     "novelty": 4,
-     "feasibility": 3,
-     "time_to_poc": 2,
-     "value_market": 4,
-     "defensibility": 3,
-     "adoption": 3
+     "execution": {
+       "novelty": 4,
+       "feasibility": 3,
+       "time_to_poc": 3,
+       "value_market": 4,
+       "defensibility": 3,
+       "adoption": 4
+     },
+     "blue_ocean": {
+       "market_creation": 4,
+       "first_mover_window": 3,
+       "network_effects": 3,
+       "strategic_clarity": 4
+     },
+     "execution_total": 21,
+     "blue_ocean_total": 14,
+     "combined_total": 35
    }
    ```
 
-7. **Make decision:**
-   - `score >= min_score_to_present` → **PRESENT**
-   - `score < min_score_to_present` but has valuable insights → **EXTRACT_INSIGHTS**
+7. **Make decision based on combined score:**
+   - `combined_total >= 35` → **PRESENT (Priority)** — Exceptional opportunity
+   - `combined_total >= 25` → **PRESENT** — Strong overall score
+   - `combined_total 18-24` but `execution_total >= 18` OR `blue_ocean_total >= 12` → **EXTRACT_INSIGHTS**
    - Otherwise → **REJECT**
 
 8. **Update paper entry:**
    ```json
    {
      "status": "presented" | "rejected" | "insights_extracted",
-     "score": 19,
-     "score_breakdown": { ... },
+     "score": 35,
+     "score_breakdown": { "execution": {...}, "blue_ocean": {...}, "execution_total": 21, "blue_ocean_total": 14, "combined_total": 35 },
      "analysis": {
        "summary": "Brief summary of claims",
        "methodology": "How they did it",
@@ -188,7 +211,7 @@ APPEND to `{{RESEARCH_DIR}}/progress.txt` (never replace):
 ## [Date] - Paper: [Title]
 ID: [paper_id]
 Status: PRESENTED | REJECTED | INSIGHTS_EXTRACTED
-Score: [X]/30
+Combined Score: [X]/50 (Execution: [Y]/30, Blue Ocean: [Z]/20)
 
 **Summary:** [What the paper claims in 2-3 sentences]
 
@@ -199,13 +222,21 @@ Score: [X]/30
 - Commercial use: [yes/no + names if found]
 - Open questions: [What remains unclear]
 
-**Score Breakdown:**
+**Execution Score Breakdown (Y/30):**
 - Novelty: X/5
 - Feasibility: X/5
 - Time-to-POC: X/5
 - Value/Market: X/5
 - Defensibility: X/5
 - Adoption: X/5
+
+**Blue Ocean Score Breakdown (Z/20):**
+- Market Creation: X/5
+- First-Mover Window: X/5
+- Network/Data Effects: X/5
+- Strategic Clarity: X/5
+
+**Market Classification:** [Blue Ocean | Purple Ocean | Red Ocean]
 
 **Decision Rationale:** [Why this decision in 1-2 sentences]
 
@@ -309,10 +340,13 @@ When research is COMPLETE, generate a comprehensive report and save it to `{{RES
 | Metric | Value |
 |--------|-------|
 | Papers Discovered | X |
-| Papers Presented (>=[threshold]/30) | X (Y%) |
+| Papers Presented (>=[threshold]/50) | X (Y%) |
 | Papers Rejected | X (Y%) |
 | Insights Extracted | X |
 | Cross-References Identified | X |
+| Blue Ocean Papers (score >= 12/20) | X (Y%) |
+| Avg Execution Score | X/30 |
+| Avg Blue Ocean Score | X/20 |
 
 ### Key Findings
 
@@ -322,25 +356,27 @@ When research is COMPLETE, generate a comprehensive report and save it to `{{RES
 
 ## Top Scoring Papers
 
-### Tier 1: High-Impact ([score range]/30)
+### Tier 1: Blue Ocean Priority (Combined >= 35/50)
 
-| Rank | Paper | Score | Key Innovation |
-|------|-------|-------|----------------|
-| 1 | **[Title]** | XX/30 | [1-line description] |
+| Rank | Paper | Combined | Execution | Blue Ocean | Key Innovation |
+|------|-------|----------|-----------|------------|----------------|
+| 1 | **[Title]** | XX/50 | XX/30 | XX/20 | [1-line description] |
 
-### Tier 2: Strong Contributions ([score range]/30)
+### Tier 2: Strong Opportunities (Combined 25-34/50)
 
-[Table of papers]
+| Paper | Combined | Execution | Blue Ocean | Key Innovation |
+|-------|----------|-----------|------------|----------------|
 
-### Tier 3: Threshold Papers ([score range]/30)
+### Tier 3: Insights Extracted (Combined 18-24/50)
 
-[Table of papers]
+| Paper | Combined | Execution | Blue Ocean | Reason for Extraction |
+|-------|----------|-----------|------------|----------------------|
 
-### Rejected Papers (<[threshold]/30)
+### Rejected Papers (Combined < 18/50)
 
-| Paper | Score | Reason |
-|-------|-------|--------|
-| [Title] | XX/30 | [Brief reason] |
+| Paper | Combined | Reason |
+|-------|----------|--------|
+| [Title] | XX/50 | [Brief reason] |
 
 ---
 

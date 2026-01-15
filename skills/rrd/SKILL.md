@@ -31,6 +31,8 @@ Generate the RRD immediately without asking questions. Use these defaults:
 | `target_papers` | 20 |
 | `min_score_to_present` | 18 |
 | `sources` | ["arXiv", "Google Scholar", "web"] |
+| `mission.blue_ocean_scoring` | true |
+| `mission.min_combined_score` | 25 |
 
 **Infer from topic description:**
 - `focus_area` - Primary research domain (robotics, NLP, ML, etc.)
@@ -74,6 +76,13 @@ Generate the RRD with these fields:
   "branchName": "research/[topic-slug]",
   "description": "Clear description of research objective and what we're looking for",
 
+  "mission": {
+    "blue_ocean_scoring": true,
+    "min_blue_ocean_score": 12,
+    "min_combined_score": 25,
+    "strategic_focus": "balanced"
+  },
+
   "requirements": {
     "focus_area": "Primary domain (robotics, NLP, etc.)",
     "keywords": ["keyword1", "keyword2", "keyword3"],
@@ -109,8 +118,11 @@ Generate the RRD with these fields:
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 0,
-      "score_distribution": {"0-11": 0, "12-17": 0, "18-23": 0, "24-30": 0}
+      "avg_combined_score": 0,
+      "avg_execution_score": 0,
+      "avg_blue_ocean_score": 0,
+      "combined_score_distribution": {"0-17": 0, "18-24": 0, "25-34": 0, "35-50": 0},
+      "blue_ocean_distribution": {"0-7": 0, "8-11": 0, "12-15": 0, "16-20": 0}
     }
   }
 }
@@ -123,25 +135,36 @@ Generate the RRD with these fields:
 | `project` | Human-readable project name |
 | `branchName` | Topic identifier used for archive folder naming (not git branches) |
 | `description` | What we're researching and why |
+| `mission` | Blue ocean scoring configuration (see below) |
 | `focus_area` | Primary research domain |
 | `keywords` | Search terms for paper discovery |
 | `time_window_days` | How recent papers should be |
 | `historical_lookback_days` | Fallback window for foundational papers (optional, default: 1095 = 3 years) |
 | `target_papers` | How many papers to collect |
 | `sources` | Where to search (arXiv, Scholar, web) |
-| `min_score_to_present` | Threshold score (0-30) for PRESENT decision |
+| `min_score_to_present` | Threshold score (0-30) for PRESENT decision (legacy, use mission.min_combined_score) |
 | `phase` | Current phase: DISCOVERY, ANALYSIS, or COMPLETE |
 | `domain_glossary` | Optional: domain-specific term definitions to improve LLM reasoning |
 | `open_questions` | Questions for user to answer if topic was ambiguous |
 | `discovery_metrics` | Tracks which sources were tried, succeeded, or blocked |
 | `analysis_metrics` | Tracks average score and score distribution |
 
+#### Mission Configuration
+
+| Field | Description |
+|-------|-------------|
+| `mission.blue_ocean_scoring` | Enable strategic blue ocean scoring (default: true) |
+| `mission.min_blue_ocean_score` | Minimum blue ocean score (0-20) for EXTRACT_INSIGHTS (default: 12) |
+| `mission.min_combined_score` | Minimum combined score (0-50) for PRESENT (default: 25) |
+| `mission.strategic_focus` | Focus preset: "balanced", "market_creation", "defensibility", "speed" |
+
 ---
 
 ## Evaluation Rubric
 
-Papers are scored 0-5 on each dimension (total 0-30):
+Papers are scored on TWO rubrics (see `MISSION.md` for full criteria):
 
+**Execution Rubric (0-30):**
 1. **Novelty/Differentiation** - How new is this approach?
 2. **Implementation Feasibility** - Can a small team build this?
 3. **Time-to-POC** - How quickly can we prototype?
@@ -149,7 +172,17 @@ Papers are scored 0-5 on each dimension (total 0-30):
 5. **Defensibility/Moat** - What's the competitive advantage?
 6. **Adoption Friction** - How easy to deploy? (higher = easier)
 
-**Threshold:** Score >= `min_score_to_present` (default: 18) -> PRESENT, else REJECT or EXTRACT_INSIGHTS
+**Blue Ocean Rubric (0-20):**
+7. **Market Creation** - New market or existing competition?
+8. **First-Mover Window** - Time until competitors replicate?
+9. **Network/Data Effects** - Does value compound over time?
+10. **Strategic Clarity** - How focused is the opportunity?
+
+**Decision Thresholds (Combined 0-50):**
+- Combined >= 35 = **PRESENT (Priority)** — Blue ocean opportunity
+- Combined >= 25 = **PRESENT** — Strong overall score
+- Combined 18-24 with Execution >= 18 OR Blue Ocean >= 12 = **EXTRACT_INSIGHTS**
+- Otherwise = **REJECT**
 
 Include this rubric explanation in the RRD description or notes if the user needs context.
 
@@ -171,6 +204,13 @@ Include this rubric explanation in the RRD description or notes if the user need
   "project": "Research: Robotics & Embodied AI",
   "branchName": "research/robotics-embodied-ai",
   "description": "Scout recent advances in robotics, embodied AI, and sim2real transfer. Focus on papers with implementation potential for a small startup team. Looking for novel manipulation techniques, efficient sim2real methods, and practical robot learning approaches.",
+
+  "mission": {
+    "blue_ocean_scoring": true,
+    "min_blue_ocean_score": 12,
+    "min_combined_score": 25,
+    "strategic_focus": "balanced"
+  },
 
   "requirements": {
     "focus_area": "robotics",
@@ -219,8 +259,11 @@ Include this rubric explanation in the RRD description or notes if the user need
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 0,
-      "score_distribution": {"0-11": 0, "12-17": 0, "18-23": 0, "24-30": 0}
+      "avg_combined_score": 0,
+      "avg_execution_score": 0,
+      "avg_blue_ocean_score": 0,
+      "combined_score_distribution": {"0-17": 0, "18-24": 0, "25-34": 0, "35-50": 0},
+      "blue_ocean_distribution": {"0-7": 0, "8-11": 0, "12-15": 0, "16-20": 0}
     }
   }
 }
