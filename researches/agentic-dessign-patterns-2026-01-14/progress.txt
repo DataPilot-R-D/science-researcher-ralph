@@ -1230,3 +1230,63 @@ Token consumption only known AFTER API calls complete - cannot prevent single ov
 - Gartner predictions about agentic AI failures create urgency for governance patterns
 
 ---
+
+## 2026-01-15 - Paper: To Retrieve or To Think? An Agentic Approach for Context Evolution
+ID: arxiv_2601.08747
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** ACE (Agentic Context Evolution) - metacognition-inspired framework that dynamically decides whether to retrieve new evidence or reason with existing knowledge. Orchestrator agent uses majority voting to select between retriever agent (external search) and reasoner agent (internal analysis). Eliminates redundant retrieval steps while maintaining accuracy.
+
+**Key Method:**
+- **Committee Decision:** Multiple agents independently evaluate current context + query
+- **Majority Voting:** Aggregates votes to prevent single-agent hallucinations from derailing
+- **RETRIEVE Action:** Activates retriever agent to fetch documents from knowledge base
+- **THINK Action:** Activates reasoner agent to generate sub-queries and synthesize existing knowledge
+- **Optimal Depth:** N=3-5 iterations per dataset; THINK comprises 50-73% of all decisions
+
+**Implementation Check:**
+- GitHub repos: No public implementation released
+- Backbone: LLaMA-3.1-8B-Instruct (compatible with standard models)
+- Commercial use: No
+- Open questions: Generalization beyond multi-hop QA? How to optimize iteration depth automatically?
+
+**Benchmark Results:**
+
+| Dataset | ACE Accuracy | Improvement over RAG |
+|---------|--------------|---------------------|
+| HotpotQA | 62.8% | +23pp |
+| MultiHop-RAG | 57.9% | +8.7pp |
+| 2WikiQA | 47.9% | +19.1pp |
+
+**Token Efficiency:** 42% fewer tokens than IterDRAG on MultiHop-RAG while achieving superior accuracy.
+
+**Score Breakdown:**
+- Novelty: 4/5 (Metacognition-inspired orchestration with majority voting)
+- Feasibility: 4/5 (Uses LLaMA-3.1-8B-Instruct; compatible with standard LLMs)
+- Time-to-POC: 4/5 (Clear methodology; majority voting straightforward to implement)
+- Value/Market: 4/5 (42% token reduction + accuracy gains addresses real RAG cost problem)
+- Defensibility: 3/5 (Pattern is transferable; innovation is in orchestration mechanism)
+- Adoption: 4/5 (Works with standard models; simple agent architecture)
+
+**Decision Rationale:** High-scoring pattern combining metacognition-inspired decision making with practical efficiency gains. Key insight: 50-73% THINK actions confirms strategic reasoning prevents runaway token costs - most queries don't need continuous retrieval.
+
+**Extracted Insights:**
+- Metacognition-inspired RETRIEVE vs THINK orchestration
+- Majority voting prevents single-agent failure (key robustness pattern)
+- 42% token savings while improving accuracy demonstrates efficiency-quality synergy
+- Optimal iteration depth N=3-5 varies by dataset
+
+**Cross-References:**
+- Extends retrieval/reasoning balance from arxiv_2508.10146 (framework comparison)
+- Orchestrator pattern relates to arxiv_2511.03023 (agent role taxonomy)
+- Complements cognitive patterns from arxiv_2505.07087
+- Token efficiency aligns with arxiv_2601.08815 (Agent Contracts resource governance)
+
+**Learnings for Future Iterations:**
+- Metacognition as inspiration for agent decision-making is fruitful research direction
+- Majority voting is simple but effective multi-agent robustness technique
+- Strategic retrieval avoidance can improve both cost and quality
+- Multi-hop QA is strong benchmark for agentic RAG evaluation
+
+---
