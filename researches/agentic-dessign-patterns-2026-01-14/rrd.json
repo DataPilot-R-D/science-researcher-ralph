@@ -646,17 +646,40 @@
         "Maciej Besta",
         "Florim Memedi",
         "Zhenyu Zhang",
+        "Robert Gerstenberger",
+        "Onur Mutlu",
+        "Torsten Hoefler",
         "et al."
       ],
       "date": "2024-01-25",
       "source": "arXiv",
       "priority": 4,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "IEEE TPAMI 2025. Comprehensive taxonomy of reasoning topologies. Foundation for understanding structured prompting patterns."
+      "status": "presented",
+      "score": 23,
+      "score_breakdown": {
+        "novelty": 4,
+        "feasibility": 5,
+        "time_to_poc": 4,
+        "value_market": 4,
+        "defensibility": 2,
+        "adoption": 4
+      },
+      "analysis": {
+        "summary": "First comprehensive taxonomy of structure-enhanced LLM reasoning schemes, classifying approaches into chains (linear sequential), trees (branching exploration), and graphs (arbitrary connections with aggregation). Published in IEEE TPAMI Dec 2025 - establishes foundational framework for understanding reasoning topologies across seven key dimensions: topology class, scope, representation, derivation, reasoning schedule, schedule representation, and AI pipeline integration.",
+        "methodology": "Systematic analysis of the prompt execution pipeline with clear conceptual definitions. Creates dimensional framework analyzing: (1) Topology class (chain/tree/graph structure), (2) Scope (single vs multi-prompt), (3) Representation (implicit textual vs explicit JSON/triples), (4) Derivation (manual/automatic construction), (5) Reasoning schedule (BFS/DFS/parallel), (6) Schedule representation (NL/code/examples), (7) Pipeline integration (retrieval, tools, fine-tuning).",
+        "results": "Graphs generally outperform chains and trees: 'significant improvements upon IO, CoT, and ToT on all four tasks using GPT-3.5'. GoT achieves 62% quality improvement on sorting over ToT while reducing costs >31%. Chain topologies: CoT significantly outperforms IO prompting on GSM8K, SVAMP, MAWPS; Program of Thoughts adds 4-8% via code generation. Tree topologies: CoT-SC with majority voting shows consistent accuracy improvements. Key trade-offs identified: cost vs quality, latency vs accuracy, user control vs automation.",
+        "implementations_found": [
+          "https://github.com/spcl/graph-of-thoughts (official GoT framework, PyPI installable)",
+          "https://github.com/spcl/knowledge-graph-of-thoughts (KGoT - KG integration)",
+          "https://langchain-ai.github.io/langgraph/tutorials/tot/tot/ (LangGraph ToT tutorial)",
+          "https://pypi.org/project/graph-of-thoughts/ (PyPI package)"
+        ],
+        "commercialized": true,
+        "commercialized_by": "ToT/GoT patterns adopted by IBM (watsonx platform), LangChain (LangGraph tutorials), enterprise deployments in legal operations and regulatory compliance. Authors from ETH Zurich SPCL (Scalable Parallel Computing Lab) with significant academic influence.",
+        "limitations": "Survey paper synthesizing existing work - no novel technique proposed. Published Jan 2024, some referenced approaches have evolved. Benchmarks may be outdated (pre-GPT-4o era). Cost-benefit trade-offs are task-dependent requiring empirical tuning. Does not cover newer protocols (A2A, ANP) or adaptive approaches (AGoT)."
+      },
+      "decision": "PRESENT",
+      "notes": "Foundational taxonomy paper published in IEEE TPAMI Vol 47 Dec 2025. First systematic classification of structured reasoning approaches. Seven-dimensional analysis framework provides principled way to evaluate reasoning schemes. Key practitioner guidance: match topology to task decomposability, optimize branching factors empirically, prefer single-prompt when feasible. Official GoT implementation available on PyPI. 15+ co-authors from ETH Zurich SPCL. Cross-references: directly extends reasoning topology taxonomy from arxiv_2404.11584; foundation for arxiv_2502.05078 AGoT; relates to cognitive patterns in arxiv_2505.07087."
     },
     {
       "id": "arxiv_2601.08816",
@@ -1128,6 +1151,41 @@
       "insight": "Position bias vulnerability in benchmarks: AGoT gains dropped from +46.2% to +0.9% on unshuffled vs shuffled GPQA, indicating training data exposure effects - always evaluate on shuffled/modified benchmarks to detect true reasoning vs memorization",
       "tags": ["benchmarks", "evaluation", "limitations"],
       "cross_refs": ["arxiv_2404.11584", "arxiv_2510.09244"]
+    },
+    {
+      "id": "insight_056",
+      "paper_id": "arxiv_2401.14295",
+      "insight": "Three-topology hierarchy for LLM reasoning: Chains (linear sequential), Trees (branching exploration with k candidates), Graphs (arbitrary connections with aggregation) - each with distinct cost-quality trade-offs; graphs achieve 62% quality gains over trees at >31% cost reduction",
+      "tags": ["reasoning", "topology", "taxonomy", "fundamentals"],
+      "cross_refs": ["arxiv_2502.05078", "arxiv_2404.11584"]
+    },
+    {
+      "id": "insight_057",
+      "paper_id": "arxiv_2401.14295",
+      "insight": "Seven-dimensional framework for evaluating reasoning schemes: Topology class, Scope (single/multi-prompt), Representation (implicit/explicit), Derivation (manual/automatic), Reasoning schedule (BFS/DFS/parallel), Schedule representation (NL/code/examples), Pipeline integration (retrieval/tools/fine-tuning)",
+      "tags": ["taxonomy", "evaluation-framework", "architecture"],
+      "cross_refs": ["arxiv_2508.10146", "arxiv_2601.03624"]
+    },
+    {
+      "id": "insight_058",
+      "paper_id": "arxiv_2401.14295",
+      "insight": "Practitioner heuristic for topology selection: Match topology to task decomposability - easily decomposable problems benefit from tree/graph structures; simple linear reasoning favors chains. Prefer single-prompt approaches when feasible for resource efficiency",
+      "tags": ["decision-guidance", "architecture", "cost-optimization"],
+      "cross_refs": ["arxiv_2509.08646", "arxiv_2511.03023"]
+    },
+    {
+      "id": "insight_059",
+      "paper_id": "arxiv_2401.14295",
+      "insight": "Branching factor optimization: 'Most advantageous branching factor depends on specific problem' - requires empirical tuning rather than fixed defaults. Increasing branching improves diversity but exponentially increases computational costs",
+      "tags": ["optimization", "configuration", "cost-benefit"],
+      "cross_refs": ["arxiv_2512.20845", "arxiv_2503.16024"]
+    },
+    {
+      "id": "insight_060",
+      "paper_id": "arxiv_2401.14295",
+      "insight": "Enterprise adoption pattern for structured reasoning: ToT for complex branching with strategic lookahead (legal routing, compliance analysis, QA diagnostics); GoT for workflows requiring merging partial answers, attaching evidence, and combining multi-stakeholder perspectives",
+      "tags": ["enterprise", "adoption", "use-cases"],
+      "cross_refs": ["arxiv_2601.03328", "arxiv_2509.08646"]
     }
   ],
   "visited_urls": [
@@ -1189,15 +1247,20 @@
     "https://github.com/AgnostiqHQ/multi-agent-llm",
     "https://github.com/spcl/graph-of-thoughts",
     "https://github.com/SaptaDey/Adaptive-Graph-of-Thoughts-MCP-server",
-    "https://www.datarobot.com/newsroom/press/datarobot-acquires-agnostiq-to-accelerate-agentic-ai-application-development/"
+    "https://www.datarobot.com/newsroom/press/datarobot-acquires-agnostiq-to-accelerate-agentic-ai-application-development/",
+    "https://arxiv.org/html/2401.14295v3",
+    "https://github.com/spcl/graph-of-thoughts",
+    "https://github.com/spcl/knowledge-graph-of-thoughts",
+    "https://pypi.org/project/graph-of-thoughts/",
+    "https://langchain-ai.github.io/langgraph/tutorials/tot/tot/"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 14,
-    "total_presented": 14,
+    "total_analyzed": 15,
+    "total_presented": 15,
     "total_rejected": 0,
-    "total_insights_extracted": 55,
+    "total_insights_extracted": 60,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -1213,11 +1276,11 @@
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 21.9,
+      "avg_score": 22.0,
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
-        "18-23": 11,
+        "18-23": 12,
         "24-30": 3
       }
     }

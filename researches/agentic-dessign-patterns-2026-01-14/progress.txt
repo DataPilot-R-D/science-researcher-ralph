@@ -974,3 +974,72 @@ Parameters: d_max=1 (recursion depth), l_max=3 (layers), n_max=3 (nodes per laye
 - Acquisition announcements provide strong commercial validation signal
 
 ---
+
+## 2026-01-15 - Paper: Demystifying Chains, Trees, and Graphs of Thoughts
+ID: arxiv_2401.14295
+Status: PRESENTED
+Score: 23/30
+
+**Summary:** First comprehensive taxonomy of structure-enhanced LLM reasoning schemes, classifying approaches into chains (linear sequential), trees (branching exploration), and graphs (arbitrary connections with aggregation). Published in IEEE TPAMI Vol 47 Dec 2025 - establishes foundational framework for understanding reasoning topologies across seven key dimensions.
+
+**Key Method:** Systematic analysis of the prompt execution pipeline creating a seven-dimensional framework:
+1. Topology class (chain/tree/graph structure)
+2. Scope (single vs multi-prompt)
+3. Representation (implicit textual vs explicit JSON/triples)
+4. Derivation (manual/automatic construction)
+5. Reasoning schedule (BFS/DFS/parallel)
+6. Schedule representation (NL/code/examples)
+7. Pipeline integration (retrieval, tools, fine-tuning)
+
+**Implementation Check:**
+- GitHub repos: Yes
+  - https://github.com/spcl/graph-of-thoughts (official GoT, PyPI: graph-of-thoughts)
+  - https://github.com/spcl/knowledge-graph-of-thoughts (KGoT - KG integration)
+  - LangGraph ToT tutorial: https://langchain-ai.github.io/langgraph/tutorials/tot/tot/
+- Commercial use: Yes - ToT/GoT patterns adopted by IBM (watsonx), LangChain, enterprise legal/compliance deployments
+- Open questions: How to dynamically select topology at runtime? Optimal branching factors per domain?
+
+**Topology Comparison:**
+
+| Topology | Structure | Key Innovation | Trade-off |
+|----------|-----------|----------------|-----------|
+| Chain (CoT) | Linear sequential | Explicit intermediate reasoning steps | Min cost, lower accuracy |
+| Tree (ToT) | Branching k candidates | Exploration of multiple paths with selection | Moderate cost, better quality |
+| Graph (GoT) | Arbitrary with aggregation | Multiple parents enable merging partial answers | Highest cost, best quality |
+
+**Performance Findings:**
+- GoT achieves 62% quality improvement on sorting over ToT while reducing costs >31%
+- CoT significantly outperforms IO prompting on GSM8K, SVAMP, MAWPS
+- Program of Thoughts adds 4-8% via code generation
+- CoT-SC with majority voting shows consistent accuracy improvements
+
+**Score Breakdown:**
+- Novelty: 4/5 (First comprehensive taxonomy; seven-dimensional framework is novel)
+- Feasibility: 5/5 (All approaches have working implementations; GoT on PyPI)
+- Time-to-POC: 4/5 (Official framework installable via pip; LangGraph tutorials available)
+- Value/Market: 4/5 (IEEE TPAMI publication; enterprise adoption validated)
+- Defensibility: 2/5 (Public knowledge synthesis; patterns are open)
+- Adoption: 4/5 (Framework-agnostic; works with any LLM; LangGraph integration)
+
+**Decision Rationale:** Foundational taxonomy paper that establishes the conceptual vocabulary and dimensional framework for structured reasoning. Score of 23/30 reflects high practical value despite being a survey (no novel technique). Seven-dimensional analysis provides principled evaluation criteria. Official GoT implementation with 62% quality gains over ToT demonstrates real value.
+
+**Extracted Insights:**
+- Three-topology hierarchy (Chains→Trees→Graphs) with distinct cost-quality trade-offs
+- Seven-dimensional framework for systematic evaluation of reasoning schemes
+- Practitioner heuristic: match topology to task decomposability
+- Branching factor requires empirical tuning per problem type
+- Enterprise pattern: ToT for legal/compliance lookahead; GoT for multi-stakeholder synthesis
+
+**Cross-References:**
+- Foundation for arxiv_2502.05078 AGoT (adaptive unification of all three topologies)
+- Extends reasoning approaches catalogued in arxiv_2404.11584 (AI Agent Architectures survey)
+- Relates to hierarchical decomposition pattern in arxiv_2505.07087 (Cognitive Patterns)
+- Graph topology aligns with DAG planning in arxiv_2509.08646 (P-t-E)
+
+**Learnings for Future Iterations:**
+- IEEE TPAMI (top-tier journal) publication indicates high research rigor and community acceptance
+- Taxonomy papers with official implementations score higher on feasibility/adoption
+- ETH Zurich SPCL has significant presence in structured reasoning research (GoT, KGoT)
+- Cost-quality trade-off analysis is essential for practitioner guidance
+
+---
