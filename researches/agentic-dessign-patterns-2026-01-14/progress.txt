@@ -11,6 +11,7 @@ Started: śro 14 sty 12:37:38 2026 CET
 - **Security through constrained capabilities**: General-purpose agents cannot provide meaningful security guarantees - application-specific agents with pattern-based constraints are the path to production security
 - **Six security patterns hierarchy**: Action-Selector (max security) → Plan-Then-Execute → Map-Reduce → Dual LLM → Code-Then-Execute → Context-Minimization (simplest)
 - **Lazy agent failure mode**: GRPO loss normalization (1/T_i) inadvertently favors shorter trajectories, causing multi-agent collapse to single-agent behavior - mitigate with causal influence measurement + restart mechanisms
+- **CoT explainability illusion**: Chain-of-Thought produces "explanations without explainability" - non-reasoning models outperform CoT variants; use architecture for traceability rather than CoT for transparency
 
 ## Cross-Reference Insights
 - arxiv_2601.03624 and arxiv_2601.03328 both emphasize governance/accountability patterns
@@ -1041,5 +1042,59 @@ Score: 23/30
 - Taxonomy papers with official implementations score higher on feasibility/adoption
 - ETH Zurich SPCL has significant presence in structured reasoning research (GoT, KGoT)
 - Cost-quality trade-off analysis is essential for practitioner guidance
+
+---
+
+## 2026-01-15 - Paper: Thoughts without Thinking: Reconsidering the Explanatory Value of Chain-of-Thought Reasoning in LLMs through Agentic Pipelines
+ID: arxiv_2505.00875
+Status: PRESENTED
+Score: 18/30
+
+**Summary:** Intel Labs empirical study demonstrating that Chain-of-Thought reasoning in agentic pipelines produces "explanations without explainability" - CoT does not improve outputs or user understanding. Challenges the assumption that showing model reasoning steps automatically provides transparency.
+
+**Key Method:** Evaluated 152 organizational and 43 task-based questions (N=750 responses) on a perceptive task guidance system using Assembly 101 dataset. Human expert reviewers and GPT-4o-as-Judge assessed answers. Tested Llama3-8b, Qwen 7b/14b, and DeepSeek reasoning-distilled variants across Perceptor-Planner-Actor architecture.
+
+**Implementation Check:**
+- GitHub repos: No - Intel Labs has 63 repositories but this specific implementation not released
+- Commercial use: No
+- Open questions: How to achieve true explainability in agentic systems? When is CoT valuable vs harmful?
+
+**Critical Results:**
+- Non-reasoning models outperformed CoT-generating variants with statistical significance
+- CoT scores showed weak correlation with answer quality
+- Cohen's Kappa = 0.28-0.48 (weak inter-rater agreement) for human/LLM evaluation
+
+**Three Barriers to CoT Explainability Identified:**
+1. **Einstellung Paradigm:** Models fixate on familiar but irrelevant concepts (e.g., dump truck mechanics when discussing toy assembly)
+2. **Logical Fallacies:** CoT generates hasty generalizations unsupported by context
+3. **Information Overload:** Excessive text obscures rather than clarifies reasoning
+
+**Score Breakdown:**
+- Novelty: 3/5 (Critical perspective on CoT valuable but builds on known limitations)
+- Feasibility: 4/5 (Agentic architecture implementable; findings directly applicable)
+- Time-to-POC: 3/5 (Conceptual guidance; no specific implementation patterns)
+- Value/Market: 3/5 (Important cautionary finding; limits CoT reliance in production)
+- Defensibility: 2/5 (Insights are public knowledge; workshop paper)
+- Adoption: 3/5 (Informs architecture decisions; no direct toolkit)
+
+**Decision Rationale:** Meets threshold (18/30) as essential counterpoint to CoT enthusiasm. Workshop paper status limits novelty score but findings are critical for production systems. Key insight: agentic systems risk becoming "crowds of LLMs playing telephone" with cascading distortion.
+
+**Extracted Insights:**
+- CoT produces "explanations without explainability" - verbalization ≠ transparency
+- Three barriers: Einstellung (fixation), fallacies (hasty generalization), overload (noise)
+- Multi-agent systems create cascading distortion risks as messages pass between agents
+- Use architecture FOR traceability rather than relying on CoT FOR explainability
+
+**Cross-References:**
+- Challenges reasoning assumptions in arxiv_2401.14295 (Demystifying CoT/ToT/GoT)
+- Relates to hallucination concerns in arxiv_2512.14474 (Model-First Reasoning)
+- Informs realistic expectations for arxiv_2502.05078 (Adaptive Graph of Thoughts)
+- Complements cascading error analysis in arxiv_2511.02303 (Lazy Agents)
+
+**Learnings for Future Iterations:**
+- Workshop papers (CHI HCXAI 2025) provide valuable critical perspectives often missing from main venues
+- Intel Labs research indicates enterprise relevance even without public implementation
+- Critical papers that challenge popular assumptions are essential for balanced research coverage
+- Weak LLM-as-Judge reliability (Cohen's Kappa 0.28-0.48) is an ongoing evaluation challenge
 
 ---

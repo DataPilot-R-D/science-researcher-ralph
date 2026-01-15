@@ -552,12 +552,30 @@
       "date": "2025-05-01",
       "source": "arXiv",
       "priority": 3,
-      "status": "pending",
-      "score": null,
-      "score_breakdown": null,
-      "analysis": null,
-      "decision": null,
-      "notes": "CHI 2025 Workshop. Critical view: CoT alone doesn't improve outputs or explainability in agentic pipelines."
+      "status": "presented",
+      "score": 18,
+      "score_breakdown": {
+        "novelty": 3,
+        "feasibility": 4,
+        "time_to_poc": 3,
+        "value_market": 3,
+        "defensibility": 2,
+        "adoption": 3
+      },
+      "analysis": {
+        "summary": "Intel Labs empirical study demonstrating that Chain-of-Thought reasoning in agentic pipelines produces 'explanations without explainability' - CoT does not improve outputs or user understanding. Challenges assumption that showing model reasoning steps automatically provides transparency. Tested on perceptive task guidance system using Assembly 101 dataset.",
+        "methodology": "Evaluated 152 organizational and 43 task-based questions (N=750 responses) using human expert reviewers and GPT-4o-as-Judge. Scored responses on -1 to 1 Likert scale for accuracy and helpfulness. Weak inter-rater agreement (Cohen's Kappa = 0.28-0.48). Tested Llama3-8b, Qwen 7b/14b, and DeepSeek reasoning-distilled variants across Perceptor-Planner-Actor architecture.",
+        "results": "Non-reasoning models outperformed reasoning (CoT-generating) variants with statistical significance. CoT scores showed weak correlation with answer quality. CoT exhibited high incompleteness (0.5 scores) regardless of answer correctness. Three barriers identified: Einstellung paradigm (fixation on irrelevant concepts), logical fallacies (hasty generalizations), information overload (excessive text obscures reasoning).",
+        "implementations_found": [
+          "https://github.com/IntelLabs (Intel Labs GitHub - no specific implementation released)",
+          "https://aigi.ox.ac.uk/wp-content/uploads/2025/07/Cot_Is_Not_Explainability.pdf (related Oxford research)",
+          "https://long-cot.github.io/ (Long CoT survey)"
+        ],
+        "commercialized": false,
+        "limitations": "Small dataset (750 responses). Assumed agentic architecture necessity without alternatives comparison. Identical LLMs across all agents rather than task-specific experts. Weak LLM-as-Judge reliability acknowledged. Workshop paper rather than full publication."
+      },
+      "decision": "PRESENT",
+      "notes": "CHI 2025 HCXAI Workshop paper. Critical counterpoint to CoT enthusiasm - essential for calibrating expectations. Key insight: agentic systems risk becoming 'crowds of LLMs playing telephone' with cascading distortion. Recommends using agentic architecture FOR traceability rather than relying on CoT FOR explainability. Cross-references: challenges reasoning assumptions in arxiv_2401.14295 taxonomy; relates to hallucination concerns in arxiv_2512.14474 MFR; informs realistic expectations for arxiv_2502.05078 AGoT."
     },
     {
       "id": "arxiv_2512.14474",
@@ -1186,6 +1204,34 @@
       "insight": "Enterprise adoption pattern for structured reasoning: ToT for complex branching with strategic lookahead (legal routing, compliance analysis, QA diagnostics); GoT for workflows requiring merging partial answers, attaching evidence, and combining multi-stakeholder perspectives",
       "tags": ["enterprise", "adoption", "use-cases"],
       "cross_refs": ["arxiv_2601.03328", "arxiv_2509.08646"]
+    },
+    {
+      "id": "insight_061",
+      "paper_id": "arxiv_2505.00875",
+      "insight": "CoT produces 'explanations without explainability': Non-reasoning models outperformed CoT-generating variants with statistical significance. Verbalized reasoning steps do not improve user understanding or task completion - showing steps is not equivalent to transparency",
+      "tags": ["explainability", "CoT-limitations", "critical-finding"],
+      "cross_refs": ["arxiv_2401.14295", "arxiv_2512.14474"]
+    },
+    {
+      "id": "insight_062",
+      "paper_id": "arxiv_2505.00875",
+      "insight": "Three barriers to CoT explainability: (1) Einstellung paradigm - fixation on familiar but irrelevant concepts, (2) Logical fallacies - hasty generalizations unsupported by context, (3) Information overload - excessive text obscures rather than clarifies reasoning",
+      "tags": ["explainability", "failure-modes", "CoT-limitations"],
+      "cross_refs": ["arxiv_2512.20845", "arxiv_2505.07087"]
+    },
+    {
+      "id": "insight_063",
+      "paper_id": "arxiv_2505.00875",
+      "insight": "Agentic systems risk 'telephone game' distortion: Multi-agent architectures where LLMs pass information between agents create cascading risks where message gets inevitably distorted. Humans cede control to multi-actor systems with unpredictable error propagation",
+      "tags": ["multi-agent", "cascading-risks", "error-propagation"],
+      "cross_refs": ["arxiv_2511.02303", "arxiv_2512.20845"]
+    },
+    {
+      "id": "insight_064",
+      "paper_id": "arxiv_2505.00875",
+      "insight": "Architecture FOR traceability, not CoT FOR explainability: Use agentic system architecture to trace information flow through agent handoffs rather than relying on CoT verbalization. Decompose transparency problem into architectural observability",
+      "tags": ["architecture", "traceability", "design-pattern"],
+      "cross_refs": ["arxiv_2509.08646", "arxiv_2506.08837"]
     }
   ],
   "visited_urls": [
@@ -1252,15 +1298,20 @@
     "https://github.com/spcl/graph-of-thoughts",
     "https://github.com/spcl/knowledge-graph-of-thoughts",
     "https://pypi.org/project/graph-of-thoughts/",
-    "https://langchain-ai.github.io/langgraph/tutorials/tot/tot/"
+    "https://langchain-ai.github.io/langgraph/tutorials/tot/tot/",
+    "https://arxiv.org/html/2505.00875v1",
+    "https://www.researchgate.net/publication/391444390_Thoughts_without_Thinking_Reconsidering_the_Explanatory_Value_of_Chain-of-Thought_Reasoning_in_LLMs_through_Agentic_Pipelines",
+    "https://github.com/IntelLabs",
+    "https://aigi.ox.ac.uk/wp-content/uploads/2025/07/Cot_Is_Not_Explainability.pdf",
+    "https://long-cot.github.io/"
   ],
   "blocked_sources": [],
   "statistics": {
     "total_discovered": 20,
-    "total_analyzed": 15,
-    "total_presented": 15,
+    "total_analyzed": 16,
+    "total_presented": 16,
     "total_rejected": 0,
-    "total_insights_extracted": 60,
+    "total_insights_extracted": 64,
     "discovery_metrics": {
       "sources_tried": [
         "arXiv",
@@ -1276,11 +1327,11 @@
       "source_failure_reasons": {}
     },
     "analysis_metrics": {
-      "avg_score": 22.0,
+      "avg_score": 21.75,
       "score_distribution": {
         "0-11": 0,
         "12-17": 0,
-        "18-23": 12,
+        "18-23": 13,
         "24-30": 3
       }
     }
