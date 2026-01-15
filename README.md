@@ -1,7 +1,7 @@
 # Research-Ralph
 
 [![Status: Active](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/DataPilot-R-D/science-researcher-ralph)
-[![Version: 2.2.0](https://img.shields.io/badge/version-2.2.0-blue)](https://github.com/DataPilot-R-D/science-researcher-ralph/releases)
+[![Version: 3.0.0](https://img.shields.io/badge/version-3.0.0-blue)](https://github.com/DataPilot-R-D/science-researcher-ralph/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
 Research-Ralph is an autonomous AI research scouting agent that discovers, analyzes, and evaluates research papers. Each research project gets its own folder with all artifacts, and each iteration spawns a fresh agent instance with clean context.
@@ -41,7 +41,20 @@ researches/research-robotics-and-embodied-2026-01-14/
 
 Answer the clarifying questions to configure your research parameters.
 
-### 2. Run Research-Ralph
+### 2. Check Status / Manage Researches
+
+```bash
+# List all research projects with status
+./ralph.sh --list
+
+# Show detailed status of a specific research
+./ralph.sh --status researches/research-robotics-and-embodied-2026-01-14
+
+# Reset research to start fresh (creates backup)
+./ralph.sh --reset researches/research-robotics-and-embodied-2026-01-14
+```
+
+### 3. Run Research-Ralph
 
 ```bash
 # Run with Claude Code (default)
@@ -58,18 +71,30 @@ Answer the clarifying questions to configure your research parameters.
 
 # Run with Codex
 ./ralph.sh researches/research-robotics-and-embodied-2026-01-14 --agent codex
+
+# Force change target papers on in-progress research (creates backup)
+./ralph.sh researches/research-robotics-and-embodied-2026-01-14 -p 50 --force
 ```
 
-**Options:**
+**Commands:**
+| Command | Description |
+|---------|-------------|
+| `--list` | List all research projects with color-coded status |
+| `--status <folder>` | Show detailed status with progress bar |
+| `--reset <folder>` | Reset research to DISCOVERY phase (creates backup) |
+| `-h, --help` | Show help message |
+
+**Run Options:**
 | Option | Description |
 |--------|-------------|
 | `-p, --papers <N>` | Target papers count (auto-sets iterations to N+5) |
 | `-i, --iterations <N>` | Override max iterations (default: auto-calculated) |
 | `--agent <name>` | AI agent: claude, amp, or codex (default: claude) |
+| `--force` | Force operations (e.g., override target_papers on in-progress research) |
 
 You'll see output like:
 ```
-Starting Research-Ralph v2.2.0
+Starting Research-Ralph v3.0.0
   Research: researches/research-robotics-and-embodied-2026-01-14
   Agent: claude
   Project: Research: Robotics and Embodied AI
@@ -205,20 +230,23 @@ When research completes, Research-Ralph automatically generates `research-report
 Check current state:
 
 ```bash
-# See research status
-cat researches/{folder}/rrd.json | jq '.phase, .statistics'
+# List all research projects with status (recommended)
+./ralph.sh --list
 
-# See paper statuses
-cat researches/{folder}/rrd.json | jq '.papers_pool[] | {id, title, status, score}'
+# Show detailed status with progress bar
+./ralph.sh --status researches/{folder}
 
 # See research findings
 cat researches/{folder}/progress.txt
 
+# See paper statuses (raw)
+cat researches/{folder}/rrd.json | jq '.papers_pool[] | {id, title, status, score}'
+
 # See presented papers
 cat researches/{folder}/rrd.json | jq '.papers_pool[] | select(.status == "presented")'
 
-# List all research projects
-ls researches/
+# Reset to start over (creates backup)
+./ralph.sh --reset researches/{folder}
 ```
 
 ## Rate Limits

@@ -1,37 +1,56 @@
 #!/bin/bash
 # Research-Ralph - Autonomous research scouting agent loop
-# Usage: ./ralph.sh <research_folder> [-p papers] [-i iterations] [--agent amp|claude|codex]
+# Usage: ./ralph.sh <research_folder> [options]
+#        ./ralph.sh --list
+#        ./ralph.sh --status <research_folder>
+#        ./ralph.sh --reset <research_folder>
 
 set -e
 
 # Version
-RALPH_VERSION="2.2.0"
+RALPH_VERSION="3.0.0"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
 # Help function
 show_help() {
   echo "Research-Ralph v$RALPH_VERSION - Autonomous research scouting agent"
   echo ""
   echo "Usage: ./ralph.sh <research_folder> [options]"
+  echo "       ./ralph.sh --list"
+  echo "       ./ralph.sh --status <research_folder>"
+  echo "       ./ralph.sh --reset <research_folder>"
   echo ""
-  echo "Arguments:"
-  echo "  <research_folder>   Path to research folder (required)"
+  echo "Commands:"
+  echo "  --list                List all research projects with status"
+  echo "  --status <folder>     Show detailed status of a research project"
+  echo "  --reset <folder>      Reset research to DISCOVERY phase"
   echo ""
-  echo "Options:"
+  echo "Run Options:"
   echo "  -p, --papers <N>      Target papers count (auto-sets iterations to N+5)"
   echo "  -i, --iterations <N>  Override max iterations (default: auto-calculated)"
   echo "  --agent <name>        AI agent: 'claude', 'amp', or 'codex' (default: claude)"
+  echo "  --force               Force operations (e.g., override target_papers)"
   echo "  -h, --help            Show this help message"
   echo ""
   echo "Examples:"
-  echo "  ./ralph.sh researches/robotics-2026-01-14"
-  echo "  ./ralph.sh researches/robotics-2026-01-14 -p 30          # 30 papers, 35 iterations"
-  echo "  ./ralph.sh researches/robotics-2026-01-14 -p 30 -i 100   # Override iterations"
-  echo "  ./ralph.sh researches/robotics-2026-01-14 --agent amp"
+  echo "  ./ralph.sh --list                                        # List all researches"
+  echo "  ./ralph.sh --status researches/robotics-2026-01-14       # Check status"
+  echo "  ./ralph.sh --reset researches/robotics-2026-01-14        # Reset to start"
+  echo "  ./ralph.sh researches/robotics-2026-01-14                # Run research"
+  echo "  ./ralph.sh researches/robotics-2026-01-14 -p 30          # 30 papers"
+  echo "  ./ralph.sh researches/robotics-2026-01-14 --agent amp    # Use Amp agent"
   echo ""
   echo "Workflow:"
   echo "  1. Create research: ./skill.sh rrd \"Research topic description\""
-  echo "  2. Run research: ./ralph.sh researches/<folder-name> [-p N] [-i N]"
-  echo "  3. Check results: cat researches/<folder-name>/progress.txt"
+  echo "  2. Run research:    ./ralph.sh researches/<folder-name>"
+  echo "  3. Check status:    ./ralph.sh --status researches/<folder-name>"
+  echo "  4. View results:    cat researches/<folder-name>/progress.txt"
 }
 
 # Default values
@@ -40,10 +59,206 @@ ITERATIONS_EXPLICIT=false  # Track if user explicitly set iterations
 AGENT="claude"  # Default to Claude Code CLI
 RESEARCH_DIR=""
 TARGET_PAPERS=""  # Empty = use rrd.json value
+FORCE_FLAG=false  # Force operations like target_papers override
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Helper to list available researches
+# ============================================================================
+# COMMAND FUNCTIONS
+# ============================================================================
+
+# List all research projects with status
+cmd_list() {
+  echo -e "${BLUE}Research-Ralph v$RALPH_VERSION${NC} - Research Projects"
+  echo ""
+
+  if [[ ! -d "$SCRIPT_DIR/researches" ]]; then
+    echo "No researches folder found."
+    echo "Create one with: ./skill.sh rrd \"Your research topic\""
+    exit 0
+  fi
+
+  local count=0
+  for dir in "$SCRIPT_DIR/researches"/*/; do
+    [[ ! -d "$dir" ]] && continue
+    local name=$(basename "$dir")
+    local rrd="$dir/rrd.json"
+
+    if [[ -f "$rrd" ]]; then
+      local phase=$(jq -r '.phase // "UNKNOWN"' "$rrd" 2>/dev/null)
+      local target=$(jq -r '.requirements.target_papers // 0' "$rrd" 2>/dev/null)
+      local analyzed=$(jq -r '.statistics.total_analyzed // 0' "$rrd" 2>/dev/null)
+      local pending=$(jq '[.papers_pool[] | select(.status == "pending")] | length' "$rrd" 2>/dev/null || echo "?")
+
+      # Color-code by phase
+      case $phase in
+        DISCOVERY) phase_color="${YELLOW}$phase${NC}" ;;
+        ANALYSIS)  phase_color="${BLUE}$phase${NC}" ;;
+        COMPLETE)  phase_color="${GREEN}$phase${NC}" ;;
+        *)         phase_color="${RED}$phase${NC}" ;;
+      esac
+
+      printf "  %-40s %b  %s/%s analyzed, %s pending\n" "$name" "$phase_color" "$analyzed" "$target" "$pending"
+      ((count++))
+    else
+      printf "  %-40s ${RED}NO RRD${NC}\n" "$name"
+      ((count++))
+    fi
+  done
+
+  if [[ $count -eq 0 ]]; then
+    echo "No research projects found."
+    echo "Create one with: ./skill.sh rrd \"Your research topic\""
+  fi
+  echo ""
+  exit 0
+}
+
+# Show detailed status of a research project
+cmd_status() {
+  local folder="$1"
+
+  # Resolve folder path
+  if [[ -d "$folder" ]]; then
+    RESEARCH_DIR="$folder"
+  elif [[ -d "$SCRIPT_DIR/researches/$folder" ]]; then
+    RESEARCH_DIR="$SCRIPT_DIR/researches/$folder"
+  elif [[ -d "$SCRIPT_DIR/$folder" ]]; then
+    RESEARCH_DIR="$SCRIPT_DIR/$folder"
+  else
+    echo -e "${RED}Error:${NC} Research folder not found: $folder"
+    exit 1
+  fi
+
+  local rrd="$RESEARCH_DIR/rrd.json"
+  if [[ ! -f "$rrd" ]]; then
+    echo -e "${RED}Error:${NC} rrd.json not found in $RESEARCH_DIR"
+    exit 1
+  fi
+
+  # Extract data
+  local project=$(jq -r '.project // "Unknown"' "$rrd")
+  local phase=$(jq -r '.phase // "UNKNOWN"' "$rrd")
+  local target=$(jq -r '.requirements.target_papers // 0' "$rrd")
+  local pool=$(jq '.papers_pool | length' "$rrd" 2>/dev/null || echo "0")
+  local analyzed=$(jq -r '.statistics.total_analyzed // 0' "$rrd")
+  local presented=$(jq -r '.statistics.total_presented // 0' "$rrd")
+  local rejected=$(jq -r '.statistics.total_rejected // 0' "$rrd")
+  local pending=$(jq '[.papers_pool[] | select(.status == "pending")] | length' "$rrd" 2>/dev/null || echo "0")
+  local analyzing=$(jq '[.papers_pool[] | select(.status == "analyzing")] | length' "$rrd" 2>/dev/null || echo "0")
+  local insights=$(jq -r '.statistics.total_insights_extracted // 0' "$rrd")
+
+  # Color-code phase
+  case $phase in
+    DISCOVERY) phase_display="${YELLOW}$phase${NC}" ;;
+    ANALYSIS)  phase_display="${BLUE}$phase${NC}" ;;
+    COMPLETE)  phase_display="${GREEN}$phase${NC}" ;;
+    *)         phase_display="${RED}$phase${NC}" ;;
+  esac
+
+  echo -e "${BLUE}Research-Ralph v$RALPH_VERSION${NC} - Status Report"
+  echo ""
+  echo -e "  ${BLUE}Project:${NC}  $project"
+  echo -e "  ${BLUE}Folder:${NC}   $RESEARCH_DIR"
+  echo -e "  ${BLUE}Phase:${NC}    $phase_display"
+  echo ""
+  echo -e "  ${BLUE}Papers:${NC}"
+  echo "    Target:    $target"
+  echo "    In Pool:   $pool"
+  echo "    Analyzed:  $analyzed"
+  echo "    Presented: $presented"
+  echo "    Rejected:  $rejected"
+  echo "    Pending:   $pending"
+  [[ "$analyzing" -gt 0 ]] && echo -e "    ${YELLOW}Analyzing: $analyzing (stuck - will be re-analyzed)${NC}"
+  echo ""
+  echo -e "  ${BLUE}Insights:${NC} $insights extracted"
+  echo ""
+
+  # Progress bar
+  if [[ "$target" -gt 0 ]]; then
+    local pct=$((analyzed * 100 / target))
+    local filled=$((pct / 5))
+    local empty=$((20 - filled))
+    printf "  ${BLUE}Progress:${NC} ["
+    printf "%${filled}s" | tr ' ' '='
+    printf "%${empty}s" | tr ' ' '-'
+    printf "] %d%%\n" "$pct"
+  fi
+  echo ""
+
+  # Recommendations
+  if [[ "$phase" == "COMPLETE" ]]; then
+    echo -e "  ${GREEN}✓ Research complete!${NC}"
+    echo "    View report: cat $RESEARCH_DIR/research-report.md"
+  elif [[ "$analyzing" -gt 0 ]]; then
+    echo -e "  ${YELLOW}! Papers stuck in 'analyzing' status will be re-analyzed on next run${NC}"
+  elif [[ "$pool" -lt "$target" && "$phase" == "ANALYSIS" ]]; then
+    echo -e "  ${YELLOW}! Pool ($pool) < Target ($target) - will revert to DISCOVERY${NC}"
+  fi
+  echo ""
+  exit 0
+}
+
+# Reset research to DISCOVERY phase
+cmd_reset() {
+  local folder="$1"
+
+  # Resolve folder path
+  if [[ -d "$folder" ]]; then
+    RESEARCH_DIR="$folder"
+  elif [[ -d "$SCRIPT_DIR/researches/$folder" ]]; then
+    RESEARCH_DIR="$SCRIPT_DIR/researches/$folder"
+  elif [[ -d "$SCRIPT_DIR/$folder" ]]; then
+    RESEARCH_DIR="$SCRIPT_DIR/$folder"
+  else
+    echo -e "${RED}Error:${NC} Research folder not found: $folder"
+    exit 1
+  fi
+
+  local rrd="$RESEARCH_DIR/rrd.json"
+  if [[ ! -f "$rrd" ]]; then
+    echo -e "${RED}Error:${NC} rrd.json not found in $RESEARCH_DIR"
+    exit 1
+  fi
+
+  # Create backup
+  cp "$rrd" "$rrd.backup.$(date +%Y%m%d_%H%M%S)"
+  echo -e "${BLUE}Backup created${NC}"
+
+  # Reset rrd.json
+  jq '
+    .phase = "DISCOVERY" |
+    .papers_pool = [] |
+    .insights = [] |
+    .statistics.total_discovered = 0 |
+    .statistics.total_analyzed = 0 |
+    .statistics.total_presented = 0 |
+    .statistics.total_rejected = 0 |
+    .statistics.total_insights_extracted = 0
+  ' "$rrd" > "$rrd.tmp" && mv "$rrd.tmp" "$rrd"
+
+  # Reset progress.txt
+  local progress="$RESEARCH_DIR/progress.txt"
+  echo "# Research-Ralph Progress Log" > "$progress"
+  echo "Reset: $(date)" >> "$progress"
+  echo "" >> "$progress"
+  echo "## Research Patterns" >> "$progress"
+  echo "- (Patterns discovered during research will be added here)" >> "$progress"
+  echo "" >> "$progress"
+  echo "## Cross-Reference Insights" >> "$progress"
+  echo "- (Connections between papers will be added here)" >> "$progress"
+  echo "" >> "$progress"
+  echo "---" >> "$progress"
+
+  echo -e "${GREEN}Research reset to DISCOVERY phase${NC}"
+  echo "  Papers pool cleared"
+  echo "  Progress log reset"
+  echo ""
+  echo "Run again with: ./ralph.sh $RESEARCH_DIR"
+  exit 0
+}
+
+# Helper to list available researches (simple version for errors)
 list_researches() {
   if [[ -d "$SCRIPT_DIR/researches" ]]; then
     ls -1 "$SCRIPT_DIR/researches/" 2>/dev/null | head -10
@@ -52,12 +267,62 @@ list_researches() {
   fi
 }
 
+# Show completion summary (used by multiple exit paths)
+show_completion_summary() {
+  echo ""
+  echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
+  echo -e "${GREEN}  Research-Ralph completed all research tasks!${NC}"
+  echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
+  echo ""
+
+  # Show summary
+  local presented=$(jq -r '.statistics.total_presented // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+  local rejected=$(jq -r '.statistics.total_rejected // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+  local insights=$(jq -r '.statistics.total_insights_extracted // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+  local analyzed=$(jq -r '.statistics.total_analyzed // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+
+  echo -e "  ${BLUE}Summary:${NC}"
+  echo "    Papers analyzed:  $analyzed"
+  echo "    Papers presented: $presented"
+  echo "    Papers rejected:  $rejected"
+  echo "    Insights:         $insights"
+  echo ""
+  echo -e "  ${BLUE}Results in:${NC} $RESEARCH_DIR/"
+  echo "    - progress.txt for detailed findings"
+  echo "    - rrd.json for full data"
+  [[ -f "$RESEARCH_DIR/research-report.md" ]] && echo "    - research-report.md for summary report"
+  echo ""
+}
+
 # Parse arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
     -h|--help)
       show_help
       exit 0
+      ;;
+    --list)
+      cmd_list
+      ;;
+    --status)
+      if [[ -z "${2:-}" || "$2" == -* ]]; then
+        echo -e "${RED}Error:${NC} --status requires a research folder"
+        echo "Usage: ./ralph.sh --status <research_folder>"
+        exit 1
+      fi
+      cmd_status "$2"
+      ;;
+    --reset)
+      if [[ -z "${2:-}" || "$2" == -* ]]; then
+        echo -e "${RED}Error:${NC} --reset requires a research folder"
+        echo "Usage: ./ralph.sh --reset <research_folder>"
+        exit 1
+      fi
+      cmd_reset "$2"
+      ;;
+    --force)
+      FORCE_FLAG=true
+      shift
       ;;
     --agent)
       if [[ -z "${2:-}" || "$2" == -* ]]; then
@@ -228,7 +493,7 @@ if ! jq -e '.requirements.target_papers' "$RRD_FILE" >/dev/null 2>&1; then
   exit 1
 fi
 
-# Override target_papers if --papers flag provided (only if research not in progress)
+# Override target_papers if --papers flag provided
 if [[ -n "$TARGET_PAPERS" ]]; then
   # Check if research is already in progress
   CURRENT_PHASE=$(jq -r '.phase // "DISCOVERY"' "$RRD_FILE" 2>/dev/null)
@@ -236,8 +501,24 @@ if [[ -n "$TARGET_PAPERS" ]]; then
 
   if [[ "$CURRENT_PHASE" != "DISCOVERY" || "$CURRENT_ANALYZED" -gt 0 ]]; then
     CURRENT_TARGET=$(jq -r '.requirements.target_papers // 20' "$RRD_FILE" 2>/dev/null)
-    echo "Warning: Research already in progress (phase: $CURRENT_PHASE, analyzed: $CURRENT_ANALYZED)"
-    echo "  Keeping existing target_papers: $CURRENT_TARGET (ignoring -p $TARGET_PAPERS)"
+    if [[ "$FORCE_FLAG" == "true" ]]; then
+      echo -e "${YELLOW}Warning:${NC} Research in progress - forcing target_papers change"
+      echo "  Previous: $CURRENT_TARGET → New: $TARGET_PAPERS"
+      # Create backup before modifying
+      cp "$RRD_FILE" "$RRD_FILE.backup.$(date +%Y%m%d_%H%M%S)"
+      jq ".requirements.target_papers = $TARGET_PAPERS" "$RRD_FILE" > "$RRD_FILE.tmp" \
+        && mv "$RRD_FILE.tmp" "$RRD_FILE"
+    else
+      echo -e "${RED}Error:${NC} Cannot change target_papers - research already in progress"
+      echo "  Phase: $CURRENT_PHASE, Analyzed: $CURRENT_ANALYZED papers"
+      echo "  Current target: $CURRENT_TARGET"
+      echo ""
+      echo "Options:"
+      echo "  1. Run without -p flag to continue with existing target"
+      echo "  2. Use --force -p $TARGET_PAPERS to override (creates backup)"
+      echo "  3. Use --reset to start fresh"
+      exit 1
+    fi
   else
     echo "Setting target_papers: $TARGET_PAPERS"
     jq ".requirements.target_papers = $TARGET_PAPERS" "$RRD_FILE" > "$RRD_FILE.tmp" \
@@ -363,14 +644,15 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   CONSECUTIVE_FAILURES=0
 
   # Check for completion signal
-  if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
-    # Server-side validation: verify agent isn't hallucinating completion
-    PENDING_COUNT=$(jq '[.papers_pool[] | select(.status == "pending" or .status == "analyzing")] | length' "$RRD_FILE" 2>/dev/null || echo "999")
-    ANALYZED_COUNT=$(jq -r '.statistics.total_analyzed // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+  PENDING_COUNT=$(jq '[.papers_pool[] | select(.status == "pending" or .status == "analyzing")] | length' "$RRD_FILE" 2>/dev/null || echo "999")
+  ANALYZED_COUNT=$(jq -r '.statistics.total_analyzed // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+  CURRENT_PHASE=$(jq -r '.phase // "DISCOVERY"' "$RRD_FILE" 2>/dev/null || echo "DISCOVERY")
 
+  # Primary check: explicit completion signal
+  if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
     if [[ "$PENDING_COUNT" -gt 0 || "$ANALYZED_COUNT" -eq 0 ]]; then
       echo ""
-      echo "Warning: Agent claimed COMPLETE but verification failed!"
+      echo -e "${YELLOW}Warning:${NC} Agent claimed COMPLETE but verification failed!"
       echo "  Pending/analyzing papers: $PENDING_COUNT (should be 0)"
       echo "  Total analyzed: $ANALYZED_COUNT (should be > 0)"
       echo "Ignoring false completion signal, continuing..."
@@ -378,22 +660,33 @@ for i in $(seq 1 $MAX_ITERATIONS); do
       continue
     fi
 
-    echo ""
-    echo "Research-Ralph completed all research tasks!"
-    echo ""
-    # Show summary
-    PRESENTED=$(jq -r '.statistics.total_presented // 0' "$RRD_FILE" 2>/dev/null || echo "0")
-    REJECTED=$(jq -r '.statistics.total_rejected // 0' "$RRD_FILE" 2>/dev/null || echo "0")
-    INSIGHTS=$(jq -r '.statistics.total_insights_extracted // 0' "$RRD_FILE" 2>/dev/null || echo "0")
-    echo "Summary:"
-    echo "  Papers presented: $PRESENTED"
-    echo "  Papers rejected: $REJECTED"
-    echo "  Insights extracted: $INSIGHTS"
-    echo ""
-    echo "Results in: $RESEARCH_DIR/"
-    echo "  - progress.txt for detailed findings"
-    echo "  - rrd.json for full data"
+    # Completion verified!
+    show_completion_summary
     exit 0
+  fi
+
+  # Fallback check: agent said "complete" in plain English AND state is actually complete
+  if echo "$OUTPUT" | grep -qi "research.*complete\|all.*papers.*analyzed\|research is complete"; then
+    if [[ "$PENDING_COUNT" -eq 0 && "$ANALYZED_COUNT" -gt 0 ]]; then
+      echo ""
+      echo -e "${YELLOW}Note:${NC} Agent indicated completion without exact tag, but state is verified complete"
+      show_completion_summary
+      exit 0
+    fi
+  fi
+
+  # Auto-complete check: if phase is COMPLETE and nothing pending, exit
+  if [[ "$CURRENT_PHASE" == "COMPLETE" && "$PENDING_COUNT" -eq 0 && "$ANALYZED_COUNT" -gt 0 ]]; then
+    echo ""
+    echo -e "${GREEN}Research already complete (detected from rrd.json state)${NC}"
+    show_completion_summary
+    exit 0
+  fi
+
+  # Show iteration delta
+  NEW_ANALYZED=$(jq -r '.statistics.total_analyzed // 0' "$RRD_FILE" 2>/dev/null || echo "0")
+  if [[ "$NEW_ANALYZED" -gt "$ANALYZED" ]]; then
+    echo -e "  ${GREEN}+$((NEW_ANALYZED - ANALYZED)) paper(s) analyzed this iteration${NC}"
   fi
 
   echo "Iteration $i complete. Continuing..."
