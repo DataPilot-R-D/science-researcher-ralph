@@ -119,8 +119,28 @@ Generate the RRD with these fields:
       "papers_analyzed": 0,
       "avg_seconds_per_paper": null
     },
+    "ideation": {
+      "started_at": null,
+      "ended_at": null,
+      "duration_seconds": null
+    },
     "complete": {
       "ended_at": null
+    }
+  },
+
+  "handoff": {
+    "product_ideation": {
+      "enabled": true,
+      "min_ideas": 3,
+      "max_ideas": 12,
+      "output_filename": "product-ideas.json",
+      "ranking_goal": "pick_one_for_prd",
+      "assumed_constraints": {
+        "team_size": 3,
+        "time_horizon_months": 3,
+        "deployment_preference": ["saas", "on_prem"]
+      }
     }
   },
 
@@ -146,6 +166,10 @@ Generate the RRD with these fields:
       "avg_blue_ocean_score": 0,
       "combined_score_distribution": {"0-17": 0, "18-24": 0, "25-34": 0, "35-50": 0},
       "blue_ocean_distribution": {"0-7": 0, "8-11": 0, "12-15": 0, "16-20": 0}
+    },
+    "ideation_metrics": {
+      "product_ideas_generated": 0,
+      "top_idea_id": null
     }
   }
 }
@@ -166,7 +190,8 @@ Generate the RRD with these fields:
 | `target_papers` | How many papers to collect |
 | `sources` | Where to search (arXiv, Scholar, web) |
 | `min_score_to_present` | Threshold score (0-30) for PRESENT decision (legacy, use mission.min_combined_score) |
-| `phase` | Current phase: DISCOVERY, ANALYSIS, or COMPLETE |
+| `phase` | Current phase: DISCOVERY, ANALYSIS, IDEATION, or COMPLETE |
+| `handoff` | Configuration for downstream agent handoffs (e.g., product ideation) |
 | `timing` | Phase timestamps for progress tracking (see Timing Configuration below) |
 | `domain_glossary` | Optional: domain-specific term definitions to improve LLM reasoning |
 | `open_questions` | Questions for user to answer if topic was ambiguous |
@@ -195,6 +220,9 @@ Generate the RRD with these fields:
 | `timing.analysis.duration_seconds` | Calculated duration of ANALYSIS phase |
 | `timing.analysis.papers_analyzed` | Count of papers analyzed (for avg calculation) |
 | `timing.analysis.avg_seconds_per_paper` | Average time per paper analysis |
+| `timing.ideation.started_at` | When IDEATION phase began |
+| `timing.ideation.ended_at` | When IDEATION phase ended |
+| `timing.ideation.duration_seconds` | Calculated duration of IDEATION phase |
 | `timing.complete.ended_at` | When research was fully completed |
 
 **RRD Generator initializes:** `research_started_at` and `discovery.started_at` with current ISO8601 timestamp.
@@ -298,8 +326,28 @@ Include this rubric explanation in the RRD description or notes if the user need
       "papers_analyzed": 0,
       "avg_seconds_per_paper": null
     },
+    "ideation": {
+      "started_at": null,
+      "ended_at": null,
+      "duration_seconds": null
+    },
     "complete": {
       "ended_at": null
+    }
+  },
+
+  "handoff": {
+    "product_ideation": {
+      "enabled": true,
+      "min_ideas": 3,
+      "max_ideas": 12,
+      "output_filename": "product-ideas.json",
+      "ranking_goal": "pick_one_for_prd",
+      "assumed_constraints": {
+        "team_size": 3,
+        "time_horizon_months": 3,
+        "deployment_preference": ["saas", "on_prem"]
+      }
     }
   },
 
@@ -325,6 +373,10 @@ Include this rubric explanation in the RRD description or notes if the user need
       "avg_blue_ocean_score": 0,
       "combined_score_distribution": {"0-17": 0, "18-24": 0, "25-34": 0, "35-50": 0},
       "blue_ocean_distribution": {"0-7": 0, "8-11": 0, "12-15": 0, "16-20": 0}
+    },
+    "ideation_metrics": {
+      "product_ideas_generated": 0,
+      "top_idea_id": null
     }
   }
 }

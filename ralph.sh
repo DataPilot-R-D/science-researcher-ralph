@@ -32,7 +32,7 @@ show_help() {
   echo "  --reset <folder>      Reset research to DISCOVERY phase"
   echo ""
   echo "Run Options:"
-  echo "  -p, --papers <N>      Target papers count (auto-sets iterations to N+5)"
+  echo "  -p, --papers <N>      Target papers count (auto-sets iterations to N+6)"
   echo "  -i, --iterations <N>  Override max iterations (default: auto-calculated)"
   echo "  --agent <name>        AI agent: 'claude', 'amp', or 'codex' (default: claude)"
   echo "  --force               Force operations (e.g., override target_papers)"
@@ -101,6 +101,7 @@ cmd_list() {
       case $phase in
         DISCOVERY) phase_color="${YELLOW}$phase${NC}" ;;
         ANALYSIS)  phase_color="${BLUE}$phase${NC}" ;;
+        IDEATION)  phase_color="${BLUE}$phase${NC}" ;;
         COMPLETE)  phase_color="${GREEN}$phase${NC}" ;;
         *)         phase_color="${RED}$phase${NC}" ;;
       esac
@@ -175,6 +176,7 @@ cmd_status() {
   case $phase in
     DISCOVERY) phase_display="${YELLOW}$phase${NC}" ;;
     ANALYSIS)  phase_display="${BLUE}$phase${NC}" ;;
+    IDEATION)  phase_display="${BLUE}$phase${NC}" ;;
     COMPLETE)  phase_display="${GREEN}$phase${NC}" ;;
     *)         phase_display="${RED}$phase${NC}" ;;
   esac
@@ -250,6 +252,7 @@ cmd_status() {
   if [[ "$phase" == "COMPLETE" ]]; then
     echo -e "  ${GREEN}✓ Research complete!${NC}"
     echo "    View report: cat $RESEARCH_DIR/research-report.md"
+    [[ -f "$RESEARCH_DIR/product-ideas.json" ]] && echo "    View product ideas: cat $RESEARCH_DIR/product-ideas.json"
   elif [[ "$analyzing" -gt 0 ]]; then
     echo -e "  ${YELLOW}! Papers stuck in 'analyzing' status will be re-analyzed on next run${NC}"
   elif [[ "$pool" -lt "$target" && "$phase" == "ANALYSIS" ]]; then
@@ -377,16 +380,24 @@ show_completion_summary() {
   local insights=$(jq -r '.statistics.total_insights_extracted // 0' "$RRD_FILE" 2>/dev/null || echo "0")
   local analyzed=$(jq -r '.statistics.total_analyzed // 0' "$RRD_FILE" 2>/dev/null || echo "0")
 
+  # Get product ideas count if available
+  local product_ideas=0
+  if [[ -f "$RESEARCH_DIR/product-ideas.json" ]]; then
+    product_ideas=$(jq '.ideas | length' "$RESEARCH_DIR/product-ideas.json" 2>/dev/null || echo "0")
+  fi
+
   echo -e "  ${BLUE}Summary:${NC}"
   echo "    Papers analyzed:  $analyzed"
   echo "    Papers presented: $presented"
   echo "    Papers rejected:  $rejected"
   echo "    Insights:         $insights"
+  [[ "$product_ideas" -gt 0 ]] && echo "    Product ideas:    $product_ideas"
   echo ""
   echo -e "  ${BLUE}Results in:${NC} $RESEARCH_DIR/"
   echo "    - progress.txt for detailed findings"
   echo "    - rrd.json for full data"
   [[ -f "$RESEARCH_DIR/research-report.md" ]] && echo "    - research-report.md for summary report"
+  [[ -f "$RESEARCH_DIR/product-ideas.json" ]] && echo "    - product-ideas.json for product opportunities"
   echo ""
 }
 
@@ -633,10 +644,10 @@ if [[ -n "$TARGET_PAPERS" ]]; then
 fi
 
 # Auto-calculate iterations if not explicitly set
-# Formula: papers + 5 (1 for discovery + papers for analysis + 4 buffer)
+# Formula: papers + 6 (1 discovery + N analysis + 1 ideation + 4 buffer)
 if [[ "$ITERATIONS_EXPLICIT" == "false" ]]; then
   PAPERS_COUNT=$(jq -r '.requirements.target_papers // 20' "$RRD_FILE")
-  MAX_ITERATIONS=$((PAPERS_COUNT + 5))
+  MAX_ITERATIONS=$((PAPERS_COUNT + 6))
 fi
 
 # Verify prompt.md exists

@@ -34,7 +34,7 @@ Keep research patterns and gotchas in this file in sync with `CLAUDE.md`. When u
 #   -h, --help            Show help message
 
 # Run Options:
-#   -p, --papers <N>      Target papers count (auto-sets iterations to N+5)
+#   -p, --papers <N>      Target papers count (auto-sets iterations to N+6)
 #   -i, --iterations <N>  Override max iterations (default: auto-calculated)
 #   --agent <name>        AI agent: 'claude', 'amp', or 'codex' (default: claude)
 #   --force               Allow -p to change target_papers on in-progress research
@@ -44,7 +44,7 @@ Keep research patterns and gotchas in this file in sync with `CLAUDE.md`. When u
 ./ralph.sh --status researches/robotics-llms-2026-01-14       # Check status
 ./ralph.sh --reset researches/robotics-llms-2026-01-14        # Reset to start
 ./ralph.sh researches/robotics-llms-2026-01-14                # Run research
-./ralph.sh researches/robotics-llms-2026-01-14 -p 30          # 30 papers, 35 iterations
+./ralph.sh researches/robotics-llms-2026-01-14 -p 30          # 30 papers, 36 iterations
 ./ralph.sh researches/robotics-llms-2026-01-14 -p 30 -i 100   # Override iterations
 ./ralph.sh researches/robotics-llms-2026-01-14 --agent amp    # Use Amp agent
 ./ralph.sh researches/robotics-llms-2026-01-14 -p 50 --force  # Force change target
@@ -60,7 +60,8 @@ researches/
 ├── robotics-llms-2026-01-14/
 │   ├── rrd.json           # Research requirements and paper data
 │   ├── progress.txt       # Research findings log
-│   └── research-report.md # Optional: final report
+│   ├── research-report.md # Generated after analysis
+│   └── product-ideas.json # Generated product opportunities
 └── quantum-ai-2026-01-15/
     ├── rrd.json
     └── progress.txt
@@ -77,12 +78,14 @@ researches/
 | `researches/` | Per-research artifact folders |
 | `researches/{name}/rrd.json` | Research Requirements Document |
 | `researches/{name}/progress.txt` | Research findings log |
+| `researches/{name}/research-report.md` | Auto-generated comprehensive report |
+| `researches/{name}/product-ideas.json` | Product opportunities with traceability |
 | `rrd.json.example` | Example RRD format |
 | `skills/rrd/` | Skill for generating RRDs |
 
 ## Research Workflow
 
-### Two Phases
+### Three Phases
 
 1. **DISCOVERY Phase**
    - Search arXiv, Google Scholar, and web for papers
@@ -97,6 +100,15 @@ researches/
    - Check if commercialized
    - Score using dual rubric (Execution 0-30 + Blue Ocean 0-20 = 0-50 combined)
    - Decide: PRESENT / REJECT / EXTRACT_INSIGHTS
+   - Generate `research-report.md` when all papers analyzed
+   - Transition to IDEATION
+
+3. **IDEATION Phase**
+   - Synthesize research into product opportunities
+   - Generate `product-ideas.json` with 3-12 ideas
+   - Each idea includes: problem, solution, evidence, risks, scores
+   - Full traceability to source papers and insights
+   - Transition to COMPLETE when done
 
 ### Evaluation Rubric
 

@@ -48,8 +48,28 @@
       "papers_analyzed": 0,
       "avg_seconds_per_paper": null
     },
+    "ideation": {
+      "started_at": null,
+      "ended_at": null,
+      "duration_seconds": null
+    },
     "complete": {
       "ended_at": null
+    }
+  },
+
+  "handoff": {
+    "product_ideation": {
+      "enabled": true,
+      "min_ideas": 3,
+      "max_ideas": 12,
+      "output_filename": "product-ideas.json",
+      "ranking_goal": "pick_one_for_prd",
+      "assumed_constraints": {
+        "team_size": 3,
+        "time_horizon_months": 3,
+        "deployment_preference": ["saas", "on_prem"]
+      }
     }
   },
 
@@ -114,6 +134,10 @@
         "12-15": 0,
         "16-20": 0
       }
+    },
+    "ideation_metrics": {
+      "product_ideas_generated": 0,
+      "top_idea_id": null
     }
   }
 }

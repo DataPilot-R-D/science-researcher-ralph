@@ -288,34 +288,203 @@ If you notice workflow/instruction issues:
 
 ---
 
+## Phase: IDEATION (Product Ideas)
+
+**Goal:** Synthesize research findings into actionable product ideas with full traceability.
+
+**Trigger:** `phase == "IDEATION"` in `{{RESEARCH_DIR}}/rrd.json`
+
+### Input
+- `{{RESEARCH_DIR}}/rrd.json` (papers, insights, scores)
+- `{{RESEARCH_DIR}}/research-report.md` (synthesis, recommendations)
+- `{{RESEARCH_DIR}}/progress.txt` (detailed findings)
+
+### Output
+- `{{RESEARCH_DIR}}/product-ideas.json` (structured product opportunities)
+- Updated `{{RESEARCH_DIR}}/rrd.json` (phase → COMPLETE, timing.ideation)
+- Append to `{{RESEARCH_DIR}}/progress.txt`
+
+### Steps:
+
+1. **Read research artifacts:**
+   - Load all presented papers (status == "presented")
+   - Load all insights from `insights` array
+   - Read `research-report.md` for synthesis and recommendations
+   - Read `handoff.product_ideation` config from `rrd.json` for constraints
+
+2. **Identify product opportunities (3-12 ideas):**
+   Based on:
+   - High-scoring papers (combined >= 25)
+   - Valuable insights with commercial potential
+   - Gaps and opportunities identified in research
+   - Assumed constraints from `handoff.product_ideation.assumed_constraints`
+
+3. **For each idea, document:**
+
+   ```json
+   {
+     "id": "idea_001",
+     "name": "Short product name",
+     "one_liner": "One sentence pitch",
+     "problem": {
+       "who": "Target persona/buyer",
+       "pain": "What pain point this solves",
+       "why_now": "Why this is timely"
+     },
+     "solution": {
+       "what": "Core solution description",
+       "key_features": ["Feature 1", "Feature 2"],
+       "mvp_scope": ["MVP item 1", "MVP item 2"],
+       "out_of_scope": ["Not included 1"],
+       "integration_points": ["System 1", "API 2"]
+     },
+     "market": {
+       "segment": "B2B | B2C | GovTech | DevTools | Media",
+       "buyer": "Who pays",
+       "users": ["End user 1", "End user 2"],
+       "alternatives": ["Competitor 1", "Manual process"],
+       "differentiators": ["What makes this unique"]
+     },
+     "evidence": {
+       "paper_ids": ["arxiv_...", "scholar_..."],
+       "insight_ids": ["insight_012", "insight_044"],
+       "notes": "Why these papers/insights support this idea"
+     },
+     "risks": [
+       {"type": "tech", "risk": "Technical risk", "mitigation": "How to address"},
+       {"type": "go_to_market", "risk": "GTM risk", "mitigation": "How to address"}
+     ],
+     "open_questions": ["Question 1", "Question 2"],
+     "scores": {
+       "execution_0_30": 0,
+       "blue_ocean_0_20": 0,
+       "combined_0_50": 0,
+       "confidence_0_1": 0.0
+     },
+     "recommended_next_steps": ["Step 1", "Step 2"],
+     "recommended_for_prd": false
+   }
+   ```
+
+4. **Score each idea** using the same execution/blue ocean framework:
+   - Reuse relevant scores from source papers
+   - Adjust based on product-specific feasibility
+   - Set `confidence_0_1` based on evidence strength (0.0-1.0)
+   - Mark top 1-3 ideas with `recommended_for_prd: true`
+
+5. **Generate `{{RESEARCH_DIR}}/product-ideas.json`:**
+
+   ```json
+   {
+     "schema_version": "1.0",
+     "project": "Research: {topic from rrd.json}",
+     "generated_at": "ISO8601 timestamp",
+     "source_artifacts": {
+       "rrd_json": "rrd.json",
+       "research_report_md": "research-report.md",
+       "progress_log": "progress.txt"
+     },
+     "selection_rubric": {
+       "goal": "Pick 1 idea for PRD",
+       "weights": {
+         "market_pull": 0.30,
+         "time_to_mvp": 0.20,
+         "defensibility": 0.20,
+         "adoption_friction": 0.15,
+         "strategic_clarity": 0.15
+       }
+     },
+     "ideas": [/* array of ideas */]
+   }
+   ```
+
+6. **Update `{{RESEARCH_DIR}}/rrd.json`:**
+   - Set `"phase": "COMPLETE"`
+   - Set `timing.ideation.ended_at` to current ISO8601 timestamp
+   - Calculate `timing.ideation.duration_seconds`
+   - Set `timing.complete.ended_at` to current ISO8601 timestamp
+   - Update `statistics.ideation_metrics.product_ideas_generated`
+   - Set `statistics.ideation_metrics.top_idea_id` to the best idea's ID
+
+7. **Append to `{{RESEARCH_DIR}}/progress.txt`:**
+
+   ```markdown
+   ---
+
+   ## [Date] - Product Ideation
+
+   Generated: product-ideas.json
+   Ideas: [N]
+
+   **Top 3 Ideas:**
+   1. idea_001 - [name] (Combined: X/50, Confidence: Y)
+   2. idea_002 - [name] (Combined: X/50, Confidence: Y)
+   3. idea_003 - [name] (Combined: X/50, Confidence: Y)
+
+   **Evidence Summary:**
+   - Papers referenced: [count]
+   - Insights referenced: [count]
+
+   **Notes:** [Any observations about the ideation process]
+   ```
+
+8. **Output completion signal:**
+   ```
+   <promise>COMPLETE</promise>
+   ```
+
+---
+
 ## Stop Condition
 
-**CRITICAL: VERIFICATION REQUIRED BEFORE COMPLETION**
+**CRITICAL: VERIFICATION REQUIRED BEFORE PHASE TRANSITIONS**
 
-Before claiming completion, you MUST read and verify the actual state:
+Before transitioning phases, you MUST read and verify the actual state:
 
 ### Verification Steps (MANDATORY)
 
-1. **Read `{{RESEARCH_DIR}}/rrd.json`** and check:
-   - Count papers with `status: "pending"` → must be 0
-   - Count papers with `status: "analyzing"` → must be 0
-   - `statistics.total_analyzed` → must be > 0
+1. **Read `{{RESEARCH_DIR}}/rrd.json`** and check the current `phase`:
 
-2. **If verification PASSES** (all papers analyzed):
-   - Update `"phase": "COMPLETE"` in `{{RESEARCH_DIR}}/rrd.json`
-   - **Update timing:**
-     - Set `timing.analysis.ended_at` to current ISO8601 timestamp
-     - Calculate `timing.analysis.duration_seconds` = (ended_at - started_at) in seconds
-     - Set `timing.complete.ended_at` to current ISO8601 timestamp
-   - Generate the Final Research Report and save to `{{RESEARCH_DIR}}/research-report.md`
-   - **OUTPUT THIS EXACT TAG (required for loop to exit):**
-     ```
-     <promise>COMPLETE</promise>
-     ```
+### If `phase == "ANALYSIS"`:
 
-3. **If verification FAILS** (papers still pending):
-   - Do NOT output COMPLETE
-   - Continue with the next pending paper
+Check paper statuses:
+- Count papers with `status: "pending"` → must be 0
+- Count papers with `status: "analyzing"` → must be 0
+- `statistics.total_analyzed` → must be > 0
+
+**If verification PASSES** (all papers analyzed):
+- **Update timing:**
+  - Set `timing.analysis.ended_at` to current ISO8601 timestamp
+  - Calculate `timing.analysis.duration_seconds` = (ended_at - started_at) in seconds
+- Generate the Final Research Report and save to `{{RESEARCH_DIR}}/research-report.md`
+- Update `"phase": "IDEATION"` in `{{RESEARCH_DIR}}/rrd.json`
+- Set `timing.ideation.started_at` to current ISO8601 timestamp
+- **Do NOT output `<promise>COMPLETE</promise>` yet** - the next iteration will run IDEATION
+
+**If verification FAILS** (papers still pending):
+- Do NOT change phase
+- Continue with the next pending paper
+
+### If `phase == "IDEATION"`:
+
+The IDEATION phase instructions above will guide you to:
+1. Generate `{{RESEARCH_DIR}}/product-ideas.json`
+2. Update `{{RESEARCH_DIR}}/rrd.json`:
+   - Set `"phase": "COMPLETE"`
+   - Set `timing.ideation.ended_at` and calculate duration
+   - Set `timing.complete.ended_at`
+   - Update `statistics.ideation_metrics`
+3. **OUTPUT THIS EXACT TAG (required for loop to exit):**
+   ```
+   <promise>COMPLETE</promise>
+   ```
+
+### If `phase == "COMPLETE"`:
+
+If you see `phase == "COMPLETE"`, output:
+```
+<promise>COMPLETE</promise>
+```
 
 **CRITICAL:** The loop ONLY exits when it sees the EXACT string `<promise>COMPLETE</promise>` in your output. Saying "research is complete" or "all papers analyzed" in plain English will NOT work. You MUST output the exact XML-style tag above.
 

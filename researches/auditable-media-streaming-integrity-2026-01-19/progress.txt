@@ -1513,3 +1513,21 @@ Combined Score: 23/50 (Execution: 18/30, Blue Ocean: 5/20)
 
 ## 2026-01-20 - Docs Update
 - Added offloaded-state replay/reset gotcha (risks when scaling stateless signers/attesters via state offloading; mitigations via monotonic counters/append-only chaining/seeded init/authenticated CRTM) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-20 - Product Ideation
+
+Generated: product-ideas.json
+Ideas: 6
+
+**Top 3 Ideas:**
+1. idea_001 - SegmentSeal (Combined: 34/50, Confidence: 0.75)
+2. idea_005 - UGC Integrity Triage (Combined: 32/50, Confidence: 0.70)
+3. idea_002 - TrustedCapture Kit (Combined: 32/50, Confidence: 0.60)
+
+**Evidence Summary:**
+- Papers referenced: 14
+- Insights referenced: 27
+
+**Notes:** Pick `idea_001` as best PRD candidate: smallest MVP surface (player+packager+log anchoring) with clear differentiation via segment-level verification UX and audit export; `idea_005` and `idea_002` are strong adjacent wedges (triage and trusted capture).

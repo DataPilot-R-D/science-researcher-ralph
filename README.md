@@ -60,7 +60,7 @@ Answer the clarifying questions to configure your research parameters.
 # Run with Claude Code (default)
 ./ralph.sh researches/research-robotics-and-embodied-2026-01-14
 
-# Set target papers (iterations auto-calculated as papers + 5)
+# Set target papers (iterations auto-calculated as papers + 6)
 ./ralph.sh researches/research-robotics-and-embodied-2026-01-14 -p 30
 
 # Override iterations if needed
@@ -87,7 +87,7 @@ Answer the clarifying questions to configure your research parameters.
 **Run Options:**
 | Option | Description |
 |--------|-------------|
-| `-p, --papers <N>` | Target papers count (auto-sets iterations to N+5) |
+| `-p, --papers <N>` | Target papers count (auto-sets iterations to N+6) |
 | `-i, --iterations <N>` | Override max iterations (default: auto-calculated) |
 | `--agent <name>` | AI agent: claude, amp, or codex (default: claude) |
 | `--force` | Force operations (e.g., override target_papers on in-progress research) |
@@ -129,7 +129,8 @@ researches/
 ├── robotics-llms-2026-01-14/
 │   ├── rrd.json           # Research requirements and paper data
 │   ├── progress.txt       # Research findings log
-│   └── research-report.md # Auto-generated when complete
+│   ├── research-report.md # Auto-generated after analysis
+│   └── product-ideas.json # Auto-generated product opportunities
 └── quantum-ai-2026-01-15/
     ├── rrd.json
     └── progress.txt
@@ -147,6 +148,7 @@ researches/
 | `researches/{name}/rrd.json` | Research Requirements Document |
 | `researches/{name}/progress.txt` | Research findings log |
 | `researches/{name}/research-report.md` | Auto-generated comprehensive report |
+| `researches/{name}/product-ideas.json` | Product opportunities with traceability |
 | `rrd.json.example` | Example RRD format for reference |
 | `skills/rrd/SKILL.md` | Skill for generating RRDs |
 | `AGENTS.md` | Research patterns and gotchas |
@@ -154,7 +156,7 @@ researches/
 
 ## Research Workflow
 
-### Two Phases
+### Three Phases
 
 **DISCOVERY Phase:**
 - Search arXiv, Google Scholar, and web for papers
@@ -170,6 +172,15 @@ researches/
 - Score using evaluation rubric
 - Decide: PRESENT / REJECT / EXTRACT_INSIGHTS
 - Extract insights (even from rejected papers)
+- Generate `research-report.md` when all papers analyzed
+- Transition to IDEATION
+
+**IDEATION Phase:**
+- Synthesize research into product opportunities
+- Generate `product-ideas.json` with 3-12 ideas
+- Each idea includes: problem, solution, evidence, risks, scores
+- Full traceability to source papers and insights
+- Transition to COMPLETE when done
 
 ### Evaluation Rubric
 
@@ -228,11 +239,11 @@ Research-Ralph looks for connections between papers:
 
 ### Stop Condition
 
-When all papers in `papers_pool` have been analyzed, Research-Ralph outputs `<promise>COMPLETE</promise>` and exits.
+When all papers are analyzed, Research-Ralph transitions to IDEATION to generate product ideas. After generating `product-ideas.json`, it outputs `<promise>COMPLETE</promise>` and exits.
 
 ### Research Report
 
-When research completes, Research-Ralph automatically generates `research-report.md` with:
+After ANALYSIS phase completes, Research-Ralph generates `research-report.md` with:
 
 - **Executive Summary**: Key metrics and findings overview
 - **Top Scoring Papers**: Tiered by score (Tier 1: High-Impact, Tier 2: Strong, Tier 3: Threshold)
@@ -240,6 +251,19 @@ When research completes, Research-Ralph automatically generates `research-report
 - **Commercial Ecosystem Map**: Companies, valuations, and open-source projects found
 - **Research Quality Self-Assessment**: Coverage, depth, accuracy scores (0-100)
 - **Recommendations**: Prioritized follow-up actions
+
+### Product Ideas
+
+After IDEATION phase completes, Research-Ralph generates `product-ideas.json` with:
+
+- **3-12 product opportunities** derived from research findings
+- **Full traceability**: Each idea links to source `paper_ids` and `insight_ids`
+- **Problem/Solution structure**: Who, pain, why now + MVP scope
+- **Market analysis**: Segment, buyer, users, alternatives, differentiators
+- **Scores**: Execution (0-30) and Blue Ocean (0-20) scores with confidence
+- **Risks and open questions**: For PRD handoff
+
+This enables downstream agents (PRD writers) to pick the best idea and generate product requirements with full evidence backing.
 
 ## Debugging
 
@@ -340,7 +364,7 @@ The Research Requirements Document (`rrd.json`) contains:
     "sources": ["arXiv", "Google Scholar", "web"],
     "min_score_to_present": 18
   },
-  "phase": "DISCOVERY | ANALYSIS | COMPLETE",
+  "phase": "DISCOVERY | ANALYSIS | IDEATION | COMPLETE",
   "papers_pool": [...],
   "insights": [...],
   "visited_urls": [],

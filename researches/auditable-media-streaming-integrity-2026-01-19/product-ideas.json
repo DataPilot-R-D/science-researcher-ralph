@@ -1,0 +1,597 @@
+{
+  "schema_version": "1.0",
+  "project": "Research: Auditable Media Streaming Integrity",
+  "generated_at": "2026-01-20T11:45:25Z",
+  "source_artifacts": {
+    "rrd_json": "rrd.json",
+    "research_report_md": "research-report.md",
+    "progress_log": "progress.txt"
+  },
+  "selection_rubric": {
+    "goal": "Pick 1 idea for PRD",
+    "weights": {
+      "market_pull": 0.3,
+      "time_to_mvp": 0.2,
+      "defensibility": 0.2,
+      "adoption_friction": 0.15,
+      "strategic_clarity": 0.15
+    }
+  },
+  "ideas": [
+    {
+      "id": "idea_001",
+      "name": "SegmentSeal",
+      "one_liner": "Segment-level C2PA + transparency anchoring for verifiable live HLS/DASH (and future WebRTC).",
+      "problem": {
+        "who": "Streaming platforms, broadcasters, and newsrooms distributing live/near-live video",
+        "pain": "They can’t reliably prove post-hoc integrity of clips under loss/transcoding, and verification UX breaks when metadata is stripped or ABR switches representations.",
+        "why_now": "C2PA streaming-mode and open player integrations exist; the missing piece is an end-to-end, loss-tolerant segment commitment + anchoring + verifier UX stack."
+      },
+      "solution": {
+        "what": "A packager+verifier kit that generates per-segment C2PA manifests with Merkle commitments, anchors them into an append-only log, and verifies/display results in-player per segment and per representation.",
+        "key_features": [
+          "CMAF/fMP4 segment commitments (Merkle-per-segment) with periodic log anchoring",
+          "ABR-aware verifier (per-segment, per-bitrate representation) with seek-safe recomputation",
+          "Canonicalization policy for benign transforms (e.g., remux/fast-start) + explicit degraded modes",
+          "‘Metadata stripped’ recovery workflow (manifest retrieval by pointer/trust list) with canonical recovery UX",
+          "On-prem or SaaS verification API + exportable audit reports"
+        ],
+        "mvp_scope": [
+          "DASH: extend/pack a C2PA-per-segment pipeline + verifier using dash.js integration",
+          "Log anchoring: Rekor/Trillian-backed anchoring of segment-manifest digests",
+          "Viewer UX: timeline state (soft-valid → strong-valid) + canonical recovery UI",
+          "CLI: verify a clip offline and emit a signed verification report"
+        ],
+        "out_of_scope": [
+          "Robust watermarking implementation (use as pointer only, if available)",
+          "Full cross-platform trust-list governance/PKI at internet scale"
+        ],
+        "integration_points": [
+          "DASH/HLS packagers (FFmpeg, Shaka Packager)",
+          "Players (dash.js, hls.js)",
+          "C2PA libraries (contentauth/c2pa-rs, contentauth/c2pa-python)",
+          "Transparency logs (sigstore/rekor or Trillian)"
+        ]
+      },
+      "market": {
+        "segment": "B2B | Media | DevTools",
+        "buyer": "Streaming platform operators, broadcasters, and trust & safety teams",
+        "users": [
+          "Playback/client teams",
+          "Trust & safety / moderation",
+          "Investigations / legal"
+        ],
+        "alternatives": [
+          "Watermark-only authenticity",
+          "Manual chain-of-custody / newsroom workflows",
+          "Platform-specific signing systems without open verification",
+          "DRM (does not provide post-hoc public auditability)"
+        ],
+        "differentiators": [
+          "Segment-level verification that survives ABR and supports random-access clip audits",
+          "Log-anchored, exportable evidence (inclusion/consistency proofs) instead of opaque ‘verified’ badges",
+          "Practical UX: canonical recovery instead of alert fatigue on benign remux/transcode"
+        ]
+      },
+      "evidence": {
+        "paper_ids": [
+          "scholar_ca0c30db5c",
+          "arxiv_2405.12336",
+          "scholar_2498b49830",
+          "arxiv_2305.01378"
+        ],
+        "insight_ids": [
+          "insight_004",
+          "insight_005",
+          "insight_006",
+          "insight_007",
+          "insight_008",
+          "insight_009",
+          "insight_013",
+          "insight_025",
+          "insight_072"
+        ],
+        "notes": "Grounded in existing C2PA streaming-mode patterns (Merkle commitments) and open player integration; adds missing anchoring+monitoring and ‘metadata stripped’ recovery UX."
+      },
+      "risks": [
+        {
+          "type": "tech",
+          "risk": "Performance overhead and edge-case failures under remux/re-encode; unclear canonicalization boundaries.",
+          "mitigation": "Define explicit canonicalization policies + allowed transforms; benchmark per segment and degrade gracefully with ‘soft-valid’ status."
+        },
+        {
+          "type": "go_to_market",
+          "risk": "Ecosystem trust-list and adoption friction; some platforms strip provenance metadata by default.",
+          "mitigation": "Start with enterprise/broadcaster pilots; provide recovery pointers + offline audit exports; ship reference integrations for 1-2 players."
+        }
+      ],
+      "open_questions": [
+        "What anchoring cadence gives best latency/cost tradeoff for realistic segment durations?",
+        "How should verification state be represented to users (provisional vs final) without causing false alarms?",
+        "What is the minimal trust-list/governance surface needed for pilots?"
+      ],
+      "scores": {
+        "execution_0_30": 22,
+        "blue_ocean_0_20": 12,
+        "combined_0_50": 34,
+        "confidence_0_1": 0.75
+      },
+      "recommended_next_steps": [
+        "Build a CMAF/fMP4 per-segment commitment + C2PA manifest generator and verify with dash.js integration",
+        "Anchor per-segment digests to Rekor/Trillian and export inclusion proofs in verification reports",
+        "Run end-to-end tests on ABR switches, seeks, and benign remuxes to validate canonicalization rules"
+      ],
+      "recommended_for_prd": true
+    },
+    {
+      "id": "idea_002",
+      "name": "TrustedCapture Kit",
+      "one_liner": "A reference ‘photon-to-proof’ capture pipeline (TPM/TEE-backed) that emits verifiable live streams.",
+      "problem": {
+        "who": "High-assurance video producers (bodycams, surveillance integrators, field journalism)",
+        "pain": "Software-only signing can’t prove sensor-origin; keys can be extracted and pipelines can sign injected pixels (“garbage in, gospel out”).",
+        "why_now": "Practical prototypes show TPM-backed livestream signing is feasible, and secure-capture guidance exists to bind sensor→SoC→TEE→C2PA."
+      },
+      "solution": {
+        "what": "A low-cost reference design (Pi/Android) for secure capture + live packaging that keeps signing keys hardware-protected, optionally attaches attestation evidence, and outputs segment-level C2PA provenance.",
+        "key_features": [
+          "Hardware-protected signing keys (TPM/TEE) with audit-friendly key lifecycle",
+          "Secure capture pipeline metadata (sensor→SoC path) and explicit degraded-mode signaling",
+          "Per-segment C2PA manifests embedded in HLS/DASH (compatible with SegmentSeal verifiers)",
+          "Remote attestation hooks for ‘device integrity’ claims"
+        ],
+        "mvp_scope": [
+          "Raspberry Pi + camera + TPM: HLS output with per-segment C2PA manifests",
+          "Local attestation bundle (TPM quote + device metadata) attached to stream/session",
+          "Demo verifier + report generator for captured clips"
+        ],
+        "out_of_scope": [
+          "Custom secure camera silicon and full supply-chain provenance",
+          "Universal platform certifications and large-scale device provisioning infrastructure"
+        ],
+        "integration_points": [
+          "TPM2 software stack / attestations (tpm2-tools, Keylime-compatible formats)",
+          "Capture/encode pipeline (GStreamer/FFmpeg)",
+          "C2PA signing libraries"
+        ]
+      },
+      "market": {
+        "segment": "B2B | GovTech | Media",
+        "buyer": "Agencies, enterprises, and integrators buying high-assurance capture systems",
+        "users": [
+          "Operators in the field",
+          "Investigators",
+          "Compliance/legal teams"
+        ],
+        "alternatives": [
+          "Bodycam vendor proprietary authenticity solutions",
+          "Post-hoc forensic analysis without cryptographic provenance",
+          "Generic timestamping without capture-path guarantees"
+        ],
+        "differentiators": [
+          "Open, standards-first provenance (C2PA) plus hardware-rooted capture claims",
+          "Clear degraded-mode semantics (what is guaranteed vs not) for auditability"
+        ]
+      },
+      "evidence": {
+        "paper_ids": [
+          "scholar_2498b49830",
+          "arxiv_2510.09656"
+        ],
+        "insight_ids": [
+          "insight_009",
+          "insight_022",
+          "insight_023",
+          "insight_024",
+          "insight_028"
+        ],
+        "notes": "Combines practical TPM-backed livestream provenance with secure-capture patterns to reduce the ‘truth gap’ at capture time."
+      },
+      "risks": [
+        {
+          "type": "tech",
+          "risk": "Hardware interoperability (camera-bus security metadata) and crypto throughput limits for per-frame/per-segment auth.",
+          "mitigation": "Prototype early with realistic FPS/resolution; prefer segment-level commitments and hardware crypto acceleration where available."
+        },
+        {
+          "type": "go_to_market",
+          "risk": "Procurement cycles and deployment friction for hardware; trust depends on provisioning and key management.",
+          "mitigation": "Start as a reference kit + SDK for integrators; provide on-prem deployment and clear operational runbooks."
+        }
+      ],
+      "open_questions": [
+        "What minimum capture-path assurance is achievable on commodity devices today?",
+        "How should device attestations be bound to stream sessions/segments to prevent mix-and-match attacks?",
+        "What are acceptable UX semantics for degraded modes (offline anchoring, partial coverage)?"
+      ],
+      "scores": {
+        "execution_0_30": 19,
+        "blue_ocean_0_20": 13,
+        "combined_0_50": 32,
+        "confidence_0_1": 0.6
+      },
+      "recommended_next_steps": [
+        "Reproduce a TPM-backed HLS provenance demo with segment-level C2PA manifests and verification UI",
+        "Define a minimal attestation bundle and binding to session identifiers (anti-mix-and-match)",
+        "Pilot with a single vertical (bodycams or newsroom field kit) to validate operational constraints"
+      ],
+      "recommended_for_prd": true
+    },
+    {
+      "id": "idea_003",
+      "name": "Provenance Watchtower",
+      "one_liner": "Monitoring + witnessing for provenance transparency logs (C2PA/Sigstore/Trillian) with anomaly detection.",
+      "problem": {
+        "who": "Platforms and regulators relying on transparency logs for provenance",
+        "pain": "Transparency logs only provide security when independent monitors/witnesses detect mis-issuance, anomalies, and policy violations; most deployments under-invest in monitoring.",
+        "why_now": "The Sigstore ecosystem proved the monitor/witness pattern for software supply chain; media provenance is entering a similar phase with C2PA adoption."
+      },
+      "solution": {
+        "what": "A monitor service that ingests log artifacts (manifests, certs, policy updates), builds per-issuer baselines, and produces alerts plus optional witness signatures for high-risk events.",
+        "key_features": [
+          "Multi-tenant monitoring for provenance artifacts + policy records",
+          "Per-issuer/per-channel anomaly detection to reduce infrastructure-skew false positives",
+          "Witnessing service that can co-sign or checkpoint critical policy/key transitions",
+          "Privacy-aware dashboards and exportable evidence packages"
+        ],
+        "mvp_scope": [
+          "Rekor/Trillian ingestion + basic policy checks",
+          "Per-issuer baseline anomaly detection + alerting",
+          "Evidence export bundle (inclusion proofs + anomaly context)"
+        ],
+        "out_of_scope": [
+          "Global multi-witness governance",
+          "Full privacy-preserving query systems (ship as roadmap)"
+        ],
+        "integration_points": [
+          "Sigstore-style logs (rekor)",
+          "Trillian-backed append-only logs",
+          "C2PA manifest ingestion from pipelines/players"
+        ]
+      },
+      "market": {
+        "segment": "B2B | Media | DevTools",
+        "buyer": "Large platforms, broadcasters, or consortiums operating provenance transparency infrastructure",
+        "users": [
+          "Security engineering",
+          "Compliance",
+          "Trust & safety"
+        ],
+        "alternatives": [
+          "Manual sampling and ad-hoc investigations",
+          "Generic CT/PKI monitors not adapted to media provenance semantics"
+        ],
+        "differentiators": [
+          "Media-provenance-specific checks (manifest semantics, policy drift, provenance graph expectations)",
+          "Built-in skew handling via per-issuer baselines"
+        ]
+      },
+      "evidence": {
+        "paper_ids": [
+          "arxiv_2305.01378",
+          "arxiv_2405.05206",
+          "arxiv_2503.00271"
+        ],
+        "insight_ids": [
+          "insight_025",
+          "insight_029",
+          "insight_030",
+          "insight_069",
+          "insight_072",
+          "insight_073"
+        ],
+        "notes": "Builds on transparency system framing and monitoring patterns; adapts to media provenance semantics and operational realities."
+      },
+      "risks": [
+        {
+          "type": "tech",
+          "risk": "Defining actionable anomaly signals without overwhelming operators (false positives).",
+          "mitigation": "Stratify by issuer/tenant; ship per-entity baselines and prioritize high-severity policy/key transitions."
+        },
+        {
+          "type": "go_to_market",
+          "risk": "Customers may not already operate a transparency log for media provenance.",
+          "mitigation": "Offer on-prem starter stack (log + monitor) and integrate with existing Sigstore deployments where possible."
+        }
+      ],
+      "open_questions": [
+        "Which provenance events should require witness signatures to materially improve security?",
+        "How to handle privacy/opaque identities without breaking monitoring guarantees?",
+        "What is the right interface contract for ‘media provenance transparency’ artifacts across vendors?"
+      ],
+      "scores": {
+        "execution_0_30": 20,
+        "blue_ocean_0_20": 12,
+        "combined_0_50": 32,
+        "confidence_0_1": 0.65
+      },
+      "recommended_next_steps": [
+        "Stand up a minimal Rekor/Trillian ingestion + monitor prototype and define 5-10 high-signal checks",
+        "Implement per-issuer baselines and measure alert quality on real provenance artifacts",
+        "Design an evidence export format suitable for incident response and audit trails"
+      ],
+      "recommended_for_prd": false
+    },
+    {
+      "id": "idea_004",
+      "name": "AttestedSigners DNS",
+      "one_liner": "DNSSEC/DANE-style discovery of stream signer keys, policies, and attestation evidence (aDNS for media).",
+      "problem": {
+        "who": "Verification clients and integrators building ‘trusted stream’ experiences",
+        "pain": "Trust lists drift and are hard to bootstrap; clients need a standard way to discover which signer keys and policies apply to a stream endpoint and whether the service is attested.",
+        "why_now": "Confidential computing ecosystems are pushing attested service discovery; similar primitives can help provenance ecosystems publish keys/policies transparently."
+      },
+      "solution": {
+        "what": "A DNS-based registry that publishes signer key pins and attestation blobs in DNSSEC-protected records with append-only logging, plus a client library to consume them.",
+        "key_features": [
+          "ATTEST-style DNS records for signer/service attestations",
+          "DANE/TLSA pinning for key continuity",
+          "Append-only logging of registrations and policy changes",
+          "Verifier library for players and backends"
+        ],
+        "mvp_scope": [
+          "Domain-level publication of signer key pins + attestation bundles",
+          "Client verifier library that resolves and validates DNSSEC proofs",
+          "Log-backed audit trail for updates"
+        ],
+        "out_of_scope": [
+          "Browser-native adoption and universal resolver support",
+          "Complex privacy-preserving naming schemes"
+        ],
+        "integration_points": [
+          "DNSSEC/DANE tooling",
+          "ACME/PKI automation",
+          "Provenance signing services"
+        ]
+      },
+      "market": {
+        "segment": "B2B | DevTools | Media",
+        "buyer": "Streaming infrastructure vendors and enterprise platforms shipping verified-stream features",
+        "users": [
+          "Security engineers",
+          "Platform integrators"
+        ],
+        "alternatives": [
+          "Manually distributed trust lists",
+          "Application-specific key registries"
+        ],
+        "differentiators": [
+          "Leverages DNS as a global, cache-friendly discovery plane",
+          "Makes key/policy updates auditable via append-only logging"
+        ]
+      },
+      "evidence": {
+        "paper_ids": [
+          "arxiv_2503.14611",
+          "arxiv_2510.12469"
+        ],
+        "insight_ids": [
+          "insight_063",
+          "insight_069",
+          "insight_072",
+          "insight_076"
+        ],
+        "notes": "Repurposes aDNS concepts for publishing and auditing stream signer keys/policies; most valuable as infrastructure for other provenance products."
+      },
+      "risks": [
+        {
+          "type": "tech",
+          "risk": "DNS caching and record size constraints; resolver compatibility for non-standard RR payloads.",
+          "mitigation": "Stick to standard RR encodings; compress/fragment blobs into standard RRsets; provide DoH-based verifier fallback."
+        },
+        {
+          "type": "go_to_market",
+          "risk": "Hard to justify as a standalone product without an end-user provenance feature.",
+          "mitigation": "Bundle as part of SegmentSeal/TrustedCapture deployments; position as ‘key/policy discovery + audit’ add-on."
+        }
+      ],
+      "open_questions": [
+        "What minimum set of records is sufficient for practical deployments (pins, policies, attestations)?",
+        "How should verifiers handle privacy (opaque identities) without breaking monitoring?",
+        "What is the migration path for legacy clients without DNSSEC validation?"
+      ],
+      "scores": {
+        "execution_0_30": 17,
+        "blue_ocean_0_20": 10,
+        "combined_0_50": 27,
+        "confidence_0_1": 0.55
+      },
+      "recommended_next_steps": [
+        "Prototype a minimal record set and a verifier library that validates DNSSEC proofs end-to-end",
+        "Define an append-only log interface contract for policy/key updates and build a small reference server",
+        "Integrate into one verified-stream demo to validate UX and operational requirements"
+      ],
+      "recommended_for_prd": false
+    },
+    {
+      "id": "idea_005",
+      "name": "UGC Integrity Triage",
+      "one_liner": "Crypto-aware authenticity triage for user videos: verify C2PA when present, fingerprint MP4 structure when not.",
+      "problem": {
+        "who": "Trust & safety teams, newsrooms, and investigators handling user-generated video",
+        "pain": "Most UGC arrives without trustworthy provenance; metadata is stripped, edits are common, and teams need fast triage before deeper investigation.",
+        "why_now": "C2PA adoption is rising but incomplete; forensic container fingerprints can complement cryptographic provenance as a practical near-term signal."
+      },
+      "solution": {
+        "what": "A triage service that (1) detects/verifies C2PA content credentials (segment/file), (2) fingerprints MP4/MOV structure to infer capture/editing pipeline, and (3) produces an evidence-backed risk report with canonical recovery workflows when available.",
+        "key_features": [
+          "C2PA verification when manifests exist, with clear ‘missing/stripped’ detection",
+          "ISO BMFF structure fingerprinting and anomaly detection",
+          "Canonicalization rules for benign remuxing so false positives are reduced",
+          "Evidence report export (for newsroom/legal workflows)"
+        ],
+        "mvp_scope": [
+          "Offline CLI + API for MP4/MOV: extract structure signature + detect known transcode patterns",
+          "C2PA verification path (when present) and unified report format",
+          "Small evaluation set from common apps/platforms"
+        ],
+        "out_of_scope": [
+          "Training large ML attribution models",
+          "Guaranteed cryptographic proof when provenance is missing"
+        ],
+        "integration_points": [
+          "Moderation pipelines",
+          "Newsroom ingestion workflows",
+          "C2PA libraries"
+        ]
+      },
+      "market": {
+        "segment": "B2B | Media | GovTech",
+        "buyer": "News organizations, social platforms, and investigative units",
+        "users": [
+          "Trust & safety analysts",
+          "Journalists / fact-checkers",
+          "Investigators"
+        ],
+        "alternatives": [
+          "Manual visual inspection and metadata checks",
+          "Standalone forensic tools without provenance integration",
+          "C2PA-only verification (fails when metadata is stripped)"
+        ],
+        "differentiators": [
+          "Combines cryptographic provenance with practical forensic signals",
+          "Explicit canonicalization and recovery UX to reduce operator fatigue"
+        ]
+      },
+      "evidence": {
+        "paper_ids": [
+          "arxiv_2402.06661",
+          "scholar_ca0c30db5c",
+          "arxiv_2405.12336"
+        ],
+        "insight_ids": [
+          "insight_004",
+          "insight_006",
+          "insight_012",
+          "insight_013"
+        ],
+        "notes": "A pragmatic ‘best effort’ verifier: crypto when available, forensic fingerprints when not, with explicit handling of benign container transforms."
+      },
+      "risks": [
+        {
+          "type": "tech",
+          "risk": "Forensic fingerprints are probabilistic and can be adversarially adapted.",
+          "mitigation": "Never present as cryptographic proof; treat as triage signals and combine with provenance metadata and canonicalization checks."
+        },
+        {
+          "type": "go_to_market",
+          "risk": "Crowded forensics tooling landscape; buyers may expect stronger guarantees.",
+          "mitigation": "Position as ‘crypto-aware triage + evidence export’ and integrate into existing moderation workflows."
+        }
+      ],
+      "open_questions": [
+        "What level of accuracy is achievable on a representative platform/app set without ML-heavy approaches?",
+        "How should the report convey uncertainty and avoid over-claiming authenticity?",
+        "Which workflows benefit most: newsroom, platform moderation, or legal discovery?"
+      ],
+      "scores": {
+        "execution_0_30": 21,
+        "blue_ocean_0_20": 11,
+        "combined_0_50": 32,
+        "confidence_0_1": 0.7
+      },
+      "recommended_next_steps": [
+        "Implement MP4 structure extraction + canonicalization and validate against common remux/transcode pipelines",
+        "Integrate C2PA verification into the same report format (present/absent/stripped paths)",
+        "Pilot with a small newsroom/moderation workflow to validate usability and evidence needs"
+      ],
+      "recommended_for_prd": true
+    },
+    {
+      "id": "idea_006",
+      "name": "TESLA Stream Auth SDK",
+      "one_liner": "Loss-tolerant, low-power authentication for live stream metadata and segment hashes with provisional→final UX.",
+      "problem": {
+        "who": "IoT camera and drone vendors adding authenticity to live feeds under tight compute budgets",
+        "pain": "Per-message signatures are too slow/expensive; loss/jitter makes naïve authentication brittle; verifiers need clear provisional vs final authenticity semantics.",
+        "why_now": "TESLA-style delayed disclosure + sparse signed anchors are mature, but packaging it into usable libraries and UX patterns is missing."
+      },
+      "solution": {
+        "what": "An SDK that provides TESLA-style delayed disclosure authentication for low-bitrate metadata/segment hashes (not full video), with receiver state machines that tolerate loss bursts and expose clear authenticity states.",
+        "key_features": [
+          "Mission/session-scoped keychains (TEE-friendly) with rotation and revocation",
+          "Receiver state machine supporting redundancy (dual/interleaved keychains) under burst loss",
+          "Explicit ‘soft-valid’ → ‘strong-valid’ status transitions and configurable uncertainty windows",
+          "Interoperable output formats suitable for anchoring to C2PA manifests"
+        ],
+        "mvp_scope": [
+          "Reference sender+receiver libraries and test harness under configurable loss/jitter",
+          "Demo binding TESLA-authenticated segment hashes into a C2PA manifest or log entry",
+          "UX guidance for provisional vs final authenticity"
+        ],
+        "out_of_scope": [
+          "Full video-payload cryptographic protection at frame rate",
+          "Hardware design for secure capture paths"
+        ],
+        "integration_points": [
+          "Embedded devices (ESP32-class constraints)",
+          "Mobile TEEs for key generation",
+          "Segment-level provenance manifests (C2PA)"
+        ]
+      },
+      "market": {
+        "segment": "B2B | IoT | Media",
+        "buyer": "Device manufacturers and integrators",
+        "users": [
+          "Firmware engineers",
+          "Security teams"
+        ],
+        "alternatives": [
+          "Per-packet signatures (too slow)",
+          "Opaque proprietary telemetry auth schemes"
+        ],
+        "differentiators": [
+          "Battle-tested patterns for loss bursts and jitter budgeting",
+          "Explicit authenticity UX semantics rather than ‘immediate’ handwaving"
+        ]
+      },
+      "evidence": {
+        "paper_ids": [
+          "arxiv_2510.11343",
+          "arxiv_2502.20555",
+          "arxiv_2511.11028",
+          "arxiv_2312.09870"
+        ],
+        "insight_ids": [
+          "insight_010",
+          "insight_014",
+          "insight_016",
+          "insight_017",
+          "insight_018",
+          "insight_019",
+          "insight_059"
+        ],
+        "notes": "Transfers TESLA/delayed disclosure patterns from broadcast authentication to the control-plane of auditable media streaming (segment hashes/metadata)."
+      },
+      "risks": [
+        {
+          "type": "tech",
+          "risk": "Time-sync assumptions and jitter can break TESLA correctness on contention-based links.",
+          "mitigation": "Expose interval timing safety margins; provide multi-cadence options and conservative defaults validated under measured loss/jitter."
+        },
+        {
+          "type": "go_to_market",
+          "risk": "May be seen as a component rather than a product; value depends on integration with a broader provenance stack.",
+          "mitigation": "Bundle with SegmentSeal as an optional ‘low-power sender’ mode and provide end-to-end demos."
+        }
+      ],
+      "open_questions": [
+        "What time-sync model is realistic for target devices and networks (Wi‑Fi/cellular/satellite)?",
+        "Which redundancy patterns give best resilience without widening attacker windows too much?",
+        "How should receivers expose authenticity state changes in UX without confusing users?"
+      ],
+      "scores": {
+        "execution_0_30": 18,
+        "blue_ocean_0_20": 8,
+        "combined_0_50": 26,
+        "confidence_0_1": 0.6
+      },
+      "recommended_next_steps": [
+        "Build a sender/receiver harness with configurable packet loss/jitter and validate desync behavior",
+        "Implement redundancy patterns (interleaved keychains, sparse cross-validation) and quantify attacker window tradeoffs",
+        "Publish a reference binding of authenticated segment hashes into C2PA/log artifacts"
+      ],
+      "recommended_for_prd": false
+    }
+  ]
+}

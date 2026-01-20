@@ -82,7 +82,12 @@
       "avg_seconds_per_paper": 1015
     },
     "complete": {
-      "ended_at": "2026-01-20T00:19:30Z"
+      "ended_at": "2026-01-20T11:45:25Z"
+    },
+    "ideation": {
+      "started_at": "2026-01-20T11:45:25Z",
+      "ended_at": "2026-01-20T11:45:25Z",
+      "duration_seconds": 0
     }
   },
   "papers_pool": [
@@ -3122,6 +3127,27 @@
         "8-11": 6,
         "12-15": 4,
         "16-20": 0
+      }
+    },
+    "ideation_metrics": {
+      "product_ideas_generated": 6,
+      "top_idea_id": "idea_001"
+    }
+  },
+  "handoff": {
+    "product_ideation": {
+      "enabled": true,
+      "min_ideas": 3,
+      "max_ideas": 12,
+      "output_filename": "product-ideas.json",
+      "ranking_goal": "pick_one_for_prd",
+      "assumed_constraints": {
+        "team_size": 3,
+        "time_horizon_months": 3,
+        "deployment_preference": [
+          "saas",
+          "on_prem"
+        ]
       }
     }
   }
