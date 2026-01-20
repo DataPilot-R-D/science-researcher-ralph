@@ -1,0 +1,1515 @@
+# Research-Ralph Progress Log
+Started: pon 19 sty 16:40:00 2026 CET
+
+## Research Patterns
+- (Patterns discovered during research will be added here)
+
+## Cross-Reference Insights
+- (Connections between papers will be added here)
+
+---
+
+---
+
+## 2026-01-19 - Discovery Update
+- Sources tried: arXiv, Google Scholar, web
+- Papers added to pool: 30 (target: 30)
+- Phase: ANALYSIS
+
+---
+
+## 2026-01-19 - Discovery Curation
+- Removed off-scope/low-fit papers: 11
+- Added replacements: 11
+- Papers pool now: 30 (phase: ANALYSIS)
+
+---
+
+## 2026-01-19 - Discovery Source Coverage
+- Ensured papers_pool includes at least one `web` and multiple `Google Scholar` entries.
+- Removed: arxiv_2505.22778, arxiv_2601.08091
+- Added: scholar_ca0c30db5c, web_8e36527aa5
+
+---
+
+## 2026-01-19 - Paper: Bridging the Data Provenance Gap Across Text, Speech and Video
+ID: arxiv_2412.17847
+Status: PRESENTED
+Combined Score: 30/50 (Execution: 18/30, Blue Ocean: 12/20)
+
+**Summary:** Large-scale longitudinal audit of ~4,000 public AI training datasets across text, speech, and video (1990–2024). Finds a sharp shift since ~2019 toward web-crawled, social-media, and synthetic sources (speech/video dominated by YouTube), plus a major mismatch between dataset-level licenses and upstream source terms that often impose non-commercial or no-crawling restrictions.
+
+**Key Method:** Manual, ecosystem-level annotation of dataset metadata across modalities: sources and sourcing categories, dataset licenses vs upstream source terms/ToS, and representation metrics (languages, geographies, creators/organizations). Extends prior license taxonomy to also label source-term restrictions and traces derivation chains across dataset collections.
+
+**Implementation Check:**
+- GitHub repos: no (no official code/data repo found; paper links only to external dataset collections)
+- Commercial use: no
+- Open questions: Where the authors' released audit artifacts live (paper references supplementary Attribution Card, but no stable public repo link found in PDF)
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 4/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (12/20):**
+- Market Creation: 3/5
+- First-Mover Window: 2/5
+- Network/Data Effects: 3/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Blue Ocean
+
+**Decision Rationale:** Strong evidence that provenance/permission risk is dominated by upstream platform terms, motivating rights-aware provenance logs and tooling; actionable for product strategy even without proposing new cryptography.
+
+**Extracted Insights:**
+- Provenance must model a chain of restrictions: dataset license alone is insufficient; upstream source Terms/Policies (often non-commercial or no-crawling) can dominate the effective permission set for downstream use.
+- Speech/video training data sourcing has consolidated around user-generated internet video (YouTube). Any auditable media integrity/provenance system should assume UGC platforms as primary sources and include durable capture-time evidence (timestamping, signatures, and retention against link rot).
+- Track representation metadata (language/geo) as first-class provenance fields: absolute coverage can rise while relative Western-centric concentration stagnates, so audits should report both absolute and relative measures over time.
+
+**Cross-References:**
+- Related to: arxiv_2405.12336, scholar_2498b49830, scholar_ca0c30db5c
+
+**Learnings for Future Iterations:**
+- When evaluating media integrity/provenance work, explicitly separate dataset-level licensing from upstream source/platform terms; treat the stricter layer as binding for real-world deployability.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added TechRxiv Cloudflare/403 fetch gotcha to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-19 - Paper: Interoperable Provenance Authentication of Broadcast Media using Open Standards-based Metadata, Watermarking and Cryptography
+ID: arxiv_2405.12336
+Status: PRESENTED
+Combined Score: 30/50 (Execution: 18/30, Blue Ocean: 12/20)
+
+**Summary:** Proposes an interoperable provenance/authenticity workflow for broadcast media posted to social platforms by combining C2PA signed manifests (cryptographically authenticated metadata) with durable ATSC 3.0 audio/video watermarking. The watermark is treated as an untrusted recovery pointer (service identifier + timeline index) to fetch the right manifest and canonical content when container metadata is stripped (e.g., HDMI capture, platform transcoding).
+
+**Key Method:** For live broadcast, generate a secure fMP4/CMAF “Replica” behind the live edge and periodically issue C2PA manifests over fixed-duration “Data Hash Segments” (DHS). Each DHS manifest uses C2PA’s streaming-mode hard binding (per-track Merkle trees) to enable piecewise validation of arbitrary clip portions; time-varying watermarks map clip boundaries to the correct DHS manifest and canonical segment.
+
+**Implementation Check:**
+- GitHub repos: partial — no paper-specific repo; C2PA reference implementations exist (e.g., https://github.com/contentauth/c2pa-rs, https://github.com/contentauth/c2pa-python)
+- Commercial use: yes — ATSC watermarking is described as commercially deployed; authors are from Verance Corporation
+- Open questions: How to bootstrap/operate broadcaster trust lists at Internet scale; how well DHS/manifest recovery works under heavy editing/cropping + lossy transport; and whether transparency-log anchoring/attestation is needed for stronger non-repudiation
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 4/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (12/20):**
+- Market Creation: 3/5
+- First-Mover Window: 3/5
+- Network/Data Effects: 2/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Blue Ocean
+
+**Decision Rationale:** Strong, standards-aligned blueprint for making streaming/broadcast content auditable post-hoc (Merkle-piecewise validation + canonical recovery) with a realistic “metadata gets stripped” failure mode; less coverage of append-only anchoring, hardware provenance, and adversarial robustness evaluation.
+
+**Extracted Insights:**
+- Watermark durability should be used as an untrusted pointer to fetch a signed manifest (root of trust = manifest signature + trust list), not as the authenticity signal itself.
+- For live streams, periodic manifests over fixed-duration segments (DHS) paired with fMP4/CMAF replication + per-track Merkle trees enables verification of arbitrary clip slices without needing the whole stream.
+- Product UX matters: to avoid alert fatigue, treat validation failures as a trigger for canonical recovery and comparison/substitution workflows rather than hard rejection.
+
+**Cross-References:**
+- Related to: scholar_ca0c30db5c (DASH + authenticity/C2PA integration), CAI blog on durable Content Credentials (https://contentauthenticity.org/blog/durable-content-credentials)
+
+**Learnings for Future Iterations:**
+- When a paper assumes C2PA for streaming, look for the specific binding mode (fMP4/CMAF + Merkle rows) and whether it supports partial verification + recovery under “metadata stripped” paths like HDMI capture or social-platform re-encode.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a C2PA durability gotcha (watermark/fingerprint as soft binding; root-of-trust = signed manifest; check fMP4/CMAF + Merkle rows + metadata-stripped paths) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-19 - Paper: Integrating Content Authenticity with DASH Video Streaming
+ID: scholar_ca0c30db5c
+Status: PRESENTED
+Combined Score: 31/50 (Execution: 20/30, Blue Ocean: 11/20)
+
+**Summary:** Presents an open reference implementation that verifies C2PA Content Credentials during MPEG-DASH playback and surfaces validation to users in real time. It integrates segment-level C2PA validation into dash.js (native and plugin options) and provides a Video.js UI with a color-coded timeline and credentials menu.
+
+**Key Method:** Intercept init+media fMP4 segments, run the C2PA JS SDK’s fragment validation, store per-segment results keyed by segment time (and per-bitrate representation), then emit a `c2pa_status` payload on playback-time updates so the UI can render “past/current” validation and details; recompute around seeks and track ABR quality switches.
+
+**Implementation Check:**
+- GitHub repos: yes — https://github.com/contentauth/dash.js/tree/c2pa-dash (samples + plugin/native integration + UI)
+- Commercial use: no (reference implementation/demo; C2PA ecosystem is commercial but this player isn’t confirmed deployed at scale)
+- Open questions: Full ACM paper PDF blocked by Cloudflare (dl.acm.org 403); no quantified latency/CPU overhead under packet loss + ABR; does not address transparency-log anchoring or capture-time hardware attestation
+
+**Execution Score Breakdown (20/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 4/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (11/20):**
+- Market Creation: 2/5
+- First-Mover Window: 3/5
+- Network/Data Effects: 2/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Purple Ocean
+
+**Decision Rationale:** High practical value as an ABR-aware, open-source “validator loop” for streaming Content Credentials (verification + UX), directly applicable to auditable streaming products even though it does not introduce new cryptography or anchoring/attestation.
+
+**Extracted Insights:**
+- Authenticity UX for streaming should be segment-based and time-local: show “past/current” validation state rather than claiming whole-stream validity ahead of time, and re-run validation on seeks.
+- ABR complicates validation: maintain verification state per representation and align quality-switch timing (e.g., small delay) so the UI reflects what is actually displayed.
+
+**Cross-References:**
+- Related to: arxiv_2405.12336 (C2PA streaming/broadcast manifests and durable recovery model), scholar_2498b49830 (C2PA + TPM livestream provenance)
+
+**Learnings for Future Iterations:**
+- For paywalled/blocked ACM papers, look for industry-forum slide decks (e.g., DASH-IF special sessions) and official reference repos; they often contain architecture diagrams, UX decisions, and source links.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added an ACM DL Cloudflare/403 access gotcha to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-19 - Paper: Hardware-Anchored Media Provenance and Blockchain-Anchored Verification
+ID: web_8e36527aa5
+Status: REJECTED
+Combined Score: 24/50 (Execution: 15/30, Blue Ocean: 9/20)
+
+**Summary:** Defensive technical disclosure proposing capture-time media provenance by hashing images/video (and livestream frames) inside trusted hardware (TEE/Secure Enclave/TPM), signing with a non-exportable device key, and anchoring proofs to an append-only public ledger (blockchain) for third-party verification. For livestreams it suggests a per-frame hash chain with periodic checkpoint anchoring to support post-hoc integrity checks.
+
+**Key Method:** Hardware-bound signing of content hashes + periodic anchoring of hash-chain checkpoints (e.g., every 1–5 seconds), plus an optional stream-start commitment containing device identity, stream identifier, start time, and hashing parameters. (The linked v0.2 specification adds implementation levels L1–L4, anti-rollback timestamping guidance, and detectable degraded/offline anchoring modes.)
+
+**Implementation Check:**
+- GitHub repos: yes — https://github.com/siegmound/hardware-media-provenance-disclosure (disclosure + HAMP_Specification_v0.2.pdf; no reference code)
+- Commercial use: no evidence
+- Open questions: Clear trust/attestation chain + revocation and verifier trust lists; random-access verification under loss/editing (hash chains require sequential hashing from the last checkpoint); how to bind a trusted capture pipeline on consumer devices without OS/vendor support; re-recording/analog recapture mitigations
+
+**Execution Score Breakdown (15/30):**
+- Novelty: 2/5
+- Feasibility: 3/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 1/5
+- Adoption: 2/5
+
+**Blue Ocean Score Breakdown (9/20):**
+- Market Creation: 2/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 2/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Purple Ocean
+
+**Decision Rationale:** Useful as a requirements-style blueprint (especially the L1–L4 levels in the v0.2 spec), but it lacks protocol detail, performance/overhead evaluation, and a concrete trust/attestation chain; core idea is broadly known and easy to replicate.
+
+**Extracted Insights:**
+- Hash-chain + periodic checkpoints detects insert/delete/reorder, but verification is sequential (O(k) hashes per k frames after the last anchor); for clip-level random access prefer Merkle-tree segment commitments or skip-list/Merkle-mountain-range structures.
+- Treat provenance systems as levels (L1–L4) and require detectable degraded modes (offline anchoring) plus anti-rollback time sources (monotonic counters / external time authorities), not OS wall-clock.
+
+**Cross-References:**
+- Related to: arxiv_2405.12336 (C2PA streaming manifests with per-track Merkle trees for piecewise validation), scholar_2498b49830 (TPM-based livestream provenance), arxiv_2402.06661 (smartphone video integrity via container structure)
+
+**Learnings for Future Iterations:**
+- For “hash chain livestream provenance” proposals, always check random-access verifier UX/performance and packet-loss/editing models; ask for Merkle/skip structures if clip validation is required.
+- Quick prototype validation: a simple SHA-256 hash chain with an anchor every 10 frames detects tampering/reordering, but verifying frames 50–59 requires hashing each frame sequentially from the last checkpoint (O(k)).
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a hash-chain vs Merkle gotcha (hash chains require sequential verification; prefer Merkle/skip structures for random-access clip validation) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-19 - Paper: SALT-V: Lightweight Authentication for 5G V2X Broadcasting
+ID: arxiv_2511.11028
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** SALT-V is a hybrid broadcast authentication protocol for 5G NR-V2X that uses sparse ECDSA-signed BOOT frames as trust anchors and GMAC-authenticated DATA frames with TESLA-style delayed key disclosure. It introduces an Ephemeral Session Tag (EST) whitelist so receivers can immediately treat most traffic from recently verified senders as “trusted,” then later perform strong MAC verification when keys are disclosed.
+
+**Key Method:** Dual-track authentication: BOOT frames (≈10%) carry certificate + ECDSA signature over a digest (payload||commitment||tag||IV) to establish sender trust; DATA frames (≈90%) carry GMAC tags under per-slot HKDF-derived keys committed via H^d(k) and revealed after d slots. RSUs broadcast signed time anchors including a Bloom-filter revocation structure; receivers whitelist short-lived ESTs for O(1) trust lookup.
+
+**Implementation Check:**
+- GitHub repos: no public repo found (GitHub API search for title/arXiv ID returned 0)
+- Commercial use: no evidence
+- Open questions: what safety guarantees remain if applications act on “immediately authenticated” DATA before MAC verification; resilience to spoofed/DoS traffic targeting EST whitelist and Bloom-filter false positives; behavior under packet loss and reordering beyond the brief model
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 2/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Purple Ocean
+
+**Decision Rationale:** Not a direct auditable media-streaming provenance system and the “immediate verification” is closer to provisional trust than cryptographic integrity verification, but the protocol stratification pattern is transferable to low-latency streaming integrity UX and systems design.
+
+**Extracted Insights:**
+- Treat “immediate authentication” claims carefully: some TESLA hybrids only enable immediate *use* based on prior signed trust anchors, with strong integrity verification deferred until key disclosure; model this explicitly as provisional → final verification.
+- Ephemeral per-sender tags (EST) + short-lived whitelists give an O(1) index for verification state and can be adapted to per-stream/segment validation caches (especially when coupled with periodic signed anchors and scalable revocation checks).
+
+**Cross-References:**
+- Related to: arxiv_2405.12336 (C2PA streaming manifests + piecewise validation), web_8e36527aa5 (hash-chain checkpointing vs random-access verification), arxiv_2510.11343 (TESLA-authenticated broadcast ID), arxiv_2502.20555 (multicast origin authentication)
+
+**Learnings for Future Iterations:**
+- When a paper claims “immediate verification” with delayed-disclosure MACs, pin down whether it is cryptographic verification or trust-based early acceptance, and assess the safety/attack implications for the application layer.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added an “immediate vs cryptographic verification” gotcha (TESLA delayed-disclosure schemes can be provisional until key disclosure) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+---
+
+## 2026-01-19 - Paper: Authentication and integrity of smartphone videos through multimedia container structure analysis
+ID: arxiv_2402.06661
+Status: PRESENTED
+Combined Score: 27/50 (Execution: 19/30, Blue Ocean: 8/20)
+
+**Summary:** The paper proposes a forensic technique to assess video integrity/authenticity by fingerprinting MP4/MOV/3GP multimedia container structure and tag values rather than relying on pixel-level forensics. It builds a large dataset across smartphone brands/models, social networks/IM apps, and editing programs to learn platform-specific container patterns and flag anomalies (including steganography-driven value changes).
+
+**Key Method:** Extract ISO BMFF “atoms” (boxes), tags, values, and order-of-appearance using an atom extraction algorithm, then represent structure as PathOrder-tag features (paths with relative order). Analyze patterns via preliminary structure comparisons plus massive analysis over binary feature presence/absence using t-SNE/PCA/Pearson correlation; then separate editable metadata vs non-editable values and discuss counter-forensic manipulations.
+
+**Implementation Check:**
+- GitHub repos: no public repo found (GitHub API became rate-limited during broader follow-up searches)
+- Commercial use: no evidence
+- Open questions: how well container fingerprints generalize as platforms update encoders; resilience vs intentional remux/counter-forensics; applicability to segmented streaming (fMP4/CMAF) and partial/lossy captures
+
+**Execution Score Breakdown (19/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (8/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 2/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Purple Ocean
+
+**Decision Rationale:** Not cryptographic streaming provenance, but a strong “soft provenance”/tamper-signal technique that can complement C2PA-style manifests and help explain why authenticity checks fail after benign platform transforms.
+
+**Extracted Insights:**
+- Container structure can act as a provenance fingerprint: box presence/order and selected tag values can identify acquisition source and common platform transcodes (useful when cryptographic metadata is missing/stripped).
+- Canonicalization is required for container-structure-based integrity: benign remuxing can reorder top-level boxes (e.g., moving `moov` ahead of `mdat` for fast-start playback), so validators should define allowed transforms or normalize before comparing/committing.
+- Editable vs non-editable tag/value separation is a practical threat-model tool: some changes preserve playback (metadata), while other byte-level values are tied to decoding and are harder to alter without breaking the file.
+
+**Cross-References:**
+- Related to: scholar_ca0c30db5c (DASH streaming authenticity needs per-segment tracking), arxiv_2405.12336 (C2PA broadcast media provenance + piecewise validation), web_8e36527aa5 (hash-chain vs random-access verification and benign transforms)
+
+**Learnings for Future Iterations:**
+- Quick prototype validation: generating MP4 with `ffmpeg` and re-muxing with `-movflags +faststart` flips root box order from `ftyp free mdat moov` to `ftyp moov free mdat` (decoded content unchanged). Treat box-order diffs as “possibly benign” unless your scheme defines canonicalization.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added an ISO BMFF atom reordering gotcha (`moov`/`mdat` order changes under “fast start” remuxing; define canonicalization/allowed transforms) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+---
+
+## 2026-01-19 - Paper: TBRD: TESLA Authenticated UAS Broadcast Remote ID
+ID: arxiv_2510.11343
+Status: PRESENTED
+Combined Score: 28/50 (Execution: 20/30, Blue Ocean: 8/20)
+
+**Summary:** TBRD proposes authenticated Broadcast Remote ID for drones by combining the TESLA delayed key-disclosure protocol with mobile-device TEEs and a trusted UAS Service Supplier (USS) verification server. It targets spoofing/replay/record-and-replay of Remote ID broadcasts while staying compatible with ASTM F3411-22a and resource-constrained transponders.
+
+**Key Method:** A mobile app uses a TEE to generate a mission-scoped TESLA keychain; interval keys are uploaded to the UAS and a root commitment plus mission timing are sent to a USS. The UAS broadcasts an interval counter + concatenated Remote ID messages, an HMAC-SHA256 over that payload, and the previous interval key (disclosure delay d=1 in the PoC). Observers buffer until key disclosure, verify the HMAC, then query the USS for mission validity and key commitment to validate the keychain and detect replay of old missions.
+
+**Implementation Check:**
+- GitHub repos: yes — https://github.com/t-brd/tbrd
+- Commercial use: no evidence found
+- Open questions: how to make applications safe under TESLA’s “verification delay” window (provisional vs final validity); robustness when GPS time is spoofed/jammed; USS availability/offline verification UX and revocation semantics; secure key upload from mobile→UAS (out of scope in the paper); selecting safe interval/jitter margins on contention-based links (Wi‑Fi CSMA/CA)
+
+**Execution Score Breakdown (20/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 4/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (8/20):**
+- Market Creation: 2/5
+- First-Mover Window: 2/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Purple Ocean
+
+**Decision Rationale:** Strong, standards-aligned pattern for low-overhead broadcast authentication (mission-scoped TESLA + TEE + server commitment checks) with a working PoC; however it is an incremental security feature in an existing Remote ID market rather than a blue-ocean category shift.
+
+**Extracted Insights:**
+- On ESP32-class devices, per-message ECC signatures can be infeasible at 1 Hz: the paper measures ~1.2s ECC signing vs ~10ms HMAC-SHA256; for streaming integrity, prefer symmetric MACs with delayed disclosure plus periodic signed/attested commitments.
+- Mission-scoped keychains generated inside a mobile TEE limit blast radius: capturing a UAS only exposes remaining interval keys for the current mission; future missions rotate via a fresh seed (maps to per-stream/per-session keys).
+- TESLA correctness is sensitive to transport timing: on contention-based links (Wi‑Fi beacons/CSMA), jitter can push packets outside intended key intervals and break “key secret at use-time” checks; explicitly budget margins and define a permissible transmission window.
+
+**Cross-References:**
+- Related to: arxiv_2511.11028 (TESLA-style delayed disclosure + “immediate” vs final verification), arxiv_2502.20555 (multicast origin auth patterns), arxiv_2405.12336 (streaming provenance commitments)
+
+**Learnings for Future Iterations:**
+- When evaluating TESLA/delayed-disclosure designs, check MAC/PHY-layer transmission jitter and interval scheduling (CSMA/CA, beacon timing, reordering) because it can silently break protocol assumptions.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a TESLA timing vs MAC jitter gotcha (CSMA/CA delays can violate key-interval secrecy checks; define a permissible transmit window and jitter margins) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-19 - Paper: Robust Multicast Origin Authentication in MACsec and CANsec for Automotive Scenarios
+ID: arxiv_2502.20555
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** Proposes TESLA-derived multicast origin authentication as an add-on over MACsec/CANsec to prevent masquerade attacks where a compromised receiver can send multicast frames using the shared link key. It analyzes single/overlapped and dual/interleaved keychain strategies to improve robustness under frame loss and introduces TRUDI, a unified receiver that can validate against multiple keychains so the transmitter can switch strategies at runtime.
+
+**Key Method:** Lamport keychains embedded in frames with receiver-side backtracking state (counter `c`, last index `î`, last key `κ̂`) for immediate validation/delivery, plus dual/interleaved keychains and sparse cross-validation frames to spread “synchronization opportunities” across time. Provides a unified U-frame format and receiver pseudocode that accepts a frame if any included key validates, then updates/dismisses keychains via flags.
+
+**Implementation Check:**
+- GitHub repos: no (no paper-specific repo found; GitHub code search requires auth; GitHub repo search hit unauth rate limits after a few queries)
+- Commercial use: no evidence (targets MACsec/CANsec automotive deployments; presented as design/analysis)
+- Open questions: applicability outside multidrop busses (paper assumes no MITM/delay and strict in-order delivery); real-world latency/CPU overhead under burst loss/jitter; safe parameter choices (overlap `Q`, sparse interleave `m,r`, hash choice/length) for modern threat models
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 2/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 2/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Valuable engineering patterns for loss-tolerant stream authentication (interleaving keychains, spreading sync opportunities, unified receiver state), but the explicit no-MITM and strict-order assumptions make it non-portable to Internet media streaming without reverting to delayed-disclosure/TESLA-style designs.
+
+**Extracted Insights:**
+- Burst loss tends to break keychain schemes at junction/disclosure points; avoid back-to-back junction frames and instead distribute synchronization opportunities across time (dual/interleaved or sparse cross-validation frames).
+- A unified receiver can track multiple keychains and accept a frame if any validates, enabling runtime strategy switching without changing the receiver implementation.
+- Overlap (`Q>1`) reduces desync probability but also increases the time window between commitment and disclosure/validation (~`Q·T`); treat redundancy as also “more time to attack” and pick modern hashes/lengths accordingly.
+
+**Cross-References:**
+- Related to: arxiv_2511.11028 (delayed disclosure + provisional vs final validity), arxiv_2510.11343 (TESLA keychains + transport timing constraints), web_8e36527aa5 (hash-chain vs random-access verification costs)
+
+**Learnings for Future Iterations:**
+- When a “TESLA-like” paper claims immediate authentication, verify the threat model: immediate keychain validation is only safe when adversaries cannot delay/reorder frames (common on multidrop busses, false on the public Internet).
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a keychain junction burst-loss gotcha (avoid back-to-back junction/disclosure frames; spread synchronization opportunities; overlap `Q` increases commitment→disclosure window) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-19 - Paper: EKILA: Synthetic Media Provenance and Attribution for Generative Art
+ID: arxiv_2304.04639
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** EKILA proposes a decentralized framework for synthetic image provenance that combines C2PA manifests with an NFT-based Ownership-Rights-Attribution (ORA) model to compensate creators whose works contributed to generative models. It adds a robust patch-level visual attribution + apportionment method to identify likely training images and scale royalty payments.
+
+**Key Method:** C2PA provenance graphs (training images→model→generated image) + ORA triangle (NFT ownership + Rights smart contract bound to manifest GUID) plus 2-stage attribution: contrastive ResNet-50 patch fingerprints (ANN/IVFPQ) → learned pairwise verifier on window-pooled feature maps → normalized per-patch credit weights.
+
+**Implementation Check:**
+- GitHub repos: no official code repo found; GitHub search surfaced https://github.com/andrewjohngilbert/ekila but it appears to be a generic project-page template (no EKILA implementation)
+- Commercial use: no (paper/prototype; Adobe authorship suggests internal interest but no product evidence)
+- Open questions: causal attribution vs similarity; how to adapt to video/streaming segments and packet loss; socio-legal enforceability + transaction costs for ORA
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 2/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 2/5
+- Network/Data Effects: 1/5
+- Strategic Clarity: 2/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Valuable patterns for C2PA provenance binding and robust recovery/attribution, but the core proposal is NFT-heavy and focused on generative-image royalties rather than loss-tolerant streaming integrity.
+
+**Extracted Insights:**
+- C2PA manifests can model general provenance graphs (training images → model → output) and can reference archives for scale, which maps to “segment set” provenance patterns in streaming systems.
+- ORA binds rights/royalty authorization to the C2PA manifest GUID to prevent asset substitution; analogous streaming systems should bind access/authorization and recovery pointers to cryptographic manifest IDs, not mutable URLs/container metadata.
+
+**Cross-References:**
+- Related to: arxiv_2405.12336, arxiv_2412.17847
+
+**Learnings for Future Iterations:**
+- Semantic Scholar API can 429 quickly; OpenAlex provides a practical metadata fallback when you already have arXiv PDF access.
+
+---
+
+## 2026-01-19 - Paper: Signing Right Away
+ID: arxiv_2510.09656
+Status: PRESENTED
+Combined Score: 26/50 (Execution: 17/30, Blue Ocean: 9/20)
+
+**Summary:** This whitepaper proposes Signing Right Away (SRA), a “photon→file” security architecture that secures the camera pipeline from the image sensor to a final signed media file. It aims to prevent “garbage in, gospel out” provenance by combining an authenticated/encrypted sensor→SoC link with TEE-only signing into a C2PA-compliant asset.
+
+**Key Method:** Four-pillar secure camera channel (authentication + AEAD confidentiality/integrity + anti-replay) over MIPI CSI-2, plus a Trusted Execution Environment that holds non-exportable signing keys, decrypts/validates, performs any processing, and emits a signed C2PA manifest with secure-pipeline and device-attestation assertions bound to the final pixels.
+
+**Implementation Check:**
+- GitHub repos: no public repo found for the paper
+- Commercial use: yes (adjacent) — Truepic secure capture on Snapdragon: https://www.truepic.com/blog/truepic-breakthrough-charts-a-path-for-restoring-trust-in-photos-and-videos-at-internet-scale
+- Open questions: trust-list + certificate/revocation design for verifiers; privacy implications of device identity/attestation; how to extend from signed files to loss-tolerant live streaming segments; durability when manifests are stripped by transcoding/screen capture
+
+**Execution Score Breakdown (17/30):**
+- Novelty: 3/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 4/5
+- Defensibility: 2/5
+- Adoption: 2/5
+
+**Blue Ocean Score Breakdown (9/20):**
+- Market Creation: 2/5
+- First-Mover Window: 2/5
+- Network/Data Effects: 1/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Purple Ocean
+
+**Decision Rationale:** Strong capture-time root-of-trust blueprint that complements C2PA and closes the sensor-origin gap, with pragmatic prototyping learnings. Less differentiated on network-loss-tolerant streaming commitments, but highly relevant for “auditable streaming” stacks that need hardware provenance at the source.
+
+**Extracted Insights:**
+- Software-only provenance signing cannot prove sensor-origin under hardware feed injection; capture provenance needs a secured sensor→SoC channel plus TEE-only signing/attestation.
+- CSI-2 security metadata transport is an interoperability risk (receiver support for “user-defined” types varies); align with MIPI CSF/CSE (SEP/FSED) or specify robust tunneling/decoding in prototypes.
+- Real-time per-frame authentication can exceed soft-core crypto budgets at 30fps/2MP; treat hardware crypto acceleration as a core requirement and benchmark early.
+
+**Cross-References:**
+- Related to: web_8e36527aa5 (hardware provenance disclosure), arxiv_2405.12336 (C2PA + durable pointers), scholar_ca0c30db5c (C2PA in DASH streaming), scholar_2498b49830 (pending: C2PA + TPM for livestreaming)
+
+**Learnings for Future Iterations:**
+- Prototype traps: CSI-2 receiver metadata paths can block “standard” packet types; plan for the exact receiver/driver behavior early (or adopt MIPI CSF/CSE end-to-end) before betting on per-frame tags.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added two gotchas to `AGENTS.md` and `CLAUDE.md` (kept in sync): CSI-2/MIPI camera-bus security metadata interoperability risks, and soft-core crypto throughput limits for per-frame authentication at real-time frame rates.
+
+---
+
+## 2026-01-19 - Paper: SoK: Log Based Transparency Enhancing Technologies
+ID: arxiv_2305.01378
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** A systematization of log-based transparency-enhancing technologies, arguing that transparency is not a single cryptographic primitive but a multi-part system (logging, sanitization, release/query, and external mechanisms) that must be designed end-to-end. It maps threats to these mechanisms via “editorial control” and “individual evidence”, and illustrates trade-offs using Certificate Transparency and blockchain-based cryptocurrencies.
+
+**Key Method:** Four-mechanism framework for transparency systems: (1) append-only/consistent logging (e.g., Merkle trees/blockchains), (2) sanitization choices (plaintext vs encrypted/auditor-only vs DP/ZK), (3) release + query interfaces (authenticated DBs/log-backed maps + access control), and (4) external mechanisms for turning evidence into action (notifications, governance, legal admissibility).
+
+**Implementation Check:**
+- GitHub repos: no dedicated repo found for this SoK; related reference implementations include Google CT tooling https://github.com/google/certificate-transparency-go and Trillian (Merkle-tree transparency log) https://github.com/google/trillian
+- Commercial use: yes (adjacent) — Certificate Transparency is widely deployed and underpins browser certificate validation policies; blockchain analytics is commercialized (e.g., Chainalysis)
+- Open questions: how to map these transparency-log mechanisms cleanly onto low-latency, lossy streaming segments; how to design incentives/monitoring so non-equivocation/consistency checks actually happen (vs “gossip should exist”); how to balance privacy with auditability without creating editorial-control loopholes
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 3/5
+- Value/Market: 4/5
+- Defensibility: 1/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 2/5
+- Strategic Clarity: 2/5
+
+**Market Classification:** Purple Ocean
+
+**Decision Rationale:** Strong design framing and threat-model checklist for transparency logs that can inform auditable streaming architectures, but it is a survey (not a new streaming commitment protocol/system) and needs to be paired with concrete low-latency streaming constructions.
+
+**Extracted Insights:**
+- Transparency is a 4-part system (log + sanitization + query/release + external enforcement); append-only proofs alone rarely create accountability without actionable dispute/notification/governance mechanisms.
+- Data-structure trade-off matters for streaming: history-tree logs give efficient append-only proofs but weak lookups; prefix-tree maps give efficient lookups but weaker append-only proofs — combined log-backed maps/authenticated dictionaries can support both random-access clip proofs and append-only evolution.
+- Privacy mechanisms can become “editorial control”: DP noise can hide low-frequency faults/minority impacts; privacy budgets can be exhausted; ZK proofs can strip context and constrain auditors — design releases/queries so privacy cannot be used as cover for selective disclosure.
+- Logs prove what was logged, not that it is true; the device/pipeline interface is the weak point. Trusted hardware can help bind physical→digital events but introduces weakest-link risk (key compromise undermines all units); mitigate via cross-verification and careful trust-list/attestation design.
+
+**Cross-References:**
+- Related to: arxiv_2405.12336 (broadcast media provenance + segments/commitments), scholar_ca0c30db5c (C2PA in DASH streaming), arxiv_2312.12057 (auditable claims), arxiv_2303.04500 (verification of transparency protocols, pending), arxiv_2405.05206 (CT log anomaly detection, pending)
+
+**Learnings for Future Iterations:**
+- When scoring “blockchain/log anchors” papers, separate (1) append-only consistency properties from (2) truth of logged events and (3) actionability/contestability; many proposals solve only (1).
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a gotcha to `AGENTS.md` and `CLAUDE.md` (kept in sync): append-only logs/blockchain anchors prove commitment, not ground truth — model the “truth gap” and pair logs with capture/attestation or cross-verification.
+
+---
+
+## 2026-01-19 - Paper: Anomaly Detection in Certificate Transparency Logs
+ID: arxiv_2405.05206
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** Proposes using Isolation Forest (unsupervised anomaly detection) to flag structurally unusual X.509 (pre)certificates in Certificate Transparency (CT) logs, beyond standards-compliance checks. Trains on a 120k random sample from Google’s Xenon 2024 CT log using quantitative certificate metadata features, and inspects the top outliers.
+
+**Key Method:** Feature engineering over certificate metadata (subject DN attribute count/length, public key type/length, issuer rarity, validity period, SAN count/avg length, wildcard count, avg subdomain count, validation type, extension count and extension size excluding SAN) + Isolation Forest (PyOD; 200 trees, 256 samples/tree) to rank certificates by anomaly score.
+
+**Implementation Check:**
+- GitHub repos: no (no paper-specific repo found; approach is reproducible with standard Isolation Forest tooling, e.g., PyOD)
+- Commercial use: no (paper is academic; CT monitoring products exist broadly)
+- Open questions: how to avoid “issuer-mix” domination (cloud-provider infrastructure certs) in outlier rankings; how to include semantic/textual features beyond quantitative counts; and how to evaluate detection quality without ground-truth labels
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 2/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 4/5
+- Defensibility: 1/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 1/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Practical monitoring insight for transparency logs (especially around clustering/stratifying outliers), but low strategic differentiation and not directly a “loss-tolerant auditable media streaming” construction.
+
+**Extracted Insights:**
+- Generic anomaly detection over transparency-log artifacts can be dominated by a few high-volume producers/issuers (e.g., cloud infrastructure); stratify by issuer/tenant or filter infrastructure clusters before interpreting “anomalies”.
+- Per-entity baselines (train on an organization’s historical artifacts) can turn anomaly scores into early warnings for automation/misconfiguration regressions; this pattern should translate to media provenance pipelines (per device/channel baselines).
+
+**Cross-References:**
+- Related to: arxiv_2305.01378 (transparency systems SoK), arxiv_2303.04500 (verification of transparency protocols, pending)
+
+**Learnings for Future Iterations:**
+- When evaluating monitoring approaches for transparency logs (CT/Sigstore/C2PA anchoring), explicitly account for heavy-tailed issuer/producer distributions; otherwise “anomalies” mostly reflect who produces the most/least typical artifacts.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a gotcha to `AGENTS.md` and `CLAUDE.md` (kept in sync): transparency-log anomaly detection can be dominated by high-volume issuers/infrastructure clusters; stratify or use per-entity baselines.
+
+---
+
+## 2026-01-19 - Paper: SAGA: Source Attribution of Generative AI Videos
+ID: arxiv_2511.12834
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** Proposes SAGA, a framework to attribute AI-generated videos to their source generator (beyond real/fake detection). It supports multi-granular attribution (authenticity, task, backbone/version, development team, and specific generator) and introduces Temporal Attention Signatures to visualize generator-specific temporal artifacts.
+
+**Key Method:** Frozen vision encoder per-frame token embeddings → hierarchical video transformer (spatial attention within frames + temporal attention across frames) with a 2-stage training strategy: pretrain real/fake with cross-entropy, then adapt to attribution using cross-entropy + hard-negative-mining contrastive loss (triplet-style) with only 0.5% source-labeled data per class.
+
+**Implementation Check:**
+- GitHub repos: no (no paper-specific repo found via arXiv/GitHub search; main text only references generator projects like HotShot)
+- Commercial use: no (research work; no productization claimed)
+- Open questions: robustness under heavy re-encoding/segmenting and adversarial generator updates; how to integrate as a probabilistic “soft provenance” fallback alongside cryptographic provenance/attestation
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 4/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 2/5
+- Strategic Clarity: 2/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Strong technical framework for ML-based generator attribution and interpretability, but it does not provide verifiable, loss-tolerant cryptographic streaming integrity; best treated as a complementary forensic signal when provenance metadata is missing/stripped.
+
+**Extracted Insights:**
+- Multi-granular attribution (task/backbone/team/generator) is a useful pattern when fine-grained provenance is uncertain; mirror this in streaming integrity UX by surfacing coarse, high-confidence status when segments/metadata are missing.
+- Temporal Attention Signatures suggest generator-specific temporal fingerprints can be aggregated over clips/segments, enabling interpretable “unknown generator” flagging when cryptographic provenance fails.
+- Two-stage training (abundant coarse labels → contrastive adaptation with hard negatives) is a reusable pattern for building attribution systems when fine-grained labels are scarce.
+
+**Cross-References:**
+- Related to: arxiv_2405.12336 (broadcast provenance segments/commitments), scholar_ca0c30db5c (C2PA in DASH streaming), arxiv_2402.06661 (container structure as a soft provenance signal)
+
+**Learnings for Future Iterations:**
+- Treat ML attribution/detection as probabilistic “soft provenance” and avoid conflating it with cryptographic audit trails; use it to guide triage/attribution when signatures/attestation are unavailable or stripped.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a gotcha to `AGENTS.md` and `CLAUDE.md` (kept in sync): forensic ML attribution is probabilistic “soft provenance” and should not be treated as cryptographic proof.
+
+---
+
+## 2026-01-19 - Paper: TPM-Based Continuous Remote Attestation and Integrity Verification for 5G VNFs on Kubernetes
+ID: arxiv_2510.03219
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** Proposes a TPM 2.0 + Linux IMA + Keylime-based system to continuously attest the runtime integrity of Kubernetes-deployed 5G core VNFs (AMF/SMF/UPF, etc.). Extends attestation from node-level to pod-level, labeling pods Trusted/Untrusted and enabling policy-driven remediation (evict/restart) without invalidating unaffected pods.
+
+**Key Method:** Use a custom IMA template that includes the process cgroup path (`cgpath`) so IMA measurement-log entries can be mapped to Kubernetes pod UIDs. During each attestation cycle the Keylime agent returns a TPM quote (PCR-10) plus the IMA measurement log; the verifier checks quote↔log consistency and validates measurements against node and pod allow lists.
+
+**Implementation Check:**
+- GitHub repos: partial — uses Keylime (https://github.com/keylime/keylime); no paper-specific repo found
+- Commercial use: no (paper describes a prototype; underlying remote-attestation tooling is industry-used)
+- Open questions: how to automate/maintain allow lists at scale (images/SBOMs), and how to keep measurement logs bounded without losing coverage
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 2/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 1/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Strong practical pattern for hardware-rooted, continuous workload integrity in Kubernetes (relevant to provenance/signing and streaming pipeline components), but it is not a media stream authentication/commitment scheme and is easy to replicate with existing TPM/IMA/Keylime primitives.
+
+**Extracted Insights:**
+- Pod-level attestation can be built by augmenting IMA logs with `cgpath` and mapping measurements to pod UIDs for per-workload allow-list validation and localized remediation.
+- Allow-list curation is a real deployment hazard: Kubernetes helper components (e.g., `/pause`, busybox) and operator debug actions (`cat`/`curl`) can trigger false positives unless modeled explicitly; derive allow lists from images/SBOMs and define “approved debug actions”.
+
+**Cross-References:**
+- Related to: scholar_2498b49830 (C2PA-based livestream provenance with TPM security; pending)
+
+**Learnings for Future Iterations:**
+- When evaluating attestation-in-Kubernetes papers, watch for the “allow-list mismatch” problem (helper containers and debugging tools) and for any strategy to keep IMA measurement logs bounded (selective path policies vs full-image coverage).
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a gotcha to `AGENTS.md` and `CLAUDE.md` (kept in sync): Kubernetes workload attestation allow-list drift (helper binaries/containers and debug actions can cause false positives; prefer allow lists from images/SBOMs and model approved debug actions).
+
+---
+
+## 2026-01-19 - Paper: Monitoring Auditable Claims in the Cloud
+ID: arxiv_2312.12057
+Status: PRESENTED
+Combined Score: 26/50 (Execution: 19/30, Blue Ocean: 7/20)
+
+**Summary:** Proposes “Cyberlog”, a distributed Datalog-style monitoring framework where per-service security monitors exchange cryptographically signed attestations and store claims in a tamper-proof log (Trillian) so audits can reconstruct the premises of safety-critical actions. Introduces git-like claim revision control (staging→commit, supersede/include, next-rules) to bound monitor KB growth while preserving a full audit trail. Evaluates on a UAV booking/orchestration cloud use case with measured monitoring latency overhead and small KB sizes.
+
+**Key Method:** Sidecar security monitors intercept service interactions (via Istio/Envoy external authz), derive higher-level workflow/time/data claims from observed events using Cyberlog rulesheets, and commit all rules/claims (plus evidence and inclusion proofs) to an append-only Trillian log for later auditability.
+
+**Implementation Check:**
+- GitHub repos: no GitHub repo found; authors publish code on GitLab: https://git.fortiss.org/sorokin/cyberlog-monitoring
+- Commercial use: no (research prototype); adjacent components are widely deployed (Trillian/Certificate Transparency; Sigstore/Rekor)
+- Open questions: how to adapt this model to high-rate, lossy media streams (likely needs segment-level commitments vs per-packet events); how to bridge the “truth gap” at the event-capture boundary (monitor sees what the proxy sees, not physical ground truth)
+
+**Execution Score Breakdown (19/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 3/5
+- Value/Market: 4/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (7/20):**
+- Market Creation: 2/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 1/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Purple Ocean
+
+**Decision Rationale:** Strong, implementable pattern for making *decision premises* auditable via signed claims + transparency-log storage, but it targets cloud workflow events (not low-latency media stream commitments) and is straightforward for others to reproduce using existing building blocks.
+
+**Extracted Insights:**
+- Auditable decision-making benefits from logging derivation evidence (rule instance + inputs / inclusion proofs), not just final claims, so auditors can reconstruct “why”.
+- Git-like revision control for claims is a practical way to bound local verification state while preserving a complete append-only audit trail; this maps naturally to rolling-window verification in streaming if applied at segment granularity.
+- Non-intrusive sidecar/proxy interception (Envoy external authz) is a reusable insertion point for auditable monitoring without rewriting application code.
+
+**Cross-References:**
+- Related to: arxiv_2305.01378 (SoK: log-based transparency), arxiv_2405.12336 (broadcast media provenance + commitments), scholar_ca0c30db5c (C2PA + DASH streaming), arxiv_2405.05206 (CT log monitoring)
+
+**Learnings for Future Iterations:**
+- For “auditable monitoring” systems, explicitly check (1) evidence-chain completeness, (2) state compaction/revision mechanisms, and (3) measured latency/throughput overhead at the insertion point (proxy/sidecar).
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a gotcha to `AGENTS.md` and `CLAUDE.md` (kept in sync): self-hosted implementation repos (university/lab GitLab or `git.*` domains) can hide implementations from GitHub API searches; always extract and follow PDF URLs.
+
+---
+
+## 2026-01-19 - Paper: Information-theoretically secure quantum timestamping with one-time universal hashing
+ID: arxiv_2505.13884
+Status: REJECTED
+Combined Score: 22/50 (Execution: 16/30, Blue Ocean: 6/20)
+
+**Summary:** Proposes an information-theoretically secure timestamping protocol that uses quantum key generation (QKG) to share correlated keys, then authenticates a document digest and a timestamp record using one-time universal2 hashing plus one-time pad encryption. Reports analytical bounds for denial/tampering probabilities and simulates timestamp throughput >100 timestamps/s at ~100–300 km fiber distances (availability >600 km with a twin-field QKG variant), using weak coherent states.
+
+**Key Method:** Four-party workflow (subscriber, verifier, certificate authority, timestamp authority): hash the document with an LFSR-based Toeplitz universal2 hash parameterized by an irreducible polynomial, encrypt digest+parameters with a one-time pad, and have verifier+CA independently validate; TSA constructs TS(doc)=[digest,time,Req-ID,Auth-ID,Ver-ID], hashes TS(doc) with another one-time universal2 hash, and similarly encrypts/verifies with subscriber+verifier.
+
+**Implementation Check:**
+- GitHub repos: no (no repo linked in the paper; GitHub API searches by arXiv id/title returned no hits)
+- Commercial use: no evidence (one author is affiliated with MatricTime Digital Technology Co. Ltd., but no product/repo was found)
+- Open questions: applicability to lossy continuous streaming (needs segment commitments + anchoring vs single-document digest); how to avoid restrictive non-collusion assumptions between multiple verifiers/authorities; practical deployment prerequisites for QKG/QKD infrastructure
+
+**Execution Score Breakdown (16/30):**
+- Novelty: 4/5
+- Feasibility: 2/5
+- Time-to-POC: 2/5
+- Value/Market: 3/5
+- Defensibility: 3/5
+- Adoption: 2/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 2/5
+- Network/Data Effects: 1/5
+- Strategic Clarity: 2/5
+
+**Market Classification:** Purple Ocean
+
+**Decision Rationale:** Technically interesting, but it relies on quantum-key infrastructure and a restrictive collusion model; it does not directly provide practical, loss-tolerant media stream integrity/anchoring mechanisms suitable for near-term deployment.
+
+**Extracted Insights:**
+- Universal2 hashing + one-time pad can authenticate arbitrarily long content with fixed-size authentication material; forgery risk grows with payload length (≈ L·2^(1−n)), motivating segmentation/periodic re-keying for long streams.
+- Three-party certification protocols that rely on correlated secrets assume non-collusion (the paper allows at most one dishonest party per verification step); auditable media systems should prefer public verifiability (signatures + transparency logs) to reduce reliance on platform-actor trust assumptions.
+
+**Cross-References:**
+- Related to: arxiv_2405.12336 (C2PA streaming/broadcast commitments), arxiv_2503.00271 (Sigstore tooling for transparency), arxiv_2303.04500 (transparency protocol verification)
+
+**Learnings for Future Iterations:**
+- “Timestamping” keyword hits can include quantum-only constructions; treat quantum-network requirements as a major adoption constraint for auditable streaming, but still extract reusable primitives (universal hashing bounds, explicit collusion assumptions).
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a gotcha to `AGENTS.md` and `CLAUDE.md` (kept in sync): "timestamping" queries can surface QKD/QKG-dependent schemes; treat quantum-network prerequisites as a major adoption constraint and extract reusable primitives (universal hashing bounds, collusion assumptions).
+
+---
+
+## 2026-01-19 - Paper: Proof of Cloud: Data Center Execution Assurance for Confidential VMs
+ID: arxiv_2510.12469
+Status: PRESENTED
+Combined Score: 34/50 (Execution: 20/30, Blue Ocean: 14/20)
+
+**Summary:** Proposes Data Center Execution Assurance (DCEA) to close a gap in commercial TEE threat models: remote attestation can certify CPU/software state but not whether the workload is running on physically trusted cloud hardware in a secure facility. It binds TEE evidence to TPM/vTPM-backed platform identity and measured launch state, aiming to detect replay/proxy (“Frankenstein”) attacks that could move a “validly attested” CVM onto untrusted hardware.
+
+**Key Method:** Composite attestation: seal the vTPM Attestation Key (AK) to measured launch PCRs (e.g., Intel TXT PCR 17–18), embed hash(AKpub) into the in-guest TDX measurements (RTMR), and have the verifier request nonce-fresh TDX + (v)TPM quotes and cross-check RTMR↔PCR consistency; optionally register AKpub in a CT-style append-only registry to detect duplicated/cloned identities.
+
+**Implementation Check:**
+- GitHub repos: yes
+  - https://github.com/proofofcloud/trust-server (quote processing + JWT issuance)
+  - https://github.com/proofofcloud/verifiers (attestation verification backend for proofofcloud.org)
+- Commercial use: yes (Proof of Cloud Alliance / registry site: https://proofofcloud.org/)
+- Open questions: how to bind *stream* signing keys/segment commitments to these platform-origin proofs (per-session vs per-segment); cross-provider standardization of PCR/RTMR interpretation; privacy model for exposing data-center identity while remaining auditable
+
+**Execution Score Breakdown (20/30):**
+- Novelty: 4/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 4/5
+- Defensibility: 3/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (14/20):**
+- Market Creation: 3/5
+- First-Mover Window: 3/5
+- Network/Data Effects: 4/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Blue Ocean
+
+**Decision Rationale:** Strong building block for auditable provenance claims about *where* sensitive workloads run (including future stream signing/encoding), with an emerging ecosystem signal (registry + open-source verifiers), even though it doesn’t directly solve loss-tolerant media stream authentication.
+
+**Extracted Insights:**
+- CT-style registries for AK public keys/hardware IDs can make platform-origin claims auditable and detect duplicated/cloned identities; the same pattern can anchor media stream signing keys.
+- Prevent “mix-and-match/Frankenstein” proxying by binding TPM/vTPM keys into in-guest TEE measurements (hash(AKpub) in RTMR) and verifying RTMR↔PCR consistency under nonce challenges.
+- For adversary-controlled channels, concurrent challenges + timing bounds complement nonce freshness to make long relay paths observable.
+
+**Cross-References:**
+- Related to: arxiv_2303.16463 (SEV-SNP CVM attestation), arxiv_2304.00382 (scalable attestation), arxiv_2510.03219 (continuous TPM/K8s attestation), arxiv_2305.01378 (SoK: transparency), arxiv_2405.05206 (CT anomaly detection)
+
+**Learnings for Future Iterations:**
+- For confidential-computing/attestation papers, implementations may live under a separate project/brand (e.g., “Proof of Cloud”) rather than the paper title/arXiv ID; always follow PDF hyperlinks and search for the project name.
+
+---
+
+## 2026-01-19 - Paper: Enabling Live Video Provenance and Authenticity: A C2PA-Based System with TPM-Based Security for Livestreaming Platforms
+ID: scholar_2498b49830
+Status: PRESENTED
+Combined Score: 31/50 (Execution: 20/30, Blue Ocean: 11/20)
+
+**Summary:** Implements a live-video provenance pipeline by embedding C2PA manifests into HLS video fragments and validating each fragment client-side in real time. Uses a hardware TPM as the signer to strengthen key protection/attestation properties while keeping latency practical for live playback.
+
+**Key Method:** Raspberry Pi 5 + Camera V3 → FFmpeg generates HLS MPEG-2 TS segments + M3U playlist; each segment is post-processed with the C2PA SDK to embed a manifest and is signed via an Infineon OPTIGA TPM SLB9672 (persistent key). A web client plays via `hls.js` and uses the fragment-loading hook to verify C2PA per segment and update a Content Credentials-style UI (tick/cross + popup).
+
+**Implementation Check:**
+- GitHub repos: no (no paper-specific repo released; only references to `hls.js` and TPM tooling)
+- Commercial use: no (prototype + integration discussion for Twitch/YouTube Live; relies on broader C2PA ecosystem adoption)
+- Open questions: segment-independence (no stream-level continuity across segments); where/how to add timestamping/countersignatures in practice; how to survive platform-side transcoding/remuxing; trust-list governance at Internet scale
+
+**Execution Score Breakdown (20/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 4/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (11/20):**
+- Market Creation: 3/5
+- First-Mover Window: 2/5
+- Network/Data Effects: 2/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Purple Ocean
+
+**Decision Rationale:** High-value, practical bridge for “C2PA for live streams” with concrete latency/overhead measurements and a credible hardware signing story (TPM + persistent keys), but the approach is easy to replicate and doesn’t yet solve stream-level continuity or distribution-path transformations.
+
+**Extracted Insights:**
+- TPM signing latency is dominated by the software stack: OpenSSL+TPM can be ~500ms, while lower-level libraries with persistent keys can hit ~40ms—important if signing every live segment.
+- For per-segment embedding, the hashing/binding step scales with segment size; keep segment files bounded (duration/bitrate) to control signing jitter and avoid unpredictable delays.
+- With ~1KB manifests, storage overhead can stay under ~1% even for very short segments; codec choice matters because higher compression shrinks video bytes and increases manifest percentage.
+
+**Cross-References:**
+- Related to: arxiv_2405.12336 (C2PA streaming commitments + durability pointers for broadcast media)
+
+**Learnings for Future Iterations:**
+- TechRxiv/ResearchGate pages can be Cloudflare-blocked; DuckDuckGo HTML results can surface direct Cloudfront `preprint_pdf/*.pdf` mirrors for full-text access.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a TechRxiv/ResearchGate workaround to `AGENTS.md` and `CLAUDE.md` (kept in sync): when HTML/PDF is blocked by Cloudflare, use DuckDuckGo HTML (via `r.jina.ai`) to find direct Cloudfront `preprint_pdf/*.pdf` mirrors.
+
+---
+
+## 2026-01-19 - Paper: Transparent Attested DNS for Confidential Computing Services
+ID: arxiv_2503.14611
+Status: PRESENTED
+Combined Score: 31/50 (Execution: 19/30, Blue Ocean: 12/20)
+
+**Summary:** Proposes attested DNS (aDNS): a DNS service that binds confidential services’ domain names to TEE-backed implementations by requiring TEEs to register hardware attestation reports before DNS records and certificates are issued. Uses DNSSEC/DANE/ACME plus a public append-only log so policies, attestations, and key bindings are transparent/auditable, enabling even legacy clients to benefit.
+
+**Key Method:** Add an ATTEST DNS RR that carries a TEE attestation report Q[platform, code, config; keys, time]. TEEs register over mutually-authenticated TLS using a DANE key; aDNS verifies the report against per-name policy and installs A/AAAA + TLSA + ATTEST. aDNS-aware clients fetch ATTEST (+ optional _policy TXT) alongside normal DNS lookups and verify attestation in parallel with the TLS handshake (no 0‑RTT until verified). aDNS also attests zone delegation and mediates ACME issuance (CAA + DNS-01), logging everything for audit.
+
+**Implementation Check:**
+- GitHub repos: yes
+  - https://github.com/microsoft/ccfdns (aDNS server on CCF)
+  - https://github.com/microsoft/ravl (attestation verification library)
+- Commercial use: no (research prototype + open-source reference implementation)
+- Open questions: adoption path for non-standard/large DNS payloads (ATTEST), DNSSEC deployment realities, and how to bind this trust layer to *stream-level* commitments/signatures for media integrity (rather than “service runs in TEE” only)
+
+**Execution Score Breakdown (19/30):**
+- Novelty: 4/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 4/5
+- Defensibility: 3/5
+- Adoption: 2/5
+
+**Blue Ocean Score Breakdown (12/20):**
+- Market Creation: 3/5
+- First-Mover Window: 3/5
+- Network/Data Effects: 2/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Blue Ocean
+
+**Decision Rationale:** High-leverage infrastructure idea: makes policies/attestations/keys discoverable and auditable at the DNS layer with near-zero connection-time cost, and can be repurposed to publish/audit stream-signing keys for media pipelines, even though it doesn’t solve loss-tolerant stream authentication by itself.
+
+**Extracted Insights:**
+- DNS can be a low-latency distribution plane for attested keys/policies when verification is overlapped with the TLS handshake; keep 0‑RTT gated on attestation verification.
+- For large/non-standard DNS artifacts, compression + fragmentation into standard RRsets (e.g., AAAA) is a practical compatibility path and can still cache well if designed for it.
+- CT-style transparency can generalize beyond certificates: log attestations + policies + bindings in an append-only Merkle ledger to deter targeted attacks and enable after-the-fact audits.
+
+**Cross-References:**
+- Related to: arxiv_2510.12469 (platform-origin attestation + registries), arxiv_2305.01378 (SoK: transparency), arxiv_2405.05206 (CT anomaly detection)
+
+**Learnings for Future Iterations:**
+- Some “paper implementations” ship under project names (here: `ccfdns`, `ravl`) rather than the paper title; GitHub API searches with “ccf dns attested”/“ravl attestation” can find them quickly.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a DNS deployment gotcha to `AGENTS.md` and `CLAUDE.md` (kept in sync): large/non-standard RR payloads (e.g., attestations) may not cache/propagate well; compression + fragmentation into standard RRsets (e.g., AAAA) and parallel prefetch (often via DoH + AD flag) can preserve low-latency verification.
+
+---
+
+## 2026-01-19 - Paper: Time Synchronization of TESLA-enabled GNSS Receivers
+ID: arxiv_2407.13386
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 19/30, Blue Ocean: 5/20)
+
+**Summary:** Provides time-synchronization checks and protocols for broadcast-only, TESLA-enabled GNSS so receivers can reject replay/delay attacks that would otherwise enable forgeries once disclosure keys are broadcast. The core idea is to rely on a GNSS-independent clock (two-way synchronized externally) plus explicit receipt-safety checks, with proofs against a delay-capable adversary.
+
+**Key Method:** Derives sufficient receipt-safety conditions (clock lag bounded by Θ/2 and per-tuple check `max(τ_m, τ_h) < t_k − Θ/2`) and couples them to a delay-safe time-sync procedure based on NTS with modifications (omit/leak less about client transmit time `τ1`, bound clock corrections `δθ` to stay within ±Θ/2, and schedule next sync using a drift bound `B(Δt)`). Analyzes multi-cadence TESLA (fast/slow Θ) and shows slow-cadence authentication cannot bootstrap fast-cadence security.
+
+**Implementation Check:**
+- GitHub repos: no (paper provides algorithms/proofs + simulations; no reference implementation found)
+- Commercial use: no (academic/standards-oriented GNSS receiver guidance)
+- Open questions: how to map these receipt-safety/time-sync constraints onto lossy Internet media streams (jitter/reordering bounds), and how to design a verifier UX that reflects “provisional” vs “final” authentication under delayed disclosure
+
+**Execution Score Breakdown (19/30):**
+- Novelty: 4/5
+- Feasibility: 4/5
+- Time-to-POC: 3/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (5/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Valuable, reusable design constraints for TESLA-style delayed-disclosure authentication (especially receipt-safety + multi-cadence pitfalls), but GNSS-specific and not a standout product wedge for auditable media streaming by itself.
+
+**Extracted Insights:**
+- Multi-cadence TESLA isn’t compositional: being safe/authenticating for a slow Θ does not imply safety for a fast Θ; slow receivers must withhold an “authenticated” flag until the slow cadence validates (or meet the tighter Θ bound), otherwise fast-cadence forgeries can slip through.
+- Treat time sync as an attack surface: crypto-authenticated NTP/NTS can still be delay-attacked; limit leakage (e.g., omit `τ1`), bound clock corrections, randomize sync scheduling, and fail closed when RTT/DoS violates Θ-derived safety checks.
+- Receipt-safety checks should use the latest receipt time across message+commitment (`max(τ_m, τ_h)`), not just one artifact, to remain correct under packet reordering and multi-message-to-key bindings.
+
+**Cross-References:**
+- Related to: arxiv_2510.11343 (TESLA-authenticated broadcast remote ID)
+
+**Learnings for Future Iterations:**
+- When evaluating delayed-disclosure schemes, explicitly check (1) the verifier’s independent clock health model/drift bound, and (2) whether multi-cadence designs accidentally claim “fast authentication” for clients that only satisfy the slow cadence.
+
+---
+
+## 2026-01-19 - Paper: Why Johnny Signs with Next-Generation Tools: A Usability Case Study of Sigstore
+ID: arxiv_2503.00271
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** Empirical usability study of Sigstore (next-generation, identity-based software signing) based on interviews with 17 security practitioners across 13 organizations. Finds that keyless OIDC + short-lived certs reduce classic key-management pain, but adoption is still constrained by transparency-log privacy concerns, enterprise scaling limits, and integration/documentation gaps.
+
+**Key Method:** Semi-structured practitioner interviews (Nov 2023–Feb 2024) analyzed via thematic analysis, then mapped onto a formative usability framework (Technology/People/Organization/Macroenvironment) and a push–pull–barrier model for tool switching.
+
+**Implementation Check:**
+- GitHub repos: yes
+  - https://github.com/sigstore/cosign
+  - https://github.com/sigstore/fulcio
+  - https://github.com/sigstore/rekor
+  - https://github.com/sigstore/scaffolding
+  - https://github.com/sigstore/helm-charts
+  - https://github.com/sigstore/sigstore-probers
+- Commercial use: yes — paper cites adoption in ecosystems (PyPI, Maven, NPM) and companies (Autodesk, Verizon, Yahoo); OpenSSF runs a public-good Sigstore instance supported by multiple member companies (e.g., Chainguard, GitHub, Google, Red Hat, Stacklok)
+- Open questions: how to run transparency-log-backed audit trails at very high event rates (stream segments/frames) without leaking sensitive metadata; how to make witness/monitoring a “default” part of deployments so transparency properties actually hold
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 3/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 2/5
+- Strategic Clarity: 2/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Not a media-stream integrity protocol, but it provides high-signal operational/adoption insights for transparency-log-based auditability (privacy trade-offs, enterprise constraints, and the risk that missing witnesses/monitors undermines the transparency guarantee).
+
+**Extracted Insights:**
+- Transparency logs are simultaneously a key adoption driver and a major barrier (privacy/metadata exposure + air-gapped constraints); design for privacy-preserving transparency or private deployments with explicit disclosure/redaction policy.
+- Transparency systems can fail socially: practitioners may adopt a log but not deploy/verify witnesses and monitors; ship default monitors/probers and make witness state visible in the verifier UX.
+- Timestamping matters with short-lived certificates: verifiers need evidence that signatures were created within cert validity windows to support after-the-fact audits.
+
+**Cross-References:**
+- Related to: arxiv_2305.01378, arxiv_2405.05206
+
+**Learnings for Future Iterations:**
+- Treat “transparency log” as an operational product: without witnessing/monitoring + clear privacy controls, teams can get a false sense of auditability.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a transparency-log operational gotcha to `AGENTS.md` and `CLAUDE.md` (kept in sync): log-based designs need deployed witnesses/monitors (and verifiers should surface witness state) or users can get a false sense of auditability.
+
+---
+
+## 2026-01-19 - Paper: CCxTrust: Confidential Computing Platform Based on TEE and TPM Collaborative Trust
+ID: arxiv_2412.03842
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** CCxTrust proposes a confidential computing platform that combines a CPU TEE (“black-box” root of trust) with a TPM (“white-box” user-accessible root of trust) to reduce reliance on vendor CAs and close trust gaps in multi-cloud environments. It introduces a Confidential TPM (CTPM) design and a composite attestation protocol that emits a single bound attestation token from both TEE and TPM evidence, targeting stronger security and lower overhead than independent attestations.
+
+**Key Method:** Collaborative roots of trust: independent RTMs for TEE and TPM plus a collaborative RTR for composite attestation, with TPM providing RTS/key storage. CTPM supports hardware TPM passthrough and vTPM modes inside CVMs, uses SPDM for device authentication, then establishes trusted channels (key negotiation; kernel TLS for encrypted bus traffic) and virtIO/shared-memory interfaces to reduce VMExit/bounce-buffer overhead. Composite attestation binds the TEE report into TPM attestation to return a unified token (analyzed under a PCL-style security model).
+
+**Implementation Check:**
+- GitHub repos: partial — formal model found
+  - https://github.com/tca-tcwg/CCxTrust_Proverif
+  - Paper notes prototype is based on https://github.com/microsoft/ms-tpm-20-ref (no full CCxTrust release found)
+- Commercial use: no (not found)
+- Open questions: how to bind capture-device identity (camera/sensor) into a multi-root composite token without introducing mix-and-match risks; side-channel and I/O adversary coverage means “attested” ≠ “safe” for media provenance unless capture path is also constrained
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 3/5
+- Defensibility: 3/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 2/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Strong, reusable systems pattern for user-controlled trust roots and composite attestation (with useful scaling/performance numbers), but it’s not a media-stream authentication/commitment protocol and doesn’t create a blue-ocean product wedge on its own.
+
+**Extracted Insights:**
+- Avoid attestation report concatenation attacks: if you need evidence from multiple roots (TEE+TPM+sensors), require a single cryptographically bound token instead of independent reports that can be mixed-and-matched.
+- Composite attestation can improve both security and efficiency: one agent call + kernel-level binding vs two independent interactions; paper reports ~24% faster attestation time than separate TEE+TPM attestations.
+- Scaling envelope for fleet attestation: >10k concurrent node attestations with ≤1.2s per request, ≤100µs token issuance, and <0.3ms average verification suggests feasibility for periodic proof issuance in large deployments.
+
+**Cross-References:**
+- Related to: arxiv_2303.16463, arxiv_2304.00382, arxiv_2306.17171 (remote attestation / confidential VM trust)
+
+**Learnings for Future Iterations:**
+- When a system claims “TEE+TPM attestation”, check whether it is a *bound* composite token (safe) or merely two independent reports (vulnerable to mix-and-match / report concatenation attacks).
+
+---
+
+## 2026-01-19 - Docs Update
+- Added an attestation composition gotcha to `AGENTS.md` and `CLAUDE.md` (kept in sync): avoid report concatenation/mix-and-match by cryptographically binding multi-root evidence into a single composite token.
+
+---
+
+## 2026-01-19 - Paper: CABBA: Compatible Authenticated Bandwidth-efficient Broadcast protocol for ADS-B
+ID: arxiv_2312.09870
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** Proposes CABBA, a backward-compatible ADS-B authentication upgrade that combines TESLA delayed key disclosure with phase-overlay modulation so legacy receivers still decode the original in-phase ADS-B message. Adds MACs/keys/certificates in an orthogonal (quadrature) channel to provide integrity, data origin authentication, and entity authentication under strict 1090ES bandwidth constraints.
+
+**Key Method:** New packet structure + receiver state machine: Type A carries ADS-B payload in-phase (PPM) and MAC+sequence in quadrature (D8PSK); Type B1 discloses TESLA interval keys; Type B2 periodically signs interval keys; Type C periodically broadcasts a CA-signed aircraft public key. Enables integrity checks before full authentication, plus “same-origin discrimination” by keychain linkage.
+
+**Implementation Check:**
+- GitHub repos: no official CABBA repo found; related tooling referenced in paper: https://github.com/lyusupov/ADSB-Out
+- Commercial use: no (research prototype; phase-overlay capability is in RTCA MOPS but deployment status isn’t evidenced)
+- Open questions: real-world performance of quadrature decoding under multipath/interference + high congestion; certificate distribution/trust-list operations; parameter tuning (B2/C periods) vs authentication latency; paper text appears to contain a likely typo calling Scenario 4 “most bandwidth-consuming” while also describing it as most bandwidth-efficient
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 3/5
+- Time-to-POC: 3/5
+- Value/Market: 4/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 4/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Strong, well-evaluated authenticated-broadcast design under extreme bandwidth/backward-compatibility constraints; transferable TESLA patterns for lossy stream verification, but aviation/PHY-layer specificity limits direct applicability to auditable media streaming products.
+
+**Extracted Insights:**
+- “Sideband auth” can preserve legacy decoding: keep the primary payload untouched and carry verifiability metadata (MACs/keys/certs) on an orthogonal channel/sidecar.
+- Same-origin discrimination via TESLA keychain linkage is a useful intermediate security property for spoofing detection before identity/certificate verification completes.
+- Model and surface uncertainty delay for delayed-disclosure schemes under packet loss (CABBA derives Δu ≈ T/2·(1+2p+4p²) under up to two missed disclosure periods), and design UX/protocol states as provisional → final authenticity.
+
+**Cross-References:**
+- Related to: arxiv_2510.11343, arxiv_2511.11028, arxiv_2407.13386, arxiv_2405.12336
+
+**Learnings for Future Iterations:**
+- When evaluating TESLA-like protocols for streaming, explicitly separate (a) integrity, (b) same-origin discrimination/clustering, and (c) full origin/identity authentication; each has different latency and loss sensitivity.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added TESLA same-origin discrimination + uncertainty-delay budgeting gotchas to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-19 - Paper: Better Prefix Authentication
+ID: arxiv_2308.15058
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 19/30, Blue Ocean: 5/20)
+
+**Summary:** Proposes new prefix authentication and secure relative timestamping schemes based on hash-labeled linking graphs. By using a deterministic “skip list with a twist” (binary SLLS2) and a ternary variant (SLLS3), it provides shorter/cheaper prefix proofs than common Merkle-tree-based transparency logs and improves the per-entry structural overhead.
+
+**Key Method:** Model an event stream as a Merkle-DAG where each event has a commitment/digest vertex that reaches all prior events. A prefix certificate between two events is the out-neighborhood of a shortest path between their commitment vertices; this suffices to recompute the newer commitment hash and prove ordering/prefix. The paper derives SLLS2/SLLS3 from deterministic skip lists and defines certificate pools (spine/vertebra) that guarantee transitive replication/verification.
+
+**Implementation Check:**
+- GitHub repos: partial — specs/format artifacts exist
+  - Reed specification (implements this scheme): https://worm-blossom.github.io/reed/ (repo: https://github.com/worm-blossom/reed)
+  - Prior related spec (earlier scheme): https://github.com/AljoschaMeyer/bamboo
+- Commercial use: no (not found)
+- Open questions: how to integrate with end-to-end transparency deployments (witness/monitor ops + privacy controls), and how to map the event model cleanly onto lossy media transport/segmenting without turning certificates into a control-plane bottleneck
+
+**Execution Score Breakdown (19/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (5/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Strong, practical building block for log-based auditability (and directly positioned as an alternative to certificate transparency logs), but not an end-to-end auditable media streaming integrity system on its own.
+
+**Extracted Insights:**
+- Prefix authentication as a Merkle-DAG linking scheme (skip-list-style jump edges) is a candidate replacement for Merkle-tree-per-segment transparency logs when you need O(1) per-chunk append cost and compact random-access proofs.
+- Bounded-length “rounds” + a cross-round link provide a clean way to combine relative timestamping with streaming commitments while keeping certificate sizes logarithmic in the round bound.
+- When comparing binary vs ternary proof sizes, account for ceil(log) discontinuities: base-3 is asymptotically smaller but can be temporarily worse near powers of 3; pick the base with a concrete table for your expected maximum stream length.
+
+**Cross-References:**
+- Related to: arxiv_2305.01378 (transparency tech SoK), arxiv_2405.05206 (CT log anomalies), arxiv_2303.04500 (verification of transparency protocols — pending)
+
+**Learnings for Future Iterations:**
+- For “proof size” claims that involve ceil(log), sanity-check with a small boundary test (powers of 2/3); step-function jumps can matter more than asymptotics in real deployments.
+
+---
+
+## 2026-01-19 - Paper: Automatic verification of transparency protocols (extended version)
+ID: arxiv_2303.04500
+Status: INSIGHTS_EXTRACTED
+Combined Score: 23/50 (Execution: 18/30, Blue Ocean: 5/20)
+
+**Summary:** Extends ProVerif to support lemmas/axioms that mention user-defined predicates, enabling automated verification of transparency protocols that rely on Merkle-tree proofs (presence/extension). Proposes a compositional method: prove a concrete log data structure (hash list or Merkle tree) satisfies an abstract “log interface” (P1–P7), then verify protocol-level transparency properties assuming that interface as axioms.
+
+**Key Method:** Introduce blocking counterparts of predicates so ProVerif’s saturation procedure can use inductive lemmas/axioms involving Merkle-proof predicates without non-termination; apply this to model transparent decryption and certificate transparency with a precise Merkle tree model.
+
+**Implementation Check:**
+- GitHub repos: no dedicated repo found; models/scripts referenced via Dropbox: https://www.dropbox.com/sh/gbn5dy0amz1106f/AACbcILzg8o1Bhf5D3nMFa2Wa?dl=0
+- Commercial use: no
+- Open questions: how to carry these symbolic proofs into computational guarantees; how to adapt the “log interface” to lossy media transports (segmenting, random-access clip verification) without making proofs/control-plane a bottleneck
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 3/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (5/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Strong verification methodology for transparency logs (directly reusable for auditable streaming commitments), but it’s a tooling/verification contribution rather than a streaming integrity protocol/system.
+
+**Extracted Insights:**
+- Treat the append-only log/commitment layer as an explicit interface (presence, extension, transitivity, compatibility, digest uniqueness) and prove concrete Merkle predicates satisfy it; then reuse the interface axioms across multiple protocols.
+- Avoid “log as trusted list/DB” shortcuts in proofs; model the proof-of-presence/proof-of-extension predicates explicitly to prevent overclaiming security.
+- Blocking-predicate patterns can keep automated ProVerif proofs terminating when Merkle-proof predicates would otherwise cause resolution loops.
+
+**Cross-References:**
+- Related to: arxiv_2305.01378 (transparency tech SoK), arxiv_2308.15058 (prefix authentication / log structures), arxiv_2405.12336 (C2PA streaming Merkle commitments)
+
+**Learnings for Future Iterations:**
+- When evaluating “transparency log” systems for streaming, ask whether the proof actually models Merkle presence/extension (or silently assumes a perfect log); this is often the difference between a credible audit trail and handwaving.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added transparency-log verification shortcut (avoid modeling logs as trusted lists; use explicit log interface + prove Merkle predicates) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-19 - Paper: Enforcing Data Geolocation Policies in Public Clouds using Trusted Computing
+ID: arxiv_2306.17171
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** Proposes a hardware-based enforcement mechanism for cloud data residency: users upload encrypted data and a third-party attestation server only releases the decryption key to storage hosts whose TPM quote proves both a known-good platform state and an authorized geolocation. Implemented as an OpenStack Swift prototype using Barbican as a key manager and a GNSS-derived location measurement hashed into a TPM PCR.
+
+**Key Method:** Extend a hashed, reverse-geocoded GNSS location into TPM PCR{15} (periodically), then use a TPM quote over PCR{0–7} (platform state) + PCR{15} (geolocation) to gate key release from a Third-Party Attestation Server (TPAS). The symmetric key K is encrypted to the host’s TPM-generated seal key so K only unseals when PCR policies match; Swift proxy policies restrict storage host selection to user-authorized regions (with encrypted replicas optionally stored elsewhere).
+
+**Implementation Check:**
+- GitHub repos: no dedicated repo found
+- Commercial use: no
+- Open questions: GNSS spoofing/jamming and secure sensor-to-TPM binding; how to adapt the “location-gated key release” pattern to low-latency, lossy media segment signing/verification without a hard dependency on an online TPAS
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 2/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 2/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Solid prototype of “attested-location-gated key release” (useful for provenance/location claims), but it targets cloud data residency enforcement rather than an end-to-end auditable media streaming integrity system.
+
+**Extracted Insights:**
+- Geolocation-as-attested-claim: hash a reverse-geocoded GNSS region into PCR{15} and gate decrypt/sign key unseal on PCR{0–7}+PCR{15}.
+- Operational gotcha: GNSS can be slow/unreliable indoors (they report ~30s cold-start); for live systems budget for cold-start delays and prefer external roof/antenna GNSS feeds with a secure device-binding path.
+- Key-release overhead is amortizable: TPM unseal (~0.743s) is one-time per boot/session; reported throughput overhead for 1MB–1GB PUTs was ~0.50% when using Barbican with TPM key protection.
+
+**Cross-References:**
+- Related to: arxiv_2510.09656 (Signing Right Away), arxiv_2303.16463 (SEV-SNP e-vTPMs attestation — pending), arxiv_2407.13386 (TESLA-enabled GNSS receivers)
+
+**Learnings for Future Iterations:**
+- For “location attestation” papers, treat GNSS spoofing + reception + cold-start as first-class adoption constraints; look for a secure sensor→OS→TPM path (device binding + measured daemon) and explicit time-of-check/time-of-use handling.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added GNSS-based geolocation attestation gotcha (cold-start/indoor reception, spoofing/jamming scope, secure GNSS→host→TPM binding, TOCTOU) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-19 - Paper: Reducing Trust in Automated Certificate Authorities via Proofs-of-Authentication
+ID: arxiv_2307.08201
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 18/30, Blue Ocean: 6/20)
+
+**Summary:** Proposes “proofs-of-authentication” for OIDC-based automated certificate authorities: embed a non-replayable cryptographic proof inside each issued certificate that the CA actually saw a valid OIDC authentication token for the subject. This reduces the trust required in the CA (it can’t mint certificates for arbitrary identities without a real authentication event) while keeping identity providers unchanged.
+
+**Key Method:** Instead of embedding a bearer JWT (replay risk), embed the JWT header+body plus a proof-of-knowledge-of-signature over the JWT (instantiated via Guillou–Quisquater proofs for RSA-signed OIDC tokens) in X.509 extensions. Use the certificate’s CT Signed Certificate Timestamp (SCT) to select the correct IdP verification key from a proposed transparency-log-backed “JWK ledger” (with witness signatures) so verifiers can validate the proof long after IdP key rotation.
+
+**Implementation Check:**
+- GitHub repos: partial — prototype PRs for Sigstore components: https://github.com/znewman01/fulcio/pull/2, https://github.com/znewman01/cosign/pull/118
+- Commercial use: unclear (Sigstore is widely used, but this proof-of-authentication variant is not known to be deployed)
+- Open questions: privacy/compliance impact of leaking JWT body claims into certificates; how to operate the JWK ledger + witness quorum at scale; how to support non-RSA IdP signing algorithms; replay window under CA compromise within JWT expiry
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 3/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (6/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 1/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Useful transferable primitives for keyless identity-bound signing and long-lived verification under key rotation, but not a media-stream integrity protocol by itself and it adds nontrivial privacy + infrastructure overhead (ledger/witnessing) for deployability.
+
+**Extracted Insights:**
+- If provenance relies on OIDC/JWT-authenticated issuance, plan for IdP key rotation: verifiers need a verifiable key-history service (e.g., a transparency-log-backed “JWK ledger” with witnesses) keyed by time.
+- Avoid embedding raw bearer tokens in artifacts (replay risk); embed minimal claims plus a non-replayable proof-of-authentication (proof-of-knowledge-of-signature) so third parties can verify “issuance followed real auth” without exposing a reusable token.
+
+**Cross-References:**
+- Related to: arxiv_2503.00271 (Sigstore usability + transparency-log operational gaps), arxiv_2305.01378 (SoK: log-based transparency), arxiv_2303.04500 (verification of transparency protocols)
+
+**Learnings for Future Iterations:**
+- When a provenance/authenticity scheme relies on OIDC, explicitly model: (1) how verifiers get historical IdP verification keys after rotation (ledger+witnesses), and (2) replay risks if any bearer token bytes are exposed in long-lived artifacts.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added an OIDC/JWK key-rotation + bearer-token replay gotcha (use verifiable JWK ledger + witnesses; avoid embedding raw bearer tokens) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-19 - Paper: Speranza: Usable, privacy-friendly software signing
+ID: arxiv_2305.06463
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 19/30, Blue Ocean: 5/20)
+
+**Summary:** Proposes a privacy-friendly package signing scheme that keeps Sigstore-like usability (OIDC + automated CA) while hiding maintainer identities from the public. It stores signer authorization as commitments and uses a zero-knowledge proof to show the signing certificate’s (opaque) subject matches the package’s (opaque) authorization record entry, with key-transparency-style authenticated dictionary proofs for scalable lookups.
+
+**Key Method:** “Identity co-commitments” via Pedersen commitments + Chaum–Pedersen equality proofs: the repository publishes a commitment to the authorized identity, the CA issues certificates to fresh commitments to the same identity, and the signer publishes a ZK equality proof linking them. Authorization records are served via a Merkle binary prefix tree (CONIKS-like) plus monitor/witness auditing to prevent equivocation and detect unauthorized policy changes.
+
+**Implementation Check:**
+- GitHub repos: yes — https://github.com/znewman01/speranza ; Sigstore CA patch: https://github.com/znewman01/fulcio/pull/1
+- Commercial use: no (not known to be deployed; this is a research prototype)
+- Open questions: how to regain compromise detection under CA mis-issuance when certificate subjects are opaque; and what monitor/witness governance model is workable for large ecosystems
+
+**Execution Score Breakdown (19/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (5/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Strong, practical cryptographic building blocks (privacy-preserving authorization proofs + authenticated policy maps) with working code, but the opportunity is incremental in the crowded software-signing/supply-chain space and only indirectly applicable to auditable media streaming.
+
+**Extracted Insights:**
+- Identity co-commitments are a reusable pattern for proving “authorized signer/device” without exposing identity or enabling cross-artifact linkage.
+- Authenticated dictionaries (Merkle prefix trees + monitors) are a concrete way to ship small trust-list/policy proofs (~KiB) instead of full policy maps—useful for provenance key registries.
+- Privacy can negate transparency-log monitoring: opaque certificate subjects make CA mis-issuance hard to detect without additional ZK/redaction/audit channels.
+
+**Cross-References:**
+- Related to: arxiv_2307.08201 (proof-of-authentication for Sigstore/OIDC), arxiv_2503.00271 (Sigstore transparency/usability gaps), arxiv_2305.01378 (SoK: log-based transparency), arxiv_2303.04500 (verification of transparency protocols)
+
+**Learnings for Future Iterations:**
+- When privacy requires anonymized identities in certs/manifests, explicitly model how you still detect CA/key registry misbehavior; “log everything” isn’t enough if identities are intentionally opaque.
+
+---
+
+## 2026-01-19 - Docs Update
+- Added an “opaque identities can break transparency” gotcha (anonymized certificate subjects weaken transparency-log compromise detection) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+
+---
+
+## 2026-01-19 - Paper: Remote attestation of SEV-SNP confidential VMs using e-vTPMs
+ID: arxiv_2303.16463
+Status: INSIGHTS_EXTRACTED
+Combined Score: 24/50 (Execution: 19/30, Blue Ocean: 5/20)
+
+**Summary:** Proposes SVSM-vTPM, a provider-independent vTPM for AMD SEV-SNP confidential VMs that does not trust host software. The vTPM runs inside SVSM at VMPL0 (isolated from guest OS and hypervisor), uses an “ephemeral vTPM” (fresh EK/SRK seeds every boot, no persistent NVRAM), and replaces EK certificates with an AMD hardware-signed SEV-SNP attestation report that binds digest(EKpub) to the VM’s measured launch state.
+
+**Key Method:** Use VMPL isolation + encrypted memory pages for secure VM↔vTPM command/response without TLS; generate an AMD-SP attestation report with `user_data = digest(EKpub)` and store it where tooling expects EKcert (TPM NVIndex). Modify Keylime’s EK verification to validate the attestation report (AMD signature + VMPL=0 + EKpub digest match) instead of checking a manufacturer-signed EK certificate.
+
+**Implementation Check:**
+- GitHub repos: yes — artifacts & code: https://github.com/svsm-vtpm/SVSM-vTPM-artifacts ; related PoC: https://github.com/stefano-garzarella/snp-svsm-vtpm ; Keylime: https://github.com/keylime/keylime
+- Commercial use: no direct product found (cloud providers have proprietary vTPMs/attestation services, but this paper’s SVSM-vTPM is an open-source design aiming to remove provider trust)
+- Open questions: how to package this into an end-to-end “attested media processing” pipeline; operational handling of ephemeral keys across reboots; robustness if hardware RNG is weak/buggy; verifier checks needed to ensure SVSM/VMPL isolation is actually enabled (not just claimed)
+
+**Execution Score Breakdown (19/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 4/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (5/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Strong, practical primitives for hardware-anchored integrity (useful for trusted capture/processing pipelines), but it doesn’t solve streaming commitments/timestamping and sits in a competitive confidential-computing attestation space.
+
+**Extracted Insights:**
+- EKcert replacement pattern: put a hardware-signed attestation report (with `user_data = digest(EKpub)`) where tooling expects EKcert to authenticate an ephemeral TPM without trusting the provider.
+- Ephemeral root-of-trust tradeoff: avoid state-injection/rollback by regenerating TPM seeds each boot, then regain “persistent secrets” via key-wrapping hierarchies and post-attestation key delivery (e.g., FDE parent-key wrapping).
+- VMPL spoofing gotcha: don’t trust “VMPL=0” fields alone—validate the measured launch binaries include the expected SVSM/vTPM at VMPL0, otherwise a provider could run without SVSM/VMPL isolation.
+
+**Cross-References:**
+- Related to: arxiv_2412.03842 (TEE+TPM collaborative trust), arxiv_2510.03219 (TPM-based continuous attestation), scholar_2498b49830 (TPM-backed C2PA livestream provenance)
+
+**Learnings for Future Iterations:**
+- For TEE/vTPM-based provenance schemes, always ask: what *exactly* binds “TPM identity” to “TEE measurement” when there is no manufacturer EKcert, and what prevents a provider from disabling the intended isolation layer (SVSM/VMPL) while still producing seemingly valid reports?
+
+---
+
+## 2026-01-19 - Docs Update
+- Added a “VMPL0 spoofing / no-SVSM” gotcha (verify launch measurements include SVSM/vTPM at the intended privilege level; don’t trust VMPL fields alone) to `AGENTS.md` and `CLAUDE.md` (kept in sync).
+---
+
+## 2026-01-20 - Paper: Scalable Attestation of Virtualized Execution Environments in Hybrid- and Multi-Cloud
+ID: arxiv_2304.00382
+Status: INSIGHTS_EXTRACTED
+Combined Score: 23/50 (Execution: 18/30, Blue Ocean: 5/20)
+
+**Summary:** Proposes WAWEL, a scalable attestation framework for heterogeneous VEEs (VMs/containers/TEEs) across hybrid/multi-clouds. It keeps a unified, TPM-compatible attestation interface while scaling by using stateless cryptographic coprocessors (e.g., HSMs) and securely offloading per-VEE measurement state.
+
+**Key Method:** Build a per-VEE “virtual secure element” (VSE) where the coprocessor signs TPM-like quotes over aggregated measurements, but the VSE state (aggregated measurements) is carried by the VEE and protected with an HMAC checked by the coprocessor. Analyze replay/relay/reset attacks on offloaded state and propose mitigations (state destruction assumptions, monotonic counters, random seeding, and restricting VSE creation to authenticated CRTMs).
+
+**Implementation Check:**
+- GitHub repos: no dedicated repo found
+- Commercial use: no (conceptually adjacent to cloud-provider attestation stacks like NitroTPM/Titan/DCAP)
+- Open questions: how to bind offloaded state to a specific stream/session to prevent forking under packet loss; how to avoid introducing a large trusted shim/service in production deployments
+
+**Execution Score Breakdown (18/30):**
+- Novelty: 3/5
+- Feasibility: 4/5
+- Time-to-POC: 3/5
+- Value/Market: 3/5
+- Defensibility: 2/5
+- Adoption: 3/5
+
+**Blue Ocean Score Breakdown (5/20):**
+- Market Creation: 1/5
+- First-Mover Window: 1/5
+- Network/Data Effects: 0/5
+- Strategic Clarity: 3/5
+
+**Market Classification:** Red Ocean
+
+**Decision Rationale:** Strong scalable-attestation primitives (stateless signers + authenticated offloaded state + TPM compatibility), but it targets cloud VEE attestation rather than auditable lossy media streaming.
+
+**Extracted Insights:**
+- Stateless signer scaling: offload per-session measurement/commitment state and MAC it so a small HSM pool can serve many VEEs/streams.
+- Offloaded-state replay/reset gotcha: protect against rollback/fork (state destruction or monotonic counters) and reset-to-empty (random seeding + restrict who can initialize state).
+
+**Cross-References:**
+- Related to: arxiv_2510.03219 (TPM-based continuous attestation), arxiv_2303.16463 (confidential VM attestation + vTPMs)
+
+**Learnings for Future Iterations:**
+- When a design offloads “secure state” outside the root of trust to scale, explicitly model replay/reset/fork attacks and require a monotonic/append-only mechanism (counters, epochs, or verifiable linkage) so missing measurements can’t be hidden.
+
+---
+
+## 2026-01-20 - Docs Update
+- Added offloaded-state replay/reset gotcha (risks when scaling stateless signers/attesters via state offloading; mitigations via monotonic counters/append-only chaining/seeded init/authenticated CRTM) to `AGENTS.md` and `CLAUDE.md` (kept in sync).

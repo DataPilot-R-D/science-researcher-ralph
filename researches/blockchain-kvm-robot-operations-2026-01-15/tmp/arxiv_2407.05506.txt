@@ -1,0 +1,1132 @@
+
+
+--- page 1 ---
+
+Pruning Blockchain Protocols for Efficient Access
+Control in IoT Systems
+Huang, Yongtao
+University of Texas at Dallas
+huang.yongtao@utdallas.edu
+I-Ling Yen
+University of Texas at Dallas
+ilyen@utdallas.edu
+Farokh Bastani
+University of Texas at Dallas
+bastani@utdallas.edu
+Abstract—We consider access control for IoT systems that
+involves shared accesses to the IoT devices as well as their data.
+Since IoT devices are dispersed all over the edge of the Internet,
+traditional centralized access control has problems. Blockchain
+based decentralized access control is thus the new solution trend.
+However, existing blockchain based access control methods do not
+focus on performance issues and may incur a high communication
+overhead.
+In this paper, we develop a Pruned Blockchain based Access
+Control (PBAC) protocol to cutdown the unnecessary message
+rounds and achieve high efficiency in access validations and
+policy management. The protocol includes a shortcut and a
+Role and Device Hierarchy-Based Access Control (R&D-BAC)
+approaches for different environment settings. To realize the
+PBAC protocols, it is necessary to carefully engineer the system
+architecture, which is also discussed in the paper. Experiments
+demonstrate the efficacy of the PBAC protocol, specifically, the
+shortcut mechanism reduces access time by approximately 43%,
+and R&D-BAC outperforms traditional blockchain based RBAC
+by more than two folds.
+Index Terms—Internet of Things (IoT); Blockchain; Access
+Control; Peer-to-Peer (P2P) Network;
+I. I NTRODUCTION
+Internet of Things (IoT) is growing in volume as well as im-
+portance. An IoT system connects a diverse range of devices,
+from wearable, home, industrial, surveillance, agricultural, and
+smart city sensors to mobile devices, autonomous vehicles,
+drones, etc., and is becoming indispensable in enhancing the
+convenience and efficiency of our daily operations. This rapid
+expansion of IoT yields great social benefits, but at the same
+time, introduces security challenges.
+Current IoT systems in practice typically use basic
+encryption-based handshakes or Single Sign-On (SSO) gate-
+ways for access control [1]. While handshakes are simple, they
+lack the complexity needed for sharing resources effectively.
+Conversely, SSO relies on a stable internet connection, often
+leaving users without access during outages, a notable issue
+in smart homes where unreachable remote server-managed
+authentication can block accesses that is completely local.
+Moreover, some manufacturers control device management
+through proprietary social networks or apps, requiring account
+registration and “family” joins, which centralizes control and
+raises security and privacy concerns. Advanced users may
+circumvent these issues with solutions like dynamic DNS,
+reverse proxies, and SSL certificates, but these can be complex
+and insecure for the average user.
+Several cloud vendors, such as AWS IoT Core [2], Microsoft
+Azure IoT Hub [3] and Oracle IoT [4], also provide IoT system
+platforms to facilitate the computation on the edge for IoT
+devices. However, most of these platforms are extensions of
+their existing cloud platforms. The access control models in
+some of these cloud-extended systems are more sophisticated,
+supporting policy-based access control. However, the system
+structure for managing access control in these systems is
+still centralized. Thus, users still need to go to the central
+certificate authority (or named differently but with the same
+functionality) to get access validation and authorization.
+Due to the pervasive nature of the IoT systems, centralized
+access control has the inherent communication overheads as
+well as the local access disruption problem during Internet
+disconnection period. In the latter case, users cannot access
+IoT devices on the same local network. Thus, it is essential
+to consider decentralized access control. Decentralized access
+control has also been considered in the literature. In [5], access
+control for smart health systems is considered. It addresses
+the cross domain issue and proposes to use the registration
+process to ensure that users and devices have global unique
+IDs. However, how the domain specific policies are defined
+such that these universal IDs can be used for access validation
+against policies from different domains have not been given.
+[6] considers role based cross domain access control issues in
+manufacturing IoT (MioT) systems. The focus of the paper is
+to identify the optimal authorization route with the least spread
+permissions. A PGAO algorithm is developed for finding
+the optimal authorization route. The proposed approach can
+provide an efficient authorization decision process in multiple
+collaborative domains in MIoT. This work does not consider
+how to perform cross domain role mappings, but assumes that
+such mapping rules are already defined in advance. Also, the
+authorization path finding is a centralized solution, requiring
+all the users, roles, permissions, and mapping policies of the
+involved domains being maintained at a central site in order
+to run the PGAO algorithm. Also, the mechanism cannot be
+used in dynamic situations since role mappings are defined in
+advance. [7] addresses the adaptivity issue in highly dynamic
+IoT environment and proposes a dynamic access control
+framework, DACIoT. The framework extends the XACML
+model to include three core components: Automatic Policy
+Specification (APS), Continuous Policy Enforcement (CPE),
+and Adaptive Policy Adjustment (APA). APS breaks down
+1
+arXiv:2407.05506v2  [cs.DC]  12 Jul 2024
+
+--- page 2 ---
+
+access control rules into fundamental elements and their con-
+textual conditions. So, the access control policy can be updated
+in a finer grain. CPE monitors changes in the operation context
+and general context during access sessions. APA then uses
+anomaly detection techniques to identify misbehavior and
+adjust access control policies on the fly according to session
+contexts.
+The earlier decentralized access control works have a strong
+sense of large domains and the domain security units and cross
+domain security management are assumed to be reliable and
+trustworthy. With large-scale IoT systems consisting of numer-
+ous large and small domains as well as individualized IoT de-
+vice owners, access control based on predefined cross-domain
+policies becomes infeasible and more dynamic schemes and
+less trustworthy assumptions should be considered. With these
+concerns, blockchain based access control has been proposed.
+Most of the works in blockchain based access control embed
+access control in established blockchain platforms, including
+public blockchain platforms, such as Bitcoin and Ethereum,
+and consortium blockchain platforms, such as Hyperledger
+Fabric [8] and FISCO-BCOS [9]. Different platforms result
+in different architectures, performance, and embedding mech-
+anisms.
+Earlier blockchain based access control works, such as [10]
+and [11] are Bitcoin based. In general, there are several short-
+comings in Bitcoin based access control. First, the transaction
+protocol is predefined, therefore, special encoding scheme is
+required to embed customized information into the blockchain
+transactions. Also, the access control solutions requires digital
+currency for recording transactions. The transaction history
+is stored on all bitcoin peers and, hence, wasting space for
+non-participators. The slow block update time of Bitcoin,
+approximately 10 minutes, and its CPU-intensive Proof-of-
+Work (PoW) consensus method render Bitcoin unsuitable for
+time-sensitive work.
+On Bitcoin and Consortium blockchains, the policy embed-
+ding mechanism is transactional where creation and updating
+of access control policies are issued as transactions to the
+blockchain. On the other hand, Ethereum based access control
+embed policies as smart contracts, making use of the contract
+languages offered by Ethereum. There are many Ethereum
+based access control frameworks being proposed and most
+of them focus on architecture designs. [12] relies on the IoT
+devices themselves for managing accesses. This approach may
+have problems because some IoT devices do not have sufficient
+computation and storage capabilities for handling blockchain
+activities. On the other hand, [13], [14], and [15] attempt
+to balance scalability and the potentially limited capabilities
+of IoT devices and use some mediator nodes to manage the
+interactions with the blockchain for the IoT devices they are in
+charge of. But the mediator nodes may fail and cannot ensure
+continuous operations. Overall, none of the approaches specify
+how to encode access control policies into smart contracts.
+Such encoding can be difficult for expressing some XACML
+rules, such as timing related ones, though the contract language
+is Tuning complete. A more serious problem with Etheruem
+based solutions is still the performance concerns. It greatly
+improves over Bitcoin and has around 12 seconds latency.
+Also, the requirement of digital currency still exists. Moreover,
+the execution time of smart contracts is untrackable because
+which miners would accept the request and whether the miners
+will win the competition are unknown.
+Consortium blockchain involves a preselected set of valida-
+tors instead of public miners for managing the blockchain.
+Also, it does not rely on Proof-of-Work or Proof-of-Stake
+to achieve consensus among all peers. Instead, Practical
+Byzantine Fault Tolerance (PBFT) between dedicated valida-
+tors is sufficient and can yield a much shorter update time.
+Moreover, most consortium blockchains do not require any
+cryptocurrency, avoiding unnecessary involvement of a large
+number of miners for maintaining the chain. Thus, it incurs
+least overhead. [16] is an ABAC based IoT access control
+framework built on top of Hyperledger Fabric. [17] is deployed
+on FISCO-BCOS [9]. The transactions recorded on blockchain
+in a form analogous to Access Control List (ACL). Though
+the performance of consortium blockchain based access con-
+trol is relatively reasonable, much better than that of public
+blockchains, there is still rooms for improvements.
+We develop a pruned blockchain based access control
+(PBAC) protocol for IoT systems, which prunes the unneces-
+sary interactions between the IoT devices, their AC hubs, and
+the blockchain. We also engineered the underlying blockchain
+support based on a bespoke consortium blockchain specifically
+optimized for access control. The PBAC protocol includes
+bootstraping, access request handling, and access policy val-
+idation algorithms. As with many other blockchain based
+access control solutions, PBAC also provides a robust crash
+recovery mechanism that is specific to our protocol, making it
+versatile for use in large-scale IoT systems with IoT resource
+sharing.
+The PBAC pruning mechanisms include a shortcut approach
+that can be used for IoT systems with permanent and long
+term users and a role and device hierarchy-based access
+control (R&D-BAC) for organizations with many IoT devices
+organized in a hierarchy.
+For access request handling, we require that both the device
+domain and the blockchain service to validate the access rights
+of the request against the policies. With a little additional
+overhead due to duplicated processing, we enable a significant
+reduction in the number of message rounds via a shortcut
+mechanism, which allows full access validation being done
+in parallel with local access authorization. This can benefit
+accesses by permanent users, such as the owner, and by re-
+current accessors, which occur frequently in real-world access
+patterns.
+To further enhance the performance in blockchain based
+access control, we consider dealing with accesses to IoT
+devices organized in a hierarchy. Resource hierarchy is widely
+adopted by many major IoT providers. Since users frequently
+have the tendency to access resources that are correlated, e.g.,
+in a subtree of a device hierarchy, we design a novel R&D-
+BAC access control model and design the associated access
+2
+
+--- page 3 ---
+
+validation mechanism to greatly reduce the number of message
+rounds required for blockchain related validation.
+Experimental results show that shortcut accesses, compared
+with normal full path accesses, shorten the latency by over
+40%. The R&D-BAC approach further improves the perfor-
+mance of blockchain based RBAC by more than two folds.
+II. S YSTEM OVERVIEW
+A. System Entities
+The important entities involved in our blockchain based
+access control protocols are depicted in Figure 1 and each
+entity is further defined and elaborated subsequently.
+Validators Users
+Owner
+Domain1
+IoT 
+Devices
+Firewall
+Hub Owner
+Domain2
+IoT 
+Devices
+Firewall
+Hub
+Internet
+Fig. 1. System Architecture
+IoT Devices offer a wide spectrum of IoT services. As
+how they are placed in the current Internet, we consider
+them hidden in the subnets behind firewalls. Services provided
+by the IoT devices are defined via manufacturer-provided
+templates, which can be used for semantic based service
+discovery. Each IoT device can be the basic element for access
+control and policies can be assignable on a per-service basis.
+Users can access the IoT devices in the network according
+to the access control polices for the devices. A user can
+represent a diverse range of entities, including an independent
+individual, an individual in a domain, a software program or
+a service, or even some IoT entity or its service.
+Owners Device owner can be an individual, an organization
+or another device in hierarchical setup. The entity who owns
+the device has full access rights to the device. Ownership is
+immutable once device is registered.
+Domains A domain is a higher-level entity in the system
+that consists of a group of IoT devices. IoT devices and
+their owners shall be in the same domain. A single IoT
+device with sufficient capabilities can choose to form its own
+domain. Many IoT devices are limited in memory and storage,
+rendering them incapable of performing complex operations.
+To enable access control on constrained devices not belonging
+to specific administrative units, they can be grouped together
+to form a domain managed by more powerful AC hubs. In
+many cases, domains are established for certain administrative
+units, such as homes, factories, companies, organizations,
+etc. In these cases, the domain may host a generic policy
+for the devices or device groups in the domain instead of
+defining policies for individual IoT devices. Frequently, the
+IoT devices in the domain form a resource hierarchy and
+access control policies can be defined based on the hierarchy
+(will be discussed later).
+Validator Cluster A cluster of validators are used to
+realize the blockchain based decentralized access control. To
+avoid performance overhead, we consider a consortium of
+blockchain validators, consisting of dedicated servers provided
+by trustworthy IoT vendors. These validators are pre-certified
+by the consortium’s security standards to ensure their trustwor-
+thiness (Proof-of-Authority). Though rarely, individual valida-
+tors may fail or be compromised, a consensus protocol is used
+to ensure the trustworthiness of the cluster.
+Validators maintain the blockchain’s complete state and are
+responsible for adding new blocks, using the Ditto [18] con-
+sensus protocol—a 2-chain HotStuff [19] variant—for network
+consensus. The data structure, based on the JellyFish Merkle
+tree [20] from the Diem project [21], is optimized for storage
+efficiency and I/O overhead.
+Access Control Hubs Each domain has an AC hub to
+manage access control and blockchain related tasks for the IoT
+devices in the domain. For operational efficacy, the AC hubs
+maintain the local domain state, including up-to-date access
+control policies for all connected devices, and the recent states
+necessary for their functionality.
+Note that some domain formations are not based on specific
+organizations, thus, the domain hubs may not always be
+trusted. Also, for organizational domains, we consider that
+their domain AC hubs may be compromised and become
+untrusted.
+B. PBAC Bootstrapping
+Access control policies for each domain in the system
+are codified into the blockchain via domain registration. An
+authorized entity of a domain must first execute a registration
+transaction to join the system and associating its devices and
+owners with the domain. (Note that a domain could be a single
+device with sufficient computation and storage capabilities.)
+The access control policies of the domain are established
+subsequently via blockchain transactions by the authorized
+entities, such as the corresponding owners or security offi-
+cers of the domain. Domain and device registration related
+transactions are specified as follows:
+• Domain Registration involves recording the creator’s ID
+idissuer, domain ID uiddomain, owner’s ID uidowner,
+and a policy descriptor pd submitted in a transaction
+(idissuer, uiddomain, uidowner, pd). The policy descrip-
+tor either points to a predefined common access control
+model, such as models we will discuss in the later sub-
+sections, or a user defined policy through smart contract.
+• Device Registration should be applied equally to
+AC hubs and IoT devices (an IoT device may serve
+as its own AC hub). The transaction is represented
+by (idissuer, uiddomain, did, uidowner, {sv, ···} ), where
+3
+
+--- page 4 ---
+
+uiddomain and uidowner are as defined earlier and
+{sv, ···} is the list of service names.
+• Device Revocation with parameters (idissuer, did) nul-
+lifies a registered device did.
+Once registered, the device record in blockchain is im-
+mutable. Changes in ownership require releasing by the current
+owner and reregistration by the new owner.
+III. A CCESS VALIDATION IN PBAC
+In existing works that embed access control policies in the
+block-chain [15] [16], access validation is always performed
+at the validator cluster or miners. We call this the full path
+validation. This remote validation can introduce significant
+delays. To shorten the latency for access validation, we
+consider a basic pruning technique in PBAC, the shortcut
+protocol, for accesses to devices by trusted users, such as
+the owners and pre-registered long-term users. In the shortcut
+protocol, validation is executed at the AC hub of a domain
+first and the full validation at the validator is done in parallel
+in the background. The benefit of the shortcut protocol is
+not only the greatly reduced access latency, but also allowing
+continued accesses in local areas when the internet connection
+is disrupted. This can benefit many local IoT systems, such
+as home IoT systems and IoT systems in factories, farms,
+hospitals, small companies, etc. The blockchain embedded
+access control would have been undesirable for local IoT
+systems or even infeasible for critical local systems while
+our shortcut protocol, with simple pruning, makes it highly
+applicable.
+ShadowDP Data Structure To facilitate the realization of
+the shortcut protocol, the access control policies for individ-
+ual devices and domains should not only be logged in the
+blockchain, but also maintained at the AC hub. AC policy
+changes will not only be reflected at the validator cluster,
+but also at the domain AC hub. For organizational domains,
+this policy maintenance is natural and changes generally
+happen at the domain AC hubs anyway. For domains with
+low power devices of independent administrative units, the
+up-to-date policies are also maintained by the corresponding
+AC hubs. We consider the hub copy of the policies as the
+shadowDP. Also, in existing blockchain based access control,
+the access control policies are only be logged as transactions
+in the blockchain, including the original establishment and the
+subsequent modifications of the policies. Thus, the validators
+need to rebuilt the policies from these logs to get the view
+of the policies, which can be highly inefficient during access
+validation. To address this problem, we extend the shadowDP
+to the validator side. Each validator maintains indices to access
+control (AC) policy entries in the blockchain and keeps another
+shadow copy of the most recent policies in memory to ensure
+efficient access validations.
+The shortcut versus the full path access validation procedure
+is depicted in Figure 2.
+Full Path (normal) access validation If a user with
+identity uid trying to access an IoT device with identity
+IoT Devices
+Validators
+Users
+1 
+2/4 
+3 
+4 
+5 5 
+(a) Full Path
+IoT Devices
+Validators
+Users
+1/2 
+2 
+3 
+3 2 (b) Internet Shortcut
+IoT Devices
+Owner
+3 
+1/2 
+2 
+(c) Local Shortcut
+Fig. 2. Full Path and Shortcut Access
+did and its corresponding service sv (optional) with per-
+mission type pt for the first time, then it issues the access
+request req = (uid, did, pt, sv) to the AC hub of did (which
+could be did itself). The AC hub, with identity hid, upon
+receiving req, validates req against its access control policy
+ACP , and after successful validation, generates a permission
+per = (uid, did, pt, sv, et, ul) and sign it into a token t =
+shid(uid, did, pt, sv, et, ul), where et is the optional expiration
+time, ul is the optional usage limitations, and shid is the
+signature for the token t. Token t is then forwarded to the Val-
+idator Cluster for endorsement. Validators, after successfully
+double validating the access rights for permission per against
+ACP in its shadowDP, perform Byzantine agreement (BA)
+to reach consensus on per, and add t to the blockchain with
+majority’s signature svi···,hid(uid, did, pt, sv, et′, ul′) and re-
+turn the endorsement. After getting the endorsement from
+a majority of Validators, the AC hub creates a session key
+k(uid, did, pt, sv, et′, ul′) and sends it to the device did which
+enables uid’s access via t. Also, token t is returned to uid to
+allow its access.
+If uid has accessed did before and still has the key-value
+pair (req, t) in its cache (where t is the corresponding token
+for req), uid can simply use t for direct re-entry without
+requiring further validation, unless the token expires or the
+session key is lost due to insufficient memory, power outages,
+or reboots on did. The use of paired token (for user) and
+session key (for device) expedites repeated accesses.
+Shortcut Access Validation In the shortcut protocol, a
+domain AC hub maintains a list Tu, which records such
+users. The AC hub, upon receiving accesses from users in
+Tu, sends out the token to the accessor without waiting
+4
+
+--- page 5 ---
+
+for the endorsement by Validators to complete (which is
+done in parallel instead). In the highly unlikely occasions
+of failed endorsement, remedy actions such as reconducting
+the endorsement or revoking the session key as well as other
+mitigation steps can be taken to protect the system. Also,
+the use of ECDSA key pairs supports long token expiration
+time and facilitates shortcut and other designs to achieve high
+performance gains.
+The PBAC access validation algorithms by the requester,
+the AC hub, and the Validators are illustrated in Figure 2 and
+detailed in Algorithms 1, 2, and 3 (modifications captured in
+them will be discussed later).
+Algorithm 1 User uid requests to connects to device did
+procedure REQUEST (req = (uid, did, pt, sv))
+if search in uid’s cache with key req reutrns t then
+reuse t to request connection to did
+if connection established then
+proceed to access did
+exit procedure
+end if
+end if ▷ No token or session key expires
+send req to AC hub hid
+wait for token t = shid(uid, did, pt, sv, et, ul)
+if t has been received then
+cache key-value pair (req, t)
+use t to request connection to did
+if connection established then
+proceed to access did
+else
+temporary failure, retry later
+end if
+end if
+end procedure
+Light workload for IoT devices and Continued accesses
+upon Internet disconnection The access control validation
+algorithm is designed to minimize the workload on the IoT de-
+vices, The devices are not involved in the validation procedure
+and only need to maintain the session keys and accordingly
+accept or reject the incoming accesses.
+In scenarios where internet connectivity is lost as shown
+in Figure 2c, our system supports intranet accesses, allowing
+token validation and device access within a local network. This
+capability ensures continuous operations, with synchronization
+to the blockchain resumed upon connectivity restoration.
+IV. PBAC FOR VARIOUS ACCESS CONTROL MODELS
+To illustrate the compatibility of PBAC, we integrate several
+established models, including Discretionary Access Control
+(DAC), Attribute-Based Access Control (ABAC), and Role-
+Based Access Control (RBAC), with PBAC in Subsections
+IV-A, IV-B and IV-C. For each model, the permission trans-
+action structure and the specific revocation and recovery
+mechanisms are discussed.
+Algorithm 2 AC hub hid validates request req
+procedure VALIDATE (req = (uid, did, pt, sv) )
+if req satisfies ACP in shadowDP then
+▷ ACP is the access control policy
+find the corresponding (etp, ulp) in ACP
+per ← (uid, did, pt, sv, etp, ulp)
+t ← shid(per)
+if uid ∈ Tu then ▷ Shortcut
+send session key k(per) to did
+send token t to uid
+multi-cast svi,hid(per) to Validator Cluster
+else ▷ Full path
+multi-cast svi,hid(per) to Validator Cluster
+wait for endorsed token svi···,hid(per))
+from majority of Validators
+send session key k(per) to did
+send token t to uid
+end if
+else
+send reject to uid
+end if
+end procedure
+Algorithm 3 Validator endorses the token
+procedure ENDORSE (shid(per))
+if req satisfies ACP in shadowDP then
+vi multi-cast svi,hid(per) to other validators
+if BFT consensus is archieved then
+vi sends svi···,hid(per) to AC hub hid
+Commit to blockchain
+end if
+end if
+end procedure
+A. Discretionary Access Control (DAC) in PBAC
+In DAC, permissions are structured in Access Control List
+(ACL) at the device hub. Each ACL entry records granted
+permission tuples that mirror blockchain transactions. ACL
+and its index are stored in ShadowDP. Invalid entries due to
+expired et or now violated access limitation ul are purged by
+monitoring timers.
+Blockchain captures permission transactions instead of the
+full ACL. Each transaction record captures the ID of the issuer,
+the permission tuple, as well as et and ul. Different types of
+transactions and their fields are formally defined as follows.
+• Permission Granted (idissuer, uid, did, pt, sv, et, ul)
+• Permission Revoked (idissuer, uid, did, pt, sv, et, ul)
+Revoking access involves dispatching a revocation session
+key to the device. Following acknowledgment, the correspond-
+ing permission entry is expunged from the ACL.
+The sequential recording in the blockchain inherently sup-
+ports the reconstruction of ACLs on AC hubs by replaying
+pertinent permission transactions since domain registration.
+Although a centralizing ACL could pose risks in an enter-
+5
+
+--- page 6 ---
+
+prise setting, synchronizing ACLs across multiple AC hubs
+within the same domain enhances fault tolerance. This flexible
+architecture permits the addition or removal of AC hubs as
+needed, without impacting the overall system integrity and
+functionality.
+B. Role-Based Access Control (RBAC) in PBAC
+In a RBAC domain, permissions are aligned with user
+roles rather than individual identities, represented by the tuple
+(rid, did, pt, sv). Here rid is a universally unique identifier
+assigned to each role, distinct from libp2p network peer
+identities. The uniqueness of rid is verified through validator
+authentication upon role creation. Roles may also be associ-
+ated with user-friendly names ( rn), which are encrypted by
+default to protect privacy across domains, given that cross-
+domain access utilizes rid. For simplicity and without loss of
+generality, we omit the optional fields et and ul.
+Transactions specific to RBAC for role creation, modifica-
+tion, and deletion are itemized as follows.
+• New Role (idissuer, id, rid, rn) where id is domain ID.
+• Delete Role (idissuer, rid)
+• Assign Role User (idissuer, rid, uid)
+• Remove Role User (idissuer, rid, uid)
+• Assign Role Permission (idissuer, rid, did, pt, sv)
+• Revoke Role Permission (idissuer, rid, did, pt, sv)
+Each AC hub maintains a bidirectional mapping between
+users and their respective roles ( mapur = uid : [rid, ··· ] and
+mapru = rid : [uid, ··· ]) in ShadowDP. When a user requests
+access, the AC hub retrieves the user’s role rid and verifies
+if the requested permission (rid, did, pt, sv) is authorized.
+Adding a user to a role involves updating both mapur and
+mapru to reflect the new association. Conversely, removing
+a user from a role necessitates the issuance of a revocation
+session key to the relevant device(s) before adjusting the
+mappings, mirroring the revocation process in DAC.
+The elimination of a role necessitates a comprehensive re-
+evaluation of permissions for all users associated with that
+role, considering that an individual’s access rights might still
+be valid through other roles they hold. Below is an algorithm
+detailing this re-evaluation process.
+Algorithm 4 Re-evaluation of user permissions
+function RE-EVALUATE (rid )
+original ← all permission set of rid in ACL
+for all u ∈ mapru[rid] do
+new set ← ∅
+for all r ∈ mapur[u] do
+add permission set of r to new set
+end for
+revoked set ← (original − new set)
+for all d ∈ revoked set do
+send revocation session key
+end for
+end for
+end function
+Similar to the DAC model, an AC hub administering RBAC
+policies can reconstruct its state by replaying recorded per-
+mission transactions. This capability ensures that the system
+can recover from disruptions and maintain consistent access
+control policies, even after hub failures or network disruptions.
+C. Attribute-Based Access Control (ABAC) in PBAC
+ABAC extends the functionality of DAC by incorporating
+a versatile attribute list and context-based access policies.
+Similar to RBAC, attributes in ABAC are assigned a unique
+identifier and can have a user-friendly name ( aname), which
+is encrypted by default to ensure privacy. However, ABAC
+differentiates itself by allowing attributes to be associated with
+both devices and users, with permissions defined by the tuple
+(aiduser, aiddevice, pt, sv), where aid represents the attribute
+identifier for either the user or device. Different types of
+transactions for ABAC are enlisted in the following.
+• New Attribute (idissuer, id, aid, aname). id is domain
+ID.
+• Delete Attribute (idissuer, aid)
+• Assign Attribute Device (idissuer, aid, did, sv)
+• Remove Attribute Device (idissuer, aid, did, sv)
+• Assign Attribute User (idissuer, aid, uid)
+• Remove Attribute User (idissuer, aid, uid)
+• Assign Attribute Permission
+(idissuer, aiduser, aiddevice, pt)
+• Revoke Attribute Permission
+(idissuer, aiduser, aiddevice, pt)
+The access validation and assignment procedures and the
+reconstruction of access control policies in an ABAC system
+mirror those established in RBAC and is not discussed further.
+V. R OLE AND DEVICE HIERARCHY -BASED ACCESS
+CONTROL (R&D-BAC)
+In enterprise settings, where devices and users proliferate,
+they are often organized hierarchically to support more sys-
+tematic access control policy definitions. Though there are well
+defined access control theories and models for role hierarchy,
+the access control models for device hierarchy is lagging.
+Within a device hierarchy (DH), an interior node generally
+represents a device group owned by a subdomain in the organi-
+zation. In a role hierarchy, permissions granted to an ancestor
+node are extended to its descendants. Similarly, we consider
+that in a DH, granting permissions for accessing a device group
+implicitly implies that the same permissions are granted for
+accessing all the devices in the subtree (subdomain).
+The device hierarchy based access control model can
+greatly simplify access right assignments. Instead of assign-
+ing access rights to a large number of individual devices,
+domain/subdomain administrators can assign desired access
+permissions to a device group at any level in the DH. Upper
+level subdomains in the DH offer more limited access rights
+to more limited accessor groups, while additional permissions
+can be assigned to the lower level subdomains closer to the
+actual devices.
+6
+
+--- page 7 ---
+
+d1
+d2
+d4
+d3
+eps
+dc={d2, …}
+control=d1
+dc={d3, d4}
+control=d2
+(a) control
+d1
+d2
+d4
+d3
+control.epsdc={d3, d4, …}
+control=d1
+control=d1 (b) non-control
+Fig. 3. Visit control and non-control Device
+Control Devices and Control Pointers Upon assigning
+a permission tuple (rid, did, pt, sv) to a device did in the
+DH, the designated device becomes a control device. Devices
+without direct permissions look up to this control device for
+access validation. Correspondingly, each node maintains a
+control pointer ( did.control) to its closest control device in
+its ancestry. Additionally, a control device keeps track of a
+list of pointers did.dc, pointing to the control devices within
+its closest descendants along different paths.
+As illustrated in Figure 3a, device d2 functions as a control
+device. Its ancestor control node pointer d2.control points to
+d1. Also, d3.control and d4.control point up to d2. On the
+other hand, d1.dc contains d2 and d2.dc contains d3 and d4.
+Control devices cache both the permissions directly assigned
+to them ( did.ps) and a cumulative permission set inherited
+from their ancestor control devices ( did.eps), where did.eps
+includes did.ps. When a user seeks permission to access
+a control device (e.g., d2), the device reviews its effective
+permission set eps and, upon finding the request permissible,
+accept the access. Conversely, if the accessed device is not
+a control device, it refers to its control device pointer (e.g.,
+d2.control = d1). The request is then relayed to its control
+device to determine the request’s validity and communicates
+the outcome accordingly. This procedure is outlined in Algo-
+rithm 5.
+d1
+d2
+d4
+d3
+d1
+d2
+d4
+d3
+control
+dc
+control
+dcps
+eps
+eps
+(a) Insertion
+d1
+d2
+d4
+d3
+d1
+d2
+d4
+d3
+control
+dc control
+dc
+ps
+eps
+eps (b) Deletion
+Fig. 4. Insert and Remove Control Device
+Assigning permission to a non-control device transforms it
+into a control device, whereas revoking the last permission
+from a control device reverts it to a non-control status. This
+transition is visually represented in Figures 4 and outlined in
+Algorithm 6.
+Algorithm 5 Device validates permission
+procedure VALIDATE (req = (uid, did, pt, sv) )
+if ControlValidate(req) then
+t ← sdid(per) ← sign per ▷ Access granted
+store session key k(per)
+multi-cast t to validators or forward t to AC hub
+response t to uid
+else
+response reject
+end if
+end procedure
+function CONTROL VALIDATE (req = (rid, did, pt, sv) )
+if did.ps ̸= ∅ then ▷ control device
+return check req ∈ did.eps
+else ▷ non control device
+return did.control.validate(per) ▷ check its
+control device for result
+end if
+end function
+Algorithm 6 Transformation of control state
+function INSERT CONTROL (did)
+add did to did.control.dc
+for all d ∈ descendants of diddo ▷ Search down
+device tree
+d.control ← did
+if d.ps ̸= ∅ then ▷ Control device
+add d to did.dc
+remove d from did.control.dc
+stop searching down
+end if
+end for
+end function
+function REMOVE CONTROL (did)
+remove did from did.controld.dc
+empty did.eps
+for all d ∈ descendants of diddo
+d.control ← did.control
+if d.ps ̸= ∅ then ▷ Control device
+add d to did.control.dc
+remove d from did.dc
+stop searching down
+end if
+end for
+end function
+7
+
+--- page 8 ---
+
+Permission assignment may involve propagating the per-
+mission down along the control device tree as depicted in
+Algorithm 7.
+Algorithm 7 Permission assignment
+function ASSIGN (per = (rid, did, pt, sv) )
+if did.ps = ∅ then
+InsertControl (did) ▷ To control device
+end if
+if per ̸∈ did.ps then
+add per to did.ps
+PropagateEps (did)
+end if
+end function
+function REVOKE (per = (rid, did, pt, sv) )
+if per ∈ did.ps then
+remove per from did.ps
+PropagateEps (did)
+end if
+if did.ps = ∅ then
+RemoveControl (did) ▷ To non-control device
+end if
+end function
+function PROPAGATE EPS(did) ▷ Traverse down control
+devices tree
+new eps ← did.ps ∪ did.control.eps
+if did.eps ̸= new eps then
+did.eps ← new eps
+for all d ∈ did.dc do
+PropagateEps (d)
+end for
+end if
+end function
+For example, in the configuration depicted Figure 4a, d1,
+d3 and d4 serve as control devices, with d2 initially a non-
+control device. Upon the assignment of permission to d2,
+which changes it to control device, adjustments are made to
+the control device tree to reflect this change. Specifically, d2
+is added to d1.dc while d3 and d4 are removed from d1.dc and
+added to d2.dc. The control pointers for all devices situated
+between d2, d3 and d4 inclusive that previously pointing to d1
+are redirected to d2.
+This conversion of d2 into a control device, necessitates the
+revision of its ps and eps with the latter being disseminated
+down to d3 and d4. Consequently, the eps of d3 and d4 are
+updated to mirror these changes. The process of reverting
+a control device back to a non-control status operates in a
+manner analogous to its initial conversion.
+Upon the registration of a new device at the leaf level, its
+control pointer is set to its immediate parent control device. If
+the parent is a non-control device, the control pointer is then
+set to mirror the control pointer of the parent. When revoking
+a control device, it is removed from it control.dc.
+The transaction protocol, policy recovery and management
+of roles within this context follows the same principles as
+established in RBAC. Control devices hold only segments
+of the role-user ( mapur) and user-role ( mapru) mappings
+relevant to their permissions eps. Updates to these mappings
+are efficiently disseminated across the network through a
+control device tree
+VI. E XPERIMENTAL STUDY
+A. Environment Setup
+We utilized commodity hardware to simulate a real-world
+IoT system scenario with the following entities.
+• Validators Platform In our experiment, we set up 4
+validators, each is an Intel NUC Skull Canyon with a
+quad-core i7-6770HQ processor, 64GB RAM, and a 2TB
+M.2 SSD.
+• AC Hub utilizes a virtual server platform, which is a
+Synology DS1522+ NAS, powered by a dual-core Ryzen
+R1600 processor with 8GB RAM, of which 1GB is
+allocated for the virtual machine.
+• IoT Device is simulated by a Raspberry Pi 3 B+, featur-
+ing a quad-core BCM2837B0 processor and 1GB RAM.
+• Client A Macbook Pro is used for client operations.
+This array of devices is networked together using both wired
+and wireless connections to a central switch, with internet
+access provided via a router and cable modem. Additionally,
+a cellphone with AT&T hotspot serves as a secondary inter-
+net access point, enabling us to simulate internet-to-internet
+communication.
+B. Network Setup and Latency Testing
+Network Initialization For the initial network connection,
+bootstrapping employs techniques like Distributed Hash Ta-
+ble (DHT), Zero Configuration Networking (zeroconf), or
+rendezvous points from a static list or previous peerstore.
+Although bootstrap time varies, it’s a one-time background
+process not factored into latency assessments.
+Firewall Navigation P2P connections navigate firewalls
+using manual or uPnP port forwarding, hole punching, or fall-
+back methods when hole punching fails. While port forwarding
+offers immediate connection, hole punching—requiring two
+communication stages after a temporary relayed connection
+[22]—presents variability in connection times. Libp2p devel-
+opment tests reveal average connection times of 0.89s and
+up to 7.78s for successful P2P connections [23]. Due to its
+significant variability, our experiments primarily utilize uPnP
+for firewall traversal.
+Latency Measurements Libp2p developer tests show pub-
+sub communication latency typically stays below 150ms, peak-
+ing at 165ms ( P99) in a 1000-node network using gossipsub-
+v1.1 [24]. Local network round trip times are generally less
+than 1ms. The raw pub-sub testing involves “cold start”, that
+each time a P2P communication is established, peer cache
+is purged and new peer ID is generated. When considering
+real-world scenarios, there is no need to cold start every
+communication. Specifically in our experiments, only the
+client process is restarted every time, not the AC hubs or
+8
+
+--- page 9 ---
+
+the validators. Thus, we redo the latency evaluation for the
+pub-sub communication considering our cases.
+Fig. 5. Pub-sub Latency Distribution (Cold Start)
+Fig. 6. Pub-sub Latency Distribution (Convergence)
+We test the latency of internet-to-internet pub-sub communi-
+cation for 2,000 messages, comparing the case of continuous
+operations without cold start and the case of cold star for
+testing peers, i.e., after each process run, we terminated it,
+and then restarted it, simulating independent connections.
+The latency distributions for with and without cold start are
+depicted in Figures 5 and 6, respectively.
+as shown in Figure 6, continuous operations without cold
+start led to a convergence of delivery time, indicating an
+underlying network optimization that enhances communication
+efficiency.
+C. Access Validation Latency: Full Path versus Shortcut
+As discussed earlier, we do not cold start the AC hub and
+validators, only client process is restarted every time. Figures
+7, 8 and 9 represent the latency distributions of 500 times
+of access validations conducted via full path, shortcut from
+internet, and shortcut from intranet, respectively.
+Fig. 7. Full Path Access Latency Distribution
+The results from the figures show that in the median case
+(P50), utilizing shortcut access over the internet yields a 43%
+Fig. 8. Shortcut Access from Internet Latency Distribution
+Fig. 9. Shortcut Access from Intranet Latency Distribution
+reduction in access time, while intranet shortcuts offer saving
+of approximately 73.9% compared to internet shortcuts. In the
+worst-case scenario ( P99), internet shortcut access provides
+a savings of about 29.7%, and leveraging intranet shortcuts
+further saves approximately 56.7%.
+D. Access Validation Latency of R&D-BAC
+To evaluate the performance of R&D-BAC, we compare it
+with the baseline case, i.e., RBAC without device hierarchy. In
+the baseline case, for each device access of did, if a token for
+accessing did is cached by the accessor uid, uid establishes
+the session with did directly; otherwise, it executes the normal
+access procedure, directing the request to the AC hub of did.
+The experiments are carried out through a simulator, which
+simulates local network and processing time in R&D-BAC
+domain. The DH in an R&D-BAC domain is simulated via a
+random tree generator based on specified parameters, including
+tree depth ( H) and degree ( D), which are the number of
+layers and the average number of child nodes in the DH,
+correspondingly. The number of child nodes of each node
+is generated in a Poisson distribution with λ = D. In our
+experiment, we choose H = 10and D = 20.
+We randomly generate permission assignment requests to
+simulate the control nodes in the device hierarchy. The des-
+ignated nodes for the permission assignment requests are
+selected based on a normal distribution, with mean ( µ = 0.6)
+and standard deviation (σ = 0.1). This setup skews permission
+assignments towards the middle to lower depths of the device
+hierarchy (0 for root and 1 for leaf).
+Access validation latency was evaluated based on the con-
+figuration with 1,000,000 devices, 100 roles, and 100,000
+users. The performance impact was measured by consider
+different numbers of control devices, ranging from empty
+to fully populated: 100, 1,000, 10,000 and 100,000. This
+9
+
+--- page 10 ---
+
+Fig. 10. Assignment Latency
+allowed us to observe and quantify the effect of scaling
+the number of control devices on the R&D-BAC efficiency
+and responsiveness. The experimental results are presented in
+Figure 10.
+As demonstrated in Figure 10, the R&D-BAC scheme con-
+sistently outperforms traditional RBAC access control meth-
+ods. On average, R&D-BAC achieves a latency time saving
+of 63.8% ( P50), and in the 99th percentile of cases ( P99), it
+delivers saving of 71.7%.
+VII. C ONCLUSION
+In this paper, we consider efficiency in blockchain based
+access control and introduce the design of our PBAC protocols.
+PBAC focuses on pruning the full scale blockchain based
+access control validation procedure and introduces a shortcut
+protocol as well as the novel R&D-BAC approach. The
+shortcut protocol can greatly reduce access latency without
+sacrificing security. R&D-BAC leverages the device hierarchy
+concept and offers a new access control model. Accordingly,
+a strategy built on top of R&D-BAC model for reducing the
+access validation latency due to blockchain has been devel-
+oped. A thorough performance study for the PBAC protocols
+has been conducted and results show that it achieves signif-
+icant performance improvements compared to the traditional
+blockchain based access control schemes.
+We plan to conduct further research in blockchain based ac-
+cess control for IoT systems. First, we will continue to explore
+performance improvement methods in blockchain protocols for
+access control. For example, We plan to expand our R&D-BAC
+scheme to efficient protocols for the attribute based access
+control model. Also, we plan to develop new token based
+authorization schemes that can be used for accessing multiple
+devices. Second, we plan to explore the expressiveness in
+embedding policies in blockchains. We will investigate the
+mechanisms for encoding XACML policies in blockchain
+transactions. We will also develop schemes for automated
+translation of XACML policies to smart contract languages.
+For both cases, we will investigate the potential limitations
+in such embedding. Third, we will explore blockchain based
+cross domain access control. In large-scale IoT systems con-
+sisting of a very large number of domains with different secu-
+rity administrations, defining federated cross-domain policies
+or pair-wise cross-domain policies in advance is infeasible.
+We will explore models for dynamic cross-domain policy
+mappings.
+REFERENCES
+[1] D. Hardt, “The OAuth 2.0 Authorization Framework,” Internet
+Engineering Task Force, Request for Comments RFC 6749, Oct.
+2012, num Pages: 76. [Online]. Available: https://datatracker.ietf.org/
+doc/rfc6749
+[2] AWS, “Secure IoT Gateway, IoT Gateway Device - AWS IoT Core -
+AWS,” Jul. 2024. [Online]. Available: https://aws.amazon.com/iot-core/
+[3] Microsoft Azure, “IoT Hub | Microsoft Azure,” Jul. 2024. [Online].
+Available: https://azure.microsoft.com/en-us/products/iot-hub/
+[4] Oracle, “IoT Intelligent Applications | Oracle,” Jul. 2024. [Online].
+Available: https://www.oracle.com/internet-of-things/
+[5] S. Sicari, A. Rizzardi, L. A. Grieco, G. Piro, and A. Coen-Porisini,
+“A policy enforcement framework for Internet of Things applications
+in the smart health,” Smart Health, vol. 3, pp. 39–74, 2017, publisher:
+Elsevier. [Online]. Available: https://www.sciencedirect.com/science/
+article/pii/S2352648316300435
+[6] Q. Liu, H. Zhang, J. Wan, and X. Chen, “An access control model
+for resource sharing based on the role-based access control intended
+for multi-domain manufacturing internet of things,” IEEE access ,
+vol. 5, pp. 7001–7011, 2017, publisher: IEEE. [Online]. Available:
+https://ieeexplore.ieee.org/document/7904674
+[7] A. Alkhresheh, K. Elgazzar, and H. S. Hassanein, “DACIoT: Dynamic
+access control framework for IoT deployments,” IEEE Internet of Things
+Journal, vol. 7, no. 12, pp. 11 401–11 419, 2020, publisher: IEEE.
+[Online]. Available: https://ieeexplore.ieee.org/document/9119088
+[8] E. Androulaki, A. Barger, V . Bortnikov, C. Cachin, K. Christidis,
+A. De Caro, D. Enyeart, C. Ferris, G. Laventman, Y . Manevich,
+S. Muralidharan, C. Murthy, B. Nguyen, M. Sethi, G. Singh, K. Smith,
+A. Sorniotti, C. Stathakopoulou, M. Vukoli ´c, S. W. Cocco, and
+J. Yellick, “Hyperledger fabric: a distributed operating system for
+permissioned blockchains,” in Proceedings of the Thirteenth EuroSys
+Conference, ser. EuroSys ’18. New York, NY , USA: Association
+for Computing Machinery, Apr. 2018, pp. 1–15. [Online]. Available:
+https://dl.acm.org/doi/10.1145/3190508.3190538
+[9] H. Li, Y . Chen, X. Shi, X. Bai, N. Mo, W. Li, R. Guo, Z. Wang, and
+Y . Sun, “FISCO-BCOS: An Enterprise-grade Permissioned Blockchain
+System with High-performance,” in Proceedings of the International
+Conference for High Performance Computing, Networking, Storage
+and Analysis, ser. SC ’23. New York, NY , USA: Association for
+Computing Machinery, Nov. 2023, pp. 1–17. [Online]. Available:
+https://dl.acm.org/doi/10.1145/3581784.3607053
+[10] A. Ouaddah, A. Abou Elkalam, and A. Ait Ouahman, “FairAccess:
+a new Blockchain-based access control framework for the Internet of
+Things,” Security and Communication Networks, vol. 9, no. 18, pp.
+5943–5964, Dec. 2016. [Online]. Available: https://onlinelibrary.wiley.
+com/doi/10.1002/sec.1748
+[11] D. Di Francesco Maesa, P. Mori, and L. Ricci, “Blockchain
+Based Access Control,” in Distributed Applications and Interoperable
+Systems, L. Y . Chen and H. P. Reiser, Eds. Cham: Springer
+International Publishing, 2017, vol. 10320, pp. 206–220, series
+Title: Lecture Notes in Computer Science. [Online]. Available:
+https://link.springer.com/10.1007/978-3-319-59665-5 15
+[12] O. Alphand, M. Amoretti, T. Claeys, S. Dall’Asta, A. Duda, G. Ferrari,
+F. Rousseau, B. Tourancheau, L. Veltri, and F. Zanichelli, “IoTChain:
+A blockchain security architecture for the Internet of Things,” in
+2018 IEEE Wireless Communications and Networking Conference
+(WCNC). Barcelona: IEEE, Apr. 2018, pp. 1–6. [Online]. Available:
+https://ieeexplore.ieee.org/document/8377385
+[13] O. Novo, “Blockchain Meets IoT: An Architecture for Scalable
+Access Management in IoT,” IEEE Internet of Things Journal ,
+vol. 5, no. 2, pp. 1184–1195, Apr. 2018. [Online]. Available:
+https://ieeexplore.ieee.org/document/8306880
+[14] R. Almadhoun, M. Kadadha, M. Alhemeiri, M. Alshehhi, and K. Salah,
+“A user authentication scheme of IoT devices using blockchain-enabled
+fog nodes,” in 2018 IEEE/ACS 15th international conference on
+computer systems and applications (AICCSA). IEEE, 2018, pp. 1–8.
+[Online]. Available: https://ieeexplore.ieee.org/document/8612856
+10
+
+--- page 11 ---
+
+[15] Y . Zhang, S. Kasahara, Y . Shen, X. Jiang, and J. Wan, “Smart
+Contract-Based Access Control for the Internet of Things,” IEEE
+Internet of Things Journal, vol. 6, no. 2, pp. 1594–1605, Apr. 2019.
+[Online]. Available: https://ieeexplore.ieee.org/document/8386853
+[16] S. Ding, J. Cao, C. Li, K. Fan, and H. Li, “A Novel Attribute-Based
+Access Control Scheme Using Blockchain for IoT,” IEEE Access,
+vol. PP, pp. 1–1, Mar. 2019.
+[17] L. Tan, N. Shi, K. Yu, M. Aloqaily, and Y . Jararweh, “A
+Blockchain-empowered Access Control Framework for Smart Devices
+in Green Internet of Things,” ACM Transactions on Internet
+Technology, vol. 21, no. 3, pp. 1–20, Aug. 2021. [Online]. Available:
+https://dl.acm.org/doi/10.1145/3433542
+[18] R. Gelashvili, L. Kokoris-Kogias, A. Sonnino, A. Spiegelman, and
+Z. Xiang, “Jolteon and Ditto: Network-Adaptive Efficient Consensus
+with Asynchronous Fallback,” in Financial Cryptography and Data
+Security, I. Eyal and J. Garay, Eds. Cham: Springer International
+Publishing, 2022, pp. 296–315.
+[19] M. Yin, D. Malkhi, M. K. Reiter, G. G. Gueta, and I. Abraham,
+“HotStuff: BFT Consensus with Linearity and Responsiveness,” in
+Proceedings of the 2019 ACM Symposium on Principles of Distributed
+Computing. Toronto ON Canada: ACM, Jul. 2019, pp. 347–356.
+[Online]. Available: https://dl.acm.org/doi/10.1145/3293611.3331591
+[20] Z. Gao, Y . Hu, and Q. Wu, “Jellyfish Merkle Tree,” Diem Association,
+Tech. Rep., Jan. 2021. [Online]. Available: https://developers.diem.com/
+docs/technical-papers/jellyfish-merkle-tree-paper
+[21] Z. Amsden, R. Arora, S. Bano, M. Baudet, S. Blackshear, A. Bothra,
+G. Cabrera, C. Catalini, K. Chalkias, E. Cheng, A. Ching, A. Chursin,
+G. Danezis, G. D. Giacomo, D. L. Dill, H. Ding, N. Doudchenko,
+V . Gao, Z. Gao, F. Garillot, M. Gorven, P. Hayes, J. M. Hou, Y . Hu,
+K. Hurley, K. Lewi, C. Li, Z. Li, D. Malkhi, S. Margulis, B. Maurer,
+P. Mohassel, L. de Naurois, V . Nikolaenko, T. Nowacki, O. Orlov,
+D. Perelman, A. Pott, B. Proctor, S. Qadeer, D. Russi, B. Schwab,
+S. Sezer, A. Sonnino, H. Venter, L. Wei, N. Wernerfelt, B. Williams,
+Q. Wu, X. Yan, T. Zakian, and R. Zhou, “The Libra Blockchain,”
+Diem Association, Tech. Rep., May 2020. [Online]. Available: https://
+developers.diem.com/docs/technical-papers/the-diem-blockchain-paper
+[22] M. Seemann, M. Inden, and D. Vyzovitis, “Decentralized Hole
+Punching,” in 2022 IEEE 42nd International Conference on Distributed
+Computing Systems Workshops (ICDCSW) . Bologna, Italy: IEEE,
+Jul. 2022, pp. 96–98. [Online]. Available: https://ieeexplore.ieee.org/
+document/9951368
+[23] IPFS, “libp2p NAT Hole Punching Success Rate - @dennis-
+tra - Measuring IPFS,” Aug. 2022. [Online]. Available: https:
+//www.youtube.com/watch?v=fyhZWlDbcyM
+[24] D. Vyzovitis, Y . Napora, D. McCormick, D. Dias, and Y . Psaras,
+“Gossipsub-v1.1 Evaluation Report,” Protocol Labs, Tech. Rep.,
+Apr. 2020. [Online]. Available: https://research.protocol.ai/publications/
+gossipsub-v1.1-evaluation-report/
+11

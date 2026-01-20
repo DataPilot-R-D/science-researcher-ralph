@@ -1,0 +1,650 @@
+arXiv:2506.17991v1  [cs.DC]  22 Jun 2025
+CFTel: A Practical Architecture for Robust and
+Scalable Telerobotics with Cloud-Fog Automation
+Thien Tran∗, Jonathan Kua ∗, Minh Tran †¶, Honghao Lyu ‡, Thuong Hoang ∗ and Jiong Jin §
+∗Deakin University, Australia; †RMIT University, Vietnam; ‡Zhejiang University, China;
+§Swinburne University of Technology, Australia; ¶University of Tasmania, Australia
+{peter.tran, jonathan.kua, thuong.hoang }@deakin.edu.au;
+minh.tranquang@rmit.edu.vn; lvhonghao@zju.edu.cn; jiongjin@swin.edu.au
+Abstract—Telerobotics is a key foundation in autonomous
+Industrial Cyber-Physical Systems (ICPS), enabling remote op-
+erations across various domains. However, conventional cloud-
+based telerobotics suffers from latency, reliability, scalability,
+and resilience issues, hindering real-time performance in critical
+applications. Cloud-Fog Telerobotics (CFTel) builds on the Cloud-
+Fog Automation (CFA) paradigm to address these limitations
+by leveraging a distributed Cloud-Edge-Robotics computing
+architecture, enabling deterministic connectivity, deterministic
+connected intelligence, and deterministic networked computing.
+This paper synthesizes recent advancements in CFTel, aiming to
+highlight its role in facilitating scalable, low-latency, autonomous,
+and AI-driven telerobotics. We analyze architectural frameworks
+and technologies that enable them, including 5G Ultra-Reliable
+Low-Latency Communication, Edge Intelligence, Embodied AI,
+and Digital Twins. The study demonstrates that CFTel has the
+potential to enhance real-time control, scalability, and autonomy
+while supporting service-oriented solutions. We also discuss prac-
+tical challenges, including latency constraints, cybersecurity risks,
+interoperability issues, and standardization efforts. This work
+serves as a foundational reference for researchers, stakeholders,
+and industry practitioners in future telerobotics research.
+Index Terms—Cloud-Fog Automation (CFA), Cloud-Fog Teler-
+obotics (CFTel), Industrial Cyber-Physical Systems (ICPS)
+I. I NTRODUCTION
+Telerobotics is a critical application of next-generation
+Industrial Cyber-Physical Systems (ICPS), enabling remote
+control of robotic systems in complex environments within
+Industry 4.0 [1]–[5]. Conventional cloud-based telerobotics,
+which relies on centralized processing, faces significant la-
+tency and network congestion, limiting real-time performance
+in critical applications of industrial automation [5], [6]. Cloud-
+Fog Automation (CFA) is a new paradigm that addresses these
+challenges by integrating a distributed Cloud-Edge-Robotics
+architecture with deterministic networking. It incorporates
+Edge Intelligence (EI), Embodied AI (EAI), and Digital
+Twins (DTs) to deliver scalable, low-latency, autonomous,
+and intelligent telerobotic systems [7], [8]. This framework
+leverages the combined capabilities of Cloud-Fog computing,
+which emphasizes deterministic communication, computing,
+and control, alongside scalable, service-oriented solutions [6].
+Leveraging the dynamic and network-centric features of
+CFA, Cloud-Fog Telerobotics (CFTel) enhances conventional
+telerobotics by distributing computational workloads across
+cloud, edge, and robotics layers [4], [9]. The cloud layer
+supports big data analytics, AI model deployment, and multi-
+robot coordination. While edge nodes enable low-latency AI
+inference, time-sensitive operations, and decentralized alloca-
+tion of computing load using fog computing, the robotics layer,
+powered by EAI, ensures autonomous adaptation to dynamic
+environments [7], [10]. Deterministic networking technolo-
+gies, such as 5G Ultra-Reliable Low-Latency Communication
+(URLLC) and Time-Sensitive Networking (TSN), underpin
+real-time control, ensuring high-reliability networks [11], [12].
+These advancements facilitate applications in smart manufac-
+turing, agriculture, logistics, automated warehousing, health-
+care, and disaster management, supporting service-oriented
+models that enhance scalability and flexibility in Industry 4.0.
+Despite technological advancements, CFTel faces chal-
+lenges, including latency constraints, cybersecurity risks, in-
+teroperability issues, and scalability limitations, necessitating
+standardized architectures and robust AI-driven frameworks
+[13]. This paper synthesizes recent advancements to empower
+CFTel, highlighting its role in enabling scalable, low-latency,
+autonomous, and AI-driven telerobotics. In summary, we make
+the following contributions:
+• Review state-of-the-art enabling technologies for teler-
+obotics, focusing on EI, EAI, and DTs.
+• Propose a novel Cloud-Fog Telerobotics architecture
+based on the Cloud-Fog Automation.
+• Outline challenges and future research directions for AI-
+driven control systems to enhance robust telerobotics.
+This paper is structured as follows: Section II presents the
+CFTel architecture, Section III details technologies, Section IV
+describes industrial applications, Section V addresses practical
+challenges, and Section VI concludes with future directions.
+II. C LOUD -FOG TELEROBOTICS ARCHITECTURE
+CFTel employs a hierarchical Cloud-Edge-Robotics archi-
+tecture to distribute computational and operational workloads,
+ensuring deterministic communication, computing, and con-
+trol [4], [14]. Table I compares the limitations of conven-
+tional cloud-based telerobotics with the proposed architecture
+
+Fig. 1. The distributed computing architecture leveraging Cloud-Fog Automation for Cloud-Fog Telerobotics.
+by integrating distributed, decentralized, and localized pro-
+cessing. This approach enables computational load balanc-
+ing, time-sensitive decision-making, security, scalability, and
+resilience for AI-driven telerobotics. It also enhances real-
+time performance, resilience, and scalability, and supports
+service-oriented solutions such as Robots-as-a-Service (RaaS),
+Control-as-a-Service (CaaS), and Manufacturing-as-a-Service
+(MaaS) [6]. Figure 1 illustrates the overall architecture of
+CFTel, and each layer plays a key role as follows:
+• Cloud Layer: Centralizes high-level processing for ICPS
+analytics, AI development and training, and multi-robot
+coordination, enabling MaaS and RaaS.
+• Edge Layer: Enables low-latency decision-making, AI
+inference for time-sensitive operations, supporting CaaS.
+• Robotics Layer: Provides ultra-low-latency control, re-
+silience, and autonomy with EAI for telerobotics in ICPS.
+A. Cloud Layer
+The cloud layer serves as the centralized hub for high-level
+processing, providing extensive data storage, big data analyt-
+ics, and large-scale AI model training. It facilitates global
+intelligence through tasks such as predictive maintenance,
+multi-robot task allocation, and fleet-wide optimization. The
+cloud supports scalable, vendor-independent models such as
+MaaS, enabling seamless integration of heterogeneous robotic
+systems [6], [8], [10]. It also hosts DTs, virtual replicas
+of physical systems, for real-time simulation and diagnos-
+tics [15], which are critical for applications such as precision
+agriculture [16]. However, reliance on remote data centers
+introduces latency, limiting its suitability for time-critical tasks
+such as telerobotic surgery or disaster response. The cloud
+layer interfaces with lower layers to delegate time-sensitive
+operations, ensuring balanced workload distribution [6].
+B. Edge Layer
+The edge layer enables low-latency decision-making and
+AI inference by processing data closer to robotic systems.
+Deployed in industrial environments, edge nodes execute
+lightweight AI models for time-sensitive tasks, including qual-
+ity inspection, path planning, system failure detection, and data
+encryption [17], [18]. This layer incorporates fog computing
+principles, often referred to as EI, which reduces cloud depen-
+dency, enhances security, and optimizes bandwidth [8]. Edge
+computing supports CaaS, enabling modular control services
+for commercial applications. By distributing computational
+loads across multiple edge nodes, this layer enhances network
+reliability and resilience, particularly in dynamic environments
+where cloud connectivity may be intermittent [13]. Tradi-
+tional time-sensitive control functions, typically managed by
+Programmable Logic Controllers (PLCs), can be migrated
+to the Edge Layer using EI. EI can execute control logic
+with AI-driven models, such as reinforcement learning for
+adaptive control, while leveraging TSN and 5G URLLC to en-
+sure deterministic performance with sub-millisecond response
+times [14]. However, challenges include adapting legacy PLC
+code to AI-based systems, which requires careful validation
+to maintain reliability and safety in industrial settings [7].
+C. Robotics Layer
+The robotics layer delivers ultra-low-latency execution, uti-
+lizing EAI for real-time robotic control and autonomy [1].
+Comprising physical robotic systems, this layer processes
+sensor inputs, such as LiDAR, cameras, and haptic feedback,
+to enable millisecond-level responses [17]. EAI empowers
+robots to perceive, learn, and adapt to dynamic environments.
+This layer enhances resilience through localized intelligence,
+minimizing dependency on upper layers [4], [8]. The integra-
+tion with edge nodes ensures seamless data flow, supporting
+scalable autonomous solutions, such as RaaS and CaaS.
+D. Integration with Existing Industrial Systems
+Integrating CFTel architecture into existing industrial sys-
+tems is critical for practical deployment in Industry 4.0.
+Legacy systems, such as PLCs and Supervisory Control and
+Data Acquisition systems, can be interfaced with CFTel us-
+ing OPC Unified Architecture (OPC-UA). OPC-UA enables
+seamless data exchange between legacy systems and CFTel’s
+Edge and Cloud layers, ensuring compatibility and real-
+time monitoring [3], [19]. Additionally, middleware solutions
+
+abstract the underlying complexities of heterogeneous sys-
+tems, providing a unified interface for data aggregation and
+control. This approach ensures that CFTel can be incremen-
+tally adopted in existing industrial setups without requir-
+ing a complete overhaul.
+E. Performance Evaluation Approach
+To assess CFTel’s practical relevance, performance evalua-
+tion can focus on key metrics such as latency, throughput, and
+reliability. Latency, as shown in Table I, is reduced to 5-10 ms
+in CFTel compared to 50-100 ms in conventional cloud-based
+telerobotics. Throughput can be measured by the number of
+robotic tasks processed per second, while reliability can be
+evaluated through the percentage of successful task comple-
+tions under varying network conditions. A simulation-based
+approach using tools such as NS-3 or OMNeT++ can model
+CFTel’s architecture in real-world applications such as multi-
+robot coordination in logistics or networked robotic systems
+in smart manufacturing for validating CFTel’s advantages.
+III. E NABLING TECHNOLOGIES FOR CFT EL
+The implementation of CFTel relies on advanced tech-
+nologies that ensure deterministic communication, real-time
+computing, and intelligent control. This section examines
+three critical enabling technologies: Network Infrastructure,
+EI and EAI, and DTs. These technologies underpin the hier-
+archical architectural layers, facilitating scalable, low-latency,
+and autonomous telerobotic operations. By integrating these
+technologies, CFTel achieves deterministic performance and
+service-oriented solutions as presented in Table II.
+A. Network Infrastructure
+A robust network infrastructure serves as the backbone of
+CFTel, providing deterministic, low-latency communication.
+Several advanced technologies contribute to this framework:
+• Time-Sensitive Networking: TSN extends Ethernet to
+ensure deterministic data transmission with minimal jitter,
+which is critical for synchronized operations [1], [7].
+• 5G and Beyond: 5G deliver ultra-low-latency and high-
+reliability communication, supporting long-distance teler-
+obotics. Emerging 6G promises further reductions in
+latency, ideal for time-sensitive applications [4], [5], [12].
+• Wi-Fi 6/7: These standards offer high throughput, low
+latency, and improved performance, complementing 5G
+and TSN by enhancing wireless connectivity, reducing
+congestion, and supporting real-time data exchange [7].
+B. Edge Intelligence and Embodied AI
+EI and EAI elements synergize within the robotics layer,
+leveraging fog-edge computing for low-latency inference and
+enabling adaptive, resilient telerobotic systems across ICPS
+applications [2], [5], [8].
+• Edge Intelligence: EI deploys AI models at edge nodes,
+processing data locally to minimize latency and reduce
+cloud dependency. Convolutional Neural Networks can be
+deployed for time-sensitive tasks such as quality inspec-
+tion and system predictive maintenance. Federated learn-
+ing enables decentralized model training across edge,
+preserving privacy and improving efficiency [20], [21].
+• Embodied AI: EAI integrates AI into physical sys-
+tems, enabling perception, learning, and adaptation [11].
+Through sensor fusion and reinforcement learning, EAI
+facilitates adaptive autonomy, allowing robots to optimize
+and perform complex tasks with minimal human input
+while enhancing human-robot interaction [22], [23].
+C. Digital Twins
+DTs are virtual representations of physical robotic systems,
+mirroring their real-time state and behavior to optimize perfor-
+mance and reliability in CFTel. Hosted primarily in the cloud
+or edge layers, DTs integrate data from robotics and edge
+nodes to provide real-time insights [15], [22]. Data manage-
+ment employs a publish-subscribe model, such as MQTT, en-
+suring efficient real-time updates with minimal overhead [11].
+• Predictive Maintenance: DTs analyze historical and
+real-time data to predict potential failures, enabling proac-
+tive maintenance scheduling to minimize downtime.
+• System Optimization: DTs facilitate simulation, testing,
+and optimization of robotic configurations, enabling pa-
+rameter refinement before real-world deployment.
+• Remote Diagnostics and Monitoring: DTs allow op-
+erators to visualize robot states and detect anomalies
+remotely via immersive eXtended Reality interfaces.
+IV. I NDUSTRIAL APPLICATIONS OF CFT EL
+This section explores CFTel’s transformative impact on
+smart manufacturing and agriculture, logistics and warehous-
+ing, healthcare, and disaster management, detailing specific
+use cases, benefits, and challenges as presented in Table III.
+Each subsection highlights the enabling technologies that drive
+innovation and support service-oriented solutions.
+A. Smart Manufacturing and Agriculture
+The distributed CFTel architecture advances smart manufac-
+turing by enabling adaptive automation, remote monitoring,
+and predictive maintenance in advanced autonomous ICPS.
+Cloud-based AI analyzes sensor data to predict equipment
+failures, reducing factory downtime and executing high-level
+decision-making [4]. Robotic arms in automotive assembly
+lines use fog computing for real-time quality inspection,
+detecting defects instantly to minimize waste. Edge nodes
+empower robots with adaptive control, allowing immediate
+responses to production anomalies, thus enhancing operational
+efficiency and cost-effectiveness. These capabilities ensure
+high reliability, scalability, and resilience, supporting MaaS,
+RaaS, and CaaS for vendor-independent deployments [1], [18].
+In agriculture, CFTel facilitates precision farming through
+autonomous drones and robots powered by EI and EAI [17],
+[24]. These systems perform tasks such as pest detection, crop
+monitoring, and soil analysis, processing data locally to opti-
+mize yields in real time [13]. Drones equipped with LiDAR
+
+TABLE I
+COMPARISON OF CONVENTIONAL CLOUD -BASED TELEROBOTICS VS . CLOUD -FOG TELEROBOTICS
+Feature Conventional Cloud-Based Telerobotics Cloud-Fog Telerobotics
+Latency High due to centralized processing and geographic server location Lower with distributed processing across the Cloud-Fog continuum
+Scalability Limited by centralized infrastructure and network congestion Enhanced via fog computing, incorporated with cloud computing
+Real-Time
+Control
+Delayed, dependent on network stability, suitable for global system
+monitoring, analytics, and resource management
+Fast, cyber-secure, distributed processing, cost-effective, supports
+time-sensitive tasks close to industrial robotic systems
+Security Vulnerable due to centralized data storage and targeted attacks Improved with localized encryption and fog-edge intelligence
+Resilience Susceptible to cloud failures, network congestion, and cyber-attacks More robust with decentralized intelligence, cloud-independent
+and cameras monitor crop health, adapting irrigation based on
+edge-driven insights, reducing reliance on centralized cloud
+processing [16]. CFTel’s architecture enhances scalability, en-
+abling farmers to manage large fields efficiently. Challenges in-
+clude integrating heterogeneous robotic systems and ensuring
+robust connectivity in rural areas, necessitating standardized
+protocols and advanced networking solutions [10].
+B. Logistics and Warehousing
+CFTel transforms logistics and warehousing by enabling
+real-time coordination of autonomous robotic fleets, boosting
+efficiency and throughput [25]. The cloud layer optimizes
+fleet-wide operations using AI-driven algorithms, while edge
+nodes handle localized tasks. Leveraging 5G URLLC, robots
+dynamically navigate for sub-millisecond coordination with
+other robots and workers, enhancing safety and speed [7]. DTs
+simulate warehouse workflows, predicting bottlenecks and op-
+timizing layouts, further improving operational efficiency [15].
+CFTel’s distributed architecture supports CaaS, allowing
+modular control services for scalable logistics operations [6].
+The communication paradigm of CFTel, combined with EI, en-
+sures robots adapt to dynamic environments. This architecture
+inherently supports scalability by offloading computational
+tasks to edge nodes, reducing bottlenecks in high-density
+robotic networks. Technologies such as 5G URLLC and EI en-
+able efficient management of large-scale fleets, ensuring low-
+TABLE II
+EMERGING TECHNOLOGIES AND THEIR KEY ROLES IN CFT EL
+Technology Key Role Applications Layer
+5G/URLLC Provides ultra-
+low-latency,
+high-reliability
+communication
+Precise control, wire-
+less communication,
+advanced telerobotics
+Cloud,
+Edge,
+Robotics
+Wi-Fi 6/7 Enhances through-
+put in dense envi-
+ronments
+Autonomous
+logistics,
+manufacturing
+Cloud,
+Edge,
+Robotics
+TSN Ensures determinis-
+tic, low-jitter com-
+munication
+Automation
+coordination, time-
+sensitive operations
+Edge,
+Robotics
+DTs Optimizes
+performance,
+predicts failures
+Manufacturing,
+resource management
+Cloud,
+Edge
+EI Enables real-time
+AI inference
+Quality control,
+decision-making
+Edge
+EAI Facilitates
+autonomous robot
+adaptation
+Network connectivity,
+system resilience
+Robotics
+latency communication and decentralized decision-making.
+However, handling high-density robotic nodes, ensuring cy-
+bersecurity and safety, in a logistics hub requires further in-
+vestigation into network capacity and swarm intelligence [25].
+C. Healthcare
+In healthcare, CFTel enables robotic-assisted surgery and
+assistive robotics, addressing the demand for remote interven-
+tions and patient support. CFTel facilitates real-time data pro-
+cessing to guide complex surgical procedures, incorporating
+advanced health technologies such as the Da Vinci Surgical
+System, and enhances surgical precision and dexterity [26],
+[27]. Fog computing ensures low-latency control, critical for
+maintaining accuracy during telerobotic surgeries, achieving
+sub-millisecond response times [7]. Assistive robots are de-
+ployed in elderly care and rehabilitation for health monitoring
+and personalized mobility support in a time-sensitive manner.
+CFTel’s distributed architecture enables scalable healthcare
+solutions and supports RaaS for broad deployment [6], [27].
+However, challenges, including data privacy, cybersecurity,
+and regulatory compliance, present significant obstacles. Se-
+cure, privacy-preserving architectures are crucial to safeguard
+sensitive patient data while ensuring operational efficiency,
+prompting research into blockchain-based security and stan-
+dardized protocols for healthcare robotics [26], [27].
+D. Disaster Management
+CFTel is pivotal in disaster management, where swarm
+robotics performs search-and-rescue missions in hazardous en-
+vironments. Cloud-fog computing enables real-time informa-
+tion sharing and coordination, while decentralized AI models
+at edge nodes facilitate autonomous decision-making [18].
+Robots deployed in earthquake-affected areas navigate using
+EAI, coordinating via 5G to locate survivors. DTs monitor
+robot states remotely, allowing operators to optimize mission
+strategies through immersive interfaces [22], [23]. These ca-
+pabilities enhance responsiveness in unpredictable disasters.
+Challenges include achieving robust inter-robot communi-
+cation under limited bandwidth and ensuring resilience in dis-
+rupted networks [4], [7]. Future advancements in 6G network-
+ing, decentralized AI, and EAI are expected to improve swarm
+robotics efficiency, enabling more autonomous and scalable
+disaster response systems. CFTel’s integration of distributed
+intelligence and deterministic communication positions it as a
+critical technology for life-saving operations.
+
+TABLE III
+SUMMARY OF CFT EL INDUSTRIAL APPLICATIONS , ENABLING TECHNOLOGIES , BENEFITS , AND CHALLENGES
+Domain Key Use Cases Enabling Technologies Benefits Challenges
+Smart Manufacturing Adaptive automation, robotic co-
+ordination, quality inspection
+Cloud-Fog computing, EI, EAI,
+Wi-Fi 6, TSN
+Reduced downtime,
+minimized waste
+System integration
+Agriculture Spraying, fertilizing, crop moni-
+toring, livestock monitoring
+Cloud computing, EI,
+autonomous drones
+Optimized yields, real-time
+decision-marking
+Rural connectivity
+Logistics Robotic fleet management, navi-
+gation, inventory management
+5G URLLC, Wi-Fi 6, DTs, EI Increased throughput, safety Cybersecurity
+Healthcare Robotic surgery, assistive robots Cloud-Fog computing, EI, EAI Precision, personalized care Data privacy
+Disaster Management Infrastructure inspection, search-
+and-rescue, swarm coordination
+5G/URLLC, Edge computing, EI,
+EAI
+Responsiveness, life-saving
+operations
+Bandwidth
+limitations
+V. P RACTICAL CHALLENGES
+CFTel offers transformative potential for autonomous ICPS,
+but significant challenges hinder its widespread adoption.
+These obstacles span technical performance, security, and
+system interoperability, impacting the reliability, safety, and
+scalability of telerobotic applications. This section examines
+three critical challenges, details the implications, and pro-
+poses solutions to empower CFTel’s integration into various
+domains. Addressing these challenges is essential to realizing
+the promise of deterministic, autonomous, and service-oriented
+solutions through CFTel architecture.
+A. Latency and Real-Time Constraints
+Achieving ultra-low latency and deterministic real-time
+communication is a formidable challenge for implementing
+CFTel, particularly in time-critical applications such as teler-
+obotic surgery [5], [26] and multi-robot coordination in disas-
+ter response [6]. Although sub-millisecond response times are
+essential to ensure precision and safety, network congestion,
+jitter, and packet loss often introduce unacceptable delays [7].
+TSN provides deterministic Ethernet-based transmission,
+while 5G URLLC achieves approximately 1 ms latency with
+99.999% reliability [14]. Wi-Fi 6/7 further enhance through-
+put in dense environments [12]. However, these technologies
+struggle under dynamic conditions, such as fluctuating network
+loads in logistics hubs. AI-powered network orchestration
+can prioritize critical data streams, while latency-aware edge
+processing offloads computations to edge nodes, reducing
+transmission delays [9], [18]. Adaptive scheduling models
+enhance responsiveness by predicting congestion. Emerging
+6G networks, AI-orchestrated network slicing, and Quantum
+Internet promise further improvements, but their development
+remains nascent, requiring further research.
+B. Cybersecurity
+The CFTel architecture introduces cybersecurity risks, as
+data and control signals traverse multiple layers, exposing
+vulnerabilities to threats such as man-in-the-middle attacks,
+adversarial AI, and ransomware. Unauthorized access to teler-
+obotic systems could disrupt operations and compromise sensi-
+tive data, with severe consequences in critical applications. For
+example, a breach in a surgical robot endangers patients [26],
+while compromised logistics robots disrupt supply chains [18].
+Traditional security measures are vital, but they introduce
+latency and conflict with advanced requirements. Advanced
+solutions, such as blockchain-based authentication and zero-
+trust security models, offer robust protection but incur compu-
+tational overhead. In multi-agent robotic systems, establishing
+trust among robots is complex, necessitating decentralized
+security models that verify authenticity without centralized
+reliance [18]. An AI-driven anomaly detection system can
+monitor behavior in real time, identifying unusual patterns
+indicative of attacks [2]. As quantum computing advances,
+quantum-resistant cryptographic techniques are needed to safe-
+guard against future threats [1]. Developing lightweight, low-
+latency security protocols is critical to balance protection and
+performance in CFTel for autonomous ICPS.
+C. Standardization
+The absence of standardized frameworks and protocols
+poses a major barrier to the scalability and interoperability of
+CFTel. Proprietary architectures and communication protocols
+prevalent in industries lead to compatibility issues, complicat-
+ing the integration of robotic systems from different vendors.
+This fragmentation hinders efficient data exchange and real-
+time collaboration, limiting the adoption of CFTel.
+Interoperability challenges are particularly pronounced be-
+tween open-source platforms and proprietary systems, which
+often use different data formats and communication protocols.
+For example, ROS relies on a publish-subscribe model, while
+proprietary systems may use custom APIs, leading to inte-
+gration bottlenecks. In practice, protocols such as ROS [13],
+OPC-UA [3], and Message Queuing Telemetry Transport
+(MQTT) [11] provide partial solutions but lack a unified
+architecture to integrate diverse robotic platforms, networking
+infrastructures, and AI-driven systems. A potential solution is
+integrating ROS 2 with OPC-UA to bridge robotic and indus-
+trial systems. Software-Defined Networking (SDN) and Net-
+work Function Virtualization (NFV) further address these chal-
+lenges by providing a flexible network layer that abstracts the
+differences between heterogeneous systems, enabling seamless
+data exchange and control [12]. Standardization efforts by
+IEEE, ISO, and IEC are ongoing, but inconsistent adoption
+persists. Universal middleware solutions that abstract underly-
+ing complexities can ensure semantic interoperability.
+
+VI. C ONCLUSION AND FUTURE RESEARCH DIRECTIONS
+This state-of-the-art review has comprehensively explored
+CFTel and its pivotal role in advancing ICPS. By leveraging
+CFA, CFTel overcomes the limitations of conventional cloud-
+based telerobotics, delivering deterministic communication,
+computing, and control through the Cloud-Edge-Robotics ar-
+chitecture. The review details enabling technologies, including
+TSN, 5G URLLC, Wi-Fi 6/7, EI, EAI, and DTs.
+CFTel impact spans diverse applications, including adaptive
+automation in smart manufacturing and precision farming in
+agriculture, to efficient robotic fleets in logistics and ware-
+housing, precise interventions in healthcare, and resilient op-
+erations in disaster management. Despite these advancements,
+challenges such as latency, cybersecurity, and standardization
+persist, necessitating innovative solutions to ensure reliability
+and scalability. This paper serves as a foundational resource
+for researchers and industry professionals, synthesizing recent
+advancements and providing a roadmap for future innovation
+in telerobotics, thereby contributing to the evolution of au-
+tonomous and intelligent industrial automation.
+Further research is required to fully leverage CFTel’s poten-
+tial, address existing constraints, and utilize emerging techno-
+logical advancements to facilitate next-generation autonomous
+and secure industrial systems. Key directions include AI-
+driven time-sensitive operations, deterministic networking,
+sustainable distributed computing paradigms, advancements in
+EI and EAI, cybersecurity and privacy solutions, standardiza-
+tion and interoperability, and application-specific challenges.
+REFERENCES
+[1] J. Jin, Z. Pang, J. Kua, Q. Zhu, K. H. Johansson, N. Marchenko, and
+D. Cavalcanti, “Cloud–Fog Automation: The New Paradigm towards
+Autonomous Industrial Cyber–Physical Systems,” IEEE Journal on
+Selected Areas in Communications , p. 1–1, 2025.
+[2] M. Adil, A. Farouk, H. Abulkasim, A. Ali, H. Song, and Z. Jin,
+“NG–ICPS: Next Generation Industrial CPS, Security Threats in
+the Era of Artificial Intelligence, and Open Challenges with Fu-
+ture Research Directions,” IEEE Internet of Things Journal , vol. 12,
+p. 1343–1367, 2025.
+[3] T. Ji and X. Xu, “Exploring the Integration of Cloud Manufacturing
+and Cyber–Physical Systems in the Era of Industry 4.0 – An OPC UA
+Approach,” Robotics and Computer–Integrated Manufacturing , vol. 93,
+p. 102927, 2025.
+[4] J. Jin, K. Yu, J. Kua, N. Zhang, Z. Pang, and Q. Han, “Cloud–Fog
+Automation: Vision, Enabling Technologies, and Future Research Di-
+rections,” IEEE Transactions on Industrial Informatics, vol. 20, p. 1039,
+2024.
+[5] E. J. Lopez Pulgarin, H. Niu, G. Herrmann, and J. Carrasco, “Implement-
+ing and Assessing a Remote Teleoperation Setup with a Digital Twin
+Using Cloud Networking,” in Towards Autonomous Robotic Systems ,
+pp. 238–250, Springer, 2022.
+[6] M. Afrin, J. Jin, A. Rahman, A. Rahman, J. Wan, and E. Hossain,
+“Resource Allocation and Service Provisioning in Multi–Agent Cloud
+Robotics: A Comprehensive Survey,” IEEE Communications Surveys &
+Tutorials, vol. 23, no. 2, p. 842–870, 2021.
+[7] D. Hu, D. Lan, Y . Liu, J. Ning, J. Wang, Y . Yang, and Z. Pang,
+“Embodied AI Through Cloud–Fog Computing: A Framework for
+Everywhere Intelligence,” in 2024 IEEE 33rd International Symposium
+on Industrial Electronics (ISIE) , p. 1–4, 2024.
+[8] Y . Himeur, A. N. Sayed, A. Alsalemi, F. Bensaali, and A. Amira, “Edge
+AI for Internet of Energy: Challenges and Perspectives,” Internet of
+Things, vol. 25, p. 101035, 2024.
+[9] P. W. Khan, K. Abbas, H. Shaiba, A. Muthanna, A. Abuarqoub, and
+M. Khayyat, “Energy Efficient Computation Offloading Mechanism in
+Multi–Server Mobile Edge Computing—An Integer Linear Optimization
+Approach,” Electronics, vol. 9, no. 6, 2020.
+[10] H. Lyu, J. Yan, J. Zhang, Z. Pang, G. Yang, and A. J.
+Isaksson, “Cloud–Fog Automation: Heterogenous Applications Over
+New–Generation Infrastructure of Virtualized Computing and Converged
+Networks,” IEEE Industrial Electronics Magazine , vol. 18, p. 30–42,
+Dec 2024.
+[11] Q. Luo, T. H. Luan, W. Shi, and P. Fan, “Deep Reinforcement Learning
+Based Computation Offloading and Trajectory Planning for Multi–UA V
+Cooperative Target Search,” IEEE Journal on Selected Areas in Com-
+munications, vol. 41, no. 2, p. 504–520, 2023.
+[12] Z. Ma, M. Xiao, Y . Xiao, Z. Pang, H. V . Poor, and B. Vucetic,
+“High–Reliability and Low–Latency Wireless Communication for Inter-
+net of Things: Challenges, Fundamentals, and Enabling Technologies,”
+IEEE Internet of Things Journal , vol. 6, p. 7946–7970, 2019.
+[13] H. Xiao, C. Chen, G. Zhang, and C. P. Chen, “Reinforcement Learn-
+ing–Driven Dynamic Obstacle Avoidance for Mobile Robot Trajectory
+Tracking,” Knowledge–Based Systems, vol. 297, p. 111974, 2024.
+[14] C. Yang, H. Yu, Q. Guo, T. Taleb, J. C. Requena, and K. Tammi,
+“Deterministic Networking Empowered Robotic Teleoperation,” IEEE
+Network, p. 1, 2024.
+[15] F. Tao, Q. Qi, L. Wang, and A. Y . C. Nee, “Digital Twins and
+Cyber–Physical Systems Toward Smart Manufacturing and Industry 4.0:
+Correlation and Comparison,” Engineering, vol. 5, p. 653–661, 2019.
+[16] S. Sarkar, B. Ganapathysubramanian, A. Singh, F. Fotouhi, S. Kar,
+K. Nagasubramanian, G. Chowdhary, S. K. Das, G. Kantor, A. Krish-
+namurthy, et al. , “Cyber–Agricultural Systems for Crop Breeding and
+Sustainable Production,” Trends in Plant Science, vol. 29, p. 130, 2024.
+[17] A. Gong, K. Yang, J. Lyu, and X. Li, “A Two–Stage Reinforcement
+Learning–Based Approach for Multi–Entity Task Allocation,” Engineer-
+ing Applications of Artificial Intelligence , vol. 136, p. 108906, 2024.
+[18] C. Zhang, Y . Wang, Z. Zhao, X. Chen, H. Ye, S. Liu, Y . Yang, and
+K. Peng, “Performance–Driven Closed–Loop Optimization and Control
+for Smart Manufacturing Processes in the Cloud–Edge–Device Collab-
+orative Architecture: A Review and New Perspectives,” Computers in
+Industry, vol. 162, p. 104131, 2024.
+[19] M. Ladegourdie and J. Kua, “Performance Analysis of OPC UA for
+Industrial Interoperability Towards Industry 4.0,” IoT, vol. 3, no. 4,
+pp. 507–525, 2022.
+[20] Z. Zhang, L. Wu, J. Jin, E. Wang, B. Liu, and Q. Han, “Secure Feder-
+ated Learning for Cloud–Fog Automation: Vulnerabilities, Challenges,
+Solutions, and Future Directions,” IEEE Transactions on Industrial
+Informatics, p. 1–13, 2025.
+[21] W. Yang, Y . Yang, W. Xiang, L. Yuan, K. Yu,´Alvaro Hern´andez Alonso,
+J. U. Ure ˜na, and Z. Pang, “Adaptive Optimization Federated Learning
+Enabled Digital Twins in Industrial IoT,” Journal of Industrial Informa-
+tion Integration, vol. 41, p. 100645, 2024.
+[22] T. Tran, Q. Nguyen, T. Luu, M. Tran, J. Kua, T. Hoang, and M. Dien,
+“Empowering Robotic Training with Kinesthetic Learning and Digital
+Twins in Human–Centric Industrial Systems,” Journal of Industrial
+Information Integration, vol. 43, p. 100743, 2025.
+[23] Q. Nguyen, T. Tran, T. Luu, M. Tran, G. R. Emad, and T. Hoang,
+“Human–Centred Interfaces on Engineering Teleoperation: A Case
+Study of Utilising Virtual Reality (VR) with Robotic Systems,” in
+2024 7th International Conference on Information and Communications
+Technology (ICOIACT), p. 142–147, 2024.
+[24] F. Sibona, N. Harrison, N. Wallace, C. Stevens, S. Sukkarieh, D. Rauben-
+heimer, S. J. Simpson, and L. A. Gonz ´alez, “A Framework to Enable
+Eco–Cyber–Physical Systems for Robotics–Focused Digital Twins in
+Smart Farming,” Journal of Field Robotics , 2025.
+[25] W. Xiang, J. Li, Y . Zhou, P. Cheng, J. Jin, and K. Yu, “Digital Twin Em-
+powered Industrial IoT–Based on Credibility–Weighted Swarm Learn-
+ing,” IEEE Transactions on Industrial Informatics, vol. 20, pp. 775–784,
+2024.
+[26] M. Dohler, S. Saikali, A. Gamal, M. C. Moschovas, and V . Patel, “The
+Crucial Role of 5G, 6G, and Fiber in Robotic Telesurgery,” Journal of
+Robotic Surgery, vol. 19, p. 4, 2024.
+[27] S. Kolb, A. Madden, N. Kr ¨oger, F. Mehmeti, F. Jurosch, L. Bernhard,
+W. Kellerer, and D. Wilhelm, “6G in Medical Robotics: Development of
+Network Allocation Strategies for a Telerobotic Examination System,”
+International Journal of Computer Assisted Radiology and Surgery ,
+vol. 20, no. 1, pp. 167–178, 2025.

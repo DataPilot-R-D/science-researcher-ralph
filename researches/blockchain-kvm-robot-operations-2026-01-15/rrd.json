@@ -1,0 +1,3075 @@
+{
+  "project": "Research: Blockchain KVM Robot Operations",
+  "branchName": "research/blockchain-kvm-robot-operations",
+  "description": "Scout advances in blockchain-based I/O virtualization, KVM protocols, and autonomous robot control systems. Focus on: (1) blockchain authentication for high-speed packet routing without duplication, (2) software-virtualized KVM over P2P networks, (3) AI-driven remote robot operations (humanoid/quadruped), (4) multi-factor authentication (2FA/3FA) in distributed systems, and (5) Layer 2 solutions for low-latency control. Looking for papers that enable secure, real-time remote control of robots via blockchain-authenticated KVM systems.",
+  "mission": {
+    "blue_ocean_scoring": true,
+    "min_blue_ocean_score": 12,
+    "min_combined_score": 25,
+    "strategic_focus": "balanced"
+  },
+  "requirements": {
+    "focus_area": "distributed systems / robotics",
+    "keywords": [
+      "blockchain authentication",
+      "KVM virtualization",
+      "remote robot control",
+      "P2P networking",
+      "Layer 2 scaling",
+      "humanoid robot teleoperation",
+      "distributed KVM",
+      "real-time robot operations"
+    ],
+    "time_window_days": 90,
+    "historical_lookback_days": 1095,
+    "target_papers": 30,
+    "sources": [
+      "arXiv",
+      "Google Scholar",
+      "web"
+    ],
+    "min_score_to_present": 18
+  },
+  "domain_glossary": {
+    "enabled": true,
+    "terms": {
+      "KVM": "Keyboard-Video-Mouse (remote control protocol)",
+      "L2": "Layer 2 (blockchain scaling solution)",
+      "P2P": "Peer-to-Peer networking",
+      "2FA/3FA": "Two/Three-Factor Authentication",
+      "SVM": "Software Virtual Machine",
+      "ETH": "Ethereum blockchain",
+      "KYC": "Know Your Customer (identity verification)",
+      "Teleoperation": "Remote control of robots by humans"
+    }
+  },
+  "open_questions": [
+    {
+      "field": "focus_area",
+      "question": "Should this research prioritize blockchain/distributed systems OR robotics/teleoperation?",
+      "options": [
+        "A: Blockchain infrastructure",
+        "B: Robot teleoperation",
+        "C: Both equally"
+      ],
+      "current_default": "Both equally"
+    },
+    {
+      "field": "keywords",
+      "question": "Should we include specific blockchain platforms (Ethereum, Solana, etc.) or keep it platform-agnostic?",
+      "options": [
+        "A: Ethereum-focused",
+        "B: Platform-agnostic",
+        "C: Multi-chain"
+      ],
+      "current_default": "Platform-agnostic"
+    }
+  ],
+  "phase": "COMPLETE",
+  "papers_pool": [
+    {
+      "id": "arxiv_2511.12390",
+      "title": "Learning Adaptive Neural Teleoperation for Humanoid Robots: From Inverse Kinematics to End-to-End Control",
+      "url": "https://arxiv.org/abs/2511.12390",
+      "pdf_url": "https://arxiv.org/pdf/2511.12390.pdf",
+      "authors": [
+        "Sanjar Atamuradov"
+      ],
+      "date": "2025-11-15",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 31,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 3,
+          "value_market": 4,
+          "defensibility": 2,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 3,
+          "first_mover_window": 2,
+          "network_effects": 3,
+          "strategic_clarity": 4
+        },
+        "execution_total": 19,
+        "blue_ocean_total": 12,
+        "combined_total": 31
+      },
+      "analysis": {
+        "summary": "Proposes a learning-based VR teleoperation framework that replaces a traditional IK+PD pipeline with an end-to-end policy trained via imitation learning + reinforcement learning. The policy maps VR controller poses and proprioceptive history to joint commands, aiming to produce smoother motions and better robustness under contact forces.",
+        "methodology": "Neural policy with (1) VR input encoder using relative controller pose encoding w.r.t. an initial grip frame, (2) proprioception encoder over joint positions/velocities and prior actions (5-step history), and (3) an LSTM head for temporal consistency. Training: behavioral cloning from IK+PD teleoperation demonstrations in simulation, then PPO fine-tuning with tracking + smoothness (acceleration/jerk) + energy regularization rewards plus a curriculum of external force disturbances; sim-to-real via domain randomization including dynamics, latency (0–20ms), and observation noise.",
+        "results": "On Unitree G1 (policy at 50Hz), reports 34% lower tracking error and 45% smoother motions vs IK+PD in nominal conditions, and 52% lower error under 0–40N force disturbances. Reported task success improves under force (door opening): 89% vs 71% for IK+PD; user study (8 participants) shows 87% preference for the learned policy; sim-to-real tracking error increases from 2.3cm (sim) to 2.7cm (real).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No vision input or haptic feedback; focuses on upper-body teleoperation only. Reported failure cases include lag on rapid controller motions (>1.5 m/s) and slow recovery after end-effector occlusion. Notes lack of explicit multi-user adaptation and suggests future work on online adaptation/meta-learning."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong technical results on real humanoid hardware for force-robust, smooth VR teleoperation with clear relevance to remote robot operations; however, the approach is largely built from standard RL components and lacks clear defensibility or blockchain/KVM-specific contributions."
+    },
+    {
+      "id": "arxiv_2507.20438",
+      "title": "Teleoperating Autonomous Vehicles over Commercial 5G Networks: Are We There Yet?",
+      "url": "https://arxiv.org/abs/2507.20438",
+      "pdf_url": "https://arxiv.org/pdf/2507.20438.pdf",
+      "authors": [
+        "Rostand A. K. Fezeu",
+        "Jason Carpenter",
+        "Rushikesh Zende",
+        "Sree Ganesh Lalitaditya Divakarla",
+        "Nitin Varyani",
+        "Faaiq Bilal",
+        "Steven Sleder",
+        "Nanditha Naik",
+        "Duncan Joly",
+        "Eman Ramadan",
+        "Ajay Kumar Gurumadaiah",
+        "Zhi-Li Zhang"
+      ],
+      "date": "2025-07-27",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 26,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 3,
+          "time_to_poc": 2,
+          "value_market": 4,
+          "defensibility": 2,
+          "adoption": 2
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 2,
+          "network_effects": 2,
+          "strategic_clarity": 4
+        },
+        "execution_total": 16,
+        "blue_ocean_total": 10,
+        "combined_total": 26
+      },
+      "analysis": {
+        "summary": "Systematic feasibility study of teleoperated driving over live commercial 5G networks (Minneapolis), focusing on uplink delivery of camera/LiDAR sensor streams. Introduces per-frame QoE metrics and shows tail latency and handover dynamics frequently violate teleoperation latency requirements even when median performance is acceptable.",
+        "methodology": "Field measurement campaign using a research AV streaming camera feeds via RTSP/WebRTC and LiDAR via a custom UDP client/server that packetizes ROS bag data. Streams are sent over tethered 5G smartphones to an AWS Local Zone edge server (RTT ~36.6ms). Collects detailed 5G RAN parameters (Accuver XCAL) plus application logs/Wireshark to correlate per-frame delays with CQI, BLER, handovers, and RB allocation; evaluates video compression (H.264/H.265/VP8/VP9) and QoE adaptation behavior (WebRTC GCC).",
+        "results": "Raw MJPEG RTSP single-camera uplink: 29.2% frames exceed 100ms total delay and 11.4% exceed 500ms, with a cumulative queuing delay effect; median per-frame network delay is ~73.5ms (above the 45ms network target). H.265+RTSP reduces >100ms total-delay violations to 0.487% but still has 17% of frames with network delay >45ms. Multi-camera streaming worsens tail behavior (e.g., RTSP merged cameras: 13% frames violate 100ms total delay and 45% violate 45ms network delay). 64-beam LiDAR streaming is effectively infeasible over 5G (median network delay ~2s even with voxel downsampling; raw ~6s). Downlink C&C is comparatively feasible (median 17.29ms; 64.29% within application target and 37.20% within network target). Cross-layer attribution: poor CQI raises average per-frame network delay from ~0.40s to ~0.77s (+92.5%); high BLER (10%+) raises delay from ~0.61s to ~0.95s (+55.7%); during A3 handovers delay increases ~86%, and ping-pong handovers can increase delay 56–85%. WebRTC bitrate adaptation lags ~10s behind sudden PHY throughput drops due to slower RTCP feedback (>=2s) versus fast 5G dynamics, motivating 5G-aware adaptation and multi-operator switching (example keeps per-frame total delay mostly <100ms).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Measurement-driven study (not a deployed solution) scoped to specific operators/coverage in Minneapolis with tethered smartphones and an AWS Local Zone edge server; results may vary across regions, bands, and network configurations. Multi-modal streaming (multiple cameras + LiDAR) remains constrained by uplink capacity and tail latency, and the paper does not address blockchain/KVM authentication layers."
+      },
+      "decision": "PRESENT",
+      "notes": "High-signal empirical evidence on uplink/tail latency, handovers, and protocol adaptation for teleoperation over real 5G; useful for designing reliable remote robot/KVM streaming, but offers limited defensibility and is not blockchain-authentication focused."
+    },
+    {
+      "id": "arxiv_2506.17991",
+      "title": "CFTel: A Practical Architecture for Robust and Scalable Telerobotics with Cloud-Fog Automation",
+      "url": "https://arxiv.org/abs/2506.17991",
+      "pdf_url": "https://arxiv.org/pdf/2506.17991.pdf",
+      "authors": [
+        "Thien Tran",
+        "Jonathan Kua",
+        "Minh Tran",
+        "Honghao Lyu",
+        "Thuong Hoang",
+        "Jiong Jin"
+      ],
+      "date": "2025-06-22",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "insights_extracted",
+      "score": 24,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 4,
+          "defensibility": 1,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 1,
+          "network_effects": 1,
+          "strategic_clarity": 2
+        },
+        "execution_total": 18,
+        "blue_ocean_total": 6,
+        "combined_total": 24
+      },
+      "analysis": {
+        "summary": "CFTel proposes a Cloud-Fog Telerobotics (CFTel) reference architecture for Industrial Cyber-Physical Systems (ICPS), distributing workloads across cloud, edge/fog, and robotics layers to improve latency, scalability, and resilience. It surveys enabling technologies (TSN, 5G URLLC, Wi‑Fi 6/7, Edge Intelligence, Embodied AI, Digital Twins) and maps them to service models like Robots-as-a-Service (RaaS) and Control-as-a-Service (CaaS).",
+        "methodology": "State-of-the-art review + architecture synthesis: (1) define a hierarchical Cloud–Edge–Robotics stack for deterministic communication/computing/control, (2) outline integration with legacy industrial systems via OPC-UA, and (3) propose evaluation metrics (latency/throughput/reliability) and simulation-based validation (NS-3/OMNeT++).",
+        "results": "Primarily qualitative; provides a comparative table claiming CFTel can reduce end-to-end latency to ~5–10 ms vs ~50–100 ms for conventional cloud-based telerobotics, and cites TSN/5G URLLC as key enablers for low-jitter, high-reliability links. No end-to-end prototype or empirical benchmark is reported in this paper.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "High-level reference architecture without a concrete implementation or experimental evaluation; broad multi-domain scope (manufacturing/agriculture/logistics/healthcare/disaster) reduces strategic focus. Security discussion mentions blockchain-based authentication/zero-trust but does not specify protocols or quantify latency/overhead, and it does not address KVM/remote-rendering transport details needed for real-time teleoperation."
+      },
+      "decision": "EXTRACT_INSIGHTS",
+      "notes": "Useful as an architectural checklist (cloud/edge/robot split, deterministic networking, ROS2/OPC-UA integration) and for framing security tradeoffs (blockchain auth overhead vs latency), but it is a survey/position paper without validated end-to-end results or KVM/blockchain-specific mechanisms."
+    },
+    {
+      "id": "arxiv_2504.09517",
+      "title": "RoboComm: A DID-based scalable and privacy-preserving Robot-to-Robot interaction over state channels",
+      "url": "https://arxiv.org/abs/2504.09517",
+      "pdf_url": "https://arxiv.org/pdf/2504.09517.pdf",
+      "authors": [
+        "Roshan Singh",
+        "Sushant Pandey"
+      ],
+      "date": "2025-04-13",
+      "source": "arXiv",
+      "priority": 5,
+      "status": "presented",
+      "score": 33,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 3,
+          "defensibility": 2,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 4,
+          "first_mover_window": 3,
+          "network_effects": 3,
+          "strategic_clarity": 4
+        },
+        "execution_total": 19,
+        "blue_ocean_total": 14,
+        "combined_total": 33
+      },
+      "analysis": {
+        "summary": "RoboComm proposes a decentralized-identity (DID) and verifiable-credentials (VC) stack for privacy-preserving robot-to-robot interactions in multi-robot ecosystems where robots from different organizations do not inherently trust each other. It uses Layer-2 state channels for high-throughput off-chain exchanges, with Layer-1 blockchain smart contracts as the settlement and dispute layer.",
+        "methodology": "Robots hold self-sovereign identities via W3C DIDs and exchange selectively-disclosed VCs instead of putting sensitive robot metadata on-chain. Peers establish P2P communication (libp2p) and open/close a state channel via a smart contract on a Quorum (EVM) Layer-1 chain; during interaction, robots exchange signed off-chain transactions that update per-iteration state (e.g., energy units and a credit score). Disputes are handled via a challenge period where the honest party can submit the latest signed state to L1.",
+        "results": "On a Raspberry Pi 5, the reported average times are 1.873 ms (off-chain tx signing), 1.28 ms (off-chain tx verification), and 3.046 ms (DID document generation), averaged over 1000 runs. Reported sizes are 563 bytes (robot DID document) and 480 bytes (off-chain transaction payload). In agent-based modeling for a swarm payload-transport task, RoboComm-enabled energy sharing reduced premature robot failures and improved task completion efficiency versus a no-sharing baseline.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Paper notes it is under peer review and presents preliminary evaluation. The main robotics evaluation uses agent-based modeling rather than real-world robot hardware, and it assumes fault-free hardware metering for energy transfer. Trust/governance of VC issuers and large-scale adversarial behavior (beyond a 2-party channel dispute) are not deeply explored, and no public code artifact is linked from the paper/arXiv page."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong fit to the research theme (robot trust + DID/VC + L2 state channels) with edge-feasible performance numbers; however, evaluation is preliminary and public implementation artifacts were not found."
+    },
+    {
+      "id": "scholar_10304344",
+      "title": "Secure teleoperated vehicles in augmented reality of things: A multichain and digital twin approach",
+      "url": "https://ieeexplore.ieee.org/abstract/document/10304344/",
+      "pdf_url": "",
+      "authors": [
+        "Sadia Jabeen Siddiqi",
+        "Mian Ahmad Jan",
+        "Anas Basalamah",
+        "Muhammad Tariq"
+      ],
+      "date": "2024-02-01",
+      "source": "Google Scholar",
+      "priority": 5,
+      "status": "rejected",
+      "score": 20,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 2,
+          "time_to_poc": 2,
+          "value_market": 3,
+          "defensibility": 2,
+          "adoption": 1
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 2,
+          "network_effects": 1,
+          "strategic_clarity": 3
+        },
+        "execution_total": 12,
+        "blue_ocean_total": 8,
+        "combined_total": 20
+      },
+      "analysis": {
+        "summary": "Analyzes security and privacy risks for teleoperated vehicles using Augmented Reality of Things (ARoT), focusing on forged-frame / false-data injection attacks against Augmented-Reality Heads-Up Displays (AR-HUDs) and shared video between a vehicle and its digital twin. Proposes a decentralized data security framework using multiple blockchains (a multichain scaffold) and positions deep neural network-based obstacle detection as part of the ARoT stack.",
+        "methodology": "Threat/vulnerability analysis centered on integrity of AR-HUD video frames and vehicle↔digital-twin synchronization, paired with a proposed multichain blockchain architecture intended to provide decentralized data integrity/security for the ARoT ecosystem. Obstacle detection is described as a deep-learning computer vision component with outputs rendered as AR overlays.",
+        "results": "Full text was not accessible from this environment due to IEEE Explore blocking automated access (HTTP 418). The Semantic Scholar abstract does not include quantitative latency/throughput overheads or experimental validation, so results could not be verified.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Paper access is closed in this environment (IEEE Explore request rejected) so analysis is based on abstract-level information only. The abstract claims to overcome latency and scalability issues via multichain, but does not provide measurable overheads; it is unclear whether blockchain operations sit on the real-time path vs. a slower audit/settlement layer. No public code artifact was found via GitHub search."
+      },
+      "decision": "REJECT",
+      "notes": "DOI: 10.1109/TCE.2023.3329007. Direct thematic fit (teleoperation + digital twin + blockchain security), but full-text access was blocked and abstract-level claims (especially latency/scalability) are insufficient to justify presentation."
+    },
+    {
+      "id": "arxiv_2511.00249",
+      "title": "Application of Blockchain Frameworks for Decentralized Identity and Access Management of IoT Devices",
+      "url": "https://arxiv.org/abs/2511.00249",
+      "pdf_url": "https://arxiv.org/pdf/2511.00249.pdf",
+      "authors": [
+        "Sushil Khairnar"
+      ],
+      "date": "2025-10-31",
+      "source": "arXiv",
+      "priority": 4,
+      "status": "insights_extracted",
+      "score": 24,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 4,
+          "defensibility": 1,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 1,
+          "first_mover_window": 1,
+          "network_effects": 1,
+          "strategic_clarity": 3
+        },
+        "execution_total": 18,
+        "blue_ocean_total": 6,
+        "combined_total": 24
+      },
+      "analysis": {
+        "summary": "Implements a decentralized identity and access management prototype for IoT devices using Hyperledger Fabric as a permissioned ledger and W3C Decentralized Identifiers (DIDs) as device identities. Demonstrates device onboarding/login and asset upload/query using a simulated IoT network built with Node-RED.",
+        "methodology": "Architecture combines (1) a Fabric network deployed via IBM Blockchain Platform (Kubernetes) with chaincode for device registry/asset management, (2) a Node.js backend using the Fabric SDK to expose APIs, (3) a Vue.js web client for device registration/login and asset actions, and (4) Node-RED flows to simulate multiple sensors producing periodic JSON payloads. Access control is owner-address based; additional chaincode checks prevent duplicate device registrations and duplicate asset uploads.",
+        "results": "Functionality-level evaluation shows successful registration/login gating, listing/querying of assets across devices, and duplication prevention (re-uploading the same asset returns an error with an existing data ID). The paper argues improved integrity/transparency and reduced reliance on centralized authorities, but does not report quantitative performance (latency/throughput) or a formal security evaluation.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Primarily a prototype demonstration: evaluation is qualitative/UI-driven, without measured end-to-end costs for DID resolution, chaincode execution, or consensus latency. The system is simulated (Node-RED sensors) and leans on IBM Cloud deployment choices; it does not address real-time teleoperation/KVM streaming constraints, threat modeling, or key-management/2FA workflows in depth."
+      },
+      "decision": "EXTRACT_INSIGHTS",
+      "notes": "Useful patterns for robot/device onboarding and auditable access control (DIDs + permissioned ledger + anti-duplication checks), but the work is largely an applied integration of existing tools without quantitative latency/security evidence for real-time operations."
+    },
+    {
+      "id": "arxiv_2508.14994",
+      "title": "A Vision-Based Shared-Control Teleoperation Scheme for Controlling the Robotic Arm of a Four-Legged Robot",
+      "url": "https://arxiv.org/abs/2508.14994",
+      "pdf_url": "https://arxiv.org/pdf/2508.14994.pdf",
+      "authors": [
+        "Murilo Vinicius da Silva",
+        "Matheus Hipolito Carvalho",
+        "Juliano Negri",
+        "Thiago Segreto",
+        "Gustavo J. G. Lahr",
+        "Ricardo V. Godoy",
+        "Marcelo Becker"
+      ],
+      "date": "2025-08-20",
+      "source": "arXiv",
+      "priority": 4,
+      "status": "insights_extracted",
+      "score": 24,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 4,
+          "defensibility": 1,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 1,
+          "first_mover_window": 1,
+          "network_effects": 1,
+          "strategic_clarity": 3
+        },
+        "execution_total": 18,
+        "blue_ocean_total": 6,
+        "combined_total": 24
+      },
+      "analysis": {
+        "summary": "Presents a vision-based shared-control teleoperation framework for a quadruped robot arm (Boston Dynamics Spot) that maps an operator’s wrist pose (tracked via an external RGB-D camera) to end-effector commands, with gesture recognition for mode switching and gripper actions. Adds a semi-autonomous grasp mode that detects objects via vision and triggers Spot’s internal grasp routine.",
+        "methodology": "Perception: Intel RealSense D435i (30 Hz, 640×480) with real-time RGB/depth alignment via ROS; ArUco marker establishes a stable reference frame; MediaPipe Pose provides 2D wrist pixels and aligned depth is sampled with a 5×5 median filter; 3D back-projection uses camera intrinsics, smoothed with an exponential moving average (α=0.5) and jump rejection (>25 cm per frame); MediaPipe hand landmarks estimate hand orientation via a palm-normal-based roll quaternion. Control: Spot arm commanded via Boston Dynamics SDK position commands at ~5 Hz; finger counting selects manual (1 finger) vs semi-autonomous (2 fingers); open palm / closed fist gestures map to gripper open/close in manual mode and release/grasp in semi-autonomous mode. Semi-autonomous grasping uses a YOLOv11-based object detector on Spot cameras and delegates grasp planning/execution to Spot’s proprietary grasp API. Code + Docker files are published (see repository).",
+        "results": "Real-robot pick-and-place: two users successfully grasped and placed two everyday objects (chips can, cleaning product) into a storage box. Precision evaluation with Optitrack ground truth reports mean positional error of ~0.07 m between the decoded wrist position and the robot end-effector, with error increasing at higher wrist velocities.",
+        "implementations_found": [
+          "https://github.com/EESC-LabRoM/MoveitServoing/tree/spot_teleop"
+        ],
+        "commercialized": false,
+        "limitations": "Limited evaluation (2 users, few objects, no reported task-time distributions or control/streaming latency). Control loop is low-rate (~5 Hz) and precision degrades with faster motions; user must face the camera for robust tracking. Semi-autonomous grasping relies on Spot’s proprietary grasp API (limits customization) and the system is Spot-specific. Obstacle avoidance/path planning is deferred to future work; the paper’s demo video URL returned 404 during this run. No blockchain/KVM/authentication layer is studied."
+      },
+      "decision": "EXTRACT_INSIGHTS",
+      "notes": "Useful as an open-source, low-instrumentation (RGB-D + gestures) shared-control teleop template plus a quantitative error baseline, but it is largely an integration of existing components with limited evaluation and no direct blockchain/KVM contribution."
+    },
+    {
+      "id": "arxiv_2508.11802",
+      "title": "Anticipatory and Adaptive Footstep Streaming for Teleoperated Bipedal Robots",
+      "url": "https://arxiv.org/abs/2508.11802",
+      "pdf_url": "https://arxiv.org/pdf/2508.11802.pdf",
+      "authors": [
+        "Luigi Penco",
+        "Beomyeong Park",
+        "Stefan Fasano",
+        "Nehar Poddar",
+        "Stephen McCrory",
+        "Nicholas Kitchel",
+        "Tomasz Bialek",
+        "Dexton Anderson",
+        "Duncan Calvert",
+        "Robert Griffin"
+      ],
+      "date": "2025-08-15",
+      "source": "arXiv",
+      "priority": 4,
+      "status": "presented",
+      "score": 26,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 3,
+          "time_to_poc": 3,
+          "value_market": 4,
+          "defensibility": 2,
+          "adoption": 2
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 2,
+          "network_effects": 1,
+          "strategic_clarity": 4
+        },
+        "execution_total": 17,
+        "blue_ocean_total": 9,
+        "combined_total": 26
+      },
+      "analysis": {
+        "summary": "Proposes a real-time teleoperation framework for bipedal stepping that retargets user foot motions into robot footstep locations instead of directly copying foot poses. It anticipates the next footstep early in the user’s stride and continuously updates the estimate to converge to the user’s final landing location. A terrain-adaptation module builds an onboard elevation map and reprojects unsafe footsteps to nearby planar regions, demonstrated on the Nadia humanoid on flat ground and a cinder-block hill.",
+        "methodology": "VR ankle trackers drive step detection (horizontal displacement + vertical lift thresholds). Instantaneous step direction is computed from tracker displacement; stride length is predicted using measured displacement + average horizontal velocity and blended back to the measured displacement using a landing factor derived from vertical motion (z and ż), then smoothed with a P-update and clamped. Footsteps are mapped into the robot stance frame with kinematic/yaw constraints. For terrain, a GPU pipeline constructs a quasi-global elevation map from depth sensing (local extraction + global fusion), and a GPU grid-search optimizer scores candidate foot poses with a composite cost emphasizing planarity/continuity. Execution uses a momentum-based whole-body QP walking controller with a standing/transfer/swing state machine and ICP-based balance; swing trajectories are modified with waypoints for step-up/step-down clearance.",
+        "results": "On Nadia, each user step triggers an immediate footstep command; practical synchronization is limited by the controller’s transfer phase (configured to 0.15 s but observed up to ~0.25–1 s depending on ICP error/stance). The elevation-map pipeline reports ~5 ms average compute at 30 Hz capture, and the terrain footstep optimizer evaluates ~1e5 candidates in <4 ms (~285 Hz). Qualitatively, the system mirrors user steps on flat ground and corrects unsafe placements to traverse a cinder-block hill.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No open-source release or quantitative end-to-end latency/jitter evaluation beyond controller phase timing; performance depends strongly on the robot’s stepping controller and hardware limits. Terrain adaptation assumes reliable onboard depth sensing and GPU resources and slows walking on rough terrain. Does not address secure networking/KVM/video streaming, so it is a locomotion-interface contribution rather than a security/distributed-systems mechanism."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong, implementation-backed teleoperation contribution: anticipatory footstep streaming with convergent updates and practical terrain-aware step correction on a real humanoid. However, it is not a blockchain/KVM paper and offers limited defensibility and limited quantitative networking/latency characterization."
+    },
+    {
+      "id": "arxiv_2508.09606",
+      "title": "BEAVR: Bimanual, multi-Embodiment, Accessible, Virtual Reality Teleoperation System for Robots",
+      "url": "https://arxiv.org/abs/2508.09606",
+      "pdf_url": "https://arxiv.org/pdf/2508.09606.pdf",
+      "authors": [
+        "Alejandro Posadas-Nava",
+        "Alejandro Carrasco",
+        "Richard Linares"
+      ],
+      "date": "2025-08-13",
+      "source": "arXiv",
+      "priority": 4,
+      "status": "presented",
+      "score": 34,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 5,
+          "value_market": 4,
+          "defensibility": 2,
+          "adoption": 4
+        },
+        "blue_ocean": {
+          "market_creation": 3,
+          "first_mover_window": 2,
+          "network_effects": 3,
+          "strategic_clarity": 4
+        },
+        "execution_total": 22,
+        "blue_ocean_total": 12,
+        "combined_total": 34
+      },
+      "analysis": {
+        "summary": "BEA VR is an open-source VR teleoperation stack that unifies real-time robot control, synchronized demonstration recording, and policy training across heterogeneous robot embodiments. It targets low-latency, high-rate operation using commodity VR hand tracking and integrates natively with the Hugging Face LeRobot dataset/training ecosystem.",
+        "methodology": "Componentized teleop pipeline (Detector/Operator/Interface) communicating over ZMQ. Uses Meta Quest 3S OpenXR hand keypoints (24 per hand @ 90 Hz), coordinate-frame construction + homogeneous transforms, multi-target DLS inverse kinematics for fingertip control with anti-collision checks, and temporal smoothing (moving average + quaternion SLERP). Demonstrations are recorded directly into the LeRobot dataset schema; policy rollouts use an asynchronous inference “think–act” loop that decouples a fixed-rate action streaming control loop from a separate inference thread.",
+        "results": "Demonstrates six tabletop manipulation tasks (e.g., tape insertion, lantern grasp, block stacking, flip-cube, pour, pick-and-place) with success rates from 60% to 100% over 10 trials each. On a pickup-box task, policies trained from 50 BEA VR demonstrations reach 10/10 success for ACT (avg 9.16 s), 8/10 for Diffusion (23.88 s), and 7/10 for SmolVLA (33.84 s). Network/control evaluation reports near-target control rates (e.g., 29.93 Hz @ 30 Hz and 99.18 Hz @ 90 Hz) with sub-ms jitter, and ~10 ms (one-way) latency at 90 Hz (~33 ms one-way at 30 Hz).",
+        "implementations_found": [
+          "https://github.com/ARCLab-MIT/BEAVR-Bot",
+          "https://huggingface.co/datasets/arclabmit/lx7r_tape_insert_dataset",
+          "https://huggingface.co/datasets/arclabmit/lx7r_lantern_grasp_dataset",
+          "https://huggingface.co/datasets/arclabmit/lx7r_stack_blocks_dataset",
+          "https://huggingface.co/datasets/arclabmit/lx7r_flip_cube_dataset",
+          "https://huggingface.co/datasets/arclabmit/lx7r_pour_dataset"
+        ],
+        "commercialized": false,
+        "limitations": "Primary constraints are hardware and usability: affordable dexterous hands remain limiting (LEAP hand precision/occlusions), and adding new robot embodiments still requires manual configuration, calibration, and tuning. The system’s impact depends on community contributions and broader benchmark standardization."
+      },
+      "decision": "PRESENT",
+      "notes": "High-signal, reproducible open-source teleoperation + dataset + policy-training stack with measured low-latency/high-rate performance; strong fit for remote robot operations (though not blockchain/KVM-specific) and easy to prototype due to released code and datasets."
+    },
+    {
+      "id": "arxiv_2505.22132",
+      "title": "Streaming Remote rendering services: Comparison of QUIC-based and WebRTC Protocols",
+      "url": "https://arxiv.org/abs/2505.22132",
+      "pdf_url": "https://arxiv.org/pdf/2505.22132.pdf",
+      "authors": [
+        "Daniel Mejías",
+        "Inhar Yeregui",
+        "Ángel Martín",
+        "Roberto Viola",
+        "Pablo Angueira",
+        "Jon Montalbán"
+      ],
+      "date": "2025-05-28",
+      "source": "arXiv",
+      "priority": 4,
+      "status": "presented",
+      "score": 25,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 4,
+          "time_to_poc": 3,
+          "value_market": 4,
+          "defensibility": 1,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 1,
+          "network_effects": 1,
+          "strategic_clarity": 4
+        },
+        "execution_total": 17,
+        "blue_ocean_total": 8,
+        "combined_total": 25
+      },
+      "analysis": {
+        "summary": "Compares WebRTC vs two QUIC-based approaches (RTP over QUIC / RoQ and Media over QUIC / MoQ) for XR remote rendering, using a Unity+GStreamer remote renderer deployed on Kubernetes and tested over Wi‑Fi 6 and a private 5G SA network.",
+        "methodology": "Unity renderer (C#) + native C++ plugin feeding GStreamer (appsrc) for H.264 encoding; WebRTC uses a Rust signaling server and a Rust player; RoQ uses peer-to-peer RTP-over-QUIC with early-stage GStreamer support and a Rust player; MoQ uses fMP4 over a relay-based publisher/subscriber model with unofficial GStreamer elements and a Rust relay server. Testbed includes an L4 vGPU VM (Kubernetes/Helm) and Wi‑Fi 6 vs AMARI Callbox Mini private 5G (N78, 20 MHz) with a Quectel RM500Q modem; NTP used for clock sync and tshark PCAPs for traffic metrics.",
+        "results": "End-to-end latency (Table I): RoQ is lowest across configs (e.g., 5G 1080p/15Mbps: 125.67 ms vs WebRTC 269.92 ms; Wi‑Fi 1080p/15Mbps: 215.00 ms vs 288.83 ms). Startup time: QUIC-based options are faster, with MoQ the fastest (e.g., Wi‑Fi 1080p/15Mbps: 532.2 ms vs WebRTC 1421.0 ms). MoQ shows the highest latency due to the relay (~431–560 ms on Wi‑Fi; ~524–538 ms on 5G). Traffic (Table III, 1080p/15Mbps): RoQ uses less throughput (~11.0–11.3 Mbps) than WebRTC (~13.78 Mbps) but has higher jitter/loss on Wi‑Fi (4.91 ms, 2.67%) while 5G is better (0.87 ms, 1.00%). WebRTC is most stable in jitter on both networks (0.66 ms Wi‑Fi; 0.64 ms 5G).",
+        "implementations_found": [
+          "https://github.com/tv-vicomtech/6G-XR_UC1_Remote_Renderer_dataset"
+        ],
+        "commercialized": false,
+        "limitations": "MoQ implementation is unofficial in GStreamer and does not support audio; RoQ GStreamer support is described as early-stage and error-prone. Measurements are from a specific Kubernetes + private 5G/Wi‑Fi testbed with no competing traffic and focus on a mostly passive-client rendering scenario; bidirectional interaction (input/control) and QUIC multipath are left for future work."
+      },
+      "decision": "PRESENT",
+      "notes": "Actionable protocol-level data for low-latency remote rendering (a KVM-adjacent primitive): RoQ lowers latency vs WebRTC in their testbed, while MoQ improves startup time but adds relay latency; QUIC implementations remain less mature (jitter/loss), so adoption risk remains."
+    },
+    {
+      "id": "arxiv_2505.19530",
+      "title": "Heavy lifting tasks via haptic teleoperation of a wheeled humanoid",
+      "url": "https://arxiv.org/abs/2505.19530",
+      "pdf_url": "https://arxiv.org/pdf/2505.19530.pdf",
+      "authors": [
+        "Amartya Purushottam",
+        "Jack Yan",
+        "Christopher Yu",
+        "Joao Ramos"
+      ],
+      "date": "2025-05-26",
+      "source": "arXiv",
+      "priority": 4,
+      "status": "presented",
+      "score": 26,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 3,
+          "time_to_poc": 3,
+          "value_market": 4,
+          "defensibility": 2,
+          "adoption": 2
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 2,
+          "network_effects": 1,
+          "strategic_clarity": 4
+        },
+        "execution_total": 17,
+        "blue_ocean_total": 9,
+        "combined_total": 26
+      },
+      "analysis": {
+        "summary": "Presents a teleoperation framework for Dynamic Mobile Manipulation (DMM) on a height-adjustable wheeled humanoid, combining whole-body motion retargeting with haptic feedback to support heavy lifting and transport tasks. Evaluates telelocomotion mappings with different levels of balance assistance, including automatic payload-induced lean compensation vs manual pilot compensation.",
+        "methodology": "Uses a whole-body HMI (adapted from prior work) to measure operator arm motion, height, pitch, and center of pressure, retargeted into robot setpoints. Adds height-variation retargeting (human height change mapped to robot height with gain βz=0.5) and a gain-scheduled LQR + feedback linearization controller across heights. For heavy payloads, estimates a new robot pitch equilibrium θ*R (and ˙θ*R) from static moment balance using known object mass and arm configuration, defines a payload-aware DCM setpoint, and retargets the human to control the robot’s normalized DCM error dynamics around that setpoint. Compares three control modes: baseline base-velocity mapping (θH→ẋR) with controller pitch compensation, a DCM pitch-only mapping with automatic pitch-setpoint estimation (triggered via the HMI), and a fully manual DCM mapping where the payload-induced moment is fed back as haptic force requiring operator lean compensation.",
+        "results": "Validated on barbell/box lifting up to 2.5 kg (21% of robot mass) with dynamic height changes. Pilots consistently preferred automatic setpoint estimation over full manual moment feedback, which required excessive lean and large sustained haptic forces (reported near 200 N) and degraded DCM tracking. DCM pitch mapping with force feedback showed improved DCM tracking vs the baseline velocity mapping; pilots tended to prefer velocity mapping for predictable precision during grasp/release and switched to DCM mapping for more responsive dynamic base motions, suggesting phase-dependent hybrid interfaces.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Requires an estimate of object mass prior to grasp to compute pitch equilibrium; models payload as a point mass at the end effector (COM offsets can cause inaccurate compensation or roll). Compensation during the grasp remains challenging. Grasping is inconsistent with passive grippers, and monocular FPV cameras limit depth perception for alignment."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong, hardware-validated haptic teleoperation/control design for heavy-lift dynamic mobile manipulation with clear relevance to remote robot operations; not blockchain/KVM-specific and no public code artifacts were found (paper links only to video demos), limiting replicability."
+    },
+    {
+      "id": "arxiv_2503.15546",
+      "title": "Enforcing Cybersecurity Constraints for LLM-driven Robot Agents for Online Transactions",
+      "url": "https://arxiv.org/abs/2503.15546",
+      "pdf_url": "https://arxiv.org/pdf/2503.15546.pdf",
+      "authors": [
+        "Shraddha Pradipbhai Shah",
+        "Aditya Vilas Deshpande"
+      ],
+      "date": "2025-03-17",
+      "source": "arXiv",
+      "priority": 4,
+      "status": "rejected",
+      "score": 23,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 1,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 3,
+          "defensibility": 1,
+          "adoption": 2
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 1,
+          "network_effects": 2,
+          "strategic_clarity": 3
+        },
+        "execution_total": 15,
+        "blue_ocean_total": 8,
+        "combined_total": 23
+      },
+      "analysis": {
+        "summary": "Proposes a layered cybersecurity architecture for LLM-driven robotic agents conducting online transactions, combining a permissioned blockchain ledger for transaction integrity, multi-factor authentication (MFA) for user/agent identity verification, and a machine-learning anomaly detection system (ADS) for fraud detection. Evaluates the stack in a simulated transaction workload.",
+        "methodology": "Layered design: (1) LLM-driven robot agent initiates/validates transactions; (2) permissioned blockchain (mentions Hyperledger Fabric) records each transaction hash (SHA-256) and digital signatures, validated via PBFT consensus (N=3f+1); (3) MFA uses biometrics plus OTP and cryptographic keys/certificates for user/agent authentication; (4) ADS uses supervised ML (e.g., Random Forest/SVM) trained on labeled transaction features (amount, frequency, duration, location, interaction history) to flag anomalies and trigger additional checks.",
+        "results": "Simulation with 10,000 transactions (10% labeled fraudulent). Reports ADS fraud-detection accuracy 98% vs 85% (traditional), transaction integrity 100% vs 95%, MFA success 99.5% vs 97%, and validation latency 0.05s vs 0.1s. Also reports 200 TPS vs 150 TPS, 70% vs 85% resource usage, and higher user satisfaction (95% vs 85%).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Evaluation is simulation-only and lacks key implementation details (LLM model, dataset generation, ADS model choice/tuning, baseline definitions). Reported performance/latency claims are therefore hard to validate, and the contribution is largely an integration of standard components. No public code artifacts found; no direct KVM/robot-control integration is evaluated."
+      },
+      "decision": "REJECT",
+      "notes": "Relevant idea (securing autonomous agents doing transactions) but the paper provides limited technical novelty and weak, hard-to-verify simulation evidence; treat its latency/TPS numbers as unvalidated."
+    },
+    {
+      "id": "arxiv_2406.02062",
+      "title": "Towards Railways Remote Driving: Analysis of Video Streaming Latency and Adaptive Rate Control",
+      "url": "https://arxiv.org/abs/2406.02062",
+      "pdf_url": "https://arxiv.org/pdf/2406.02062.pdf",
+      "authors": [
+        "Daniel Mejias",
+        "Zaloa Fernandez",
+        "Roberto Viola",
+        "Ander Aramburu",
+        "Igor Lopez",
+        "Andoni Diaz"
+      ],
+      "date": "2024-06-04",
+      "source": "arXiv",
+      "priority": 4,
+      "status": "presented",
+      "score": 26,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 4,
+          "defensibility": 1,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 1,
+          "network_effects": 1,
+          "strategic_clarity": 4
+        },
+        "execution_total": 18,
+        "blue_ocean_total": 8,
+        "combined_total": 26
+      },
+      "analysis": {
+        "summary": "Compares RTSP vs WebRTC for low-latency video streaming in the context of train remote driving, and proposes a practical latency measurement method plus a simple adaptive rate control loop.",
+        "methodology": "Implements an RTP-based pipeline in GStreamer (Basler/Pylon capture + NVIDIA H.264 encode/decode + RTP pay/depay) and evaluates RTSP and WebRTC. End-to-end latency is computed by embedding the camera capture timestamp into the RTP header (via RFC 8286 extension) and subtracting it from the player display time (requires NTP sync). Rate adaptation runs at the sender using RTCP report metrics (jitter + fraction of packet loss) with 3 quality levels (1080p30 H.264 at 5/3.5/2 Mbps) and fixed thresholds (2% loss; 500/1000 Hz jitter).",
+        "results": "In a two-camera 1080p30 setup at 5 Mbps per stream, when link capacity is >=11–12 Mbps, reported S2S latency is ~150 ms while reported RTP-based E2E latency is ~60–75 ms (RTSP) and ~45–55 ms (WebRTC). When capacity drops to ~10 Mbps, latency jumps to ~0.5 s, and at <=9 Mbps it exceeds ~1 s with pixelation/freezing. In a 5G SA lab setup with an attenuator, the system remains stable up to ~55 dB (~18 Mbps measured) with ~200 ms S2S latency; beyond ~60 dB the connection is lost and latency can spike to seconds before freezing.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No public code release found. Adaptive control is coarse (bitrate-only 3-level) and the authors note future work on resolution adaptation and better bandwidth estimation via congestion control; 5G tests are lab-based with outdoor/field trials reported as future work. Also not directly tied to blockchain authentication beyond being relevant to low-latency remote operation video transport."
+      },
+      "decision": "PRESENT",
+      "notes": "Actionable latency/quality tradeoffs for multi-camera teleoperation and a reusable RTP timestamping recipe for measuring video latency; however, the control logic is simple and the contribution is incremental (no blockchain/KVM-specific mechanism)."
+    },
+    {
+      "id": "arxiv_2304.00781",
+      "title": "Event-driven Fabric Blockchain -- ROS 2 Interface: Towards Secure and Auditable Teleoperation of Mobile Robots",
+      "url": "https://arxiv.org/abs/2304.00781",
+      "pdf_url": "https://arxiv.org/pdf/2304.00781.pdf",
+      "authors": [
+        "Lei Fu",
+        "Salma Salimi",
+        "Jorge Peña Queralta",
+        "Tomi Westerlund"
+      ],
+      "date": "2023-04-03",
+      "source": "arXiv",
+      "priority": 4,
+      "status": "presented",
+      "score": 26,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 3,
+          "value_market": 3,
+          "defensibility": 2,
+          "adoption": 2
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 2,
+          "network_effects": 1,
+          "strategic_clarity": 4
+        },
+        "execution_total": 17,
+        "blue_ocean_total": 9,
+        "combined_total": 26
+      },
+      "analysis": {
+        "summary": "Evaluates whether a permissioned blockchain (Hyperledger Fabric) can be used as a secure, auditable transport layer for ROS 2 teleoperation across networks/organizations. Proposes an event-driven Fabric–ROS 2 bridge that forwards selected ROS topics as Fabric transactions and uses chaincode events (instead of polling) to deliver data updates back into remote ROS 2 graphs.",
+        "methodology": "Implements an event-driven bridge with (1) NodeJS client apps using Fabric Node SDK + rclnodejs: a ROS-subscriber/Fabric-publisher and a Fabric-subscriber/ROS-publisher; and (2) a streamlined Go chaincode with a generic ROS-message asset schema (topic, msg type, payload) plus set/get/delete methods that emit chaincode events. Experiments use a 3-host Fabric network and ROS 2 (Galactic) in simulation (Gazebo multi-drone) and real-world DJI Tello drones tracked by Optitrack; latency is measured two-way by preserving timestamps from state messages and comparing on return of corresponding control messages.",
+        "results": "Reports non-deterministic but consistent near-real-time performance: one-way transport+confirmation roughly 350–400ms and two-way latencies typically <0.5–1.0s across simulated trajectory controllers. In a direct comparison to a polling-based bridge, both approaches achieve ~0.55s average latency at ~70 msg/s, but the event-driven bridge uses far less CPU (~0.2–0.4% vs ~3–7%) and continues working at ~110 msg/s where polling fails. Multi-drone simulation demonstrates >250 msg/s total load with a stable latency distribution; real-world Tello tests show acceptable tracking at constant speeds but controller failure when speed increases due to state staleness from bridge latency.",
+        "implementations_found": [
+          "https://github.com/TIERS/fabric2rosnodejs"
+        ],
+        "commercialized": false,
+        "limitations": "Latency/jitter are inherent to block confirmation and can produce bursty delivery patterns; the paper uses a simple, non-network-aware controller and does not optimize control under delayed/batched updates. The approach is not suitable for tight real-time loops; high-bandwidth streams (e.g., video) should stay off-chain with integrity checks (hashes) anchored on-chain."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong, implementation-backed evidence that Fabric can support secure/auditable cross-network ROS 2 teleoperation at modest rates (hundreds of ms latency) and that event-driven chaincode events outperform polling under load; however, latency is too high for fast control and the strategic moat is limited."
+    },
+    {
+      "id": "arxiv_2508.21480",
+      "title": "Towards a Decentralized IoT Onboarding for Smart Homes Using Consortium Blockchain",
+      "url": "https://arxiv.org/abs/2508.21480",
+      "pdf_url": "https://arxiv.org/pdf/2508.21480.pdf",
+      "authors": [
+        "Narges Dadkhah",
+        "Khan Reaz",
+        "Gerhard Wunder"
+      ],
+      "date": "2025-08-29",
+      "source": "arXiv",
+      "priority": 3,
+      "status": "presented",
+      "score": 29,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 3,
+          "defensibility": 2,
+          "adoption": 2
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 2,
+          "network_effects": 3,
+          "strategic_clarity": 4
+        },
+        "execution_total": 18,
+        "blue_ocean_total": 11,
+        "combined_total": 29
+      },
+      "analysis": {
+        "summary": "Proposes a decentralized onboarding framework for smart-home IoT devices that extends existing onboarding approaches to the application layer using a Hyperledger Fabric (HLF) consortium blockchain. The design aims to reduce reliance on centralized PKI/manufacturer-controlled keys while enabling registration, access control, revocation, and event-driven risk alerts.",
+        "methodology": "An Authenticator app and Server mutually authenticate over TLS 1.3 (including a post-quantum hybrid mode using ML-KEM+ECDH), then the Server issues a short-lived TOTP token (30s window) and API endpoint that the Authenticator provisions to the device. The device generates a keypair and pseudo-UUID and submits a token-bound registration request; after verification, the Server creates a long-lived device token and per-device server keypair, then writes device state to HLF. HLF uses three channels (Identity, Data, Risk Management) with separate smart contracts for role-based access control, logging, and anomaly-triggered alerts; revocation invalidates the device token and records deactivation (CRL/OCSP referenced).",
+        "results": "Formal verification in the Tamarin Prover validates authentication, token integrity, and keypair confidentiality lemmas, with reported verification completing in 0.34 seconds. A prototype integrated with the IoTree backend and an Android Authenticator uses HLF (Node.js chaincode) and reports HLF transaction latency below 500ms up to ~175 TPS (tested 30–300 TPS), with latency rising rapidly beyond that saturation point.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Primarily targets onboarding/monitoring rather than real-time control loops; the measured latency is for HLF transactions, not end-to-end robot/KVM interaction. Deployment assumes a permissioned consortium and multiple stakeholder roles, which may be heavy for consumer IoT; no public implementation artifacts were provided beyond references to external tools/platforms."
+      },
+      "decision": "PRESENT",
+      "notes": "Useful, implementation-backed pattern for consortium-blockchain onboarding + access control + event-driven risk alerts, with formal verification and concrete HLF latency/throughput characterization; however, it is not directly KVM/robot-control specific and adoption depends on a multi-party consortium."
+    },
+    {
+      "id": "arxiv_2507.00623",
+      "title": "Remote Rendering for Virtual Reality: performance comparison of multimedia frameworks and protocols",
+      "url": "https://arxiv.org/abs/2507.00623",
+      "pdf_url": "https://arxiv.org/pdf/2507.00623.pdf",
+      "authors": [
+        "Daniel Mejías",
+        "Inhar Yeregui",
+        "Roberto Viola",
+        "Miguel Fernández",
+        "Mario Montagud"
+      ],
+      "date": "2025-07-01",
+      "source": "arXiv",
+      "priority": 3,
+      "status": "presented",
+      "score": 29,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 4,
+          "defensibility": 2,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 2,
+          "network_effects": 1,
+          "strategic_clarity": 4
+        },
+        "execution_total": 20,
+        "blue_ocean_total": 9,
+        "combined_total": 29
+      },
+      "analysis": {
+        "summary": "Builds a multi-protocol remote-rendering testbed for VR that can stream rendered 360° video to lightweight clients via WebRTC, DASH/LL-DASH, RTP-over-QUIC (transport baseline), and Media over QUIC (MoQ), using either GStreamer or FFmpeg as the media pipeline. Reports end-to-end video latency measurements over WiFi and 5G, highlighting protocol and integration overhead tradeoffs.",
+        "methodology": "Unity application (C#) renders a VR scene and outputs raw audio + 360° video, bridged via a native C++ plugin into either (1) GStreamer pipelines (native API integration) supporting WebRTC, DASH, RTP-over-QUIC, and MoQ (fMP4 over an unofficial MoQ element), or (2) FFmpeg pipelines (CLI + OS pipes) supporting DASH and LL-DASH (fMP4). Latency is measured using an in-scene clock object plus NTP synchronization between sender/receiver; encoding uses H.264 (GPU), GOP=5, 1080p60 at 10 Mbps.",
+        "results": "Latency @1080p60/10Mbps over WiFi: URS-WebRTC 82±12ms; GStreamer-WebRTC 219±22ms; MoQ 159±12ms; RTP-over-QUIC 248±2ms; DASH 6–9s; LL-DASH 4.9s. Over 5G: URS-WebRTC 129±11ms; GStreamer-WebRTC 253±16ms; MoQ 194±20ms; RTP-over-QUIC 293±31ms; DASH 6.5–10.2s; LL-DASH 5.1s. URS outperforms due to tighter Unity integration; external pipelines pay GPU frame readback + reinjection overhead.",
+        "implementations_found": [
+          "https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7886"
+        ],
+        "commercialized": false,
+        "limitations": "Not blockchain-specific; interaction mechanisms are effectively limited to URS/WebRTC (data channel), while DASH/LL-DASH and current MoQ pipeline focus on video delivery. The MoQ GStreamer element is unofficial and lacks audio support. QUIC is evaluated as RTP-over-QUIC transport (not RoQ) and requires a non-browser player. Latency methodology uses a synthetic scene + NTP clock and does not include camera capture/display pipelines typical of physical robot teleoperation."
+      },
+      "decision": "PRESENT",
+      "notes": "Actionable latency numbers for KVM-adjacent remote rendering: WebRTC (tight integration) is sub-150ms, MoQ looks promising but immature, and DASH/LL-DASH are multi-second and unsuitable for real-time control; primary value is architectural tradeoff guidance rather than novel protocol design."
+    },
+    {
+      "id": "arxiv_2505.22123",
+      "title": "Leveraging 5G Physical Layer Monitoring for Adaptive Remote Rendering in XR Applications",
+      "url": "https://arxiv.org/abs/2505.22123",
+      "pdf_url": "https://arxiv.org/pdf/2505.22123.pdf",
+      "authors": [
+        "Inhar Yeregui",
+        "Daniel Mejías",
+        "Mikel Zorrilla",
+        "Roberto Viola",
+        "Jasone Astorga",
+        "Eduardo Jacob"
+      ],
+      "date": "2025-05-28",
+      "source": "arXiv",
+      "priority": 3,
+      "status": "presented",
+      "score": 28,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 3,
+          "defensibility": 2,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 2,
+          "network_effects": 1,
+          "strategic_clarity": 4
+        },
+        "execution_total": 19,
+        "blue_ocean_total": 9,
+        "combined_total": 28
+      },
+      "analysis": {
+        "summary": "Proposes using 5G physical-layer monitoring (MCS index + radio configuration) to estimate available downlink capacity and drive real-time adaptation of remote-rendered XR streaming profiles (bitrate/framerate/resolution) on an edge renderer.",
+        "methodology": "A Rate Controller queries the 5G gNB for the MCS index (via WebSocket in an Amarisoft standalone 5G setup) and computes a theoretical maximum data rate using the 3GPP formula (layers, modulation order, PRBs, numerology, overhead). It maps the estimated data rate to three pre-defined WebRTC streaming profiles (Q1 720p/60/5Mbps, Q2 1080p/60/8Mbps, Q3 4K/60/35Mbps) and rate-limits profile changes to at most one every 3 seconds to avoid oscillations.",
+        "results": "Estimated data rate tracked measured throughput (iperf3) closely over 60s with small deviations attributed to dynamic overhead. In a 140s mobility test (UE moving up to 15m from the base station and back), auto-adaptation reduced total freeze time from 4760ms to 3930ms (~17.4% reduction) while keeping ~56fps average; however, each profile switch introduced an additional ~277ms freeze due to implementation limits. The client received the highest quality for 76.43% of the session; authors estimate up to 34.9% freeze-time reduction if switch-induced freezes are eliminated.",
+        "implementations_found": [
+          "https://github.com/tv-vicomtech/6G-XR_UC1_Remote_Renderer_dataset"
+        ],
+        "commercialized": false,
+        "limitations": "Evaluation is on a controlled standalone 5G testbed with direct gNB metric access; feasibility on commercial 5G depends on NEF/modem exposure of PHY metrics. Only 3 discrete profiles are tested, no predictive control is implemented, and profile switching can itself cause freezes in the WebRTC pipeline. Single-UE, short-range (15m) experiments; multi-user congestion and wider mobility are not assessed."
+      },
+      "decision": "PRESENT",
+      "notes": "Actionable for KVM-adjacent remote operations: PHY-derived capacity estimates can drive faster/cleaner QoS adaptation than application-only feedback. Not blockchain-specific and likely replicable, but provides concrete testbed + metrics and highlights a real deployment gotcha (switch-induced freezes)."
+    },
+    {
+      "id": "arxiv_2503.17873",
+      "title": "A Distributed Blockchain-based Access Control for the Internet of Things",
+      "url": "https://arxiv.org/abs/2503.17873",
+      "pdf_url": "https://arxiv.org/pdf/2503.17873.pdf",
+      "authors": [
+        "Ebtihal Abdulrahman",
+        "Suhair Alshehri",
+        "Ali Alzubaidy",
+        "Asma Cherif"
+      ],
+      "date": "2025-03-22",
+      "source": "arXiv",
+      "priority": 3,
+      "status": "insights_extracted",
+      "score": 24,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 4,
+          "defensibility": 1,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 1,
+          "first_mover_window": 1,
+          "network_effects": 0,
+          "strategic_clarity": 4
+        },
+        "execution_total": 18,
+        "blue_ocean_total": 6,
+        "combined_total": 24
+      },
+      "analysis": {
+        "summary": "Proposes DBC-ABAC, a distributed blockchain-based Attribute-Based Access Control (ABAC) model for IoT. ABAC policy management (PAP) and access decisions (PDP/PIP) are embedded into Hyperledger Fabric chaincode so edge nodes can authorize access without a centralized controller.",
+        "methodology": "Distributed domains with IoT gateways forwarding device data to domain edge nodes that participate in a permissioned Fabric network. ABAC is represented as subject/object/permission/environment attributes; policies are stored on-ledger (CouchDB world state). Two smart contracts: Policy Contract (ValidatePolicy/AddPolicy/UpdatePolicy/DeletePolicy/QueryPolicy) and Access Contract (GetAtts/CheckAccess/DelegateAccess). Delegation is implemented by updating the OwnerID attribute; revocation by flipping permission attributes (Read/Write) and time-bounding policies (StartTime/EndTime).",
+        "results": "Benchmarked chaincode functions with Hyperledger Caliper (total 100 transactions) under two send rates (TPS=5 and TPS=50). Reports <1s average latency for all functions at TPS=5, and <1s for QueryPolicy/DeletePolicy/CheckAccess (≈1s for AddPolicy/UpdatePolicy) at TPS=50; throughput at TPS=5 is reported as 5–5.4 TPS, vs 4.95–4.99 (Fabric-IoT) and 4.91–5.2 (ABAC-HLFBC).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Evaluation is on a single local machine (not geographically distributed). Consensus is out of scope; implementation uses a single Raft ordering service (centralization risk). The IoT data path and the proposed distributed data storage system are not implemented; the access control part is evaluated but actual cross-domain data retrieval is deferred to future work."
+      },
+      "decision": "EXTRACT_INSIGHTS",
+      "notes": "Useful Fabric ABAC smart-contract decomposition + benchmarking baseline, but it operates at seconds-scale transaction latency and targets a crowded IoT access-control space; treat blockchain as control-plane authorization, not a real-time robot/KVM data-plane mechanism."
+    },
+    {
+      "id": "arxiv_2503.15998",
+      "title": "Wearable Haptics for a Marionette-inspired Teleoperation of Highly Redundant Robotic Systems",
+      "url": "https://arxiv.org/abs/2503.15998",
+      "pdf_url": "https://arxiv.org/pdf/2503.15998.pdf",
+      "authors": [
+        "Davide Torielli",
+        "Leonardo Franco",
+        "Maria Pozzi",
+        "Luca Muratore",
+        "Monica Malvezzi",
+        "Nikos Tsagarakis",
+        "Domenico Prattichizzo"
+      ],
+      "date": "2025-03-20",
+      "source": "arXiv",
+      "priority": 3,
+      "status": "presented",
+      "score": 27,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 3,
+          "value_market": 3,
+          "defensibility": 2,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 2,
+          "network_effects": 1,
+          "strategic_clarity": 4
+        },
+        "execution_total": 18,
+        "blue_ocean_total": 9,
+        "combined_total": 27
+      },
+      "analysis": {
+        "summary": "Extends the TelePhysicalOperation (TPO) “Marionette” teleoperation paradigm with a wearable haptic interface to improve operator awareness when teleoperating highly redundant robots. The interface adds skin-indentation (squeezing) and vibration feedback plus ring-mounted buttons, and is evaluated on the CENTAURO loco-manipulation mission with 12 naive users across three interface conditions.",
+        "methodology": "User wrist motion (tracked with Intel RealSense T265 cameras) generates virtual forces applied to robot control points; robot motion is produced via an admittance-style control (joint-level mass-spring-damper model) and mobile-base Cartesian velocity control. Wearable devices (forearm bands + index-finger rings, ESP-based, servomotor-driven fabric belts + vibromotors) map: forearm squeezing to the magnitude of the applied virtual force when commanding a limb; finger squeezing to gripper grasp force or end-effector contact force; vibration patterns acknowledge button-triggered mode toggles (activation, gripper, control-point switch).",
+        "results": "In the CENTAURO mission (pick bottle → place in box → press emergency button), ANOVA found no statistically significant differences in completion time or NASA-TLX workload across conditions. Reported means (All trials): A 168.5±28.0s, B 178.5±2.1s, C 182.6±17.2s; (Last two trials): A 150.1±28.1s, B 172.5±13.4s, C 148.2±6.0s; failures: A=2, B=1, C=1. Questionnaires show a general subjective preference for the full buttons+haptics condition (C), with a slight perceived increase in complexity.",
+        "implementations_found": [
+          "https://github.com/ADVRHumanoids/tpo_vision"
+        ],
+        "commercialized": false,
+        "limitations": "No public code repo is linked from the paper; evaluation is short-horizon and lab-based, and does not report statistically significant objective performance improvements from haptics. Condition A uses a second human operator for voice commands (perfect understanding/ACK), which may not reflect real speech-recognition latency/error; network/KVM effects are not evaluated."
+      },
+      "decision": "PRESENT",
+      "notes": "Practical, lightweight wearable haptics + button acknowledgments for an intuitive “virtual rope” teleoperation UI; strong relevance to remote robot operations but limited blue-ocean defensibility and no measured latency/KVM/blockchain link."
+    },
+    {
+      "id": "arxiv_2412.03709",
+      "title": "Securing RC Based P2P Networks: A Blockchain-based Access Control Framework utilizing Ethereum Smart Contracts for IoT and Web 3.0",
+      "url": "https://arxiv.org/abs/2412.03709",
+      "pdf_url": "https://arxiv.org/pdf/2412.03709.pdf",
+      "authors": [
+        "Saurav Ghosh",
+        "Reshmi Mitra",
+        "Indranil Roy",
+        "Bidyut Gupta"
+      ],
+      "date": "2024-12-04",
+      "source": "arXiv",
+      "priority": 3,
+      "status": "rejected",
+      "score": 21,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 3,
+          "time_to_poc": 4,
+          "value_market": 2,
+          "defensibility": 1,
+          "adoption": 2
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 1,
+          "network_effects": 1,
+          "strategic_clarity": 3
+        },
+        "execution_total": 14,
+        "blue_ocean_total": 7,
+        "combined_total": 21
+      },
+      "analysis": {
+        "summary": "Proposes an Ethereum smart-contract based access-control framework for a dynamic, hierarchical P2P overlay (RC-based structured P2P). The design separates role/policy enforcement (Access Control Contracts) from adjudication (Judge Contract) and uses a Register Contract to map role/method names to contract addresses/ABIs for role-specific lookups.",
+        "methodology": "Defines a two-level RC-based P2P architecture (a transit ring of group-heads for lookup + fully-connected groups at level 2). Implements role-oriented ACCs with a dual validation scheme: (1) static permission checks against predefined policies and (2) dynamic validation based on detected misbehavior, recorded in a misbehavior list. A Judge Contract applies penalties using a severity/impact mapping that references CIA + STRIDE categories; the Register Contract supports methodRegister/methodUpdate/methodDelete/getContract to manage contract references.",
+        "results": "Demonstrates smart-contract scaffolding and role-specific ACC variants; reports only qualitative “before/after” improvements (response times improved, unauthorized access reduced, transparency enhanced) without quantitative latency, throughput, or gas-cost measurements.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No quantitative evaluation (e.g., gas/fee overhead, transaction latency, commit jitter, throughput) and no released code; unclear whether the intended deployment is public Ethereum vs permissioned/private chain. Dynamic behavior monitoring is described conceptually but not specified end-to-end (on-chain vs off-chain detection, alert thresholds, adversarial robustness). Does not address real-time video/KVM/control-loop constraints relevant to remote robot operations."
+      },
+      "decision": "REJECT",
+      "notes": "Conceptually aligned with decentralized access control, but the approach is largely standard (RBAC-like role contracts + registry + penalties) and the paper lacks quantitative validation or artifacts needed to assess feasibility under real-time robot/KVM constraints."
+    },
+    {
+      "id": "arxiv_2408.11805",
+      "title": "ACE: A Cross-Platform Visual-Exoskeletons System for Low-Cost Dexterous Teleoperation",
+      "url": "https://arxiv.org/abs/2408.11805",
+      "pdf_url": "https://arxiv.org/pdf/2408.11805.pdf",
+      "authors": [
+        "Shiqi Yang",
+        "Minghuan Liu",
+        "Yuzhe Qin",
+        "Runyu Ding",
+        "Jialong Li",
+        "Xuxin Cheng",
+        "Ruihan Yang",
+        "Sha Yi",
+        "Xiaolong Wang"
+      ],
+      "date": "2024-08-21",
+      "source": "arXiv",
+      "priority": 3,
+      "status": "presented",
+      "score": 30,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 4,
+          "defensibility": 2,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 2,
+          "network_effects": 2,
+          "strategic_clarity": 4
+        },
+        "execution_total": 20,
+        "blue_ocean_total": 10,
+        "combined_total": 30
+      },
+      "analysis": {
+        "summary": "ACE introduces a low-cost (~$600) bimanual teleoperation setup that combines a 3D-printed exoskeleton for wrist/end-effector pose (via forward kinematics) with hand-facing cameras for 3D finger keypoints, aiming to collect high-quality dexterous demonstrations across diverse robots and end-effectors.",
+        "methodology": "Hardware: portable dual-base (desktop/mobile) bimanual exoskeleton with encodered Dynamixel joints + hand-facing RGB webcams to reduce occlusion. Perception/control: MediaPipe detects 21 hand keypoints in the wrist frame; scaled workspace mapping (xe = γ(xh−ch)+ct) plus Normal/Mirror/Bimanual and Gripper/Hand modes; IK retargets wrist pose to robot arms and an optimization-based hand-retargeting maps keypoints to robot hand joints. System runs ~27 Hz hand tracking and can reach ~100 Hz with higher-FPS cameras; gRPC pipeline supports extensions (e.g., Vision Pro).",
+        "results": "Reports ~1 mm average FK error for end-effector pose; tape-measure extension teleop shows ~3 mm average error (20→40 cm). In a simulated target-reaching user study vs GELLO, ACE improves success and efficiency in most settings (e.g., Small/Small success 97.1% vs 47.6%). Demonstration collection on real robots achieves high teleop success (e.g., 120/123 for Grasp Dolls on xArm+Ability Hand; 62/66 on H1+Inspire) and supports imitation learning with diffusion policy (xArm) and ACT (H1), reporting per-subtask success rates roughly 0.4–1.0 depending on step.",
+        "implementations_found": [
+          "https://github.com/ACETeleop/ACETeleop",
+          "https://github.com/ACETeleop/ACE_hardware",
+          "https://ace-teleop.github.io/"
+        ],
+        "commercialized": false,
+        "limitations": "Paper notes the camera mount prevents hands from coming together and increases rotational burden due to added moment arm, making some operations less intuitive. Work focuses on local teleoperation/data collection and does not address secure remote/KVM transport or blockchain authentication, so end-to-end network latency/jitter is not characterized."
+      },
+      "decision": "PRESENT",
+      "notes": "Strong execution: open-source hardware+software with concrete accuracy/efficiency measurements and broad cross-platform coverage (hands and grippers). Strategic upside is moderate because teleoperation hardware is a competitive space (ALOHA/GELLO/DexCap/AnyTeleop), and the work does not itself solve secure low-latency remote/KVM operation; best viewed as a high-quality input/interface layer to pair with networking/security."
+    },
+    {
+      "id": "arxiv_2406.00375",
+      "title": "Teledrive: An Embodied AI based Telepresence System",
+      "url": "https://arxiv.org/abs/2406.00375",
+      "pdf_url": "https://arxiv.org/pdf/2406.00375.pdf",
+      "authors": [
+        "Snehasis Banerjee",
+        "Sayan Paul",
+        "Ruddradev Roychoudhury",
+        "Abhijan Bhattacharya",
+        "Chayan Sarkar",
+        "Ashis Sau",
+        "Pradip Pramanick",
+        "Brojeshwar Bhowmick"
+      ],
+      "date": "2024-06-01",
+      "source": "arXiv",
+      "priority": 3,
+      "status": "presented",
+      "score": 30,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 3,
+          "value_market": 4,
+          "defensibility": 2,
+          "adoption": 4
+        },
+        "blue_ocean": {
+          "market_creation": 3,
+          "first_mover_window": 2,
+          "network_effects": 1,
+          "strategic_clarity": 4
+        },
+        "execution_total": 20,
+        "blue_ocean_total": 10,
+        "combined_total": 30
+      },
+      "analysis": {
+        "summary": "Introduces Teledrive, a WebRTC-based telepresence robot system that adds embodied-AI autonomy so non-expert remote operators can issue high-level speech commands (e.g., ‘go to the kitchen/bedroom’) instead of continuous manual driving. Key features include an explicit AreaGoal (AreaNav) formulation, edge-offloaded perception/planning, and a person-following mode for caregiving scenarios.",
+        "methodology": "Edge–cloud hybrid architecture with four subsystems: (1) Communication: WebRTC collaborative multi-presence session with cloud star topology for A/V over SRTP plus an on-demand P2P WebRTC data channel (SCTP) for delay-sensitive control; robot↔edge offload uses WebSocket semantics. (2) HRI: command-word detection + VAD, ASR (wav2vec-based), task identification, and a dialogue loop for disambiguation. (3) Embodied navigation: modular PointNav (RGB-D + odometry mapping, A* global planning, local heuristic policy), ObjectNav using scene graphs + a spatial relational graph (GCN embeddings), and AreaNav that infers regions via object–region relation graphs + region-transition priors, periodic 360° scans, opening detection (custom YOLO classes), and landmark backtracking. (4) Person following: YOLO detection with GOTURN + CSRT tracking plus one-class SVM re-identification and voting.",
+        "results": "Simulation benchmarks in AI Habitat/Matterport3D report PointNav success 91.05% (905/994 Gibson episodes). ObjectNav results vs baselines: Success 0.941, SPL 0.658, SoftSPL 0.679, DTS 0.305 (Random: Success 0.006; Frontier: Success 0.598). AreaNav across six target areas shows average success 0.958 (ViewAreaGoal) and 0.942 (AreaGoal) with mean step counts 159 and 182, outperforming random exploration (0.775/0.725 success; 332/361 steps) and frontier-based baselines (0.83/0.875; 205/221). A 30-user study (global participants) reports usability ratings (MOS) across conferencing/navigation/speech features; authors also mention real-life indoor deployments.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No public Teledrive code release is linked in the paper (only external dataset/tool links). The work is not blockchain-authentication or KVM-virtualization focused, and it does not provide detailed end-to-end network latency/jitter measurements for the control+video loop under adverse Internet conditions. Several evaluations assume simulation conveniences (e.g., ground-truth pose in Habitat for PointNav), and real-robot quantitative navigation benchmarks are limited."
+      },
+      "decision": "PRESENT",
+      "notes": "Good reference architecture for browser-based telepresence with autonomy (AreaGoal + person-following) and a concrete WebRTC control-plane split (A/V star + P2P control). Strategic moat is limited and it does not address blockchain-authenticated KVM specifically, but it is directly useful for designing low-latency remote robot/KVM-style control stacks."
+    },
+    {
+      "id": "arxiv_2401.03398",
+      "title": "Amplifying robotics capacities with a human touch: An immersive low-latency panoramic remote system",
+      "url": "https://arxiv.org/abs/2401.03398",
+      "pdf_url": "https://arxiv.org/pdf/2401.03398.pdf",
+      "authors": [
+        "Junjie Li",
+        "Kang Li",
+        "Dewei Han",
+        "Jian Xu",
+        "Zhaoyuan Ma"
+      ],
+      "date": "2024-01-07",
+      "source": "arXiv",
+      "priority": 3,
+      "status": "insights_extracted",
+      "score": 24,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 4,
+          "time_to_poc": 3,
+          "value_market": 3,
+          "defensibility": 2,
+          "adoption": 4
+        },
+        "blue_ocean": {
+          "market_creation": 1,
+          "first_mover_window": 1,
+          "network_effects": 0,
+          "strategic_clarity": 4
+        },
+        "execution_total": 18,
+        "blue_ocean_total": 6,
+        "combined_total": 24
+      },
+      "analysis": {
+        "summary": "Proposes the \"Avatar System\", a device–cloud–client platform for immersive remote robot operation using 360° panoramic video and VR. The prototype uses a six-fisheye panoramic camera, edge correction+stitching, H.265(HEVC) encoding, and 5G uplink to a cloud relay feeding a VR client (HTC VIVE PRO). They measure event-to-eye latency of ~357 ms in an office setting (and higher in lab/outdoor) and argue VR head-tracking enables near-zero-latency perspective switching versus mechanical pan/tilt cameras.",
+        "methodology": "Architecture: device terminal (mobile robot + panoramic camera + 6T edge compute + 5G CPE) → cloud server (relay + optional AI) → client PC+VR. Edge performs distortion correction + white balance + SIFT-based stitching to 360° RGB, synchronizes audio, then encodes in HEVC for transmission. Cloud forwards encoded video (AI processing like YOLO/ORB-SLAM3 is optional and excluded from latency tests) and relays operator control signals to the device.",
+        "results": "Event-to-eye latency (Table 1): avg 0.357 s (office), 0.450 s (lab), 0.796 s (outdoor) using a timer-in-frame measurement method; latency variability tracks network conditions. Perspective switching is claimed to be almost zero-latency because viewpoint changes are computed locally from VR head tracking on the decoded 360° video.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No open-source release for the Avatar system was found via GitHub searches of arXiv ID/title. Best-case event-to-eye latency is still hundreds of ms and cloud-side AI processing latency is explicitly excluded, limiting relevance to tight real-time robot control/KVM. Security, authentication, and blockchain integration are out of scope; operator performance evaluation is deferred to future work."
+      },
+      "decision": "EXTRACT_INSIGHTS",
+      "notes": "Useful engineering reference for a 360° VR teleoperation pipeline and a practical event-to-eye latency measurement method, but it does not address blockchain-authenticated access or low-jitter real-time robot/KVM operation; latency remains too high for many control-loop scenarios."
+    },
+    {
+      "id": "arxiv_2309.16869",
+      "title": "Vidaptive: Efficient and Responsive Rate Control for Real-Time Video on Variable Networks",
+      "url": "https://arxiv.org/abs/2309.16869",
+      "pdf_url": "https://arxiv.org/pdf/2309.16869.pdf",
+      "authors": [
+        "Pantea Karimi",
+        "Sadjad Fouladi",
+        "Vibhaalakshmi Sivaraman",
+        "Mohammad Alizadeh"
+      ],
+      "date": "2023-09-28",
+      "source": "arXiv",
+      "priority": 3,
+      "status": "presented",
+      "score": 30,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 4,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 4,
+          "defensibility": 2,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 2,
+          "network_effects": 1,
+          "strategic_clarity": 4
+        },
+        "execution_total": 21,
+        "blue_ocean_total": 9,
+        "combined_total": 30
+      },
+      "analysis": {
+        "summary": "Vidaptive proposes a WebRTC-compatible rate control design that improves utilization and reduces tail latency on variable networks by decoupling congestion-control behavior from the video encoder output. It makes the video stream appear backlogged to a delay-based congestion controller via buffering and dummy padding traffic, then adapts encoder target bitrate, frame rate (via pause/skip), and resolution to track the controller sending rate.",
+        "methodology": "Replace WebRTC’s GCC with a delay-based, windowed congestion controller (evaluated with Copa and RoCC) that outputs a congestion window and implied sending rate (CC-Rate). A pacer sends at CC-Rate; if the encoder undershoots, Vidaptive injects dummy packets so the controller sees a backlogged flow; if the encoder overshoots, packets are buffered and sent as allowed. Latency safeguards pause/skip frames when pacer-queue age exceeds τ (set to 33ms), and drain/reset (force keyframe) if queued packets exceed ~1s. An online hindsight-optimization chooses headroom α (target bitrate = α·CC-Rate) over a sliding window (T=1s, λ tradeoff between frame rate and quality) and adjusts resolution when larger changes are needed.",
+        "results": "On 16 Mahimahi cellular traces (lossless link, 25ms one-way delay), Vidaptive reports ~2.5× higher utilization and ~2× higher video bitrate vs GCC on average, improving average PSNR by ~1.6–1.9 dB. Median frame latency increases by ~47ms (148ms→195ms) but P95 frame latency drops substantially overall (4120ms→1433ms across all frames), with per-trace P95 improvements on 10/16 traces (~2.7s average improvement) and degradations of ~45–380ms on 5 traces; frame rate drops ~10% on average.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No public Vidaptive code release identified; implementation is described as WebRTC modifications. Uses dummy padding traffic to keep CC feedback active, which can waste bandwidth (authors suggest possible future repurposing for FEC/keyframes). Evaluation is on lossless, emulated links; some traces show worse P95 latency despite higher quality, and Vidaptive can reduce frame rate during outages to maintain low delay."
+      },
+      "decision": "PRESENT",
+      "notes": "Highly relevant to KVM/teleoperation video paths: a drop-in WebRTC transport that improves utilization and reduces tail latency spikes without changing hardware encoders. Not blockchain-specific and likely replicable, but offers a practical lever for remote robot operations."
+    },
+    {
+      "id": "scholar_10272865",
+      "title": "Intelligent Interface for Secure Routing of TCP/IP Connections to the KVM Hypervisor",
+      "url": "https://ieeexplore.ieee.org/document/10272865/",
+      "pdf_url": "",
+      "authors": [
+        "Artur Zaenchkovski",
+        "Alexey Lazarev",
+        "Alexey Shtempel"
+      ],
+      "date": "2023-09-10",
+      "source": "Google Scholar",
+      "priority": 3,
+      "status": "rejected",
+      "score": 19,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 3,
+          "time_to_poc": 3,
+          "value_market": 2,
+          "defensibility": 1,
+          "adoption": 2
+        },
+        "blue_ocean": {
+          "market_creation": 1,
+          "first_mover_window": 1,
+          "network_effects": 0,
+          "strategic_clarity": 4
+        },
+        "execution_total": 13,
+        "blue_ocean_total": 6,
+        "combined_total": 19
+      },
+      "analysis": {
+        "summary": "Proposes an “intelligent traffic encapsulation” interface to securely route TCP/IP connections into an ARM pKVM (EL2) hypervisor environment, aiming to enable secure development/management access to KVM-layer systems on mobile-class devices.",
+        "methodology": "From the accessible abstract/metadata: (1) automated hypervisor detection from a chroot environment, and (2) an internal authorization algorithm for automated authentication using RSA plus one-time passwords (OTP), intended to keep the same management semantics across LAN/WAN interfaces.",
+        "results": "No evaluation details were accessible without IEEE Xplore PDF access; performance/latency/security properties could not be verified in this iteration.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "IEEE Xplore full text/PDF requires sign-in and direct fetch returns “Request Rejected”; only abstract, author list, and keywords (plus partial introduction) were accessible via a text proxy, limiting evidence for claims and preventing deep validation."
+      },
+      "decision": "REJECT",
+      "notes": "IEEE Xplore access blocked (418 Request Rejected / sign-in required). Abstract and keyword metadata show relevance to KVM/pKVM secure access but not to blockchain or robot teleoperation, and the lack of accessible evaluation prevents assessing feasibility for real-time operations."
+    },
+    {
+      "id": "arxiv_2509.10291",
+      "title": "Proof of AutoML: SDN based Secure Energy Trading with Blockchain in Disaster Case",
+      "url": "https://arxiv.org/abs/2509.10291",
+      "pdf_url": "https://arxiv.org/pdf/2509.10291.pdf",
+      "authors": [
+        "Salih Toprak",
+        "Muge Erel-Ozcevik"
+      ],
+      "date": "2025-09-12",
+      "source": "arXiv",
+      "priority": 2,
+      "status": "rejected",
+      "score": 21,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 3,
+          "time_to_poc": 4,
+          "value_market": 2,
+          "defensibility": 1,
+          "adoption": 2
+        },
+        "blue_ocean": {
+          "market_creation": 2,
+          "first_mover_window": 1,
+          "network_effects": 0,
+          "strategic_clarity": 4
+        },
+        "execution_total": 14,
+        "blue_ocean_total": 7,
+        "combined_total": 21
+      },
+      "analysis": {
+        "summary": "Proposes “Proof of AutoML”, an SDN-assisted blockchain energy-trading framework for disaster scenarios. Instead of traditional mining, it uses AutoML-selected regression models to generate pseudo-random nonce candidates from network QoS telemetry. The paper evaluates five regressors on a 9000-sample QoS dataset, emphasizing uniqueness (“randomness rate”) and Shannon entropy of model outputs.",
+        "methodology": "Hybrid SDN master/slave controller architecture routes and records energy-trading requests via smart contracts. The SDN controller ingests QoS features (one-way delay, jitter, packet loss) and predicts throughput using an AutoML regression model; the prediction is treated as a nonce candidate during block construction (Algorithm 1), then broadcast to base-station nodes for consensus validation.",
+        "results": "Reported regression performance (Table I) is modest (best R^2≈0.619 for Gradient Boosting). Randomness metrics (Table II) are near-max for all models: Random Forest and Extra Trees reach 100% randomness rate and 1.0000 normalized Shannon entropy; LightGBM reaches 99.9% and 0.9999. Timing (Table III) shows sub-second training and ~0.04–0.07s prediction per sample on an M2 laptop.",
+        "implementations_found": [
+          "https://github.com/sstprk/proof_of_automl"
+        ],
+        "commercialized": false,
+        "limitations": "Core security premise is weak: nonce “randomness” does not replace a well-defined consensus/threat model (PoW difficulty or BFT/PoA assumptions). Randomness rate (unique predictions/total) and Shannon entropy over the value distribution are not cryptographic randomness tests and can be maximized by deterministic sequences. No end-to-end evaluation of SDN+blockchain under realistic disaster networking, nor relevance to real-time robot/KVM control loops."
+      },
+      "decision": "REJECT",
+      "notes": "Has a public prototype repo, but the contribution conflates nonce uniqueness/entropy with consensus security and lacks an end-to-end SDN+blockchain evaluation. Low relevance to blockchain-authenticated KVM/robot operations."
+    },
+    {
+      "id": "arxiv_2412.04222",
+      "title": "DistB-VNET: Distributed Cluster-based Blockchain Vehicular Ad-Hoc Networks through SDN-NFV for Smart City",
+      "url": "https://arxiv.org/abs/2412.04222",
+      "pdf_url": "https://arxiv.org/pdf/2412.04222.pdf",
+      "authors": [
+        "Anichur Rahman",
+        "MD. Zunead Abedin Eidmum",
+        "Dipanjali Kundu",
+        "Mahir Hossain",
+        "MD Tanjum An Tashrif",
+        "Md Ahsan Karim",
+        "Md. Jahidul Islam"
+      ],
+      "date": "2024-12-05",
+      "source": "arXiv",
+      "priority": 2,
+      "status": "rejected",
+      "score": 18,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 2,
+          "feasibility": 3,
+          "time_to_poc": 3,
+          "value_market": 2,
+          "defensibility": 1,
+          "adoption": 2
+        },
+        "blue_ocean": {
+          "market_creation": 1,
+          "first_mover_window": 1,
+          "network_effects": 0,
+          "strategic_clarity": 3
+        },
+        "execution_total": 13,
+        "blue_ocean_total": 5,
+        "combined_total": 18
+      },
+      "analysis": {
+        "summary": "DistB-VNET proposes a smart-city VANET architecture combining blockchain, SDN, and NFV, with an edge-level IDS to classify malicious traffic. It uses clustering via RSUs/cluster heads and a dual-layer blockchain (distributed at the edge plus centralized in the cloud) to improve security and scalability.",
+        "methodology": "Vehicles form clusters via RSUs; cluster heads handle secure message exchange using hashes and public/private keys, and forward data to SDN controllers for routing/traffic management. NFV is used for automatic resource allocation, while an Isolation Forest model (trained on the IDS 2018 intrusion dataset) filters benign vs malicious traffic before it reaches distributed nodes.",
+        "results": "Reports Isolation Forest classification metrics of 99.23% accuracy (99.14% precision, 99.15% recall, 99.07% F1). Simulation uses Mininet and an Ethereum stack (Truffle/Ganache/Solidity) and reports higher PDR/throughput and lower end-to-end delay/energy vs a baseline (IEAOCGO-C) across 20–50 vehicles; throughput scales with larger cluster size but drops as vehicle count increases.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Evaluation is simulation-only with several reporting ambiguities (units/“gas” labeling, and a crypto step described as encrypt-with-private-key/decrypt-with-public-key). No public code is provided, and the work does not address real-time robot/KVM teleoperation constraints (e.g., ms-level control/video loops and connection-setup latency)."
+      },
+      "decision": "REJECT",
+      "notes": "Crowded smart-city VANET security space; contribution is mostly a high-level integration plus simulation, with limited relevance to blockchain-authenticated KVM/robot operations."
+    },
+    {
+      "id": "arxiv_2407.05506",
+      "title": "Pruning Blockchain Protocols for Efficient Access Control in IoT Systems",
+      "url": "https://arxiv.org/abs/2407.05506",
+      "pdf_url": "https://arxiv.org/pdf/2407.05506.pdf",
+      "authors": [
+        "Yongtao Huang",
+        "I-Ling Yen",
+        "Farokh Bastani"
+      ],
+      "date": "2024-07-07",
+      "source": "arXiv",
+      "priority": 2,
+      "status": "insights_extracted",
+      "score": 24,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 3,
+          "defensibility": 1,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 1,
+          "first_mover_window": 1,
+          "network_effects": 0,
+          "strategic_clarity": 4
+        },
+        "execution_total": 18,
+        "blue_ocean_total": 6,
+        "combined_total": 24
+      },
+      "analysis": {
+        "summary": "Proposes PBAC (Pruned Blockchain-based Access Control) for IoT systems to reduce access-validation latency and message rounds compared to \"full path\" blockchain validation. The key pruning idea is a shortcut protocol where a domain AC hub validates and issues tokens/session keys immediately for trusted users, while validator endorsement happens asynchronously in the background; the paper also introduces an enterprise-oriented device-hierarchy model (R&D-BAC) to speed up authorization at scale.",
+        "methodology": "Architecture: IoT devices sit behind firewalls and are grouped into domains, each managed by an Access Control (AC) hub that maintains a \"shadow\" copy of policies (shadowDP). A consortium validator cluster (Proof-of-Authority) maintains blockchain state and endorses hub-signed permissions via BFT consensus (Ditto, a 2-chain HotStuff variant); validators also keep indices + an in-memory shadow copy of latest policies to avoid reconstructing policies from transaction logs during validation. Access flow: users request (uid,did,pt,sv) from the hub; hub checks policy, signs a token, and (full path) waits for validator endorsement before distributing a session key to the device. Shortcut: for a trusted-user list Tu, the hub sends token + session key immediately and submits endorsement to validators in parallel; the design also supports intranet-only operation during Internet disconnection with later synchronization.",
+        "results": "On a small hardware testbed (4 validators on Intel NUCs, hub on a NAS VM, device on Raspberry Pi 3B+), 500 access validations show internet shortcut reduces median (P50) access time by ~43% vs full path; intranet shortcut further reduces median time by ~73.9% vs internet shortcut. In worst-case (P99), internet shortcut saves ~29.7% vs full path and intranet shortcut saves ~56.7% vs internet shortcut. For R&D-BAC, a simulator over a random device hierarchy (H=10, D=20) with 1,000,000 devices, 100 roles, and 100,000 users reports ~63.8% (P50) and ~71.7% (P99) access-latency savings vs baseline RBAC without device hierarchy.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "No public code/repro package is linked. The shortcut protocol explicitly trades strict pre-authorization for latency (granting access before validator endorsement) and the paper only sketches mitigation for rare endorsement failure. R&D-BAC performance is evaluated in simulation (not end-to-end on real distributed hardware). The work targets IoT authorization rather than KVM/robot control loops and does not measure end-to-end operator-perception or robot actuation latency."
+      },
+      "decision": "EXTRACT_INSIGHTS",
+      "notes": "Strong control-plane pattern for low-latency operation: do hub-side validation + token/session-key issuance and treat blockchain endorsement as asynchronous audit/consensus. Strategically, IoT blockchain access control is crowded and the paper is not directly about KVM/robot operations, so the main value here is extracting architecture/latency learnings rather than presenting it as a primary opportunity."
+    },
+    {
+      "id": "arxiv_2405.15749",
+      "title": "Collaborative Access Control for IoT -- A Blockchain Approach",
+      "url": "https://arxiv.org/abs/2405.15749",
+      "pdf_url": "https://arxiv.org/pdf/2405.15749.pdf",
+      "authors": [
+        "Yongtao Huang",
+        "I-Ling Yen",
+        "Farokh Bastani"
+      ],
+      "date": "2024-05-24",
+      "source": "arXiv",
+      "priority": 2,
+      "status": "insights_extracted",
+      "score": 24,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 3,
+          "feasibility": 4,
+          "time_to_poc": 4,
+          "value_market": 3,
+          "defensibility": 1,
+          "adoption": 3
+        },
+        "blue_ocean": {
+          "market_creation": 1,
+          "first_mover_window": 1,
+          "network_effects": 0,
+          "strategic_clarity": 4
+        },
+        "execution_total": 18,
+        "blue_ocean_total": 6,
+        "combined_total": 24
+      },
+      "analysis": {
+        "summary": "Proposes P2P-BEAC, a 3-layer architecture for decentralized IoT access control that combines a libp2p-based overlay (NAT traversal + virtual networking) with a consortium BFT blockchain to log access-control transactions. It supports multiple access-control models (DAC/ABAC/RBAC) and introduces a shortcut protocol where an IoT hub issues an access token immediately for predictable users while validator consensus and on-chain logging run in the background.",
+        "methodology": "Defines system entities (devices, users, hubs, validator cluster) and uses ECDSA public keys as stable peer identities stored in a DHT. The overlay leverages libp2p hole punching + relay fallback plus TAP/TUN-based virtual IP + port forwarding to make remote services reachable like a LAN. Access control is embedded as signed blockchain transactions (domain/device registration, permission grant/revoke, plus ABAC/RBAC meta-list operations with immutable UIDs). Device/hub issues access tokens and session keys; validators ratify and record transactions. Dynamic access includes one-time tokens via TOTP-based passphrase shared out-of-band.",
+        "results": "In a warm-start experiment with 500 access validations, the shortcut protocol reduces median access time by ~43% for internet access vs full-path validation; intranet shortcut further reduces access time by ~73.9% vs the internet shortcut. Worst-case (P99) savings are ~29.7% (internet shortcut vs full path) and ~56.7% (intranet shortcut vs internet shortcut).",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "Focuses on access validation latency (control-plane), not continuous low-latency robot/KVM video+control loops; shortcut relies on hub trust and needs stronger threat-model + rollback handling when background validation fails. Evaluation is warm-start and does not study geo-distributed validators/hubs; NAT traversal and p2p connection setup time can dominate end-to-end UX."
+      },
+      "decision": "EXTRACT_INSIGHTS",
+      "notes": "Useful P2P overlay + fast-path token validation patterns for secure remote operations, but the IoT blockchain access-control space is crowded and the work does not address real-time robot/KVM loops or provide an implementation."
+    },
+    {
+      "id": "arxiv_2311.15290",
+      "title": "Challenges in Blockchain as a Solution for IoT Ecosystem Threats and Access Control: A Survey",
+      "url": "https://arxiv.org/abs/2311.15290",
+      "pdf_url": "https://arxiv.org/pdf/2311.15290.pdf",
+      "authors": [
+        "Suranjeet Chowdhury Avik",
+        "Sujit Biswas",
+        "Md Atiqur Rahaman Ahad",
+        "Zohaib Latif",
+        "Abdullah Alghamdi",
+        "Hamad Abosaq",
+        "Anupam Kumar Bairagi"
+      ],
+      "date": "2023-11-26",
+      "source": "arXiv",
+      "priority": 1,
+      "status": "insights_extracted",
+      "score": 23,
+      "score_breakdown": {
+        "execution": {
+          "novelty": 1,
+          "feasibility": 5,
+          "time_to_poc": 4,
+          "value_market": 3,
+          "defensibility": 1,
+          "adoption": 4
+        },
+        "blue_ocean": {
+          "market_creation": 1,
+          "first_mover_window": 1,
+          "network_effects": 0,
+          "strategic_clarity": 3
+        },
+        "execution_total": 18,
+        "blue_ocean_total": 5,
+        "combined_total": 23
+      },
+      "analysis": {
+        "summary": "Survey of IoT ecosystem security threats and access-control challenges, with a focus on how blockchain is proposed as a mitigation layer. It consolidates common IoT/access-control problems (heterogeneity, resource constraints, scalability/interoperability, privacy) and summarizes classes of attacks relevant to blockchain-backed deployments, ending with research directions such as L2/off-chain scaling and edge integration to reduce latency.",
+        "methodology": "Literature review that organizes IoT security challenges and access-control challenges into categories, surveys blockchain-based access-control approaches (e.g., ABAC/CP-ABE, RBAC, trust- and context-aware access control), and catalogs notable attack classes affecting blockchain/P2P systems (e.g., Sybil, DDoS, wallet/DAO incidents) using reported real-world examples.",
+        "results": "Identifies access control as a recurring bottleneck in IoT security literature and notes that blockchain consensus and ledger bandwidth can add latency that makes time-sensitive IoT access control difficult. Future directions emphasize scalability methods (sharding, off-chain, layer-2), privacy mechanisms (ZK/homomorphic/SMPC), interoperability standards, governance/consensus design for private chains, and running blockchain components closer to devices via edge computing to reduce latency.",
+        "implementations_found": [],
+        "commercialized": false,
+        "limitations": "As a survey, it does not introduce a new protocol or provide an implementation/benchmark; it also does not evaluate end-to-end ms-level control-loop requirements (e.g., KVM/robot teleoperation) where network setup and video/control paths dominate latency."
+      },
+      "decision": "EXTRACT_INSIGHTS",
+      "notes": "Useful as a consolidation of access-control pain points and a reminder that on-chain validation/consensus latency is a blocker for time-sensitive operations; however, it is a survey with no direct KVM/robot control contribution or implementation."
+    }
+  ],
+  "insights": [
+    {
+      "id": "insight_001",
+      "paper_id": "arxiv_2504.09517",
+      "insight": "Use W3C DIDs + Verifiable Credentials to keep sensitive robot metadata off-chain (stored on the robot) while enabling selective disclosure and third-party-free authentication.",
+      "tags": [
+        "decentralized-identity",
+        "verifiable-credentials",
+        "privacy",
+        "robot-authentication"
+      ],
+      "cross_refs": [
+        "arxiv_2511.00249"
+      ]
+    },
+    {
+      "id": "insight_002",
+      "paper_id": "arxiv_2504.09517",
+      "insight": "State-channel off-chain payloads can be kept small (reported 480 bytes) with millisecond-scale signing/verification on edge hardware (Raspberry Pi 5), suggesting feasibility for real-time robot interactions.",
+      "tags": [
+        "state-channels",
+        "layer-2",
+        "performance",
+        "edge"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_003",
+      "paper_id": "arxiv_2504.09517",
+      "insight": "Credit-score incentives + a challenge-period dispute mechanism provide a lightweight trust/punishment loop for 2-party robot service exchange (example: per-microunit energy transfer with per-iteration signed states).",
+      "tags": [
+        "incentives",
+        "dispute-resolution",
+        "trust"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_004",
+      "paper_id": "arxiv_2511.12390",
+      "insight": "Relative VR controller pose encoding (delta from an initial “grip” frame) makes the policy invariant to the absolute VR coordinate frame, simplifying setup and reducing calibration sensitivity.",
+      "tags": [
+        "teleoperation",
+        "vr",
+        "representation",
+        "coordinate-invariance"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_005",
+      "paper_id": "arxiv_2511.12390",
+      "insight": "A practical recipe to replace IK+PD teleoperation: behavior-clone IK demonstrations for warm start, then PPO fine-tuning with explicit smoothness (acceleration/jerk) rewards plus a force-disturbance curriculum to learn implicit force compensation without explicit force sensing.",
+      "tags": [
+        "teleoperation",
+        "reinforcement-learning",
+        "imitation-learning",
+        "force-robustness",
+        "smoothness"
+      ],
+      "cross_refs": [
+        "arxiv_2505.19530",
+        "arxiv_2506.17991"
+      ]
+    },
+    {
+      "id": "insight_006",
+      "paper_id": "arxiv_2511.12390",
+      "insight": "Remote teleoperation stack detail: Meta Quest 3 controllers streamed over WebRTC (<30ms round trip) while training with latency randomization (0–20ms) suggests designing the control policy and transport layer together (and explicitly training for network jitter/latency).",
+      "tags": [
+        "webrtc",
+        "latency",
+        "teleoperation",
+        "sim-to-real",
+        "networking"
+      ],
+      "cross_refs": [
+        "arxiv_2505.22132",
+        "arxiv_2507.20438"
+      ]
+    },
+    {
+      "id": "insight_007",
+      "paper_id": "arxiv_2507.20438",
+      "insight": "Per-frame QoE + the \"cumulative delay effect\" show that once uplink throughput dips, sensor frames start queueing and later frames are disproportionately likely to miss deadlines; low-latency teleoperation stacks need proactive frame dropping/rate control to avoid buffer build-up.",
+      "tags": [
+        "teleoperation",
+        "latency",
+        "streaming",
+        "qoe",
+        "queueing"
+      ],
+      "cross_refs": [
+        "arxiv_2505.22132",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_008",
+      "paper_id": "arxiv_2507.20438",
+      "insight": "Mobility management is a tail-latency driver: during A3 handovers per-frame network delay rises ~86%, and ping-pong handovers can raise delay 56–85%; trajectory-aware proactive handover and/or multi-operator switching are key levers for reliable teleoperation.",
+      "tags": [
+        "5g",
+        "handover",
+        "tail-latency",
+        "mobility"
+      ],
+      "cross_refs": [
+        "arxiv_2505.22123",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_009",
+      "paper_id": "arxiv_2507.20438",
+      "insight": "High-resolution LiDAR uplink is effectively infeasible on commercial 5G (reported median seconds-level delays even after voxel downsampling); practical remote ops should prefer edge processing + sending compressed/semantic outputs instead of raw point clouds.",
+      "tags": [
+        "lidar",
+        "bandwidth",
+        "compression",
+        "edge-compute"
+      ],
+      "cross_refs": [
+        "arxiv_2506.17991"
+      ]
+    },
+    {
+      "id": "insight_010",
+      "paper_id": "arxiv_2506.17991",
+      "insight": "Architectural split for real-time teleoperation: keep ultra-low-latency control on the robot, run time-sensitive inference/control services at the edge (CaaS), and reserve the cloud for fleet coordination + model training (RaaS/MaaS).",
+      "tags": [
+        "architecture",
+        "edge-computing",
+        "telerobotics",
+        "control"
+      ],
+      "cross_refs": [
+        "arxiv_2507.20438",
+        "arxiv_2505.22132",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_011",
+      "paper_id": "arxiv_2506.17991",
+      "insight": "For deterministic links in dense industrial settings, TSN (low-jitter Ethernet) + 5G URLLC are positioned as the core enablers; evaluation should explicitly track latency/jitter/packet-loss under congestion rather than relying on averages.",
+      "tags": [
+        "deterministic-networking",
+        "tsn",
+        "5g-urllc",
+        "latency"
+      ],
+      "cross_refs": [
+        "arxiv_2507.20438",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_012",
+      "paper_id": "arxiv_2506.17991",
+      "insight": "Blockchain-based authentication is often suggested for multi-layer telerobotics security, but the key product question is where it sits in the loop: use it for session/authorization off the real-time path unless the paper can show bounded overhead.",
+      "tags": [
+        "blockchain",
+        "authentication",
+        "security",
+        "latency-budget"
+      ],
+      "cross_refs": [
+        "arxiv_2504.09517",
+        "arxiv_2304.00781",
+        "arxiv_2511.00249"
+      ]
+    },
+    {
+      "id": "insight_013",
+      "paper_id": "scholar_10304344",
+      "insight": "AR-HUD video/frame integrity is an under-discussed attack surface for teleoperated vehicles: forged frames / false data injection into AR overlays can mislead the remote operator (and the digital twin) even when base vehicle control is otherwise secured.",
+      "tags": [
+        "augmented-reality",
+        "ar-hud",
+        "teleoperation",
+        "integrity",
+        "false-data-injection"
+      ],
+      "cross_refs": [
+        "arxiv_2507.20438",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_014",
+      "paper_id": "scholar_10304344",
+      "insight": "When papers propose blockchain-based security for real-time teleoperation stacks, require explicit placement and measurement: which data goes through blockchain/multichain vs. fast signatures, and what the end-to-end latency/jitter budget impact is.",
+      "tags": [
+        "blockchain",
+        "multichain",
+        "latency",
+        "scalability",
+        "security"
+      ],
+      "cross_refs": [
+        "arxiv_2506.17991",
+        "arxiv_2504.09517"
+      ]
+    },
+    {
+      "id": "insight_015",
+      "paper_id": "arxiv_2304.00781",
+      "insight": "For ROS 2↔blockchain bridges, prefer chaincode events (event-driven) over polling: polling may match latency at low load, but it breaks past ~100 msg/s due to CPU overhead, while event-driven delivery stays stable.",
+      "tags": [
+        "hyperledger-fabric",
+        "ros2",
+        "event-driven",
+        "teleoperation",
+        "latency",
+        "scalability"
+      ],
+      "cross_refs": [
+        "arxiv_2506.17991"
+      ]
+    },
+    {
+      "id": "insight_016",
+      "paper_id": "arxiv_2304.00781",
+      "insight": "Block-based confirmation introduces non-deterministic delays and bursty message arrival; controllers must be latency-aware (prediction/state estimation, throttling, subset selection) or will fail at higher speeds due to stale state.",
+      "tags": [
+        "blockchain",
+        "teleoperation",
+        "control",
+        "latency-jitter",
+        "staleness"
+      ],
+      "cross_refs": [
+        "arxiv_2507.20438",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_017",
+      "paper_id": "arxiv_2511.00249",
+      "insight": "A practical IoT/robot onboarding pattern is to treat the permissioned ledger as a global registry keyed by a device DID: enforce “no login without registration” and prevent duplicate device IDs/assets at the chaincode level to reduce simple spoofing and double-spend-style duplication.",
+      "tags": [
+        "decentralized-identity",
+        "hyperledger-fabric",
+        "device-onboarding",
+        "access-control",
+        "anti-duplication"
+      ],
+      "cross_refs": [
+        "arxiv_2304.00781",
+        "arxiv_2504.09517"
+      ]
+    },
+    {
+      "id": "insight_018",
+      "paper_id": "arxiv_2511.00249",
+      "insight": "Keep identity metadata off-chain by storing DID documents/asset payloads in external storage (e.g., IPFS/object storage) and committing only hashes/pointers plus ownership state on-chain; this preserves auditability while avoiding ledger bloat.",
+      "tags": [
+        "did-documents",
+        "off-chain-storage",
+        "auditability",
+        "scalability"
+      ],
+      "cross_refs": [
+        "arxiv_2508.21480",
+        "arxiv_2504.09517"
+      ]
+    },
+    {
+      "id": "insight_019",
+      "paper_id": "arxiv_2508.14994",
+      "insight": "For vision-based arm teleoperation, using an RGB-D camera plus an ArUco marker for a stable reference frame and simple filters (depth median window, EMA smoothing, jump rejection) provides a low-instrumentation path to continuous 3D wrist tracking.",
+      "tags": [
+        "teleoperation",
+        "vision",
+        "rgb-d",
+        "calibration",
+        "filtering"
+      ],
+      "cross_refs": [
+        "arxiv_2408.11805",
+        "arxiv_2511.12390"
+      ]
+    },
+    {
+      "id": "insight_020",
+      "paper_id": "arxiv_2508.14994",
+      "insight": "Gesture-based shared control can reduce cognitive load: finger counting to switch manual vs semi-autonomous modes, with open palm/closed fist mapped to gripper actions (open/close vs release/grasp) creates a simple, low-effort interface.",
+      "tags": [
+        "teleoperation",
+        "shared-control",
+        "gestures",
+        "hri"
+      ],
+      "cross_refs": [
+        "arxiv_2508.09606",
+        "arxiv_2511.12390"
+      ]
+    },
+    {
+      "id": "insight_021",
+      "paper_id": "arxiv_2508.14994",
+      "insight": "Precision is velocity-limited: reported mean positional error is ~0.07 m and increases as wrist velocity rises, suggesting teleop UIs should incorporate lag compensation/prediction and/or higher-rate control loops for faster motions.",
+      "tags": [
+        "teleoperation",
+        "precision",
+        "control",
+        "latency"
+      ],
+      "cross_refs": [
+        "arxiv_2507.20438",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_022",
+      "paper_id": "arxiv_2508.11802",
+      "insight": "Anticipatory footstep streaming can be implemented with simple, stable estimators: predict stride length using current displacement + average velocity, then blend back toward the measured displacement using a landing factor derived from vertical motion (z, ż) so the estimate converges at touchdown.",
+      "tags": [
+        "teleoperation",
+        "locomotion",
+        "anticipation",
+        "estimation"
+      ],
+      "cross_refs": [
+        "arxiv_2511.12390",
+        "arxiv_2508.09606",
+        "arxiv_2408.11805"
+      ]
+    },
+    {
+      "id": "insight_023",
+      "paper_id": "arxiv_2508.11802",
+      "insight": "If the operator’s terrain cannot be mirrored locally, auto-correct teleop footsteps using onboard perception: build a quasi-global elevation map from depth and run a fast grid-search optimizer over candidate foot poses with planarity/continuity checks; the paper reports ~5 ms map compute @30 Hz and <4 ms for ~1e5 candidates (~285 Hz).",
+      "tags": [
+        "terrain-adaptation",
+        "heightmap",
+        "gpu",
+        "optimization",
+        "safety"
+      ],
+      "cross_refs": [
+        "arxiv_2406.02062",
+        "arxiv_2507.20438",
+        "arxiv_2508.14994"
+      ]
+    },
+    {
+      "id": "insight_024",
+      "paper_id": "arxiv_2508.09606",
+      "insight": "When building teleop-to-policy pipelines, writing demonstrations directly into a learning-native schema (LeRobot: observations/actions + MP4 + Arrow/Parquet + metadata) reduces one-off dataset glue and makes benchmarking/training immediate.",
+      "tags": [
+        "teleoperation",
+        "datasets",
+        "lerobot",
+        "reproducibility",
+        "policy-learning"
+      ],
+      "cross_refs": [
+        "arxiv_2511.12390",
+        "arxiv_2506.17991"
+      ]
+    },
+    {
+      "id": "insight_025",
+      "paper_id": "arxiv_2508.09606",
+      "insight": "A practical way to keep real-time control stable under heavy inference is an asynchronous “think–act” loop: stream actions at a fixed rate in one loop while policy inference runs in a separate thread and updates actions when ready.",
+      "tags": [
+        "control",
+        "latency",
+        "asynchronous",
+        "inference",
+        "teleoperation"
+      ],
+      "cross_refs": [
+        "arxiv_2507.20438",
+        "arxiv_2511.12390",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_026",
+      "paper_id": "arxiv_2508.09606",
+      "insight": "Measured timing shows BEA VR can maintain ~30–100 Hz command rates with sub-ms jitter and ~10–33 ms one-way latency using a modular, ZMQ-based process architecture; useful as a baseline when budgeting KVM/streaming + security overhead.",
+      "tags": [
+        "networking",
+        "latency",
+        "jitter",
+        "zmq",
+        "teleoperation"
+      ],
+      "cross_refs": [
+        "arxiv_2505.22132",
+        "arxiv_2507.20438"
+      ]
+    },
+    {
+      "id": "insight_027",
+      "paper_id": "arxiv_2505.22132",
+      "insight": "RTP-over-QUIC (RoQ) can materially reduce end-to-end video latency versus WebRTC in a remote-rendering pipeline; Table I shows 5G 1080p/15Mbps at 125.67 ms (RoQ) vs 269.92 ms (WebRTC), with similar wins on Wi‑Fi.",
+      "tags": [
+        "roq",
+        "quic",
+        "webrtc",
+        "latency",
+        "remote-rendering",
+        "kvm-adjacent"
+      ],
+      "cross_refs": [
+        "arxiv_2507.20438",
+        "arxiv_2406.02062",
+        "arxiv_2505.22123"
+      ]
+    },
+    {
+      "id": "insight_028",
+      "paper_id": "arxiv_2505.22132",
+      "insight": "MoQ’s relay-based pub/sub model can cut connection startup time (e.g., ~0.5–0.8 s vs ~1.4–1.7 s WebRTC in Table I) but adds large steady-state latency (roughly doubling due to the relay in their setup), making it risky for tight control loops.",
+      "tags": [
+        "moq",
+        "quic",
+        "startup-time",
+        "relay",
+        "latency"
+      ],
+      "cross_refs": [
+        "arxiv_2507.20438",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_029",
+      "paper_id": "arxiv_2505.22132",
+      "insight": "Protocol maturity matters: WebRTC shows very low jitter/loss on Wi‑Fi (0.66 ms jitter, 0.02% loss in Table III) while RoQ/MoQ show multi‑percent loss on Wi‑Fi; server CPU is also lower for WebRTC (Table II), implying QUIC stacks may need extra engineering before production teleop/KVM use.",
+      "tags": [
+        "jitter",
+        "packet-loss",
+        "maturity",
+        "gstreamer",
+        "deployment"
+      ],
+      "cross_refs": [
+        "arxiv_2507.20438",
+        "arxiv_2309.16869"
+      ]
+    },
+    {
+      "id": "insight_030",
+      "paper_id": "arxiv_2503.15546",
+      "insight": "A practical “layered security” blueprint for autonomous agents doing transactions is: permissioned blockchain ledger (integrity/audit) + MFA (biometric + OTP/certs) + real-time anomaly detection that can pause transactions and request re-verification.",
+      "tags": [
+        "security-architecture",
+        "mfa",
+        "anomaly-detection",
+        "permissioned-blockchain"
+      ],
+      "cross_refs": [
+        "arxiv_2504.09517",
+        "arxiv_2511.00249",
+        "arxiv_2503.17873"
+      ]
+    },
+    {
+      "id": "insight_031",
+      "paper_id": "arxiv_2503.15546",
+      "insight": "When modeling permissioned-chain transaction validation for a security control-plane, PBFT is often described with N=3f+1 fault tolerance and a ≥2/3 agreement threshold; useful for rough performance/latency budgeting (but validate with real deployments).",
+      "tags": [
+        "pbft",
+        "hyperledger-fabric",
+        "consensus",
+        "latency-budget"
+      ],
+      "cross_refs": [
+        "arxiv_2504.09517"
+      ]
+    },
+    {
+      "id": "insight_032",
+      "paper_id": "arxiv_2503.15546",
+      "insight": "Simple fraud/anomaly features cited for online-transaction monitoring include amount, duration, frequency, location, and interaction history; supervised models like Random Forest/SVM can be used as a first pass to trigger step-up auth.",
+      "tags": [
+        "features",
+        "random-forest",
+        "svm",
+        "fraud-detection",
+        "step-up-auth"
+      ],
+      "cross_refs": [
+        "arxiv_2503.17873",
+        "arxiv_2405.15749"
+      ]
+    },
+    {
+      "id": "insight_033",
+      "paper_id": "arxiv_2505.19530",
+      "insight": "For heavy lifting on dynamically balancing wheeled humanoids, estimating a payload-aware lean setpoint (θ*R) from object mass + arm configuration can reduce operator workload versus fully manual moment feedback, which can require very large sustained haptic forces (paper reports ~200 N).",
+      "tags": [
+        "teleoperation",
+        "haptics",
+        "payload-compensation",
+        "wheeled-humanoid",
+        "balance"
+      ],
+      "cross_refs": [
+        "arxiv_2503.15998",
+        "arxiv_2511.12390"
+      ]
+    },
+    {
+      "id": "insight_034",
+      "paper_id": "arxiv_2505.19530",
+      "insight": "Instead of retargeting absolute pitch, retarget the human to regulate the robot’s normalized DCM error dynamics around a payload-adjusted DCM setpoint; this provides assisted balance while keeping the operator in the loop.",
+      "tags": [
+        "dcm",
+        "dynamic-similarity",
+        "control",
+        "telelocomotion"
+      ],
+      "cross_refs": [
+        "arxiv_2508.11802",
+        "arxiv_2511.12390"
+      ]
+    },
+    {
+      "id": "insight_035",
+      "paper_id": "arxiv_2505.19530",
+      "insight": "A phase-dependent telelocomotion UI can be effective: velocity mapping for predictable precision during grasp/release, DCM/pitch mapping for responsive dynamic base motion; expose a tunable haptic gain to trade transparency vs stability/oscillations.",
+      "tags": [
+        "human-factors",
+        "hybrid-control",
+        "haptic-gain",
+        "teleoperation"
+      ],
+      "cross_refs": [
+        "arxiv_2508.09606",
+        "arxiv_2401.03398"
+      ]
+    },
+    {
+      "id": "insight_036",
+      "paper_id": "arxiv_2406.02062",
+      "insight": "For operator-perceived teleoperation latency, distinguish screen-to-screen (S2S) from RTP-based end-to-end (E2E): this paper reports ~150 ms S2S versus ~45–75 ms E2E under good conditions, implying E2E can materially understate what the human feels.",
+      "tags": [
+        "latency",
+        "measurement",
+        "teleoperation",
+        "kvm-adjacent"
+      ],
+      "cross_refs": [
+        "arxiv_2507.20438",
+        "arxiv_2505.22123"
+      ]
+    },
+    {
+      "id": "insight_037",
+      "paper_id": "arxiv_2406.02062",
+      "insight": "A protocol-agnostic latency probe for RTP stacks: propagate camera capture timestamps through the media pipeline and inject them into RTP header extensions (RFC 8286), then compute latency at the player using NTP-synchronized clocks.",
+      "tags": [
+        "rtp",
+        "rfc8286",
+        "ntp",
+        "monitoring",
+        "kvm-adjacent"
+      ],
+      "cross_refs": [
+        "arxiv_2505.22132",
+        "arxiv_2507.00623"
+      ]
+    },
+    {
+      "id": "insight_038",
+      "paper_id": "arxiv_2406.02062",
+      "insight": "Multi-stream bandwidth headroom matters: with two 5 Mbps 1080p30 streams, once link capacity approaches ~10 Mbps, latency can jump from ~150 ms to ~0.5 s and then >1 s with pixelation/freezing, so rate adaptation should trigger before buffers saturate.",
+      "tags": [
+        "rate-control",
+        "bandwidth",
+        "tail-latency",
+        "teleoperation"
+      ],
+      "cross_refs": [
+        "arxiv_2309.16869",
+        "arxiv_2406.00375"
+      ]
+    },
+    {
+      "id": "insight_039",
+      "paper_id": "arxiv_2406.02062",
+      "insight": "RTCP-report-driven bitrate adaptation can be implemented with simple jitter/packet-loss thresholds, but the authors recommend augmenting it with congestion control/bandwidth estimation for smoother and more predictive control.",
+      "tags": [
+        "rtcp",
+        "rate-control",
+        "webrtc",
+        "gstreamer"
+      ],
+      "cross_refs": [
+        "arxiv_2309.16869",
+        "arxiv_2507.20438"
+      ]
+    },
+    {
+      "id": "insight_040",
+      "paper_id": "arxiv_2503.15998",
+      "insight": "Haptics tailored to a “virtual rope” teleoperation metaphor: map command magnitude (virtual force) to forearm skin indentation only when the robot is actually moving, to reinforce sensorimotor coupling without overloading the user.",
+      "tags": [
+        "teleoperation",
+        "haptics",
+        "ui",
+        "sensorimotor"
+      ],
+      "cross_refs": [
+        "arxiv_2505.19530",
+        "arxiv_2511.12390"
+      ],
+      "cross_cluster": "HAPTIC_TELEOP_UI"
+    },
+    {
+      "id": "insight_041",
+      "paper_id": "arxiv_2503.15998",
+      "insight": "Mode-switching for complex robots benefits from immediate acknowledgments: button-only control (without ACK) was not always preferred over voice commands with human confirmation; vibrotactile ACK patterns can replace the “second operator” confirmation loop.",
+      "tags": [
+        "human-factors",
+        "ack",
+        "teleoperation",
+        "ui"
+      ],
+      "cross_refs": [
+        "arxiv_2406.02062"
+      ],
+      "cross_cluster": "HMI_ACK_PATTERNS"
+    },
+    {
+      "id": "insight_042",
+      "paper_id": "arxiv_2503.15998",
+      "insight": "Wearable mapping design heuristic: co-locate feedback with the body part implied by the metaphor (forearm near wrists for “rope tension” commands; fingers for end-effector contact/grasp forces), while keeping the hardware lightweight (~104g wearable + ~114g tracker reported).",
+      "tags": [
+        "wearables",
+        "haptics",
+        "design",
+        "teleoperation"
+      ],
+      "cross_refs": [
+        "arxiv_2503.15998"
+      ],
+      "cross_cluster": "WEARABLE_HAPTICS_DESIGN"
+    },
+    {
+      "id": "insight_043",
+      "paper_id": "arxiv_2309.16869",
+      "insight": "Make real-time video congestion control RTT-responsive by treating the stream as a backlogged flow: buffer when the encoder overshoots the CCA sending rate and inject dummy padding when it undershoots, so the CCA feedback loop is not disrupted by application-limited frame generation.",
+      "tags": [
+        "rate-control",
+        "webrtc",
+        "congestion-control",
+        "dummy-traffic",
+        "kvm-adjacent"
+      ],
+      "cross_refs": [
+        "arxiv_2406.02062",
+        "arxiv_2505.22123"
+      ]
+    },
+    {
+      "id": "insight_044",
+      "paper_id": "arxiv_2309.16869",
+      "insight": "Tail-latency safety pattern for teleoperation/KVM video: pause/skip encoding when pacer-queue age exceeds roughly one frame interval (τ≈33ms), and if queued packets exceed ~1s, drain the queue and force a keyframe reset to avoid propagating decoder errors and bound worst-case latency.",
+      "tags": [
+        "tail-latency",
+        "webrtc",
+        "teleoperation",
+        "kvm-adjacent",
+        "safeguards"
+      ],
+      "cross_refs": [
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_045",
+      "paper_id": "arxiv_2309.16869",
+      "insight": "Use an online headroom optimization (target bitrate = α·CC-Rate) with a sliding window and a tunable λ (frame-rate vs quality) to adapt α to encoder and link variability; change resolution only when more drastic bitrate shifts are needed.",
+      "tags": [
+        "optimization",
+        "rate-control",
+        "encoder",
+        "webrtc"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_046",
+      "paper_id": "arxiv_2507.00623",
+      "insight": "In remote-rendering pipelines, framework integration overhead can dominate latency: extracting frames from the GPU to feed external pipelines (GStreamer/FFmpeg) and then reinjecting for GPU encoding materially increases end-to-end latency vs an engine-native path (e.g., Unity URS).",
+      "tags": [
+        "remote-rendering",
+        "latency",
+        "gpu",
+        "pipeline",
+        "kvm-adjacent"
+      ],
+      "cross_refs": [
+        "arxiv_2505.22123",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_047",
+      "paper_id": "arxiv_2507.00623",
+      "insight": "Protocol choice changes interactive feasibility by orders of magnitude: measured E2E video latency shows URS/WebRTC at ~82–129ms (WiFi/5G) while MoQ is ~159–194ms and can outperform a less-integrated WebRTC pipeline; RTP-over-QUIC is close to WebRTC but lacks browser playback without an application-layer protocol.",
+      "tags": [
+        "remote-rendering",
+        "webrtc",
+        "moq",
+        "quic",
+        "latency"
+      ],
+      "cross_refs": [
+        "arxiv_2309.16869",
+        "arxiv_2505.22123",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "id": "insight_048",
+      "paper_id": "arxiv_2507.00623",
+      "insight": "DASH/LL-DASH trade interaction for scalability: even with 2s segments and fMP4 fragments, reported latencies remain multi-second (≈4.9–10.2s), making these protocols unsuitable for tight robot/KVM control loops unless paired with a separate low-latency control channel.",
+      "tags": [
+        "dash",
+        "ll-dash",
+        "scalability",
+        "teleoperation",
+        "kvm-adjacent"
+      ],
+      "cross_refs": [
+        "arxiv_2505.22123",
+        "arxiv_2406.02062"
+      ]
+    },
+    {
+      "paper_id": "arxiv_2505.22123",
+      "insight": "PHY-layer metrics (e.g., MCS index) + 3GPP data-rate formulas can provide a near-real-time estimate of available downlink capacity to drive remote-rendering/QoS adaptation before application-level throughput feedback reacts.",
+      "tags": [
+        "remote-rendering",
+        "5g",
+        "phy-metrics",
+        "qos-adaptation"
+      ],
+      "cross_refs": [
+        "arxiv_2507.00623",
+        "arxiv_2309.16869"
+      ],
+      "cross_cluster": "REMOTE_RENDERING_QOS_ADAPTATION",
+      "id": "insight_049"
+    },
+    {
+      "paper_id": "arxiv_2505.22123",
+      "insight": "Switching discrete streaming profiles (resolution/bitrate) can itself introduce short freezes in WebRTC pipelines; measure the switch cost, rate-limit oscillations (e.g., ≥3s), and consider simulcast/SVC or smoother encoder reconfiguration to avoid stalls.",
+      "tags": [
+        "webrtc",
+        "streaming",
+        "qos",
+        "remote-operations"
+      ],
+      "cross_refs": [
+        "arxiv_2309.16869",
+        "arxiv_2507.00623",
+        "arxiv_2406.02062"
+      ],
+      "cross_cluster": "REMOTE_RENDERING_QOS_ADAPTATION",
+      "id": "insight_050"
+    },
+    {
+      "id": "insight_051",
+      "paper_id": "arxiv_2412.03709",
+      "insight": "Split “policy enforcement” and “penalty adjudication” on-chain: keep per-method/role Access Control Contracts (ACCs) simple, and centralize threat-to-penalty mapping in a Judge Contract (JC) so penalties stay consistent across methods.",
+      "tags": [
+        "access-control",
+        "smart-contracts",
+        "architecture",
+        "threat-model"
+      ],
+      "cross_refs": [
+        "arxiv_2504.09517",
+        "arxiv_2311.15290"
+      ]
+    },
+    {
+      "id": "insight_052",
+      "paper_id": "arxiv_2412.03709",
+      "insight": "A “Register Contract” pattern (method name → contract address + ABI) enables role-specific contract discovery and supports contract upgrades/rotation without a centralized directory—useful for distributed KVM/robot operations where policies/keys change frequently.",
+      "tags": [
+        "registry",
+        "upgradability",
+        "access-control",
+        "p2p"
+      ],
+      "cross_refs": [
+        "arxiv_2504.09517",
+        "arxiv_2503.17873"
+      ]
+    },
+    {
+      "id": "insight_053",
+      "paper_id": "arxiv_2508.21480",
+      "insight": "Hyperledger Fabric multi-channel separation (Identity/Data/Risk) + per-channel chaincode provides a concrete pattern for isolating access control and audit logs while still enabling event-driven alerts to external stakeholders.",
+      "tags": [
+        "hyperledger-fabric",
+        "access-control",
+        "channels",
+        "event-driven"
+      ],
+      "cross_refs": [
+        "arxiv_2412.03709",
+        "arxiv_2504.09517"
+      ]
+    },
+    {
+      "id": "insight_054",
+      "paper_id": "arxiv_2508.21480",
+      "insight": "Combining short-lived TOTP-based onboarding tokens with post-quantum hybrid TLS (ML-KEM+ECDH) and per-device key material is a pragmatic recipe for reducing replay risk and improving forward security in device registration flows.",
+      "tags": [
+        "onboarding",
+        "pqc",
+        "tls",
+        "totp",
+        "authentication"
+      ],
+      "cross_refs": [
+        "arxiv_2504.09517"
+      ]
+    },
+    {
+      "id": "insight_055",
+      "paper_id": "arxiv_2508.21480",
+      "insight": "HLF transaction latency stays <500ms up to ~175 TPS (30–300 TPS tested) in the reported setup; treat “near real-time” claims as bounded by consortium-chain saturation and separate from control-loop latency requirements.",
+      "tags": [
+        "performance",
+        "latency",
+        "throughput",
+        "hyperledger-fabric"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_056",
+      "paper_id": "scholar_10272865",
+      "insight": "For securing management/developer access to pKVM-on-ARM systems, combine (a) hypervisor presence detection even from constrained environments (e.g., chroot) with (b) an authentication flow pairing public-key crypto (RSA) and short-lived OTP, while keeping the same interface semantics across LAN/WAN.",
+      "tags": [
+        "kvm",
+        "pkvm",
+        "arm",
+        "access-control",
+        "otp",
+        "rsa"
+      ],
+      "cross_refs": [
+        "arxiv_2412.03709"
+      ]
+    },
+    {
+      "id": "insight_057",
+      "paper_id": "arxiv_2408.11805",
+      "insight": "Hybrid wrist+finger capture: use exoskeleton FK for stable 6D wrist pose and a hand-facing camera for finger keypoints to reduce occlusion and achieve mm-scale end-effector tracking (reported ~3 mm avg error in a tape extension task).",
+      "tags": [
+        "teleoperation",
+        "data-collection",
+        "hand-tracking",
+        "exoskeleton",
+        "accuracy"
+      ],
+      "cross_refs": [
+        "arxiv_2503.15998"
+      ]
+    },
+    {
+      "id": "insight_058",
+      "paper_id": "arxiv_2408.11805",
+      "insight": "Cross-platform retargeting without joint-matching: scale-and-center workspace mapping (xe = γ(xh−ch)+ct) plus modes (Normal/Mirror/Bimanual, Gripper/Hand) improves usability across robots; in user study vs GELLO it greatly boosts success in tight workspaces (Small/Small 97.1% vs 47.6%), suggesting scaling is most valuable when teleop/robot workspaces mismatch.",
+      "tags": [
+        "teleoperation",
+        "retargeting",
+        "ik",
+        "usability",
+        "workspace-scaling"
+      ],
+      "cross_refs": [
+        "arxiv_2503.15998"
+      ]
+    },
+    {
+      "id": "insight_059",
+      "paper_id": "arxiv_2408.11805",
+      "insight": "Operational throughput matters for dataset collection: magnetic modular connectors enable quick donning (<30s) and fast sizing adjustments (<2 min), reducing setup friction for multi-robot demo collection.",
+      "tags": [
+        "teleoperation",
+        "hardware",
+        "data-collection",
+        "ergonomics"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_060",
+      "paper_id": "arxiv_2401.03398",
+      "insight": "Event-to-eye latency measurement for VR teleop: put a live timer (T1) on the client screen, capture it via the device camera, view it in VR, and compare with the client-displayed time (T2); screenshot periodically to estimate the end-to-end perception delay.",
+      "tags": [
+        "latency",
+        "measurement",
+        "teleoperation",
+        "vr"
+      ],
+      "cross_refs": [
+        "arxiv_2408.11805"
+      ]
+    },
+    {
+      "id": "insight_061",
+      "paper_id": "arxiv_2401.03398",
+      "insight": "360° remote operation pipeline tradeoffs: edge-side SIFT stitching + HEVC encoding + 5G uplink to a cloud relay yields ~0.36–0.80 s event-to-eye latency depending on network conditions; VR head-tracking provides near-zero-latency viewpoint switching without mechanical camera motion.",
+      "tags": [
+        "teleoperation",
+        "360-video",
+        "hevc",
+        "5g",
+        "edge-computing",
+        "latency"
+      ],
+      "cross_refs": [
+        "arxiv_2408.11805"
+      ]
+    },
+    {
+      "id": "insight_062",
+      "paper_id": "arxiv_2503.17873",
+      "insight": "Fabric ABAC pattern: split chaincode into a Policy Contract (validate/add/update/delete/query policies) and an Access Contract (extract request attributes, check policy match, delegate access) so PAP vs PDP/PIP responsibilities are explicit on-ledger.",
+      "tags": [
+        "blockchain",
+        "access-control",
+        "abac",
+        "hyperledger-fabric",
+        "smart-contracts"
+      ],
+      "cross_refs": [
+        "arxiv_2412.03709",
+        "arxiv_2511.00249"
+      ]
+    },
+    {
+      "id": "insight_063",
+      "paper_id": "arxiv_2503.17873",
+      "insight": "Delegation/revocation via ABAC attribute edits: implement delegation by updating an OwnerID attribute (ownership transfer) and revocation by flipping permission attributes (e.g., Read/Write) or expiring policies (StartTime/EndTime) rather than introducing separate delegation protocols.",
+      "tags": [
+        "abac",
+        "delegation",
+        "revocation",
+        "policy-management",
+        "iot"
+      ],
+      "cross_refs": [
+        "arxiv_2412.03709"
+      ]
+    },
+    {
+      "id": "insight_064",
+      "paper_id": "arxiv_2503.17873",
+      "insight": "Hyperledger Caliper benchmarking reminder: TPS/latency numbers are chaincode transaction metrics (submit→commit), not robot/KVM event-to-eye or control-loop latency; even “<1s” blockchain latency implies blockchain belongs in control/authorization planes, not the real-time loop.",
+      "tags": [
+        "benchmarking",
+        "latency",
+        "hyperledger-caliper",
+        "control-plane"
+      ],
+      "cross_refs": [
+        "arxiv_2401.03398",
+        "arxiv_2507.20438"
+      ]
+    },
+    {
+      "id": "insight_065",
+      "paper_id": "arxiv_2406.00375",
+      "insight": "Hybrid WebRTC topology pattern for remote robot/KVM-like control: use a cloud star (SRTP media) for multi-party A/V, but route delay-sensitive operator control on-demand via a direct P2P WebRTC data channel (SCTP) to avoid relay-induced latency.",
+      "tags": [
+        "webrtc",
+        "telepresence",
+        "teleoperation",
+        "control-plane",
+        "topology",
+        "kvm"
+      ],
+      "cross_refs": [
+        "arxiv_2505.22132",
+        "arxiv_2507.20438"
+      ],
+      "cross_cluster": "HYBRID_WEBRTC_TOPOLOGY"
+    },
+    {
+      "id": "insight_066",
+      "paper_id": "arxiv_2406.00375",
+      "insight": "Operationally useful autonomy target for telepresence: AreaGoal navigation (‘go to kitchen/bedroom’) is distinct from PointNav/ObjectNav; this paper formalizes AreaGoal vs ViewAreaGoal and shows a practical heuristic stack (object–region relation graph + region-transition priors + periodic 360° scans + landmark backtracking).",
+      "tags": [
+        "embodied-ai",
+        "navigation",
+        "areagoal",
+        "telepresence",
+        "hri"
+      ],
+      "cross_refs": [
+        "arxiv_2401.03398"
+      ]
+    },
+    {
+      "id": "insight_067",
+      "paper_id": "arxiv_2406.00375",
+      "insight": "Depth-only obstacle avoidance breaks on mirrors/reflective surfaces; Teledrive combines observation-similarity checks with a reflective-surface estimator (Mirror3D-style) to prevent false free-space inference.",
+      "tags": [
+        "robotics",
+        "perception",
+        "depth",
+        "teleoperation",
+        "safety"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_068",
+      "paper_id": "arxiv_2406.00375",
+      "insight": "Least-privilege remote operation idea: keep the operator UI from having direct access to the edge/ROS runtime; instead, invoke autonomy modules via a mediated frontend channel. This separation is a good insertion point for policy enforcement (e.g., blockchain/DID-backed authorization) without putting blockchain in the real-time loop.",
+      "tags": [
+        "security",
+        "access-control",
+        "edge-computing",
+        "ros",
+        "blockchain",
+        "control-plane"
+      ],
+      "cross_refs": [
+        "arxiv_2504.09517",
+        "arxiv_2503.17873"
+      ]
+    },
+    {
+      "id": "insight_069",
+      "paper_id": "arxiv_2407.05506",
+      "insight": "Low-latency blockchain authorization pattern: do hub-side policy validation and issue a token + session key immediately for trusted users, while running validator/BFT endorsement asynchronously in the background; this can preserve local (intranet) operation during Internet outages while keeping blockchain as an audit/consensus layer.",
+      "tags": [
+        "security",
+        "access-control",
+        "blockchain",
+        "control-plane",
+        "latency",
+        "offline"
+      ],
+      "cross_refs": [
+        "arxiv_2406.00375",
+        "arxiv_2503.17873"
+      ]
+    },
+    {
+      "id": "insight_070",
+      "paper_id": "arxiv_2407.05506",
+      "insight": "Performance gotcha in blockchain policy embedding: if policies are logged as transactions, validators/hubs need a maintained shadow policy state (indices + latest policy snapshot) to avoid rebuilding policies from the chain for every access validation.",
+      "tags": [
+        "blockchain",
+        "access-control",
+        "performance",
+        "state-management",
+        "latency"
+      ],
+      "cross_refs": [
+        "arxiv_2503.17873"
+      ]
+    },
+    {
+      "id": "insight_071",
+      "paper_id": "arxiv_2407.05506",
+      "insight": "Device-hierarchy access control can reduce authorization overhead at scale: use \"control devices\" + control pointers and propagate effective permission sets down a hierarchy so most checks are local to a small set of nodes (useful for large fleets/assets with organizational structure).",
+      "tags": [
+        "access-control",
+        "hierarchy",
+        "rbac",
+        "scalability",
+        "iot"
+      ],
+      "cross_refs": [
+        "arxiv_2405.15749"
+      ]
+    },
+    {
+      "id": "insight_072",
+      "paper_id": "arxiv_2405.15749",
+      "insight": "For NAT-isolated device services (including KVM-over-IP style access), combine libp2p hole punching/relay fallback with TAP/TUN virtual IP + port forwarding so remote services are reachable as if on the same LAN.",
+      "tags": [
+        "p2p",
+        "nat-traversal",
+        "tunneling",
+        "virtualization",
+        "kvm",
+        "libp2p"
+      ],
+      "cross_refs": [
+        "arxiv_2406.00375"
+      ]
+    },
+    {
+      "id": "insight_073",
+      "paper_id": "arxiv_2405.15749",
+      "insight": "Use a hub-issued fast path: issue an access token + session key immediately for predictable users while validator consensus + blockchain logging runs asynchronously (audit/consensus control-plane), reducing access-validation latency without putting blockchain in the real-time loop.",
+      "tags": [
+        "blockchain",
+        "access-control",
+        "control-plane",
+        "latency",
+        "fast-path"
+      ],
+      "cross_refs": [
+        "arxiv_2407.05506",
+        "arxiv_2503.17873"
+      ]
+    },
+    {
+      "id": "insight_074",
+      "paper_id": "arxiv_2405.15749",
+      "insight": "Separate steady-state RTT from session setup: NAT traversal / hole punching can add seconds (paper cites libp2p median ~0.89s and P99 ~7.78s for connection establishment), so pre-warm channels and measure setup vs control-loop latency explicitly.",
+      "tags": [
+        "p2p",
+        "latency",
+        "benchmarking",
+        "nat-traversal",
+        "teleoperation"
+      ],
+      "cross_refs": [
+        "arxiv_2507.20438",
+        "arxiv_2406.00375"
+      ]
+    },
+    {
+      "id": "insight_075",
+      "paper_id": "arxiv_2509.10291",
+      "insight": "“Nonce randomness” is not consensus security: evaluate what consensus and threat model the system actually relies on (PoW difficulty vs permissioned validation/BFT).",
+      "tags": [
+        "blockchain",
+        "consensus",
+        "security"
+      ],
+      "cross_refs": [
+        "arxiv_2412.04222"
+      ]
+    },
+    {
+      "id": "insight_076",
+      "paper_id": "arxiv_2509.10291",
+      "insight": "Randomness proxies like “unique outputs / total” and marginal Shannon entropy can score ~1.0 even for deterministic or periodic sequences; use stronger randomness tests when assessing nonce/PRNG claims.",
+      "tags": [
+        "randomness",
+        "evaluation",
+        "nonce"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_077",
+      "paper_id": "arxiv_2412.04222",
+      "insight": "Unsupervised anomaly detection (Isolation Forest) can be placed at an edge gateway/cluster head to filter malicious traffic before forwarding control-plane requests to SDN/blockchain components, reducing blast radius when the attack surface is primarily network traffic.",
+      "tags": [
+        "edge-security",
+        "intrusion-detection",
+        "anomaly-detection",
+        "isolation-forest"
+      ],
+      "cross_refs": []
+    },
+    {
+      "id": "insight_078",
+      "paper_id": "arxiv_2412.04222",
+      "insight": "A two-tier ledger pattern (edge-distributed blockchain for local coordination + cloud-centralized blockchain for verification/storage) can keep low-latency decisions closer to the edge while retaining an auditable settlement layer.",
+      "tags": [
+        "two-tier-ledger",
+        "control-plane",
+        "scalability",
+        "sdn-nfv"
+      ],
+      "cross_refs": [
+        "arxiv_2509.10291"
+      ]
+    },
+    {
+      "id": "insight_079",
+      "paper_id": "arxiv_2311.15290",
+      "insight": "For time-sensitive systems, blockchain consensus/ledger bandwidth can add latency that makes real-time access validation impractical; treat blockchain as a control-plane/audit layer and use off-chain/L2 mechanisms (or hub-side fast paths) for the real-time loop.",
+      "tags": [
+        "latency",
+        "control-plane",
+        "layer-2",
+        "off-chain",
+        "access-control"
+      ],
+      "cross_refs": [
+        "arxiv_2407.05506",
+        "arxiv_2405.15749"
+      ]
+    },
+    {
+      "id": "insight_080",
+      "paper_id": "arxiv_2311.15290",
+      "insight": "IoT access-control difficulty is driven by device heterogeneity, resource constraints, scalability, interoperability, and dynamic membership; practical designs should rely on lightweight identities + context/attribute-based policies enforced at gateways/edge rather than heavy per-device crypto handshakes.",
+      "tags": [
+        "access-control",
+        "heterogeneity",
+        "resource-constraints",
+        "interoperability",
+        "scalability"
+      ],
+      "cross_refs": [
+        "arxiv_2503.17873"
+      ]
+    },
+    {
+      "id": "insight_081",
+      "paper_id": "arxiv_2311.15290",
+      "insight": "A recurring research direction for blockchain+IoT is edge integration: execute smart-contract logic and policy checks closer to devices to reduce latency and improve responsiveness while keeping the ledger as an audit/coordination substrate.",
+      "tags": [
+        "edge-computing",
+        "smart-contracts",
+        "latency",
+        "iot"
+      ],
+      "cross_refs": [
+        "arxiv_2406.00375",
+        "arxiv_2412.04222"
+      ]
+    }
+  ],
+  "visited_urls": [
+    "https://export.arxiv.org/api/query?search_query=all:blockchain+AND+all:authentication+AND+all:robot&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:blockchain+AND+all:%22access%20control%22+AND+all:iot&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:%22decentralized%20identity%22+AND+all:iot&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:teleoperation+AND+all:humanoid&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:teleoperation+AND+all:quadruped&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:%22remote%22+AND+all:robot+AND+all:%22low%20latency%22&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:webrtc+AND+all:robot&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:%22peer-to-peer%22+AND+all:%22video%22+AND+all:%22low%20latency%22&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:blockchain+AND+all:sdn+AND+all:routing&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:blockchain+AND+all:nfv&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:%22remote%20desktop%22+AND+all:%22peer-to-peer%22&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:%22keyboard%22+AND+all:%22video%22+AND+all:%22mouse%22+AND+all:remote&sortBy=submittedDate&sortOrder=descending&max_results=50",
+    "https://export.arxiv.org/api/query?search_query=all:teleoperation+AND+all:blockchain&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:telerobotics+AND+all:blockchain&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:robot+AND+all:%22state%20channel%22&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:robot+AND+all:%22decentralized%20identity%22&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:%22low%20latency%22+AND+all:rollup&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:%22low%20latency%22+AND+all:%22state%20channel%22&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:%22cloud%20gaming%22+AND+all:%22low%20latency%22&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:%22interactive%22+AND+all:%22video%20streaming%22+AND+all:%22low%20latency%22&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:%22remote%20rendering%22+AND+all:streaming&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:webrtc+AND+all:%22low%20latency%22&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:%22remote%20desktop%22+AND+all:webrtc&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:%22pixel%20streaming%22&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:kvm+AND+all:hypervisor+AND+all:security&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:%22kernel%20virtual%20machine%22+AND+all:%22live%20migration%22&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:%22live%20migration%22+AND+all:kvm&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?search_query=all:kvm+AND+all:virtualization+AND+all:network&sortBy=submittedDate&sortOrder=descending&max_results=20",
+    "https://export.arxiv.org/api/query?id_list=2504.09517,2304.00781,2503.15546,2412.03709,2511.00249,2503.17873,2407.05506,2405.15749,2311.15290,2508.21480,2412.04222,2509.10291,2507.20438,2406.02062,2309.16869,2505.22132,2507.00623,2505.22123,2506.17991,2508.09606,2505.19530,2508.14994,2508.11802,2511.12390,2503.15998,2408.11805,2401.03398,2406.00375&max_results=50",
+    "https://scholar.google.com/scholar?q=KVM+over+IP+security",
+    "https://scholar.google.com/scholar?q=secure+teleoperation+mobile+robots+blockchain",
+    "https://scholar.google.com/scholar?q=Secure+teleoperated+vehicles+multichain+digital+twin",
+    "https://api.semanticscholar.org/graph/v1/paper/search?query=KVM%20over%20IP&limit=5&fields=title,authors,url,year,venue,externalIds",
+    "https://ieeexplore.ieee.org/abstract/document/10304344/",
+    "https://arxiv.org/abs/2504.09517",
+    "https://arxiv.org/pdf/2504.09517.pdf",
+    "https://duckduckgo.com/html/?q=RoboComm+DID+state+channels+robots",
+    "https://duckduckgo.com/html/?q=Scurid+RoboComm+github",
+    "https://duckduckgo.com/html/?q=RoboComm+state+channel+libp2p+quorum+typescript",
+    "https://duckduckgo.com/html/?q=roshan+singh+robocomm+github",
+    "https://kalikho.github.io/",
+    "https://identity-economy.de/robocomm-skalierbare-und-datenschutzkonforme-roboter-zu-roboter-interaktion-mittels-dezentralisierter-identitaeten-und-state-channels",
+    "https://github.com/kalikho/roboComm",
+    "https://api.github.com/repos/kalikho/roboComm",
+    "https://raw.githubusercontent.com/kalikho/roboComm/main/README.md",
+    "https://api.github.com/search/repositories?q=RoboComm+DID+state+channels&per_page=5",
+    "https://api.github.com/search/repositories?q=%22RoboComm%22+robot+economy&per_page=5",
+    "https://api.github.com/search/repositories?q=%22arXiv%3A2504.09517%22&per_page=5",
+    "https://api.github.com/search/repositories?q=2504.09517&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Decentralized+Identity%22+state+channels+robots&per_page=5",
+    "https://api.github.com/users/scurid-inc",
+    "https://api.github.com/users/scurid-inc/repos?per_page=100&page=1",
+    "https://api.github.com/users/scurid-inc/repos?per_page=100&page=2",
+    "https://api.github.com/users/kalikho",
+    "https://api.github.com/search/repositories?q=user%3Akalikho+RoboComm&per_page=20",
+    "https://api.github.com/search/repositories?q=user%3Akalikho+robo&per_page=5",
+    "https://api.github.com/search/repositories?q=user%3Akalikho+robocomm&per_page=5",
+    "https://api.github.com/search/repositories?q=user%3Akalikho+state-channel&per_page=5",
+    "https://api.github.com/search/repositories?q=user%3Akalikho+state+channel&per_page=5",
+    "https://api.github.com/search/repositories?q=user%3Akalikho+didcomm&per_page=5",
+    "https://api.github.com/search/repositories?q=user%3Akalikho+libp2p&per_page=5",
+    "https://api.github.com/search/repositories?q=user%3Akalikho+quorum&per_page=5",
+    "https://api.github.com/search/repositories?q=user%3Akalikho+mesa&per_page=5",
+    "https://api.github.com/search/repositories?q=roboComm&per_page=10",
+    "https://arxiv.org/abs/2511.12390",
+    "https://arxiv.org/pdf/2511.12390.pdf",
+    "https://api.github.com/search/repositories?q=2511.12390",
+    "https://api.github.com/search/repositories?q=Learning%20Adaptive%20Neural%20Teleoperation",
+    "https://api.github.com/search/repositories?q=Neural%20teleoperation%20Unitree%20G1",
+    "https://api.github.com/search/repositories?q=satamuradov%20teleoperation",
+    "https://paperswithcode.com/api/v1/papers/?arxiv_id=2511.12390",
+    "https://arxiv.paperswithcode.com/api/v0/repos-and-datasets/2511.12390",
+    "https://arxiv.org/pdf/2507.20438.pdf",
+    "https://api.github.com/search/repositories?q=2507.20438+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Teleoperating+Autonomous+Vehicles%22+5G+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=Fezeu+teleoperation+5G+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=arXiv%3A2507.20438+in:readme&per_page=5",
+    "https://arxiv.org/abs/2506.17991",
+    "https://arxiv.org/pdf/2506.17991.pdf",
+    "https://api.github.com/search/repositories?q=2506.17991",
+    "https://api.github.com/search/repositories?q=CFTel+telerobotics",
+    "https://api.semanticscholar.org/graph/v1/paper/search?query=Secure%20teleoperated%20vehicles%20in%20augmented%20reality%20of%20things%20multichain%20digital%20twin%20approach&limit=5&fields=title,authors,year,venue,url,externalIds,openAccessPdf",
+    "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1109/TCE.2023.3329007?fields=title,abstract,authors,year,venue,url,externalIds,citationCount,referenceCount,fieldsOfStudy",
+    "https://api.crossref.org/works/10.1109/TCE.2023.3329007",
+    "https://dblp.org/rec/journals/tce/SiddiqiJBT24.html",
+    "https://dblp.org/rec/journals/tce/SiddiqiJBT24.xml",
+    "https://xplorestaging.ieee.org/ielx7/30/10510045/10304344.pdf?arnumber=10304344",
+    "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10304344",
+    "https://api.github.com/search/repositories?q=3329007&per_page=5",
+    "https://api.github.com/search/repositories?q=%2210.1109%2FTCE.2023.3329007%22+in:readme+in:description&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Augmented+Reality+of+Things%22+multichain+digital+twin+teleoperated&per_page=5",
+    "https://export.arxiv.org/api/query?search_query=all:%22Secure%20Teleoperated%20Vehicles%22&start=0&max_results=10&sortBy=submittedDate&sortOrder=descending",
+    "https://export.arxiv.org/api/query?search_query=au:Siddiqi+AND+ti:%22Secure%22&start=0&max_results=10",
+    "https://pub.orcid.org/v3.0/0000-0002-5298-1328/works",
+    "https://duckduckgo.com/html/?q=10.1109%2FTCE.2023.3329007%20pdf",
+    "https://lite.duckduckgo.com/lite/?q=10.1109%2FTCE.2023.3329007",
+    "https://api.github.com/search/repositories?q=Hyperledger%20Fabric%20ROS2%20integration&per_page=5",
+    "https://api.github.com/users/TIERS/repos?per_page=100&page=1",
+    "https://api.github.com/repos/TIERS/fabric2rosnodejs/contents/",
+    "https://github.com/TIERS/fabric2rosnodejs",
+    "https://raw.githubusercontent.com/TIERS/fabric2rosnodejs/main/README.md",
+    "https://arxiv.org/pdf/2511.00249.pdf",
+    "https://api.github.com/search/repositories?q=2511.00249+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=Application%20of%20Blockchain%20Frameworks%20for%20Decentralized%20Identity%20and%20Access%20Management%20of%20IoT%20Devices+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Sushil%20Khairnar%22+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=Khairnar%20Hyperledger%20Fabric+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=decentralized%20identity%20fabric%20node-red+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=DID%20Hyperledger%20Fabric%20IoT+in:name,description,readme&per_page=5",
+    "https://api.github.com/users/sushilk123",
+    "https://api.github.com/users/sushilk123/repos?per_page=100&page=1",
+    "https://api.github.com/users/sushilk123/repos?per_page=100&page=1&sort=updated",
+    "https://arxiv.org/abs/2508.14994",
+    "https://arxiv.org/pdf/2508.14994.pdf",
+    "https://github.com/EESC-LabRoM/MoveitServoing",
+    "https://github.com/EESC-LabRoM/MoveitServoing/blob/spot_teleop/",
+    "https://github.com/EESC-LabRoM/MoveitServoing/tree/spot_teleop",
+    "https://api.github.com/repos/EESC-LabRoM/MoveitServoing",
+    "https://api.github.com/repos/EESC-LabRoM/MoveitServoing/branches/spot_teleop",
+    "https://ricardovgodoy.github.io/publication/2025-lars-teleop/",
+    "https://arxiv.org/html/2508.11802v1",
+    "https://arxiv.org/pdf/2508.11802.pdf",
+    "https://arxiv.org/abs/2508.11802",
+    "https://youtu.be/E_X6ol7BoyQ",
+    "https://api.github.com/search/repositories?q=2508.11802&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Anticipatory%20and%20Adaptive%20Footstep%20Streaming%22&per_page=5",
+    "https://api.github.com/search/repositories?q=Nadia%20humanoid%20footstep%20teleoperation&per_page=5",
+    "https://lite.duckduckgo.com/lite/?q=Anticipatory%20Adaptive%20Footstep%20Streaming%20Teleoperated%20Bipedal%20Robots",
+    "https://arxiv.org/pdf/2508.09606.pdf",
+    "https://api.github.com/repos/ARCLab-MIT/BEAVR-Bot",
+    "https://github.com/ARCLab-MIT/BEAVR-Bot",
+    "https://huggingface.co/datasets/arclabmit/lx7r_tape_insert_dataset",
+    "https://huggingface.co/datasets/arclabmit/lx7r_lantern_grasp_dataset",
+    "https://huggingface.co/datasets/arclabmit/lx7r_stack_blocks_dataset",
+    "https://huggingface.co/datasets/arclabmit/lx7r_flip_cube_dataset",
+    "https://huggingface.co/datasets/arclabmit/lx7r_pour_dataset",
+    "https://arxiv.org/abs/2505.22132",
+    "https://arxiv.org/pdf/2505.22132.pdf",
+    "https://github.com/tv-vicomtech/6G-XR_UC1_Remote_Renderer_dataset",
+    "https://raw.githubusercontent.com/tv-vicomtech/6G-XR_UC1_Remote_Renderer_dataset/master/README.md",
+    "https://arxiv.org/abs/2503.15546",
+    "https://arxiv.org/pdf/2503.15546.pdf",
+    "https://api.github.com/search/repositories?q=2503.15546+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Enforcing%20Cybersecurity%20Constraints%20for%20LLM-driven%20Robot%20Agents%22+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22LLM-driven%20Robot%20Agents%20for%20Online%20Transactions%22+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Shraddha%20Pradipbhai%20Shah%22+in:readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22arXiv%3A2503.15546%22+in:readme+in:description+in:name&per_page=5",
+    "https://api.github.com/search/repositories?q=2503.15546+arxiv+in:readme+in:description&per_page=5",
+    "https://arxiv.org/abs/2505.19530",
+    "https://arxiv.org/pdf/2505.19530.pdf",
+    "https://arxiv.org/abs/2505.19530v1",
+    "https://youtu.be/jF270_bG1h8?feature=shared",
+    "https://api.github.com/search/repositories?q=2505.19530+in%3Aname%2Cdescription%2Creadme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Heavy+lifting+tasks%22+haptic+teleoperation&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Dynamic+Mobile+Manipulation%22+haptic+teleoperation&per_page=5",
+    "https://api.github.com/search/repositories?q=wheeled+humanoid+bilateral+teleoperation+Ramos&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Amartya+Purushottam%22+teleoperation&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Joao+Ramos%22+teleoperation&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Dynamic+locomotion+teleoperation%22+wheeled+humanoid&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Dynamic+mobile+manipulation%22+wheeled+humanoid&per_page=5",
+    "https://api.github.com/search/repositories?q=%22wheeled+humanoid%22+%22Human-Machine+Interface%22&per_page=5",
+    "https://arxiv.org/abs/2406.02062",
+    "https://arxiv.org/pdf/2406.02062.pdf",
+    "https://api.github.com/search/repositories?q=2406.02062",
+    "https://api.github.com/search/repositories?q=%22Towards%20Railways%20Remote%20Driving%22",
+    "https://api.github.com/search/repositories?q=R2Dato%20remote%20driving",
+    "https://api.github.com/search/repositories?q=Vicomtech%20remote%20driving",
+    "https://api.github.com/search/repositories?q=R2Dato",
+    "https://api.github.com/search/repositories?q=EUrail%20R2Dato",
+    "https://api.github.com/search/repositories?q=CAF%20Signalling%20remote%20driving",
+    "https://api.github.com/search/repositories?q=Amarisoft%205G%20SA%20attenuator%20gstreamer%20webrtcbin",
+    "https://api.github.com/search/repositories?q=%223-levels%20Adaptive%20Rate%20Control%22",
+    "https://arxiv.org/abs/2503.15998",
+    "https://arxiv.org/pdf/2503.15998.pdf",
+    "https://youtu.be/QLU2ZrU0HjQ",
+    "https://youtu.be/VTiB6I_fIWo",
+    "https://api.github.com/search/repositories?q=%22TelePhysicalOperation%22&per_page=5",
+    "https://api.github.com/repos/ADVRHumanoids/tpo_vision",
+    "https://raw.githubusercontent.com/ADVRHumanoids/tpo_vision/master/README.md",
+    "https://lite.duckduckgo.com/lite/?q=Wearable%20Haptics%20Marionette-inspired%20Teleoperation%202503.15998",
+    "https://arxiv.org/abs/2309.16869",
+    "https://arxiv.org/pdf/2309.16869.pdf",
+    "https://ar5iv.labs.arxiv.org/html/2309.16869",
+    "https://api.github.com/search/repositories?q=Vidaptive&per_page=5",
+    "https://api.github.com/search/repositories?q=2309.16869&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Karimi%22+%22Sadjad%22+Vidaptive&per_page=5",
+    "https://arxiv.org/abs/2507.00623",
+    "https://arxiv.org/pdf/2507.00623.pdf",
+    "https://api.github.com/search/repositories?q=2507.00623+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Remote+Rendering+for+Virtual+Reality%22+in:name,description,readme&per_page=10",
+    "https://lite.duckduckgo.com/lite/?q=2507.00623+github",
+    "https://api.github.com/search/repositories?q=6G-XR+remote+renderer+in:name,description,readme&per_page=10",
+    "https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7886",
+    "https://arxiv.org/abs/2505.22123",
+    "https://arxiv.org/pdf/2505.22123.pdf",
+    "https://api.github.com/search/repositories?q=2505.22123+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=6G-XR+remote+renderer&per_page=10",
+    "https://api.github.com/search/repositories?q=org:tv-vicomtech+remote+renderer&per_page=10",
+    "https://arxiv.org/abs/2412.03709",
+    "https://arxiv.org/pdf/2412.03709.pdf",
+    "https://arxiv.paperswithcode.com/api/v0/papers/2412.03709",
+    "https://api.github.com/search/repositories?q=2412.03709",
+    "https://api.github.com/search/repositories?q=Securing+RC+Based+P2P+Networks",
+    "https://api.github.com/search/repositories?q=PrimaryGroupHeadRoleACC",
+    "https://arxiv.org/abs/2508.21480",
+    "https://arxiv.org/pdf/2508.21480.pdf",
+    "https://is.gd/8NGvPs",
+    "https://api.github.com/search/repositories?q=2508.21480+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Decentralized%20IoT%20Onboarding%22+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22smart%20home%22+consortium+onboarding+blockchain+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=ASOP-protocol.spthy+in:readme,description,name&per_page=5",
+    "https://api.github.com/search/repositories?q=IoTree+Hyperledger+Fabric+in:readme,description,name&per_page=5",
+    "https://api.openalex.org/works?search=Intelligent%20Interface%20for%20Secure%20Routing%20of%20TCP%2FIP%20Connections%20to%20the%20KVM%20Hypervisor&per-page=5",
+    "https://api.openalex.org/works/W4387445018",
+    "https://doi.org/10.1109/rusautocon58002.2023.10272865",
+    "https://ieeexplore.ieee.org/abstract/document/10272865/",
+    "https://ieeexplore.ieee.org/document/10272865/",
+    "https://r.jina.ai/https://ieeexplore.ieee.org/document/10272865/",
+    "https://r.jina.ai/https://ieeexplore.ieee.org/document/10272865/authors",
+    "https://r.jina.ai/https://ieeexplore.ieee.org/document/10272865/keywords",
+    "https://export.arxiv.org/api/query?search_query=all:%22Intelligent%20Interface%20for%20Secure%20Routing%20of%20TCP%2FIP%20Connections%20to%20the%20KVM%20Hypervisor%22&start=0&max_results=5",
+    "https://api.github.com/search/repositories?q=10272865+KVM+hypervisor&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Secure%20Routing%20of%20TCP%2FIP%20Connections%20to%20the%20KVM%20Hypervisor%22&per_page=5",
+    "https://api.github.com/search/repositories?q=RusAutoCon58002+KVM&per_page=5",
+    "https://api.github.com/search/repositories?q=pKVM+traffic+encapsulation+RSA+OTP&per_page=5",
+    "https://api.github.com/search/repositories?q=Zaenchkovski+KVM&per_page=5",
+    "https://lite.duckduckgo.com/lite/?q=Intelligent%20Interface%20for%20Secure%20Routing%20of%20TCP%2FIP%20Connections%20to%20the%20KVM%20Hypervisor",
+    "https://ace-teleop.github.io/",
+    "https://github.com/ACETeleop/ACETeleop",
+    "https://github.com/ACETeleop/ACE_hardware",
+    "https://raw.githubusercontent.com/ACETeleop/ACETeleop/main/README.md",
+    "https://raw.githubusercontent.com/ACETeleop/ACETeleop/main/LICENSE",
+    "https://arxiv.org/abs/2401.03398",
+    "https://arxiv.org/pdf/2401.03398.pdf",
+    "https://api.github.com/search/repositories?q=2401.03398",
+    "https://api.github.com/search/repositories?q=2401.03398+avatar",
+    "https://api.github.com/search/repositories?q=arxiv+2401.03398",
+    "https://api.openalex.org/works?search=Amplifying%20robotics%20capacities%20with%20a%20human%20touch&per-page=5",
+    "https://api.openalex.org/works/W4390783913",
+    "https://arxiv.org/abs/2503.17873",
+    "https://arxiv.org/pdf/2503.17873.pdf",
+    "https://ar5iv.labs.arxiv.org/html/2503.17873",
+    "https://api.github.com/search/repositories?q=2503.17873+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=DBC-ABAC+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Distributed+Blockchain-based+Access+Control%22+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/users?q=Ebtihal+Abdulrahman+in:fullname&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Fabric-IoT%22+ABAC+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22ABAC-HLFBC%22+in:name,description,readme&per_page=5",
+    "https://arxiv.org/abs/2407.05506",
+    "https://arxiv.org/pdf/2407.05506.pdf",
+    "https://api.github.com/search/repositories?q=2407.05506+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=2407.05506+in:name,description,readme&per_page=10",
+    "https://api.github.com/search/repositories?q=%22Pruning%20Blockchain%20Protocols%22+in:name,description,readme&per_page=10",
+    "https://api.github.com/search/repositories?q=PBAC%20blockchain%20access%20control+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=R%26D-BAC+in:name,description,readme&per_page=5",
+    "https://api.github.com/repos/nadeemyb/PBAC",
+    "https://arxiv.org/abs/2405.15749",
+    "https://arxiv.org/pdf/2405.15749.pdf",
+    "https://arxiv.org/e-print/2405.15749",
+    "https://api.github.com/search/repositories?q=2405.15749+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Collaborative%20Access%20Control%20for%20IoT%22+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=P2P-BEAC+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=BEAC+IoT+blockchain+access+control+in:name,description,readme&per_page=5",
+    "https://arxiv.org/abs/2509.10291",
+    "https://arxiv.org/pdf/2509.10291.pdf",
+    "https://ar5iv.labs.arxiv.org/html/2509.10291",
+    "https://api.github.com/search/repositories?q=2509.10291+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22Proof%20of%20AutoML%22+in:name,description,readme&per_page=5",
+    "https://api.github.com/repos/sstprk/proof_of_automl/contents/Prototype?ref=main",
+    "https://raw.githubusercontent.com/sstprk/proof_of_automl/main/Prototype/README.md",
+    "https://arxiv.org/abs/2412.04222",
+    "https://arxiv.org/pdf/2412.04222.pdf",
+    "https://api.github.com/search/repositories?q=2412.04222%20in%3Aname%2Cdescription%2Creadme&per_page=5",
+    "https://api.github.com/search/repositories?q=DistB-VNET%20in%3Aname%2Cdescription%2Creadme&per_page=5",
+    "https://api.github.com/search/repositories?q=DistB%20VNET%20blockchain%20SDN%20NFV%20in%3Aname%2Cdescription%2Creadme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22DistB-VNET%22&per_page=5",
+    "https://arxiv.org/abs/2311.15290",
+    "https://arxiv.org/pdf/2311.15290.pdf",
+    "https://api.github.com/search/repositories?q=2311.15290+in:name,description,readme&per_page=5",
+    "https://api.github.com/search/repositories?q=%22IoT+ecosystem%27s+threats+and+access+control%22+in:name,description,readme&per_page=5"
+  ],
+  "blocked_sources": [],
+  "statistics": {
+    "total_discovered": 30,
+    "total_analyzed": 30,
+    "total_presented": 16,
+    "total_rejected": 6,
+    "total_insights_extracted": 8,
+    "discovery_metrics": {
+      "sources_tried": [
+        "arXiv",
+        "Google Scholar",
+        "web"
+      ],
+      "sources_successful": [
+        "arXiv",
+        "Google Scholar"
+      ],
+      "sources_blocked": [],
+      "source_failure_reasons": {
+        "web": "Semantic Scholar Graph API returned HTTP 429 during KVM-over-IP expansion; IEEE Explore also rejected direct HTML fetch."
+      }
+    },
+    "analysis_metrics": {
+      "avg_combined_score": 25.63,
+      "avg_execution_score": 17.43,
+      "avg_blue_ocean_score": 8.2,
+      "combined_score_distribution": {
+        "0-17": 0,
+        "18-24": 14,
+        "25-34": 16,
+        "35-50": 0
+      },
+      "blue_ocean_distribution": {
+        "0-7": 12,
+        "8-11": 15,
+        "12-15": 3,
+        "16-20": 0
+      }
+    }
+  },
+  "timing": {
+    "research_started_at": "2026-01-15T13:02:02+01:00",
+    "discovery": {
+      "started_at": "2026-01-15T13:02:02+01:00",
+      "ended_at": null,
+      "duration_seconds": null
+    },
+    "analysis": {
+      "started_at": "2026-01-15T13:02:02+01:00",
+      "ended_at": "2026-01-15T19:19:48+01:00",
+      "duration_seconds": 22666,
+      "papers_analyzed": 30,
+      "avg_seconds_per_paper": 752.8
+    },
+    "complete": {
+      "ended_at": "2026-01-15T19:19:48+01:00"
+    }
+  }
+}
