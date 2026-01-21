@@ -361,3 +361,56 @@ class TestRunResearch:
 
         assert result is True
         mock_manager.update_target_papers.assert_called_once_with(30, force=True)
+
+    @patch("ralph.commands.run.LiveResearchDisplay")
+    @patch("ralph.commands.run.ResearchLoop")
+    @patch("ralph.commands.run.RRDManager")
+    @patch("ralph.commands.run.resolve_research_path")
+    @patch("ralph.commands.run.load_config")
+    @patch("ralph.commands.run.console")
+    def test_run_research_display_exception_cleanup(
+        self, mock_console, mock_load_config, mock_resolve, mock_manager_class, mock_loop_class, mock_live_display, tmp_path
+    ):
+        """Test display cleanup on exception."""
+        mock_config = MagicMock()
+        mock_config.default_agent = Agent.CLAUDE
+        mock_config.live_output = True
+        mock_load_config.return_value = mock_config
+
+        project_path = tmp_path / "test-project"
+        project_path.mkdir()
+        mock_resolve.return_value = project_path
+
+        mock_manager = MagicMock()
+        mock_manager.validate.return_value = []
+        mock_rrd = MagicMock()
+        mock_rrd.phase = Phase.DISCOVERY
+        mock_rrd.requirements.target_papers = 20
+        mock_rrd.statistics.total_analyzed = 0
+        mock_manager.load.return_value = mock_rrd
+        mock_manager_class.return_value = mock_manager
+
+        # Create a mock display where the context manager properly cleans up
+        mock_display = MagicMock()
+        mock_live = MagicMock()
+        exit_called = []
+
+        def mock_exit(*args):
+            exit_called.append(True)
+            return False  # Don't suppress the exception
+
+        mock_display.start.return_value.__enter__ = MagicMock(return_value=mock_live)
+        mock_display.start.return_value.__exit__ = mock_exit
+        mock_live_display.return_value = mock_display
+
+        # Make the loop raise an exception
+        mock_loop = MagicMock()
+        mock_loop.run.side_effect = RuntimeError("Unexpected error during research")
+        mock_loop_class.return_value = mock_loop
+
+        # Should not propagate exception to caller but should clean up
+        with pytest.raises(RuntimeError):
+            run_research("test-project")
+
+        # Verify the context manager exit was called (cleanup occurred)
+        assert len(exit_called) == 1

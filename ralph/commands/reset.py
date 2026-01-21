@@ -1,5 +1,6 @@
 """Reset command - reset a research project to DISCOVERY phase."""
 
+import json
 from pathlib import Path
 
 from ralph.config import resolve_research_path
@@ -89,6 +90,15 @@ def reset_project(project: str, confirm: bool = True) -> bool:
         console.print(f"Run again with: [bold]research-ralph --run {project_path.name}[/bold]")
         console.print()
         return True
+    except PermissionError as e:
+        print_error(f"Permission denied: {e}")
+        return False
+    except OSError as e:
+        print_error(f"Filesystem error: {e}")
+        return False
+    except json.JSONDecodeError as e:
+        print_error(f"RRD file corrupted: {e}")
+        return False
     except Exception as e:
-        print_error(f"Failed to reset: {e}")
+        print_error(f"Unexpected error: {type(e).__name__}: {e}")
         return False

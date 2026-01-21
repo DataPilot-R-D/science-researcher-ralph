@@ -2,6 +2,7 @@
 
 import json
 import shutil
+import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -41,7 +42,7 @@ class RRDManager:
         return self._rrd
 
     def save(self, rrd: Optional[RRD] = None) -> None:
-        """Save RRD to file."""
+        """Save RRD to file using atomic write."""
         if rrd is not None:
             self._rrd = rrd
 
@@ -51,8 +52,13 @@ class RRDManager:
         # Convert to dict, handling enums and dates
         data = json.loads(self._rrd.model_dump_json())
 
-        with open(self.rrd_path, "w") as f:
+        # Atomic write: write to temp file, then rename
+        with tempfile.NamedTemporaryFile(
+            mode="w", dir=self.rrd_path.parent, delete=False, suffix=".tmp"
+        ) as f:
             json.dump(data, f, indent=2)
+            temp_path = Path(f.name)
+        temp_path.replace(self.rrd_path)
 
     @property
     def rrd(self) -> RRD:

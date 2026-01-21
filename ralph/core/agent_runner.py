@@ -171,7 +171,12 @@ class AgentRunner:
                 success=False,
                 error_type=ErrorType.TIMEOUT.value,
             )
+        except KeyboardInterrupt:
+            raise  # Let Ctrl+C propagate
         except Exception as e:
+            import sys
+            import traceback
+            print(f"Agent error: {traceback.format_exc()}", file=sys.stderr)
             return AgentResult(
                 output=str(e),
                 exit_code=1,
@@ -229,8 +234,9 @@ class AgentRunner:
             try:
                 with open(last_message_file) as f:
                     last_message = f.read()
-            except (FileNotFoundError, PermissionError, IOError, UnicodeDecodeError):
-                pass  # Codex output file is supplementary; continue without it
+            except (FileNotFoundError, PermissionError, IOError, UnicodeDecodeError) as e:
+                import sys
+                print(f"Note: Could not read Codex output: {type(e).__name__}", file=sys.stderr)
 
             return self._build_result(
                 result.stdout + result.stderr + last_message, result.returncode

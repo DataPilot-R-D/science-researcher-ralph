@@ -201,7 +201,7 @@ def _collect_projects_from_dir(
                 projects.append(item)
                 seen_names.add(item.name)
     except PermissionError:
-        pass
+        print(f"Warning: Cannot read directory {directory}", file=sys.stderr)
 
 
 def list_research_projects() -> list[Path]:
@@ -237,7 +237,13 @@ def list_research_projects() -> list[Path]:
     if legacy_dir.exists() and legacy_dir.resolve() != cwd.resolve():
         _collect_projects_from_dir(legacy_dir, projects, seen_names)
 
-    return sorted(projects, key=lambda p: p.stat().st_mtime, reverse=True)
+    def _safe_mtime(p: Path) -> float:
+        try:
+            return p.stat().st_mtime
+        except OSError:
+            return 0
+
+    return sorted(projects, key=_safe_mtime, reverse=True)
 
 
 def ensure_research_dir() -> Path:
@@ -314,8 +320,11 @@ def ensure_current_dir_initialized() -> dict[str, object]:
                 check=True,
             )
             result["git_initialized"] = True
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            pass  # Git not available or init failed
+        except FileNotFoundError:
+            print("Note: git not found, skipping git initialization.", file=sys.stderr)
+        except subprocess.CalledProcessError as e:
+            stderr = e.stderr.decode() if e.stderr else str(e)
+            print(f"Warning: git init failed: {stderr}", file=sys.stderr)
 
     # 3. Copy template files
     created_files: list[str] = []

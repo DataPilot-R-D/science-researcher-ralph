@@ -66,8 +66,8 @@ def show_status(project: str) -> bool:
         if isinstance(start, str):
             try:
                 start = datetime.fromisoformat(start.replace("Z", "+00:00"))
-            except Exception:
-                start = None
+            except ValueError:
+                start = None  # Invalid timestamp format
 
         if start:
             now = datetime.now(start.tzinfo) if start.tzinfo else datetime.now()

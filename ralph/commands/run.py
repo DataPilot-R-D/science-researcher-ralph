@@ -75,7 +75,7 @@ def run_research(
             print_error(f"Invalid agent: {agent}. Must be claude, amp, or codex")
             return False
     else:
-        agent_enum = config.default_agent
+        agent_enum = Agent(config.default_agent) if isinstance(config.default_agent, str) else config.default_agent
 
     # Calculate max iterations
     rrd = manager.load()
@@ -124,7 +124,7 @@ def run_research(
                 updated_rrd = manager.load()
                 display.update_papers(updated_rrd.statistics.total_analyzed)
             except (FileNotFoundError, json.JSONDecodeError):
-                pass  # Keep displaying last known count
+                pass  # Keep displaying last known count - status may be stale
         else:
             if result.papers_delta > 0:
                 display.end_iteration(result.papers_delta)

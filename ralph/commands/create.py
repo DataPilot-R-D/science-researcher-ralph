@@ -38,7 +38,7 @@ def create_project(
             print_error(f"Invalid agent: {agent}. Must be claude, amp, or codex")
             return None
     else:
-        agent_enum = config.default_agent
+        agent_enum = Agent(config.default_agent) if isinstance(config.default_agent, str) else config.default_agent
 
     # Print header
     console.print()

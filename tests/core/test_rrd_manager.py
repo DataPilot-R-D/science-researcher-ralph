@@ -460,3 +460,32 @@ class TestRRDManagerGetSummary:
         assert summary["project"] == "AI Robotics Research"
         assert summary["phase"] == "DISCOVERY"
         assert summary["target_papers"] == 20
+
+
+class TestRRDManagerLoadErrors:
+    """Tests for RRDManager.load error handling."""
+
+    def test_load_pydantic_validation_error(self, tmp_project_dir):
+        """Test load handles invalid schema (Pydantic ValidationError)."""
+        from pydantic import ValidationError
+
+        # Write JSON that passes JSON parsing but fails Pydantic validation
+        # requirements.target_papers must be int, not string
+        (tmp_project_dir / "rrd.json").write_text(
+            '{"project": "Test", "requirements": {"focus_area": "test", "target_papers": "invalid"}}'
+        )
+        manager = RRDManager(tmp_project_dir)
+
+        with pytest.raises(ValidationError):
+            manager.load()
+
+    def test_load_missing_required_field_pydantic(self, tmp_project_dir):
+        """Test load raises ValidationError for missing required fields."""
+        from pydantic import ValidationError
+
+        # Missing required 'requirements' field
+        (tmp_project_dir / "rrd.json").write_text('{"project": "Test"}')
+        manager = RRDManager(tmp_project_dir)
+
+        with pytest.raises(ValidationError):
+            manager.load()

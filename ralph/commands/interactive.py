@@ -107,7 +107,8 @@ def _get_project_label(project_path: Path) -> str:
     except FileNotFoundError:
         return f"{project_path.name} [NO RRD]"
     except Exception as e:
-        return f"{project_path.name} [{type(e).__name__}]"
+        detail = str(e)[:20] if str(e) else type(e).__name__
+        return f"{project_path.name} [ERR: {detail}]"
 
 
 def _select_project(prompt: str, include_status: bool = False) -> Optional[Path]:
@@ -224,11 +225,15 @@ def run_menu() -> None:
         return
 
     papers = questionary.text(
-        "Target papers (leave empty to use existing):", style=MENU_STYLE
+        "Target papers (leave empty to use existing):",
+        validate=lambda x: x == "" or x.isdigit() or "Enter a number",
+        style=MENU_STYLE,
     ).ask()
 
     iterations = questionary.text(
-        "Max iterations (leave empty for auto):", style=MENU_STYLE
+        "Max iterations (leave empty for auto):",
+        validate=lambda x: x == "" or x.isdigit() or "Enter a number",
+        style=MENU_STYLE,
     ).ask()
 
     config = load_config()

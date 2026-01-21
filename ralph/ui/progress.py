@@ -10,7 +10,6 @@ from rich.progress import (
     TimeElapsedColumn,
     TimeRemainingColumn,
 )
-from rich.spinner import Spinner
 
 from ralph.ui.console import console, SimpsonsColors
 

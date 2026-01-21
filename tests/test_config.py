@@ -867,3 +867,80 @@ class TestNeedsInitialization:
             (tmp_path / f).write_text(f"# {f}")
 
         assert needs_initialization() is False
+
+
+class TestSaveConfigErrors:
+    """Tests for save_config error handling."""
+
+    def test_save_raises_permission_error(self, tmp_path, monkeypatch):
+        """Test save raises PermissionError when dir not writable."""
+        import os
+
+        # Create a read-only directory
+        config_dir = tmp_path / ".research-ralph"
+        config_dir.mkdir()
+        config_file = config_dir / "config.yaml"
+
+        monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+
+        # Make directory read-only
+        os.chmod(config_dir, 0o444)
+
+        config = Config(default_papers=50)
+
+        try:
+            with pytest.raises(PermissionError):
+                save_config(config)
+        finally:
+            # Restore permissions for cleanup
+            os.chmod(config_dir, 0o755)
+
+
+class TestConvertConfigValueEdgeCases:
+    """Tests for _convert_config_value edge cases."""
+
+    def test_convert_config_value_invalid_agent(self):
+        """Test conversion raises for invalid agent."""
+        from ralph.config import _convert_config_value, Agent
+
+        with pytest.raises(ValueError):
+            _convert_config_value("invalid_agent", Agent)
+
+    def test_convert_config_value_invalid_int(self):
+        """Test conversion raises for invalid int."""
+        from ralph.config import _convert_config_value
+
+        with pytest.raises(ValueError):
+            _convert_config_value("not_a_number", int)
+
+    def test_convert_config_value_valid_int(self):
+        """Test conversion works for valid int."""
+        from ralph.config import _convert_config_value
+
+        result = _convert_config_value("42", int)
+        assert result == 42
+
+    def test_convert_config_value_valid_agent(self):
+        """Test conversion works for valid agent."""
+        from ralph.config import _convert_config_value, Agent
+
+        result = _convert_config_value("amp", Agent)
+        assert result == Agent.AMP
+
+    def test_convert_config_value_bool_false(self):
+        """Test conversion handles boolean false values."""
+        from ralph.config import _convert_config_value
+
+        for value in ["false", "0", "no", "FALSE", "False"]:
+            result = _convert_config_value(value, bool)
+            assert result is False
+
+    def test_convert_config_value_path(self):
+        """Test conversion handles Path type."""
+        from ralph.config import _convert_config_value
+        from pathlib import Path
+
+        result = _convert_config_value("~/test/path", Path)
+        assert isinstance(result, Path)
+        assert "~" not in str(result)  # Should be expanded

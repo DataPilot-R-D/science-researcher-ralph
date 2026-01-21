@@ -194,7 +194,7 @@ class TestResetProject:
 
         assert result is False
         mock_print_error.assert_called()
-        assert "Failed to reset" in str(mock_print_error.call_args)
+        assert "Unexpected error" in str(mock_print_error.call_args)
 
     @patch("ralph.commands.reset.RRDManager")
     @patch("ralph.commands.reset.resolve_research_path")

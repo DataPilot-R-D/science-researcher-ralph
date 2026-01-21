@@ -563,3 +563,61 @@ class TestEnsureValidPhase:
         # DISCOVERY stays as DISCOVERY
         assert phase == Phase.DISCOVERY
         mock_manager.save.assert_not_called()
+
+
+class TestResearchLoopStreamingExceptions:
+    """Tests for streaming exception handling."""
+
+    @patch("ralph.core.research_loop.time")
+    @patch("ralph.core.research_loop.AgentRunner")
+    @patch("ralph.core.research_loop.load_config")
+    @patch("ralph.core.research_loop.RRDManager")
+    def test_run_agent_streaming_exception(
+        self, mock_manager_class, mock_load_config, mock_runner_class, mock_time, tmp_path
+    ):
+        """Test streaming handles generator exceptions."""
+        mock_config = MagicMock()
+        mock_config.default_agent = Agent.CLAUDE
+        mock_config.max_consecutive_failures = 3
+        mock_config.live_output = True  # Enable streaming
+        mock_load_config.return_value = mock_config
+
+        mock_manager = MagicMock()
+        mock_manager.validate.return_value = []
+        mock_rrd = MagicMock()
+        mock_rrd.phase = Phase.DISCOVERY
+        mock_rrd.requirements.target_papers = 20
+        mock_rrd.statistics.total_analyzed = 0
+        mock_rrd.statistics.total_presented = 0
+        mock_rrd.statistics.total_insights_extracted = 0
+        mock_rrd.papers_pool = []
+        mock_rrd.pending_papers = []
+        mock_rrd.analyzing_papers = []
+        mock_manager.load.return_value = mock_rrd
+        mock_manager_class.return_value = mock_manager
+
+        # Simulate streaming generator that raises exception mid-iteration
+        def mock_streaming_generator(*args, **kwargs):
+            yield "First line"
+            raise IOError("Network error during streaming")
+
+        mock_runner = MagicMock()
+        mock_runner.is_available.return_value = True
+        mock_runner.run_streaming.side_effect = mock_streaming_generator
+        # Also mock regular run as fallback
+        mock_runner.run.return_value = AgentResult(
+            output="Fallback result",
+            exit_code=1,
+            success=False,
+            error_type="network",
+        )
+        mock_runner_class.return_value = mock_runner
+
+        (tmp_path / "prompt.md").write_text("Test")
+
+        loop = ResearchLoop(project_path=tmp_path, max_iterations=3)
+        # Should not crash - loop handles the exception gracefully
+        result = loop.run()
+
+        # Loop should have run and completed (possibly with failures)
+        assert result.iterations_run > 0 or result.error_message is not None
