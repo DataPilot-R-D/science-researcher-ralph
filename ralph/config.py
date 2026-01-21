@@ -34,7 +34,7 @@ class Config(BaseModel):
 
 
 # Default config path
-CONFIG_DIR = Path.home() / ".ralph"
+CONFIG_DIR = Path.home() / ".research-ralph"
 CONFIG_FILE = CONFIG_DIR / "config.yaml"
 
 
@@ -45,7 +45,7 @@ def get_config_dir() -> Path:
 
 
 def load_config() -> Config:
-    """Load configuration from ~/.ralph/config.yaml or return defaults."""
+    """Load configuration from ~/.research-ralph/config.yaml or return defaults."""
     if CONFIG_FILE.exists():
         try:
             with open(CONFIG_FILE) as f:
@@ -67,7 +67,7 @@ def load_config() -> Config:
 
 
 def save_config(config: Config) -> None:
-    """Save configuration to ~/.ralph/config.yaml.
+    """Save configuration to ~/.research-ralph/config.yaml.
 
     Raises:
         PermissionError: If config file is not writable

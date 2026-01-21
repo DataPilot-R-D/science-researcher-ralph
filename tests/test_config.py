@@ -83,7 +83,7 @@ class TestGetConfigDir:
 
     def test_creates_directory(self, tmp_path, monkeypatch):
         """Test that get_config_dir creates directory."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
 
         result = get_config_dir()
@@ -173,7 +173,7 @@ class TestSaveConfig:
 
     def test_save_creates_file(self, tmp_path, monkeypatch):
         """Save creates config file."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_file = config_dir / "config.yaml"
 
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
@@ -186,7 +186,7 @@ class TestSaveConfig:
 
     def test_save_writes_correct_values(self, tmp_path, monkeypatch):
         """Save writes correct values to file."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_file = config_dir / "config.yaml"
         config_dir.mkdir()
 
@@ -209,7 +209,7 @@ class TestSaveConfig:
 
     def test_save_overwrites_existing(self, tmp_path, monkeypatch):
         """Save overwrites existing config file."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_file = config_dir / "config.yaml"
         config_dir.mkdir()
         config_file.write_text("default_papers: 10")
@@ -273,7 +273,7 @@ class TestSetConfigValue:
 
     def test_set_research_dir(self, tmp_path, monkeypatch):
         """Set handles research_dir path."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
@@ -285,7 +285,7 @@ class TestSetConfigValue:
 
     def test_set_default_agent_valid(self, tmp_path, monkeypatch):
         """Set handles valid agent value."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
@@ -297,7 +297,7 @@ class TestSetConfigValue:
 
     def test_set_default_agent_invalid(self, tmp_path, monkeypatch):
         """Set returns False with error for invalid agent."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
@@ -310,7 +310,7 @@ class TestSetConfigValue:
 
     def test_set_integer_field(self, tmp_path, monkeypatch):
         """Set handles integer fields."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
@@ -322,7 +322,7 @@ class TestSetConfigValue:
 
     def test_set_integer_field_invalid(self, tmp_path, monkeypatch):
         """Set returns False with error for invalid integer."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
@@ -335,7 +335,7 @@ class TestSetConfigValue:
 
     def test_set_boolean_field_true_values(self, tmp_path, monkeypatch):
         """Set handles boolean true values."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
@@ -347,7 +347,7 @@ class TestSetConfigValue:
 
     def test_set_boolean_field_false_value(self, tmp_path, monkeypatch):
         """Set handles boolean false value."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
@@ -359,7 +359,7 @@ class TestSetConfigValue:
 
     def test_set_unknown_key(self, tmp_path, monkeypatch):
         """Set returns False with error for unknown key."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")

@@ -163,7 +163,7 @@ def mock_config(tmp_research_dir: Path) -> Config:
 @pytest.fixture
 def mock_config_file(tmp_path: Path, mock_config: Config) -> Path:
     """Create a mock config file."""
-    config_dir = tmp_path / ".ralph"
+    config_dir = tmp_path / ".research-ralph"
     config_dir.mkdir()
     config_file = config_dir / "config.yaml"
 

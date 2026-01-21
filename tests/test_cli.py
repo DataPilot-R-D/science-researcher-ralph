@@ -90,7 +90,7 @@ class TestCLIConfigFlag:
 
     def test_set_config_value(self, tmp_path, monkeypatch):
         """Test setting config value."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
@@ -102,7 +102,7 @@ class TestCLIConfigFlag:
 
     def test_set_invalid_config_key(self, tmp_path, monkeypatch):
         """Test setting invalid config key."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
@@ -293,7 +293,7 @@ class TestCLISubcommands:
 
     def test_config_subcommand_set_value(self, tmp_path, monkeypatch):
         """Test 'config' subcommand setting value."""
-        config_dir = tmp_path / ".ralph"
+        config_dir = tmp_path / ".research-ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
