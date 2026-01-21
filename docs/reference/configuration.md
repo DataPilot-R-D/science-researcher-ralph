@@ -17,7 +17,7 @@ research-ralph config default_agent=amp
 
 # Alternate flag form
 research-ralph --config default_papers=30
-research-ralph --config
+research-ralph --config=
 ```
 
 ### Config keys
