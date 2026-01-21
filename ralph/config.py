@@ -1,6 +1,7 @@
 """Configuration management for Research-Ralph."""
 
 import os
+import sys
 from enum import Enum
 from pathlib import Path
 from typing import Optional
@@ -54,15 +55,12 @@ def load_config() -> Config:
                 data["research_dir"] = Path(data["research_dir"]).expanduser()
             return Config(**data)
         except yaml.YAMLError as e:
-            import sys
             print(f"Warning: Config file has invalid YAML: {e}. Using defaults.", file=sys.stderr)
             return Config()
         except (PermissionError, OSError) as e:
-            import sys
             print(f"Warning: Cannot read config file: {e}. Using defaults.", file=sys.stderr)
             return Config()
         except Exception as e:
-            import sys
             print(f"Warning: Config load failed ({type(e).__name__}). Using defaults.", file=sys.stderr)
             return Config()
     return Config()

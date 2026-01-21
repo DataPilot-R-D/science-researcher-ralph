@@ -87,6 +87,7 @@ RETRY_CONFIG: dict[ErrorType, tuple[int, bool]] = {
     ErrorType.RATE_LIMIT: (30, True),
     ErrorType.TIMEOUT: (2, True),
     ErrorType.NETWORK: (2, True),
+    ErrorType.MISSING_PROMPT: (0, False),  # Config error, don't retry
     ErrorType.UNKNOWN: (5, True),
 }
 
