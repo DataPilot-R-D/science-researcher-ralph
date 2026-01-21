@@ -148,13 +148,13 @@ def _get_repo_root() -> Path:
 
 def resolve_research_path(path: str) -> Optional[Path]:
     """
-    Resolve a research project path. Checks:
+    Resolve a research project path within current working directory.
+
+    Checks:
     1. Current directory if "." or empty
     2. Absolute path
     3. Relative to current directory
     4. Project name in current directory subdirs
-    5. Project name in research_dir (fallback)
-    6. Legacy researches/ folder
 
     Returns None if not found.
     """
@@ -177,17 +177,6 @@ def resolve_research_path(path: str) -> Optional[Path]:
     if cwd_project.exists() and (cwd_project / "rrd.json").exists():
         return cwd_project
 
-    # Fallback to configured research_dir
-    config = load_config()
-    if (config.research_dir / path).exists():
-        return config.research_dir / path
-
-    # Legacy researches/ folder
-    script_dir = Path(__file__).parent.parent
-    legacy_path = script_dir / "researches" / path
-    if legacy_path.exists():
-        return legacy_path
-
     return None
 
 
@@ -206,11 +195,11 @@ def _collect_projects_from_dir(
 
 def list_research_projects() -> list[Path]:
     """
-    List all research projects. Looks in:
+    List all research projects in current working directory.
+
+    Looks in:
     1. Current directory (if it has rrd.json, treat as single project)
     2. Subdirectories of current directory
-    3. Configured research_dir (fallback)
-    4. Script's researches/ folder (legacy)
 
     Returns list of project paths sorted by modification time (most recent first).
     """
@@ -225,17 +214,6 @@ def list_research_projects() -> list[Path]:
 
     # Check subdirectories of current directory
     _collect_projects_from_dir(cwd, projects, seen_names)
-
-    # Fallback to configured research_dir (if different from cwd)
-    config = load_config()
-    if config.research_dir.exists() and config.research_dir.resolve() != cwd.resolve():
-        _collect_projects_from_dir(config.research_dir, projects, seen_names)
-
-    # Check legacy researches/ folder
-    script_dir = Path(__file__).parent.parent
-    legacy_dir = script_dir / "researches"
-    if legacy_dir.exists() and legacy_dir.resolve() != cwd.resolve():
-        _collect_projects_from_dir(legacy_dir, projects, seen_names)
 
     def _safe_mtime(p: Path) -> float:
         try:

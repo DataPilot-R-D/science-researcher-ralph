@@ -437,22 +437,27 @@ class TestResolveResearchPath:
 
         assert result is None
 
-    def test_resolve_from_config_research_dir(self, tmp_path, monkeypatch):
-        """Resolve finds project in configured research_dir."""
+    def test_does_not_resolve_from_config_research_dir(self, tmp_path, monkeypatch):
+        """Resolve does NOT find project in configured research_dir (scoped to cwd only)."""
         research_dir = tmp_path / "research"
         research_dir.mkdir()
         project = research_dir / "my-project"
         project.mkdir()
+        (project / "rrd.json").write_text("{}")
 
-        monkeypatch.chdir(tmp_path / "elsewhere" if (tmp_path / "elsewhere").exists() else tmp_path)
+        # Change to a different directory (not research_dir)
+        elsewhere = tmp_path / "elsewhere"
+        elsewhere.mkdir()
+        monkeypatch.chdir(elsewhere)
         monkeypatch.setattr(
             "ralph.config.load_config",
             lambda: Config(research_dir=research_dir),
         )
 
+        # Project exists in research_dir but NOT in cwd - should NOT be found
         result = resolve_research_path("my-project")
 
-        assert result == project
+        assert result is None
 
 
 class TestListResearchProjects:
