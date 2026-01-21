@@ -383,6 +383,7 @@ def view_research_report(project: Path) -> None:
 
 def view_product_ideas(project: Path) -> None:
     """Display product ideas in an interactive selection menu."""
+    back_value = "__back__"
     ideas_path = project / "product-ideas.json"
     if not ideas_path.exists():
         print_warning("Product ideas not yet generated (complete IDEATION phase first)")
@@ -416,7 +417,7 @@ def view_product_ideas(project: Path) -> None:
             for idea in ideas
             if isinstance(idea, dict)
         ]
-        choices.append(questionary.Choice("Back", value=None))
+        choices.append(questionary.Choice("Back", value=back_value))
 
         selected = questionary.select(
             "Select an idea to view details:",
@@ -424,8 +425,12 @@ def view_product_ideas(project: Path) -> None:
             style=MENU_STYLE,
         ).ask()
 
-        if selected is None:
+        if selected is None or selected == back_value:
             break
+
+        if not isinstance(selected, dict):
+            print_warning("Invalid selection; please choose a product idea")
+            continue
 
         _display_idea_details(selected)
 
