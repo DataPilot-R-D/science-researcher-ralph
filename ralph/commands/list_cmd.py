@@ -33,8 +33,12 @@ def _get_project_info(project_path: Path) -> dict:
         }
     except json.JSONDecodeError:
         return {**base_info, "phase": "INVALID JSON"}
-    except Exception:
-        return base_info
+    except PermissionError:
+        return {**base_info, "phase": "NO ACCESS"}
+    except FileNotFoundError:
+        return {**base_info, "phase": "NO RRD"}
+    except Exception as e:
+        return {**base_info, "phase": f"ERR:{type(e).__name__}"}
 
 
 def list_projects() -> list[dict]:

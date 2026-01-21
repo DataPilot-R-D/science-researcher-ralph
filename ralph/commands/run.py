@@ -1,5 +1,6 @@
 """Run command - execute the research loop."""
 
+import json
 from pathlib import Path
 from typing import Optional
 
@@ -122,8 +123,8 @@ def run_research(
             try:
                 updated_rrd = manager.load()
                 display.update_papers(updated_rrd.statistics.total_analyzed)
-            except Exception:
-                pass
+            except (FileNotFoundError, json.JSONDecodeError):
+                pass  # Keep displaying last known count
         else:
             if result.papers_delta > 0:
                 display.end_iteration(result.papers_delta)

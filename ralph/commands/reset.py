@@ -53,8 +53,14 @@ def reset_project(project: str, confirm: bool = True) -> bool:
         console.print(f"  Papers in pool: {summary['pool_size']}")
         console.print(f"  Insights: {summary['insights']}")
         console.print()
-    except Exception:
-        pass
+    except (ValueError, KeyError) as e:
+        console.print()
+        console.print(f"[dim]Current state: Could not parse rrd.json ({type(e).__name__})[/dim]")
+        console.print()
+    except (FileNotFoundError, PermissionError) as e:
+        console.print()
+        console.print(f"[dim]Current state: Could not load ({type(e).__name__})[/dim]")
+        console.print()
 
     # Confirm
     if confirm:

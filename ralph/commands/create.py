@@ -6,7 +6,6 @@ from typing import Optional
 from ralph.config import Agent, load_config
 from ralph.core.skill_runner import SkillRunner
 from ralph.ui.console import console, print_error, print_success, print_info, SimpsonsColors
-from ralph.ui.progress import create_spinner
 
 
 def create_project(

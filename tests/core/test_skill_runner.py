@@ -400,3 +400,81 @@ class TestSkillRunnerRunRrdSkill:
         # Verify codex command was used
         call_args = mock_subprocess.call_args[0][0]
         assert "codex" in call_args
+
+
+class TestFinalizeProject:
+    """Tests for _finalize_project error recovery."""
+
+    def test_finalize_project_rename_permission_error(self, tmp_path, monkeypatch):
+        """Test handling when rename fails due to permission error."""
+        from datetime import date
+
+        monkeypatch.chdir(tmp_path)
+
+        # Create temp directory with rrd.json
+        today = date.today().isoformat()
+        temp_path = tmp_path / f"rrd-temp-{today}"
+        temp_path.mkdir()
+        (temp_path / "rrd.json").write_text(
+            json.dumps({"project": "Test Project", "requirements": {}})
+        )
+
+        runner = SkillRunner(script_dir=tmp_path)
+
+        # Mock rename to raise PermissionError
+        original_rename = Path.rename
+
+        def mock_rename(self, target):
+            raise PermissionError("Cannot rename")
+
+        monkeypatch.setattr(Path, "rename", mock_rename)
+
+        result_path, output = runner._finalize_project(temp_path, "test topic", "Agent output")
+
+        # Should return temp_path on error with explanation
+        assert result_path == temp_path
+        assert "failed to rename" in output.lower()
+
+    def test_finalize_project_handles_name_collision(self, tmp_path, monkeypatch):
+        """Test project creation when directory name already exists."""
+        from datetime import date
+
+        monkeypatch.chdir(tmp_path)
+
+        today = date.today().isoformat()
+
+        # Create temp directory with rrd.json
+        temp_path = tmp_path / f"rrd-temp-{today}"
+        temp_path.mkdir()
+        (temp_path / "rrd.json").write_text(
+            json.dumps({"project": "Test Project", "requirements": {}})
+        )
+
+        # Pre-create the target directory to cause collision
+        expected_name = f"test-project-{today}"
+        (tmp_path / expected_name).mkdir()
+
+        runner = SkillRunner(script_dir=tmp_path)
+        result_path, output = runner._finalize_project(temp_path, "test topic", "Agent output")
+
+        # Should succeed with a numbered suffix
+        assert result_path is not None
+        assert result_path.exists()
+        assert f"{expected_name}-1" in str(result_path)
+
+    def test_finalize_project_no_rrd_file(self, tmp_path, monkeypatch):
+        """Test handling when rrd.json was not created."""
+        from datetime import date
+
+        monkeypatch.chdir(tmp_path)
+
+        today = date.today().isoformat()
+        temp_path = tmp_path / f"rrd-temp-{today}"
+        temp_path.mkdir()
+        # Don't create rrd.json
+
+        runner = SkillRunner(script_dir=tmp_path)
+        result_path, output = runner._finalize_project(temp_path, "test topic", "Agent output")
+
+        assert result_path is None
+        assert "was not created" in output

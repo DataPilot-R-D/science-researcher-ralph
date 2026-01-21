@@ -100,7 +100,7 @@ class TestListProjects:
         result = list_projects()
 
         assert len(result) == 1
-        assert result[0]["phase"] == "ERROR"
+        assert result[0]["phase"] == "NO RRD"  # FileNotFoundError case
         assert result[0]["target"] == 0
 
     @patch("ralph.commands.list_cmd.create_project_table")

@@ -508,3 +508,88 @@ class TestAgentRunnerRunStreaming:
         # Verify stdin was used
         mock_process.stdin.write.assert_called()
         mock_process.stdin.close.assert_called()
+
+    @patch("subprocess.Popen")
+    def test_run_streaming_partial_output_on_failure(self, mock_popen, tmp_path):
+        """Test streaming with non-zero exit but partial output."""
+        prompt_path = tmp_path / "prompt.md"
+        prompt_path.write_text("Test prompt")
+
+        mock_process = MagicMock()
+        mock_process.stdout = iter(["Partial line 1\n", "Partial line 2\n"])
+        mock_process.stdin = MagicMock()
+        mock_process.returncode = 1  # Non-zero exit
+        mock_process.wait = MagicMock()
+        mock_popen.return_value = mock_process
+
+        runner = AgentRunner(Agent.CLAUDE, script_dir=tmp_path)
+        gen = runner.run_streaming(tmp_path)
+
+        lines = []
+        result = None
+        try:
+            while True:
+                line = next(gen)
+                lines.append(line)
+        except StopIteration as e:
+            result = e.value
+
+        # Should have captured partial output
+        assert len(lines) == 2
+        assert "Partial" in lines[0]
+        # Should report failure
+        assert result.success is False
+        assert result.exit_code == 1
+
+    @patch("subprocess.Popen")
+    def test_run_streaming_generator_not_fully_exhausted(self, mock_popen, tmp_path):
+        """Test behavior when generator not fully consumed."""
+        prompt_path = tmp_path / "prompt.md"
+        prompt_path.write_text("Test prompt")
+
+        mock_process = MagicMock()
+        mock_process.stdout = iter(["Line 1\n", "Line 2\n", "Line 3\n"])
+        mock_process.stdin = MagicMock()
+        mock_process.returncode = 0
+        mock_process.wait = MagicMock()
+        mock_popen.return_value = mock_process
+
+        runner = AgentRunner(Agent.CLAUDE, script_dir=tmp_path)
+        gen = runner.run_streaming(tmp_path)
+
+        # Only consume one line then abandon
+        first_line = next(gen)
+        assert "Line 1" in first_line
+
+        # Generator should still be usable
+        second_line = next(gen)
+        assert "Line 2" in second_line
+
+    @patch("subprocess.Popen")
+    def test_run_streaming_empty_output(self, mock_popen, tmp_path):
+        """Test streaming with no output lines."""
+        prompt_path = tmp_path / "prompt.md"
+        prompt_path.write_text("Test prompt")
+
+        mock_process = MagicMock()
+        mock_process.stdout = iter([])  # Empty output
+        mock_process.stdin = MagicMock()
+        mock_process.returncode = 0
+        mock_process.wait = MagicMock()
+        mock_popen.return_value = mock_process
+
+        runner = AgentRunner(Agent.CLAUDE, script_dir=tmp_path)
+        gen = runner.run_streaming(tmp_path)
+
+        lines = []
+        result = None
+        try:
+            while True:
+                line = next(gen)
+                lines.append(line)
+        except StopIteration as e:
+            result = e.value
+
+        assert len(lines) == 0
+        assert result.success is True
+        assert result.output == ""

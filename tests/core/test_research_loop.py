@@ -475,3 +475,91 @@ class TestResearchLoopCallbacks:
 
         on_start.assert_called()
         on_end.assert_called()
+
+
+class TestEnsureValidPhase:
+    """Tests for ResearchLoop._ensure_valid_phase method."""
+
+    @patch("ralph.core.research_loop.load_config")
+    @patch("ralph.core.research_loop.RRDManager")
+    def test_ensure_valid_phase_reverts_analysis_if_insufficient_papers(
+        self, mock_manager_class, mock_load_config, tmp_path
+    ):
+        """Test phase reverts to DISCOVERY if papers < target."""
+        mock_config = MagicMock()
+        mock_config.default_agent = Agent.CLAUDE
+        mock_config.max_consecutive_failures = 3
+        mock_config.live_output = False
+        mock_load_config.return_value = mock_config
+
+        mock_manager = MagicMock()
+        mock_rrd = MagicMock()
+        # Phase is ANALYSIS but not enough papers
+        mock_rrd.phase = Phase.ANALYSIS
+        mock_rrd.requirements.target_papers = 20
+        mock_rrd.papers_pool = [MagicMock()] * 10  # Only 10 papers, need 20
+        mock_manager.load.return_value = mock_rrd
+        mock_manager_class.return_value = mock_manager
+
+        loop = ResearchLoop(project_path=tmp_path, max_iterations=10)
+        phase = loop._ensure_valid_phase()
+
+        # Should revert to DISCOVERY
+        assert phase == Phase.DISCOVERY
+        assert mock_rrd.phase == Phase.DISCOVERY
+        mock_manager.save.assert_called_once()
+
+    @patch("ralph.core.research_loop.load_config")
+    @patch("ralph.core.research_loop.RRDManager")
+    def test_ensure_valid_phase_keeps_analysis_if_sufficient_papers(
+        self, mock_manager_class, mock_load_config, tmp_path
+    ):
+        """Test phase stays ANALYSIS if papers >= target."""
+        mock_config = MagicMock()
+        mock_config.default_agent = Agent.CLAUDE
+        mock_config.max_consecutive_failures = 3
+        mock_config.live_output = False
+        mock_load_config.return_value = mock_config
+
+        mock_manager = MagicMock()
+        mock_rrd = MagicMock()
+        # Phase is ANALYSIS with enough papers
+        mock_rrd.phase = Phase.ANALYSIS
+        mock_rrd.requirements.target_papers = 20
+        mock_rrd.papers_pool = [MagicMock()] * 20  # Exactly 20 papers
+        mock_manager.load.return_value = mock_rrd
+        mock_manager_class.return_value = mock_manager
+
+        loop = ResearchLoop(project_path=tmp_path, max_iterations=10)
+        phase = loop._ensure_valid_phase()
+
+        # Should keep ANALYSIS
+        assert phase == Phase.ANALYSIS
+        mock_manager.save.assert_not_called()
+
+    @patch("ralph.core.research_loop.load_config")
+    @patch("ralph.core.research_loop.RRDManager")
+    def test_ensure_valid_phase_discovery_unchanged(
+        self, mock_manager_class, mock_load_config, tmp_path
+    ):
+        """Test DISCOVERY phase is not modified."""
+        mock_config = MagicMock()
+        mock_config.default_agent = Agent.CLAUDE
+        mock_config.max_consecutive_failures = 3
+        mock_config.live_output = False
+        mock_load_config.return_value = mock_config
+
+        mock_manager = MagicMock()
+        mock_rrd = MagicMock()
+        mock_rrd.phase = Phase.DISCOVERY
+        mock_rrd.requirements.target_papers = 20
+        mock_rrd.papers_pool = [MagicMock()] * 5  # Only 5 papers
+        mock_manager.load.return_value = mock_rrd
+        mock_manager_class.return_value = mock_manager
+
+        loop = ResearchLoop(project_path=tmp_path, max_iterations=10)
+        phase = loop._ensure_valid_phase()
+
+        # DISCOVERY stays as DISCOVERY
+        assert phase == Phase.DISCOVERY
+        mock_manager.save.assert_not_called()

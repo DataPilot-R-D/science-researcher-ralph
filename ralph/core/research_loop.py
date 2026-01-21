@@ -183,12 +183,14 @@ class ResearchLoop:
         """Run the agent, with streaming if enabled."""
         if self.live_output and self.on_output:
             gen = runner.run_streaming(self.project_path)
+            result = None
             try:
-                for line in gen:
+                while True:
+                    line = next(gen)
                     self.on_output(line)
-                return gen.send(None)  # type: ignore
             except StopIteration as e:
-                return e.value
+                result = e.value
+            return result if result else runner.run(self.project_path)
         return runner.run(self.project_path)
 
     def _is_research_complete(self, agent_result: AgentResult) -> bool:

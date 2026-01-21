@@ -68,7 +68,7 @@ def classify_error(output: str) -> ErrorType:
 
     if "403" in output or "forbidden" in output_lower:
         return ErrorType.FORBIDDEN
-    if "429" in output or "too many requests" in output_lower or "rate" in output_lower and "limit" in output_lower:
+    if "429" in output or "too many requests" in output_lower or ("rate" in output_lower and "limit" in output_lower):
         return ErrorType.RATE_LIMIT
     if any(word in output_lower for word in ["bot", "challenge", "captcha", "blocked"]):
         return ErrorType.BOT_CHALLENGE
@@ -227,8 +227,8 @@ class AgentRunner:
             try:
                 with open(last_message_file) as f:
                     last_message = f.read()
-            except Exception:
-                pass
+            except (FileNotFoundError, PermissionError, IOError, UnicodeDecodeError):
+                pass  # Codex output file is supplementary; continue without it
 
             return self._build_result(
                 result.stdout + result.stderr + last_message, result.returncode
@@ -236,8 +236,8 @@ class AgentRunner:
         finally:
             try:
                 os.unlink(last_message_file)
-            except Exception:
-                pass
+            except (FileNotFoundError, PermissionError, OSError):
+                pass  # Temp file cleanup is best-effort
 
     def _prepare_prompt(
         self, research_dir: Path, prompt_path: Optional[Path]

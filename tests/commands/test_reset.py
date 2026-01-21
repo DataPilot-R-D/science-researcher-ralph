@@ -208,7 +208,7 @@ class TestResetProject:
         mock_manager = MagicMock()
         mock_manager.exists = True
         mock_manager.validate.return_value = []
-        mock_manager.get_summary.side_effect = Exception("Invalid RRD")
+        mock_manager.get_summary.side_effect = ValueError("Invalid RRD structure")
         backup_path = project_path / "rrd.backup.test.json"
         mock_manager.reset.return_value = backup_path
         mock_manager_class.return_value = mock_manager

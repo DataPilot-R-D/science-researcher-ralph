@@ -65,7 +65,8 @@ def save_config(config: Config) -> None:
     data = config.model_dump()
     # Convert Path to string for YAML serialization
     data["research_dir"] = str(data["research_dir"])
-    # Convert enum to string value for YAML serialization
+    # Note: use_enum_values=True should handle this, but model_dump() returns
+    # the string value directly, so this check is a safety fallback
     if hasattr(data["default_agent"], "value"):
         data["default_agent"] = data["default_agent"].value
     with open(CONFIG_FILE, "w") as f:

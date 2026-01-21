@@ -524,3 +524,76 @@ class TestRRD:
         assert len(rrd.papers_pool) == 2
         assert len(rrd.insights) == 1
         assert rrd.phase == Phase.ANALYSIS
+
+    def test_full_rrd_roundtrip_serialization(self, sample_requirements, sample_insight):
+        """Test RRD survives full JSON serialization roundtrip."""
+        original = RRD(
+            project="Roundtrip Test Project",
+            branchName="research/roundtrip-test",
+            description="Testing JSON roundtrip",
+            mission=Mission(blue_ocean_scoring=True, min_combined_score=30),
+            requirements=sample_requirements,
+            domain_glossary=DomainGlossary(enabled=True, terms={"AI": "Artificial Intelligence"}),
+            open_questions=["Will this roundtrip?"],
+            phase=Phase.ANALYSIS,
+            papers_pool=[
+                Paper(id="p1", title="Paper 1", url="http://example.com/1", status=PaperStatus.PRESENTED),
+                Paper(id="p2", title="Paper 2", url="http://example.com/2", status=PaperStatus.PENDING),
+            ],
+            insights=[sample_insight],
+            visited_urls=["http://arxiv.org"],
+            blocked_sources=["http://blocked.com"],
+        )
+
+        # Serialize to JSON string
+        json_str = original.model_dump_json()
+
+        # Deserialize back
+        reloaded = RRD.model_validate_json(json_str)
+
+        # Verify all fields match
+        assert reloaded.project == original.project
+        assert reloaded.branchName == original.branchName
+        assert reloaded.description == original.description
+        assert reloaded.phase == original.phase
+        assert len(reloaded.papers_pool) == len(original.papers_pool)
+        assert reloaded.papers_pool[0].id == original.papers_pool[0].id
+        assert reloaded.papers_pool[0].status == original.papers_pool[0].status
+        assert len(reloaded.insights) == len(original.insights)
+        assert reloaded.insights[0].id == original.insights[0].id
+        assert reloaded.mission.min_combined_score == original.mission.min_combined_score
+        assert reloaded.requirements.focus_area == original.requirements.focus_area
+        assert reloaded.domain_glossary.terms == original.domain_glossary.terms
+        assert reloaded.visited_urls == original.visited_urls
+        assert reloaded.blocked_sources == original.blocked_sources
+
+    def test_roundtrip_preserves_paper_scores(self, sample_requirements):
+        """Test that paper scores survive roundtrip."""
+        from ralph.models.paper import ScoreBreakdown
+
+        original = RRD(
+            project="Score Test",
+            requirements=sample_requirements,
+            papers_pool=[
+                Paper(
+                    id="scored",
+                    title="Scored Paper",
+                    url="http://example.com",
+                    status=PaperStatus.PRESENTED,
+                    score=42,  # Combined score stored in score field
+                    score_breakdown=ScoreBreakdown(
+                        novelty=4, feasibility=5, time_to_poc=4,
+                        value_market=4, defensibility=4, adoption=4,  # 25 execution
+                        market_creation=5, first_mover_window=4,
+                        network_data_effects=4, strategic_clarity=4,  # 17 blue ocean
+                    ),
+                ),
+            ],
+        )
+
+        json_str = original.model_dump_json()
+        reloaded = RRD.model_validate_json(json_str)
+
+        assert reloaded.papers_pool[0].score == 42
+        assert reloaded.papers_pool[0].score_breakdown.execution_score == 25
+        assert reloaded.papers_pool[0].score_breakdown.blue_ocean_score == 17

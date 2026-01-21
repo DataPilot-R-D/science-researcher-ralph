@@ -50,8 +50,14 @@ def _get_project_label(project_path: Path) -> str:
         analyzed = rrd.get("statistics", {}).get("total_analyzed", 0)
         target = rrd.get("requirements", {}).get("target_papers", "?")
         return f"{project_path.name} [{phase}] ({analyzed}/{target} papers)"
-    except Exception:
-        return project_path.name
+    except json.JSONDecodeError:
+        return f"{project_path.name} [INVALID JSON]"
+    except PermissionError:
+        return f"{project_path.name} [NO ACCESS]"
+    except FileNotFoundError:
+        return f"{project_path.name} [NO RRD]"
+    except Exception as e:
+        return f"{project_path.name} [{type(e).__name__}]"
 
 
 def _select_project(prompt: str, include_status: bool = False) -> Optional[Path]:
