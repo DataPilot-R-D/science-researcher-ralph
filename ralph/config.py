@@ -247,6 +247,9 @@ def ensure_research_dir() -> Path:
     return config.research_dir
 
 
+TEMPLATE_FILES = ["AGENTS.md", "CLAUDE.md", "prompt.md", "MISSION.md"]
+
+
 def check_initialization_status() -> dict[str, object]:
     """
     Check what initialization is needed (without performing any actions).
@@ -258,21 +261,19 @@ def check_initialization_status() -> dict[str, object]:
         - files_missing: list of missing template files
     """
     cwd = Path.cwd()
-    templates = ["AGENTS.md", "CLAUDE.md", "prompt.md", "MISSION.md"]
-
-    missing_files = [f for f in templates if not (cwd / f).exists()]
-
     return {
         "config_missing": not CONFIG_FILE.exists(),
         "git_missing": not (cwd / ".git").exists(),
-        "files_missing": missing_files,
+        "files_missing": [f for f in TEMPLATE_FILES if not (cwd / f).exists()],
     }
 
 
 def needs_initialization() -> bool:
     """Check if any initialization is needed."""
     status = check_initialization_status()
-    return status["config_missing"] or status["git_missing"] or bool(status["files_missing"])
+    return bool(
+        status["config_missing"] or status["git_missing"] or status["files_missing"]
+    )
 
 
 def ensure_current_dir_initialized() -> dict[str, object]:
@@ -317,16 +318,15 @@ def ensure_current_dir_initialized() -> dict[str, object]:
             pass  # Git not available or init failed
 
     # 3. Copy template files
-    templates = ["AGENTS.md", "CLAUDE.md", "prompt.md", "MISSION.md"]
     created_files: list[str] = []
+    repo_root = _get_repo_root()
 
-    for template in templates:
+    for template in TEMPLATE_FILES:
         target = cwd / template
-        if not target.exists():
-            source = _get_repo_root() / template
-            if source.exists():
-                shutil.copy(source, target)
-                created_files.append(template)
+        source = repo_root / template
+        if not target.exists() and source.exists():
+            shutil.copy(source, target)
+            created_files.append(template)
 
     result["files_created"] = created_files
     return result

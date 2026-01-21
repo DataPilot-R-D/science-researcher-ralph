@@ -51,29 +51,23 @@ def check_and_prompt_init() -> bool:
     """
     status = check_initialization_status()
 
-    # Check if anything needs initialization
-    config_missing = status["config_missing"]
-    git_missing = status["git_missing"]
-    files_missing = status["files_missing"]
-
-    if not config_missing and not git_missing and not files_missing:
-        return False  # Nothing to do
+    if not status["config_missing"] and not status["git_missing"] and not status["files_missing"]:
+        return False
 
     # Show what's missing
     console.print()
     console.print("[bold]Research-Ralph needs initialization:[/bold]")
     console.print()
 
-    if config_missing:
+    if status["config_missing"]:
         console.print("  [red]✗[/red] Config file missing (~/.research-ralph/config.yaml)")
-    if git_missing:
+    if status["git_missing"]:
         console.print("  [red]✗[/red] Git not initialized")
-    if files_missing:
-        console.print(f"  [red]✗[/red] Template files missing: {', '.join(files_missing)}")
+    if status["files_missing"]:
+        console.print(f"  [red]✗[/red] Template files missing: {', '.join(status['files_missing'])}")
 
     console.print()
 
-    # Prompt user
     proceed = questionary.confirm(
         "Initialize Research-Ralph?",
         default=True,
@@ -83,20 +77,17 @@ def check_and_prompt_init() -> bool:
     if not proceed:
         return False
 
-    # Perform initialization
     result = ensure_current_dir_initialized()
 
-    # Show results
     console.print()
     if result["config_created"]:
         print_success("Created ~/.research-ralph/config.yaml")
     if result["git_initialized"]:
         print_success("Initialized git repository")
     if result["files_created"]:
-        files = ", ".join(result["files_created"])
-        print_success(f"Created template files: {files}")
-
+        print_success(f"Created template files: {', '.join(result['files_created'])}")
     console.print()
+
     return True
 
 
