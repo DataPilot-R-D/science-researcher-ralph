@@ -59,6 +59,7 @@ class ErrorType(str, Enum):
     BOT_CHALLENGE = "bot_challenge"
     TIMEOUT = "timeout"
     NETWORK = "network"
+    MISSING_PROMPT = "missing_prompt"
     UNKNOWN = "unknown"
 
 

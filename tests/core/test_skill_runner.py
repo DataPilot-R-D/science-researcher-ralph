@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 from ralph.config import Agent
-from ralph.core.skill_runner import SkillRunner, _get_repo_root
+from ralph.core.skill_runner import SkillRunner, _get_repo_root, _to_slug
 
 
 class TestGetRepoRoot:
@@ -23,6 +23,51 @@ class TestGetRepoRoot:
         (tmp_path / "pyproject.toml").write_text("[project]")
 
         # Can't easily test this without mocking __file__ location
+
+
+class TestToSlug:
+    """Tests for _to_slug helper function."""
+
+    def test_to_slug_normal_text(self):
+        """Test normal text conversion."""
+        assert _to_slug("Hello World") == "hello-world"
+        assert _to_slug("Test Project Name") == "test-project-name"
+
+    def test_to_slug_empty_string(self):
+        """Test empty string returns empty."""
+        assert _to_slug("") == ""
+
+    def test_to_slug_special_characters_only(self):
+        """Test string with only special characters."""
+        assert _to_slug("!@#$%^&*()") == ""
+        assert _to_slug("---") == ""
+
+    def test_to_slug_max_length_truncation(self):
+        """Test max length truncation."""
+        long_text = "a" * 100
+        result = _to_slug(long_text, max_length=50)
+        assert len(result) == 50
+        assert result == "a" * 50
+
+    def test_to_slug_custom_max_length(self):
+        """Test custom max length parameter."""
+        assert len(_to_slug("This is a long project name", max_length=10)) <= 10
+
+    def test_to_slug_leading_trailing_special_chars(self):
+        """Test leading/trailing special characters are stripped."""
+        assert _to_slug("--hello--") == "hello"
+        assert _to_slug("!!test!!") == "test"
+        assert _to_slug("  spaces  ") == "spaces"
+
+    def test_to_slug_preserves_numbers(self):
+        """Test numbers are preserved."""
+        assert _to_slug("Project 123") == "project-123"
+        assert _to_slug("2024-01-15") == "2024-01-15"
+
+    def test_to_slug_consecutive_special_chars(self):
+        """Test consecutive special characters become single hyphen."""
+        assert _to_slug("hello   world") == "hello-world"
+        assert _to_slug("test---project") == "test-project"
 
 
 class TestSkillRunnerInit:

@@ -132,11 +132,12 @@ class TestErrorType:
         assert ErrorType.BOT_CHALLENGE.value == "bot_challenge"
         assert ErrorType.TIMEOUT.value == "timeout"
         assert ErrorType.NETWORK.value == "network"
+        assert ErrorType.MISSING_PROMPT.value == "missing_prompt"
         assert ErrorType.UNKNOWN.value == "unknown"
 
     def test_error_type_count(self):
         """Verify we have all expected error types."""
-        assert len(ErrorType) == 6
+        assert len(ErrorType) == 7
 
 
 class TestClassifyError:

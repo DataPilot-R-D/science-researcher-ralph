@@ -103,8 +103,12 @@ class SkillRunner:
             return result.stdout + result.stderr, None
         except subprocess.TimeoutExpired:
             return "", "Agent timed out"
+        except FileNotFoundError as e:
+            return "", f"Agent not found: {e}"
+        except PermissionError as e:
+            return "", f"Permission denied: {e}"
         except Exception as e:
-            return "", str(e)
+            return "", f"{type(e).__name__}: {e}"
 
     def _get_agent_command(self, agent: Agent, prompt: str) -> tuple[list[str], Optional[str]]:
         """Get command and optional stdin for agent."""
@@ -158,7 +162,7 @@ class SkillRunner:
 
             return final_path, output
         except Exception as e:
-            return temp_path, f"Created research but failed to rename: {e}\n{output}"
+            return temp_path, f"Created research but failed to rename ({type(e).__name__}): {e}\n{output}"
 
     def run_rrd_skill(
         self,

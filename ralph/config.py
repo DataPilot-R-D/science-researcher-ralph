@@ -53,8 +53,17 @@ def load_config() -> Config:
             if "research_dir" in data:
                 data["research_dir"] = Path(data["research_dir"]).expanduser()
             return Config(**data)
-        except Exception:
-            # Return defaults on any error
+        except yaml.YAMLError as e:
+            import sys
+            print(f"Warning: Config file has invalid YAML: {e}. Using defaults.", file=sys.stderr)
+            return Config()
+        except (PermissionError, OSError) as e:
+            import sys
+            print(f"Warning: Cannot read config file: {e}. Using defaults.", file=sys.stderr)
+            return Config()
+        except Exception as e:
+            import sys
+            print(f"Warning: Config load failed ({type(e).__name__}). Using defaults.", file=sys.stderr)
             return Config()
     return Config()
 
