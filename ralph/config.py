@@ -300,6 +300,7 @@ def ensure_current_dir_initialized() -> dict[str, object]:
     result: dict[str, object] = {
         "config_created": False,
         "git_initialized": False,
+        "git_error": None,
         "files_created": [],
     }
 
@@ -321,9 +322,11 @@ def ensure_current_dir_initialized() -> dict[str, object]:
             )
             result["git_initialized"] = True
         except FileNotFoundError:
+            result["git_error"] = "git not found"
             print("Note: git not found, skipping git initialization.", file=sys.stderr)
         except subprocess.CalledProcessError as e:
             stderr = e.stderr.decode() if e.stderr else str(e)
+            result["git_error"] = stderr
             print(f"Warning: git init failed: {stderr}", file=sys.stderr)
 
     # 3. Copy template files

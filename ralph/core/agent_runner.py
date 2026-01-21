@@ -244,8 +244,11 @@ class AgentRunner:
         finally:
             try:
                 os.unlink(last_message_file)
-            except (FileNotFoundError, PermissionError, OSError):
-                pass  # Temp file cleanup is best-effort
+            except FileNotFoundError:
+                pass  # Expected if file was already deleted
+            except (PermissionError, OSError) as e:
+                import sys
+                print(f"Note: Could not clean up Codex temp file: {type(e).__name__}", file=sys.stderr)
 
     def _prepare_prompt(
         self, research_dir: Path, prompt_path: Optional[Path]

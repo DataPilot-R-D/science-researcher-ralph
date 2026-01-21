@@ -6,6 +6,8 @@ import time
 from pathlib import Path
 from typing import Optional
 
+from pydantic import ValidationError
+
 import questionary
 from questionary import Style
 
@@ -241,8 +243,16 @@ def _handle_open_questions(project_path: Path) -> bool:
 
     try:
         rrd = manager.load()
-    except Exception:
-        return True  # Let run_research handle errors
+    except FileNotFoundError:
+        return True  # Let run_research handle missing file
+    except (json.JSONDecodeError, ValidationError) as e:
+        import sys
+        print(f"Warning: Could not parse rrd.json: {type(e).__name__}", file=sys.stderr)
+        return True
+    except (PermissionError, OSError) as e:
+        import sys
+        print(f"Warning: Could not read rrd.json: {type(e).__name__}", file=sys.stderr)
+        return True
 
     if not rrd.open_questions:
         return True

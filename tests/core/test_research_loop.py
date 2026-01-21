@@ -621,3 +621,88 @@ class TestResearchLoopStreamingExceptions:
 
         # Loop should have run and completed (possibly with failures)
         assert result.iterations_run > 0 or result.error_message is not None
+
+
+class TestKeyboardInterruptHandling:
+    """Tests for KeyboardInterrupt handling in research loop."""
+
+    @patch("ralph.core.research_loop.time")
+    @patch("ralph.core.research_loop.AgentRunner")
+    @patch("ralph.core.research_loop.load_config")
+    @patch("ralph.core.research_loop.RRDManager")
+    def test_keyboard_interrupt_during_iteration(
+        self, mock_manager_class, mock_load_config, mock_runner_class, mock_time, tmp_path
+    ):
+        """Test that KeyboardInterrupt propagates from agent run."""
+        mock_config = MagicMock()
+        mock_config.default_agent = Agent.CLAUDE
+        mock_config.max_consecutive_failures = 3
+        mock_config.live_output = False
+        mock_load_config.return_value = mock_config
+
+        mock_manager = MagicMock()
+        mock_manager.validate.return_value = []
+        mock_rrd = MagicMock()
+        mock_rrd.phase = Phase.DISCOVERY
+        mock_rrd.requirements.target_papers = 20
+        mock_rrd.statistics.total_analyzed = 0
+        mock_rrd.papers_pool = []
+        mock_manager.load.return_value = mock_rrd
+        mock_manager_class.return_value = mock_manager
+
+        mock_runner = MagicMock()
+        mock_runner.is_available.return_value = True
+        mock_runner.run.side_effect = KeyboardInterrupt()
+        mock_runner_class.return_value = mock_runner
+
+        (tmp_path / "prompt.md").write_text("Test")
+
+        loop = ResearchLoop(project_path=tmp_path, max_iterations=10)
+
+        with pytest.raises(KeyboardInterrupt):
+            loop.run()
+
+    @patch("ralph.core.research_loop.time")
+    @patch("ralph.core.research_loop.AgentRunner")
+    @patch("ralph.core.research_loop.load_config")
+    @patch("ralph.core.research_loop.RRDManager")
+    def test_keyboard_interrupt_during_streaming(
+        self, mock_manager_class, mock_load_config, mock_runner_class, mock_time, tmp_path
+    ):
+        """Test that KeyboardInterrupt propagates from streaming."""
+        mock_config = MagicMock()
+        mock_config.default_agent = Agent.CLAUDE
+        mock_config.max_consecutive_failures = 3
+        mock_config.live_output = True  # Enable streaming
+        mock_load_config.return_value = mock_config
+
+        mock_manager = MagicMock()
+        mock_manager.validate.return_value = []
+        mock_rrd = MagicMock()
+        mock_rrd.phase = Phase.DISCOVERY
+        mock_rrd.requirements.target_papers = 20
+        mock_rrd.statistics.total_analyzed = 0
+        mock_rrd.papers_pool = []
+        mock_manager.load.return_value = mock_rrd
+        mock_manager_class.return_value = mock_manager
+
+        def streaming_generator():
+            yield "Line 1"
+            raise KeyboardInterrupt()
+
+        mock_runner = MagicMock()
+        mock_runner.is_available.return_value = True
+        mock_runner.run_streaming.return_value = streaming_generator()
+        mock_runner_class.return_value = mock_runner
+
+        (tmp_path / "prompt.md").write_text("Test")
+
+        on_output = MagicMock()
+        loop = ResearchLoop(
+            project_path=tmp_path,
+            max_iterations=10,
+            on_output=on_output,
+        )
+
+        with pytest.raises(KeyboardInterrupt):
+            loop.run()

@@ -192,7 +192,15 @@ class ResearchLoop:
                 raise  # Let Ctrl+C propagate
             except StopIteration as e:
                 result = e.value
-            return result if result else runner.run(self.project_path)
+
+            # Check if we got a valid result
+            if isinstance(result, AgentResult):
+                return result
+
+            # Unexpected: streaming didn't return AgentResult, fall back
+            import sys
+            print("Warning: Streaming did not return AgentResult, falling back to non-streaming", file=sys.stderr)
+            return runner.run(self.project_path)
         return runner.run(self.project_path)
 
     def _is_research_complete(self, agent_result: AgentResult) -> bool:

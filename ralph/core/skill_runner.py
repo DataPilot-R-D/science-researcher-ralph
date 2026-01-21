@@ -100,7 +100,10 @@ class SkillRunner:
             result = subprocess.run(
                 cmd, input=stdin_input, capture_output=True, text=True, timeout=300
             )
-            return result.stdout + result.stderr, None
+            output = result.stdout + result.stderr
+            if result.returncode != 0:
+                return output, f"Agent exited with code {result.returncode}"
+            return output, None
         except subprocess.TimeoutExpired:
             return "", "Agent timed out"
         except FileNotFoundError as e:

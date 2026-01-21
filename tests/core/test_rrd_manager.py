@@ -489,3 +489,99 @@ class TestRRDManagerLoadErrors:
 
         with pytest.raises(ValidationError):
             manager.load()
+
+
+class TestAtomicWriteFailures:
+    """Tests for atomic write failure handling in RRDManager."""
+
+    def test_save_cleans_temp_on_replace_failure(self, tmp_project_dir, sample_rrd):
+        """Test that temp file is cleaned up when replace fails."""
+        manager = RRDManager(tmp_project_dir)
+
+        # First save to create the file
+        manager.save(sample_rrd)
+
+        # Mock replace to fail
+        with patch.object(Path, 'replace', side_effect=OSError("Disk full")):
+            with pytest.raises(OSError):
+                sample_rrd.project = "Updated"
+                manager.save()
+
+        # Temp file should be cleaned up
+        temp_files = list(tmp_project_dir.glob("*.tmp"))
+        assert len(temp_files) == 0
+
+    def test_save_raises_on_write_failure(self, tmp_project_dir, sample_rrd):
+        """Test that save raises on write failure."""
+        manager = RRDManager(tmp_project_dir)
+
+        with patch("tempfile.NamedTemporaryFile", side_effect=PermissionError("No permission")):
+            with pytest.raises(PermissionError):
+                manager.save(sample_rrd)
+
+    def test_save_preserves_original_on_failure(self, project_with_rrd):
+        """Test that original file is preserved when save fails."""
+        manager = RRDManager(project_with_rrd)
+
+        # Load original
+        original_rrd = manager.load()
+        original_project = original_rrd.project
+
+        # Try to save with modified data, but mock replace to fail
+        original_rrd.project = "Modified"
+
+        with patch.object(Path, 'replace', side_effect=OSError("Disk full")):
+            with pytest.raises(OSError):
+                manager.save()
+
+        # Original file should still have original content
+        manager2 = RRDManager(project_with_rrd)
+        reloaded = manager2.load()
+        assert reloaded.project == original_project
+
+
+class TestConcurrentAccess:
+    """Tests for concurrent access scenarios."""
+
+    def test_load_fails_if_file_deleted_between_check_and_read(self, project_with_rrd):
+        """Test that load raises FileNotFoundError if file deleted mid-operation."""
+        manager = RRDManager(project_with_rrd)
+
+        # Verify file exists initially
+        assert manager.exists
+
+        # Delete file
+        manager.rrd_path.unlink()
+
+        # load() should raise FileNotFoundError
+        with pytest.raises(FileNotFoundError):
+            manager.load()
+
+    def test_save_after_external_modification(self, project_with_rrd, sample_rrd):
+        """Test save behavior when file was modified externally."""
+        manager = RRDManager(project_with_rrd)
+        rrd = manager.load()
+
+        # External modification
+        with open(project_with_rrd / "rrd.json", "w") as f:
+            json.dump({"project": "External", "requirements": {"focus_area": "test", "target_papers": 10}}, f)
+
+        # Our save should overwrite (atomic replace)
+        rrd.project = "Our Update"
+        manager.save()
+
+        # Verify our update won
+        manager2 = RRDManager(project_with_rrd)
+        reloaded = manager2.load()
+        assert reloaded.project == "Our Update"
+
+    def test_backup_fails_if_file_deleted(self, project_with_rrd):
+        """Test backup raises if source file deleted."""
+        manager = RRDManager(project_with_rrd)
+
+        # Delete file
+        manager.rrd_path.unlink()
+
+        # backup should fail
+        with pytest.raises(FileNotFoundError):
+            manager.create_backup()

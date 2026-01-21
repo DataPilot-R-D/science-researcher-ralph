@@ -594,3 +594,73 @@ class TestAgentRunnerRunStreaming:
         assert len(lines) == 0
         assert result.success is True
         assert result.output == ""
+
+
+class TestProcessCleanup:
+    """Tests for process cleanup and temp file handling."""
+
+    @patch("subprocess.run")
+    @patch("os.unlink")
+    def test_codex_temp_file_cleaned_on_success(self, mock_unlink, mock_run, tmp_path):
+        """Test Codex temp file is cleaned up on success."""
+        prompt_path = tmp_path / "prompt.md"
+        prompt_path.write_text("Test prompt")
+
+        mock_run.return_value = MagicMock(returncode=0, stdout="Success", stderr="")
+
+        runner = AgentRunner(Agent.CODEX, script_dir=tmp_path)
+        runner.run(tmp_path)
+
+        # unlink should have been called for temp file cleanup
+        mock_unlink.assert_called()
+
+    @patch("subprocess.run")
+    @patch("os.unlink")
+    def test_codex_temp_file_cleaned_on_failure(self, mock_unlink, mock_run, tmp_path):
+        """Test Codex temp file is cleaned up on failure."""
+        prompt_path = tmp_path / "prompt.md"
+        prompt_path.write_text("Test prompt")
+
+        mock_run.return_value = MagicMock(returncode=1, stdout="", stderr="Error")
+
+        runner = AgentRunner(Agent.CODEX, script_dir=tmp_path)
+        runner.run(tmp_path)
+
+        # unlink should still be called for cleanup
+        mock_unlink.assert_called()
+
+    @patch("subprocess.run")
+    def test_codex_handles_unlink_permission_error(self, mock_run, tmp_path, capsys):
+        """Test Codex handles unlink permission error gracefully."""
+        prompt_path = tmp_path / "prompt.md"
+        prompt_path.write_text("Test prompt")
+
+        mock_run.return_value = MagicMock(returncode=0, stdout="Success", stderr="")
+
+        runner = AgentRunner(Agent.CODEX, script_dir=tmp_path)
+
+        with patch("os.unlink", side_effect=PermissionError("No permission")):
+            result = runner.run(tmp_path)
+
+        # Should succeed despite cleanup failure
+        assert result.success is True
+
+        # Should log warning to stderr
+        captured = capsys.readouterr()
+        assert "Could not clean up" in captured.err
+
+    @patch("subprocess.run")
+    def test_codex_handles_unlink_file_not_found(self, mock_run, tmp_path):
+        """Test Codex handles unlink FileNotFoundError silently."""
+        prompt_path = tmp_path / "prompt.md"
+        prompt_path.write_text("Test prompt")
+
+        mock_run.return_value = MagicMock(returncode=0, stdout="Success", stderr="")
+
+        runner = AgentRunner(Agent.CODEX, script_dir=tmp_path)
+
+        with patch("os.unlink", side_effect=FileNotFoundError("Not found")):
+            result = runner.run(tmp_path)
+
+        # Should succeed - FileNotFoundError is silently ignored (expected case)
+        assert result.success is True
