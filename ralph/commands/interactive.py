@@ -355,29 +355,47 @@ def run_menu() -> None:
 
 
 def view_research_report(project: Path) -> None:
-    """Display the research report in a readable format."""
+    """Display the research report as rendered Markdown."""
     report_path = project / "research-report.md"
     if not report_path.exists():
         print_warning("Research report not yet generated (complete ANALYSIS phase first)")
         return
 
+    try:
+        content = report_path.read_text(encoding="utf-8")
+    except PermissionError:
+        print_warning(f"Cannot read {report_path.name}: permission denied")
+        return
+    except (UnicodeDecodeError, OSError) as e:
+        print_warning(f"Cannot read {report_path.name}: {e}")
+        return
+
     console.print()
-    console.print(Markdown(report_path.read_text()))
+    console.print(Markdown(content))
     console.print()
     questionary.press_any_key_to_continue("Press any key to continue...").ask()
 
 
 def view_product_ideas(project: Path) -> None:
-    """Display product ideas in a readable format."""
+    """Display product ideas in an interactive selection menu."""
     ideas_path = project / "product-ideas.json"
     if not ideas_path.exists():
         print_warning("Product ideas not yet generated (complete IDEATION phase first)")
         return
 
     try:
-        ideas = json.loads(ideas_path.read_text()).get("ideas", [])
-    except json.JSONDecodeError:
-        print_warning("Could not parse product-ideas.json")
+        content = ideas_path.read_text(encoding="utf-8")
+    except PermissionError:
+        print_warning(f"Cannot read {ideas_path.name}: permission denied")
+        return
+    except (UnicodeDecodeError, OSError) as e:
+        print_warning(f"Cannot read {ideas_path.name}: {e}")
+        return
+
+    try:
+        ideas = json.loads(content).get("ideas", [])
+    except json.JSONDecodeError as e:
+        print_warning(f"Cannot parse {ideas_path.name}: invalid JSON at line {e.lineno}")
         return
 
     if not ideas:
@@ -387,10 +405,11 @@ def view_product_ideas(project: Path) -> None:
     while True:
         choices = [
             questionary.Choice(
-                f"{idea['name']} (Score: {idea.get('scores', {}).get('combined_0_50', 'N/A')}/50)",
+                f"{idea.get('name', 'Unnamed')} (Score: {idea.get('scores', {}).get('combined_0_50', 'N/A')}/50)",
                 value=idea,
             )
             for idea in ideas
+            if isinstance(idea, dict)
         ]
         choices.append(questionary.Choice("Back", value=None))
 
@@ -407,12 +426,17 @@ def view_product_ideas(project: Path) -> None:
 
 
 def _get_score_color(combined: int) -> str:
-    """Return color based on combined score threshold."""
-    if combined >= 30:
+    """Return color based on MISSION.md decision thresholds."""
+    try:
+        score = int(combined) if combined is not None else 0
+    except (TypeError, ValueError):
+        score = 0
+
+    if score >= 35:  # PRESENT (Priority)
         return "green"
-    if combined >= 20:
+    if score >= 18:  # PRESENT or EXTRACT_INSIGHTS
         return "yellow"
-    return "red"
+    return "red"  # REJECT
 
 
 def _display_idea_details(idea: dict) -> None:
