@@ -209,10 +209,79 @@ def main_menu() -> None:
             config_menu()
 
 
+def _handle_open_questions(project_path: Path) -> bool:
+    """
+    Check for open questions and prompt user to answer them.
+
+    Returns:
+        True if should continue with research, False if cancelled
+    """
+    from ralph.core.rrd_manager import RRDManager
+
+    manager = RRDManager(project_path)
+    if not manager.exists:
+        return True
+
+    try:
+        rrd = manager.load()
+    except Exception:
+        return True  # Let run_research handle errors
+
+    if not rrd.open_questions:
+        return True
+
+    console.print()
+    console.print(f"[bold]This research has {len(rrd.open_questions)} open question(s):[/bold]")
+    console.print()
+
+    for i, oq in enumerate(rrd.open_questions, 1):
+        console.print(f"[dim]{i}. {oq.field}[/dim]")
+
+        # Build choices from options + "Other"
+        choices = [questionary.Choice(opt, value=opt) for opt in oq.options]
+        choices.append(questionary.Choice("Other (custom answer)", value="__other__"))
+
+        answer = questionary.select(
+            oq.question,
+            choices=choices,
+            default=oq.current_default if oq.current_default in oq.options else None,
+            style=MENU_STYLE,
+        ).ask()
+
+        if answer is None:
+            return False  # User cancelled
+
+        if answer == "__other__":
+            answer = questionary.text(
+                "Enter your custom answer:",
+                style=MENU_STYLE,
+            ).ask()
+            if answer is None:
+                return False
+
+        # Update the current_default with user's answer
+        oq.current_default = answer
+        console.print(f"  → {answer}")
+        console.print()
+
+    # Clear open_questions after answering (they're resolved)
+    rrd.open_questions = []
+    manager.save()
+
+    print_success("Open questions resolved!")
+    console.print()
+    return True
+
+
 def run_menu() -> None:
     """Show menu for running a research project."""
     project = _select_project("Select a research project to run:", include_status=True)
     if project is None:
+        return
+
+    # Handle open questions before running
+    if not _handle_open_questions(project):
+        print_info("Research cancelled")
         return
 
     console.print()
