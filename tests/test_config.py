@@ -565,9 +565,100 @@ class TestEnsureResearchDir:
 class TestEnsureCurrentDirInitialized:
     """Tests for ensure_current_dir_initialized function."""
 
-    def test_creates_missing_files(self, tmp_path, monkeypatch):
+    def test_creates_config_file(self, tmp_path, monkeypatch):
+        """Function creates config file if missing."""
+        monkeypatch.chdir(tmp_path)
+
+        config_dir = tmp_path / ".research-ralph"
+        config_file = config_dir / "config.yaml"
+        monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+
+        # Create templates dir (required for _get_repo_root)
+        template_dir = tmp_path / "templates"
+        template_dir.mkdir()
+
+        with patch("ralph.config._get_repo_root", return_value=template_dir):
+            result = ensure_current_dir_initialized()
+
+        assert result["config_created"] is True
+        assert config_file.exists()
+
+    def test_skips_existing_config(self, tmp_path, monkeypatch):
+        """Function does not recreate existing config."""
+        monkeypatch.chdir(tmp_path)
+
+        config_dir = tmp_path / ".research-ralph"
+        config_dir.mkdir()
+        config_file = config_dir / "config.yaml"
+        config_file.write_text("default_papers: 42")
+        monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+
+        template_dir = tmp_path / "templates"
+        template_dir.mkdir()
+
+        with patch("ralph.config._get_repo_root", return_value=template_dir):
+            result = ensure_current_dir_initialized()
+
+        assert result["config_created"] is False
+        # Original content preserved
+        assert "42" in config_file.read_text()
+
+    def test_initializes_git_repo(self, tmp_path, monkeypatch):
+        """Function initializes git repo if missing."""
+        monkeypatch.chdir(tmp_path)
+
+        config_dir = tmp_path / ".research-ralph"
+        config_dir.mkdir()
+        config_file = config_dir / "config.yaml"
+        config_file.write_text("default_papers: 20")
+        monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+
+        template_dir = tmp_path / "templates"
+        template_dir.mkdir()
+
+        with patch("ralph.config._get_repo_root", return_value=template_dir):
+            result = ensure_current_dir_initialized()
+
+        assert result["git_initialized"] is True
+        assert (tmp_path / ".git").exists()
+
+    def test_skips_existing_git_repo(self, tmp_path, monkeypatch):
+        """Function does not reinitialize existing git repo."""
+        monkeypatch.chdir(tmp_path)
+
+        # Create existing .git directory
+        (tmp_path / ".git").mkdir()
+
+        config_dir = tmp_path / ".research-ralph"
+        config_dir.mkdir()
+        config_file = config_dir / "config.yaml"
+        config_file.write_text("default_papers: 20")
+        monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+
+        template_dir = tmp_path / "templates"
+        template_dir.mkdir()
+
+        with patch("ralph.config._get_repo_root", return_value=template_dir):
+            result = ensure_current_dir_initialized()
+
+        assert result["git_initialized"] is False
+
+    def test_creates_missing_template_files(self, tmp_path, monkeypatch):
         """Function creates missing template files."""
         monkeypatch.chdir(tmp_path)
+
+        # Pre-create config and git to focus on template files
+        config_dir = tmp_path / ".research-ralph"
+        config_dir.mkdir()
+        config_file = config_dir / "config.yaml"
+        config_file.write_text("default_papers: 20")
+        monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+        (tmp_path / ".git").mkdir()
 
         # Create mock templates
         template_dir = tmp_path / "templates"
@@ -576,26 +667,46 @@ class TestEnsureCurrentDirInitialized:
             (template_dir / f).write_text(f"# {f}")
 
         with patch("ralph.config._get_repo_root", return_value=template_dir):
-            created, files = ensure_current_dir_initialized()
+            result = ensure_current_dir_initialized()
 
-        assert created is True
-        assert len(files) == 4
+        assert len(result["files_created"]) == 4
+        for f in ["AGENTS.md", "CLAUDE.md", "prompt.md", "MISSION.md"]:
+            assert (tmp_path / f).exists()
 
     def test_no_op_if_all_exist(self, tmp_path, monkeypatch):
         """Function does nothing if all files exist."""
         monkeypatch.chdir(tmp_path)
 
+        # Pre-create everything
+        config_dir = tmp_path / ".research-ralph"
+        config_dir.mkdir()
+        config_file = config_dir / "config.yaml"
+        config_file.write_text("default_papers: 20")
+        monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+        (tmp_path / ".git").mkdir()
+
         for f in ["AGENTS.md", "CLAUDE.md", "prompt.md", "MISSION.md"]:
             (tmp_path / f).write_text(f"# {f}")
 
-        created, files = ensure_current_dir_initialized()
+        result = ensure_current_dir_initialized()
 
-        assert created is False
-        assert files == []
+        assert result["config_created"] is False
+        assert result["git_initialized"] is False
+        assert result["files_created"] == []
 
-    def test_creates_only_missing(self, tmp_path, monkeypatch):
-        """Function creates only missing files."""
+    def test_creates_only_missing_templates(self, tmp_path, monkeypatch):
+        """Function creates only missing template files."""
         monkeypatch.chdir(tmp_path)
+
+        # Pre-create config and git
+        config_dir = tmp_path / ".research-ralph"
+        config_dir.mkdir()
+        config_file = config_dir / "config.yaml"
+        config_file.write_text("default_papers: 20")
+        monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+        (tmp_path / ".git").mkdir()
 
         # Create some existing files
         (tmp_path / "AGENTS.md").write_text("# Existing")
@@ -608,9 +719,31 @@ class TestEnsureCurrentDirInitialized:
             (template_dir / f).write_text(f"# {f}")
 
         with patch("ralph.config._get_repo_root", return_value=template_dir):
-            created, files = ensure_current_dir_initialized()
+            result = ensure_current_dir_initialized()
 
-        assert created is True
-        assert len(files) == 2
-        assert "prompt.md" in files
-        assert "MISSION.md" in files
+        assert len(result["files_created"]) == 2
+        assert "prompt.md" in result["files_created"]
+        assert "MISSION.md" in result["files_created"]
+
+    def test_handles_git_not_available(self, tmp_path, monkeypatch):
+        """Function handles git command not being available."""
+        monkeypatch.chdir(tmp_path)
+
+        config_dir = tmp_path / ".research-ralph"
+        config_dir.mkdir()
+        config_file = config_dir / "config.yaml"
+        config_file.write_text("default_papers: 20")
+        monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+
+        template_dir = tmp_path / "templates"
+        template_dir.mkdir()
+
+        # Mock subprocess.run to raise FileNotFoundError (git not found)
+        with patch("ralph.config._get_repo_root", return_value=template_dir):
+            with patch("subprocess.run", side_effect=FileNotFoundError("git not found")):
+                result = ensure_current_dir_initialized()
+
+        # Should not crash, just skip git init
+        assert result["git_initialized"] is False
+        assert not (tmp_path / ".git").exists()

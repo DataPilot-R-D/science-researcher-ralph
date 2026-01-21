@@ -338,22 +338,41 @@ def cmd_config(
 def cmd_init() -> None:
     """Initialize current directory for Research-Ralph.
 
-    Creates AGENTS.md, CLAUDE.md, prompt.md, MISSION.md if missing.
-    These files are copied from the package templates.
+    Performs:
+    - Creates ~/.research-ralph/config.yaml if missing
+    - Initializes git repo if not present
+    - Creates AGENTS.md, CLAUDE.md, prompt.md, MISSION.md if missing
     """
     from ralph.config import ensure_current_dir_initialized
 
-    created, files = ensure_current_dir_initialized()
-    if created:
+    result = ensure_current_dir_initialized()
+    config_created = result["config_created"]
+    git_initialized = result["git_initialized"]
+    files_created = result["files_created"]
+
+    any_changes = config_created or git_initialized or files_created
+
+    if any_changes:
         console.print()
-        print_success("Initialized current directory for Research-Ralph")
+        print_success("Initialized Research-Ralph")
         console.print()
-        console.print("[dim]Created files:[/dim]")
-        for f in files:
-            console.print(f"  - {f}")
-        console.print()
+
+        if config_created:
+            console.print("[dim]Created config:[/dim]")
+            console.print("  - ~/.research-ralph/config.yaml")
+            console.print()
+
+        if git_initialized:
+            console.print("[dim]Initialized git repository[/dim]")
+            console.print()
+
+        if files_created:
+            console.print("[dim]Created template files:[/dim]")
+            for f in files_created:
+                console.print(f"  - {f}")
+            console.print()
     else:
-        print_info("Directory already initialized (all files present)")
+        print_info("Already initialized (config, git, and template files present)")
 
 
 if __name__ == "__main__":

@@ -247,30 +247,58 @@ def ensure_research_dir() -> Path:
     return config.research_dir
 
 
-def ensure_current_dir_initialized() -> tuple[bool, list[str]]:
+def ensure_current_dir_initialized() -> dict[str, object]:
     """
-    Ensure current directory has necessary agent files.
+    Ensure current directory is fully initialized for Research-Ralph.
 
-    Creates AGENTS.md, CLAUDE.md, prompt.md, MISSION.md if missing.
+    Performs:
+    1. Creates ~/.research-ralph/config.yaml if missing
+    2. Initializes git repo if not present
+    3. Creates AGENTS.md, CLAUDE.md, prompt.md, MISSION.md if missing
 
     Returns:
-        Tuple of (any_created, list_of_created_files)
+        Dict with keys: config_created, git_initialized, files_created
     """
     import shutil
+    import subprocess
+
+    result: dict[str, object] = {
+        "config_created": False,
+        "git_initialized": False,
+        "files_created": [],
+    }
 
     cwd = Path.cwd()
-    created_files: list[str] = []
 
-    # Template files to copy
+    # 1. Ensure config file exists
+    if not CONFIG_FILE.exists():
+        save_config(Config())
+        result["config_created"] = True
+
+    # 2. Initialize git repo if not exists
+    if not (cwd / ".git").exists():
+        try:
+            subprocess.run(
+                ["git", "init"],
+                cwd=cwd,
+                capture_output=True,
+                check=True,
+            )
+            result["git_initialized"] = True
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            pass  # Git not available or init failed
+
+    # 3. Copy template files
     templates = ["AGENTS.md", "CLAUDE.md", "prompt.md", "MISSION.md"]
+    created_files: list[str] = []
 
     for template in templates:
         target = cwd / template
         if not target.exists():
-            # Find template from package/repo root
             source = _get_repo_root() / template
             if source.exists():
                 shutil.copy(source, target)
                 created_files.append(template)
 
-    return len(created_files) > 0, created_files
+    result["files_created"] = created_files
+    return result

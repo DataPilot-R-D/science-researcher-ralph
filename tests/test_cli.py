@@ -302,24 +302,52 @@ class TestCLISubcommands:
 
         assert result.exit_code == 0
 
-    def test_init_subcommand(self, tmp_path, monkeypatch):
-        """Test 'init' subcommand."""
+    def test_init_subcommand_creates_all(self, tmp_path, monkeypatch):
+        """Test 'init' subcommand creates config, git, and files."""
         monkeypatch.chdir(tmp_path)
 
         with patch("ralph.config.ensure_current_dir_initialized") as mock_init:
-            mock_init.return_value = (True, ["AGENTS.md", "CLAUDE.md"])
+            mock_init.return_value = {
+                "config_created": True,
+                "git_initialized": True,
+                "files_created": ["AGENTS.md", "CLAUDE.md"],
+            }
 
             result = runner.invoke(app, ["init"])
 
             assert result.exit_code == 0
             mock_init.assert_called_once()
+            assert "Initialized" in result.stdout
+            assert "config" in result.stdout.lower()
+            assert "git" in result.stdout.lower()
+
+    def test_init_subcommand_creates_only_files(self, tmp_path, monkeypatch):
+        """Test 'init' subcommand when only files need creation."""
+        monkeypatch.chdir(tmp_path)
+
+        with patch("ralph.config.ensure_current_dir_initialized") as mock_init:
+            mock_init.return_value = {
+                "config_created": False,
+                "git_initialized": False,
+                "files_created": ["prompt.md", "MISSION.md"],
+            }
+
+            result = runner.invoke(app, ["init"])
+
+            assert result.exit_code == 0
+            assert "prompt.md" in result.stdout
+            assert "MISSION.md" in result.stdout
 
     def test_init_subcommand_already_initialized(self, tmp_path, monkeypatch):
         """Test 'init' subcommand when already initialized."""
         monkeypatch.chdir(tmp_path)
 
         with patch("ralph.config.ensure_current_dir_initialized") as mock_init:
-            mock_init.return_value = (False, [])
+            mock_init.return_value = {
+                "config_created": False,
+                "git_initialized": False,
+                "files_created": [],
+            }
 
             result = runner.invoke(app, ["init"])
 
