@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "research-ralph"
+version = "4.0.0"
+description = "Autonomous research scouting agent for discovering, analyzing, and evaluating research papers"
+authors = ["DataPilot <team@datapilot.dev>"]
+readme = "README.md"
+license = "MIT"
+packages = [{include = "ralph"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+typer = {extras = ["all"], version = "^0.15"}
+rich = "^13.9"
+pydantic = "^2.10"
+pyyaml = "^6.0"
+questionary = "^2.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
+pytest-cov = "^6.0"
+
+[tool.poetry.scripts]
+research-ralph = "ralph.cli:app"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
