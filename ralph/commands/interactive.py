@@ -209,6 +209,23 @@ def main_menu() -> None:
             config_menu()
 
 
+def _prompt_open_question(oq) -> Optional[str]:
+    """Prompt user for a single open question. Returns answer or None if cancelled."""
+    choices = [questionary.Choice(opt, value=opt) for opt in oq.options]
+    choices.append(questionary.Choice("Other (custom answer)", value="__other__"))
+
+    default = oq.current_default if oq.current_default in oq.options else None
+    answer = questionary.select(oq.question, choices=choices, default=default, style=MENU_STYLE).ask()
+
+    if answer is None:
+        return None
+
+    if answer == "__other__":
+        return questionary.text("Enter your custom answer:", style=MENU_STYLE).ask()
+
+    return answer
+
+
 def _handle_open_questions(project_path: Path) -> bool:
     """
     Check for open questions and prompt user to answer them.
@@ -237,34 +254,14 @@ def _handle_open_questions(project_path: Path) -> bool:
     for i, oq in enumerate(rrd.open_questions, 1):
         console.print(f"[dim]{i}. {oq.field}[/dim]")
 
-        # Build choices from options + "Other"
-        choices = [questionary.Choice(opt, value=opt) for opt in oq.options]
-        choices.append(questionary.Choice("Other (custom answer)", value="__other__"))
-
-        answer = questionary.select(
-            oq.question,
-            choices=choices,
-            default=oq.current_default if oq.current_default in oq.options else None,
-            style=MENU_STYLE,
-        ).ask()
-
+        answer = _prompt_open_question(oq)
         if answer is None:
-            return False  # User cancelled
+            return False
 
-        if answer == "__other__":
-            answer = questionary.text(
-                "Enter your custom answer:",
-                style=MENU_STYLE,
-            ).ask()
-            if answer is None:
-                return False
-
-        # Update the current_default with user's answer
         oq.current_default = answer
         console.print(f"  → {answer}")
         console.print()
 
-    # Clear open_questions after answering (they're resolved)
     rrd.open_questions = []
     manager.save()
 

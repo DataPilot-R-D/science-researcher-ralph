@@ -187,14 +187,14 @@ class TestResetProject:
             "pool_size": 20,
             "insights": 5,
         }
-        mock_manager.reset.side_effect = Exception("Disk full")
+        mock_manager.reset.side_effect = OSError("Disk full")
         mock_manager_class.return_value = mock_manager
 
         result = reset_project("test-project", confirm=False)
 
         assert result is False
         mock_print_error.assert_called()
-        assert "Unexpected error" in str(mock_print_error.call_args)
+        assert "Filesystem error" in str(mock_print_error.call_args)
 
     @patch("ralph.commands.reset.RRDManager")
     @patch("ralph.commands.reset.resolve_research_path")

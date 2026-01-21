@@ -54,13 +54,9 @@ def reset_project(project: str, confirm: bool = True) -> bool:
         console.print(f"  Papers in pool: {summary['pool_size']}")
         console.print(f"  Insights: {summary['insights']}")
         console.print()
-    except (ValueError, KeyError) as e:
+    except (ValueError, KeyError, FileNotFoundError, PermissionError) as e:
         console.print()
-        console.print(f"[dim]Current state: Could not parse rrd.json ({type(e).__name__})[/dim]")
-        console.print()
-    except (FileNotFoundError, PermissionError) as e:
-        console.print()
-        console.print(f"[dim]Current state: Could not load ({type(e).__name__})[/dim]")
+        console.print(f"[dim]Current state: Could not load rrd.json ({type(e).__name__})[/dim]")
         console.print()
 
     # Confirm
@@ -84,12 +80,6 @@ def reset_project(project: str, confirm: bool = True) -> bool:
     # Perform reset
     try:
         backup_path = manager.reset()
-        print_success(f"Backup created: {backup_path}")
-        print_success("Research reset to DISCOVERY phase")
-        console.print()
-        console.print(f"Run again with: [bold]research-ralph --run {project_path.name}[/bold]")
-        console.print()
-        return True
     except PermissionError as e:
         print_error(f"Permission denied: {e}")
         return False
@@ -99,8 +89,10 @@ def reset_project(project: str, confirm: bool = True) -> bool:
     except json.JSONDecodeError as e:
         print_error(f"RRD file corrupted: {e}")
         return False
-    except KeyboardInterrupt:
-        raise  # Let Ctrl+C propagate
-    except Exception as e:
-        print_error(f"Unexpected error: {type(e).__name__}: {e}")
-        return False
+
+    print_success(f"Backup created: {backup_path}")
+    print_success("Research reset to DISCOVERY phase")
+    console.print()
+    console.print(f"Run again with: [bold]research-ralph --run {project_path.name}[/bold]")
+    console.print()
+    return True
