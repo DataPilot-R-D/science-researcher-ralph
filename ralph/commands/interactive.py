@@ -359,14 +359,11 @@ def view_research_report(project: Path) -> None:
     report_path = project / "research-report.md"
     if not report_path.exists():
         print_warning("Research report not yet generated (complete ANALYSIS phase first)")
-        console.print()
         return
 
-    content = report_path.read_text()
     console.print()
-    console.print(Markdown(content))
+    console.print(Markdown(report_path.read_text()))
     console.print()
-
     questionary.press_any_key_to_continue("Press any key to continue...").ask()
 
 
@@ -375,22 +372,18 @@ def view_product_ideas(project: Path) -> None:
     ideas_path = project / "product-ideas.json"
     if not ideas_path.exists():
         print_warning("Product ideas not yet generated (complete IDEATION phase first)")
-        console.print()
         return
 
     try:
-        data = json.loads(ideas_path.read_text())
+        ideas = json.loads(ideas_path.read_text()).get("ideas", [])
     except json.JSONDecodeError:
         print_warning("Could not parse product-ideas.json")
         return
-
-    ideas = data.get("ideas", [])
 
     if not ideas:
         print_info("No product ideas found")
         return
 
-    # Show list of ideas with scores
     while True:
         choices = [
             questionary.Choice(
@@ -413,11 +406,20 @@ def view_product_ideas(project: Path) -> None:
         _display_idea_details(selected)
 
 
+def _get_score_color(combined: int) -> str:
+    """Return color based on combined score threshold."""
+    if combined >= 30:
+        return "green"
+    if combined >= 20:
+        return "yellow"
+    return "red"
+
+
 def _display_idea_details(idea: dict) -> None:
     """Display detailed view of a product idea."""
     console.print()
 
-    # Header with name and one-liner
+    # Header
     console.print(
         Panel(
             f"[bold]{idea.get('name', 'Unnamed')}[/bold]\n\n{idea.get('one_liner', '')}",
@@ -426,57 +428,53 @@ def _display_idea_details(idea: dict) -> None:
         )
     )
 
-    # Problem section
+    # Problem
     problem = idea.get("problem", {})
-    if problem:
-        console.print(
-            Panel(
-                f"[bold]Who:[/bold] {problem.get('who', 'N/A')}\n"
-                f"[bold]Pain:[/bold] {problem.get('pain', 'N/A')}\n"
-                f"[bold]Why Now:[/bold] {problem.get('why_now', 'N/A')}",
-                title="Problem",
-            )
+    console.print(
+        Panel(
+            f"[bold]Who:[/bold] {problem.get('who', 'N/A')}\n"
+            f"[bold]Pain:[/bold] {problem.get('pain', 'N/A')}\n"
+            f"[bold]Why Now:[/bold] {problem.get('why_now', 'N/A')}",
+            title="Problem",
         )
+    )
 
-    # Solution section
+    # Solution
     solution = idea.get("solution", {})
-    if solution:
-        features = solution.get("key_features", [])
-        features_str = "\n".join(f"  • {f}" for f in features) if features else "N/A"
-        console.print(
-            Panel(
-                f"[bold]What:[/bold] {solution.get('what', 'N/A')}\n\n"
-                f"[bold]Key Features:[/bold]\n{features_str}\n\n"
-                f"[bold]MVP Scope:[/bold] {solution.get('mvp_scope', 'N/A')}",
-                title="Solution",
-            )
+    features = solution.get("key_features", [])
+    features_str = "\n".join(f"  - {f}" for f in features) if features else "N/A"
+    console.print(
+        Panel(
+            f"[bold]What:[/bold] {solution.get('what', 'N/A')}\n\n"
+            f"[bold]Key Features:[/bold]\n{features_str}\n\n"
+            f"[bold]MVP Scope:[/bold] {solution.get('mvp_scope', 'N/A')}",
+            title="Solution",
         )
+    )
 
     # Scores
     scores = idea.get("scores", {})
-    if scores:
-        combined = scores.get("combined_0_50", 0)
-        score_color = "green" if combined >= 30 else "yellow" if combined >= 20 else "red"
-        console.print(
-            Panel(
-                f"[bold]Execution:[/bold] {scores.get('execution_0_30', 'N/A')}/30\n"
-                f"[bold]Blue Ocean:[/bold] {scores.get('blue_ocean_0_20', 'N/A')}/20\n"
-                f"[{score_color}][bold]Combined:[/bold] {combined}/50[/{score_color}]\n"
-                f"[bold]Confidence:[/bold] {scores.get('confidence_0_1', 'N/A')}",
-                title="Scores",
-            )
+    combined = scores.get("combined_0_50", 0)
+    color = _get_score_color(combined)
+    console.print(
+        Panel(
+            f"[bold]Execution:[/bold] {scores.get('execution_0_30', 'N/A')}/30\n"
+            f"[bold]Blue Ocean:[/bold] {scores.get('blue_ocean_0_20', 'N/A')}/20\n"
+            f"[{color}][bold]Combined:[/bold] {combined}/50[/{color}]\n"
+            f"[bold]Confidence:[/bold] {scores.get('confidence_0_1', 'N/A')}",
+            title="Scores",
         )
+    )
 
     # Evidence
-    evidence = idea.get("evidence", {})
-    paper_ids = evidence.get("paper_ids", [])
+    paper_ids = idea.get("evidence", {}).get("paper_ids", [])
     if paper_ids:
         console.print(f"\n[dim]Based on papers: {', '.join(paper_ids)}[/dim]")
 
-    # Risks
-    risks = idea.get("risks", [])
+    # Risks (show top 3)
+    risks = idea.get("risks", [])[:3]
     if risks:
-        risks_str = "\n".join(f"  • [{r.get('type', 'N/A')}] {r.get('risk', 'N/A')}" for r in risks[:3])
+        risks_str = "\n".join(f"  - [{r.get('type', 'N/A')}] {r.get('risk', 'N/A')}" for r in risks)
         console.print(f"\n[bold]Key Risks:[/bold]\n{risks_str}")
 
     console.print()
@@ -505,14 +503,15 @@ def status_menu() -> None:
         style=MENU_STYLE,
     ).ask()
 
-    if action == "view_report":
-        view_research_report(project)
-    elif action == "view_ideas":
-        view_product_ideas(project)
-    elif action == "run":
-        run_research(str(project))
-    elif action == "reset":
-        reset_project(str(project))
+    actions = {
+        "view_report": lambda: view_research_report(project),
+        "view_ideas": lambda: view_product_ideas(project),
+        "run": lambda: run_research(str(project)),
+        "reset": lambda: reset_project(str(project)),
+    }
+
+    if action in actions:
+        actions[action]()
 
 
 def _print_config(config, title: str = "Current Settings") -> None:
