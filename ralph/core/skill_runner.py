@@ -131,8 +131,9 @@ class SkillRunner:
         if not rrd_path.exists():
             try:
                 temp_path.rmdir()
-            except Exception:
-                pass
+            except (PermissionError, OSError) as e:
+                import sys
+                print(f"Note: Could not clean up temp directory {temp_path}: {type(e).__name__}", file=sys.stderr)
             return None, f"RRD file was not created. Agent output:\n{output}"
 
         # Parse rrd.json

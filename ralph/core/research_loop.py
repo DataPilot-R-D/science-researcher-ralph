@@ -188,6 +188,8 @@ class ResearchLoop:
                 while True:
                     line = next(gen)
                     self.on_output(line)
+            except KeyboardInterrupt:
+                raise  # Let Ctrl+C propagate
             except StopIteration as e:
                 result = e.value
             return result if result else runner.run(self.project_path)

@@ -99,6 +99,8 @@ def reset_project(project: str, confirm: bool = True) -> bool:
     except json.JSONDecodeError as e:
         print_error(f"RRD file corrupted: {e}")
         return False
+    except KeyboardInterrupt:
+        raise  # Let Ctrl+C propagate
     except Exception as e:
         print_error(f"Unexpected error: {type(e).__name__}: {e}")
         return False

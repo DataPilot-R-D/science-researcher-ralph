@@ -53,12 +53,22 @@ class RRDManager:
         data = json.loads(self._rrd.model_dump_json())
 
         # Atomic write: write to temp file, then rename
-        with tempfile.NamedTemporaryFile(
-            mode="w", dir=self.rrd_path.parent, delete=False, suffix=".tmp"
-        ) as f:
-            json.dump(data, f, indent=2)
-            temp_path = Path(f.name)
-        temp_path.replace(self.rrd_path)
+        temp_path = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                mode="w", dir=self.rrd_path.parent, delete=False, suffix=".tmp"
+            ) as f:
+                json.dump(data, f, indent=2)
+                temp_path = Path(f.name)
+            temp_path.replace(self.rrd_path)
+        except OSError:
+            # Clean up temp file on failure
+            if temp_path and temp_path.exists():
+                try:
+                    temp_path.unlink()
+                except OSError:
+                    pass  # Best effort cleanup
+            raise
 
     @property
     def rrd(self) -> RRD:
