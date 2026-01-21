@@ -31,26 +31,30 @@ Use git commits as checkpoints so research progress is easy to track and revert:
 ## Commands
 
 ```bash
-# Create a new research (creates folder in researches/)
-./skill.sh rrd "Your research topic description"
-# Creates: researches/{topic}-{date}/rrd.json
+# Create a new research (creates a project folder)
+research-ralph --new "Your research topic description"
+# Creates: <project>-YYYY-MM-DD/rrd.json (in current directory)
 
 # List all research projects with status
-./ralph.sh --list
+research-ralph --list
 
 # Show detailed status of a specific research
-./ralph.sh --status researches/{folder-name}
+research-ralph --status researches/{folder-name}
 
 # Reset research to DISCOVERY phase (creates backup)
-./ralph.sh --reset researches/{folder-name}
+research-ralph --reset researches/{folder-name}
 
 # Run research on a folder
-./ralph.sh researches/{folder-name} [options]
+research-ralph --run researches/{folder-name} [options]
 
 # Commands:
+#   --new "<topic>"       Create a new research project (RRD generation)
+#   --run <folder>        Run research on a project
 #   --list                List all research projects with color-coded status
 #   --status <folder>     Show detailed status with progress bar
 #   --reset <folder>      Reset research to DISCOVERY phase (creates backup)
+#   --config [key=value]  View or set CLI config
+#   --version             Show version and exit
 #   -h, --help            Show help message
 
 # Run Options:
@@ -60,28 +64,25 @@ Use git commits as checkpoints so research progress is easy to track and revert:
 #   --force               Allow -p to change target_papers on in-progress research
 
 # Examples
-./ralph.sh --list                                             # List all researches
-./ralph.sh --status researches/robotics-llms-2026-01-14       # Check status
-./ralph.sh --reset researches/robotics-llms-2026-01-14        # Reset to start
-./ralph.sh researches/robotics-llms-2026-01-14                # Run research
-./ralph.sh researches/robotics-llms-2026-01-14 -p 30          # 30 papers, 36 iterations
-./ralph.sh researches/robotics-llms-2026-01-14 -p 30 -i 100   # Override iterations
-./ralph.sh researches/robotics-llms-2026-01-14 --agent amp    # Use Amp agent
-./ralph.sh researches/robotics-llms-2026-01-14 -p 50 --force  # Force change target
-
-# List available skills
-./skill.sh --list
+research-ralph --list                                             # List all researches
+research-ralph --status researches/robotics-llms-2026-01-14       # Check status
+research-ralph --reset researches/robotics-llms-2026-01-14        # Reset to start
+research-ralph --run researches/robotics-llms-2026-01-14          # Run research
+research-ralph --run researches/robotics-llms-2026-01-14 -p 30    # 30 papers, 36 iterations
+research-ralph --run researches/robotics-llms-2026-01-14 -p 30 -i 100   # Override iterations
+research-ralph --run researches/robotics-llms-2026-01-14 --agent amp    # Use Amp agent
+research-ralph --run researches/robotics-llms-2026-01-14 -p 50 --force  # Force change target
 ```
 
 ## Architecture
 
-### Core Loop (`ralph.sh`)
-1. Parses research folder path (required) and `--agent` flag
-2. Reads `rrd.json` and `progress.txt` from the research folder
-3. Invokes the selected agent with `prompt.md`
+### Core Loop (`research-ralph`)
+1. Resolves project path from `--run` (or interactive selection)
+2. Reads `rrd.json` and `progress.txt` from the project folder
+3. Invokes the selected agent with `prompt.md` (via `ralph/core/agent_runner.py`)
    - Claude: `claude -p "..." --dangerously-skip-permissions --allowedTools "..."`
-   - Amp: `cat prompt.md | amp --dangerously-allow-all`
-   - Codex: `codex exec --dangerously-bypass-approvals-and-sandbox -`
+   - Amp: `echo "$PROMPT" | amp --dangerously-allow-all`
+   - Codex: `echo "$PROMPT" | codex exec --dangerously-bypass-approvals-and-sandbox -`
 4. Checks output for `<promise>COMPLETE</promise>` to exit
 5. Repeats until completion or max iterations reached
 
@@ -107,8 +108,7 @@ researches/
 ### Key Files
 | File/Folder | Purpose |
 |-------------|---------|
-| `ralph.sh` | Main research loop script |
-| `skill.sh` | Skill runner (creates research folders for rrd skill) |
+| `ralph/cli.py` | Python CLI entrypoint (`research-ralph`) |
 | `prompt.md` | Agent instructions for research workflow |
 | `MISSION.md` | Agent objectives, success metrics, blue ocean scoring |
 | `researches/` | Per-research artifact folders |

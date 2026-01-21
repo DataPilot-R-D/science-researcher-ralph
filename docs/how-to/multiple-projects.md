@@ -22,24 +22,33 @@ researches/
 
 ## Creating Multiple Projects
 
+Projects are created in the current directory. To keep them under `researches/`, run:
+```bash
+mkdir -p researches
+cd researches
+```
+
 ```bash
 # Create first research
-./skill.sh rrd "Research robotics and embodied AI"
-# Creates: researches/research-robotics-and-embodied-2026-01-14/
+research-ralph --new "Research robotics and embodied AI"
+# Creates: research-robotics-and-embodied-2026-01-14/
 
 # Create second research
-./skill.sh rrd "Research quantum computing applications"
-# Creates: researches/research-quantum-computing-2026-01-14/
+research-ralph --new "Research quantum computing applications"
+# Creates: research-quantum-computing-2026-01-14/
 
 # Create third research
-./skill.sh rrd "Research NLP transformers"
-# Creates: researches/research-nlp-transformers-2026-01-14/
+research-ralph --new "Research NLP transformers"
+# Creates: research-nlp-transformers-2026-01-14/
 ```
 
 ## Listing All Projects
 
 ```bash
-# Simple list
+# CLI list (with status)
+research-ralph --list
+
+# Simple folder list
 ls researches/
 
 # With details
@@ -58,10 +67,15 @@ done
 
 ```bash
 # Run first project
-./ralph.sh researches/robotics-llms-2026-01-14
+research-ralph --run researches/robotics-llms-2026-01-14
 
 # When done, run second project
-./ralph.sh researches/quantum-computing-2026-01-15
+research-ralph --run researches/quantum-computing-2026-01-15
+```
+
+If you're already in `researches/`, drop the prefix:
+```bash
+research-ralph --run robotics-llms-2026-01-14
 ```
 
 ### Concurrent (Multiple Terminals)
@@ -70,10 +84,10 @@ Open multiple terminal windows/tabs:
 
 ```bash
 # Terminal 1
-./ralph.sh researches/robotics-llms-2026-01-14
+research-ralph --run researches/robotics-llms-2026-01-14
 
 # Terminal 2
-./ralph.sh researches/quantum-computing-2026-01-15
+research-ralph --run researches/quantum-computing-2026-01-15
 ```
 
 Note: Be mindful of rate limits when running concurrently.

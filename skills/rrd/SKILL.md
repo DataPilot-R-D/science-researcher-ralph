@@ -61,7 +61,7 @@ Generate the RRD immediately without asking questions. Use these defaults:
 ---
 RRD saved to: {path}/rrd.json
 
-WARNING: There are open questions in the RRD. Review and edit rrd.json before running ralph.sh:
+WARNING: There are open questions in the RRD. Review and edit rrd.json before running research-ralph:
 - {list each question}
 ```
 

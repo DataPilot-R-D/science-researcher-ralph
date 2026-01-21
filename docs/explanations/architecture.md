@@ -8,7 +8,7 @@ Research-Ralph runs AI agents in a loop, where **each iteration is completely st
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      ralph.sh Loop                          │
+│                  research-ralph Loop                        │
 │  ┌─────────┐    ┌─────────┐    ┌─────────┐                 │
 │  │ Iter 1  │ -> │ Iter 2  │ -> │ Iter 3  │ -> ...          │
 │  │ (fresh) │    │ (fresh) │    │ (fresh) │                 │
@@ -34,9 +34,9 @@ Since agents are stateless, all memory persists through files:
 | `progress.txt` | Detailed findings, patterns | For context | Appended each iteration |
 | `AGENTS.md` | Patterns, gotchas, workflow tips | Every iteration | When patterns discovered |
 
-## Two-Phase Workflow
+## Three-Phase Workflow
 
-Research runs through two distinct phases:
+Research runs through three distinct phases:
 
 ### DISCOVERY Phase
 
@@ -76,7 +76,7 @@ Research runs through two distinct phases:
 │  3. Read full paper content             │
 │  4. Search for implementations          │
 │  5. Check commercialization             │
-│  6. Score using [rubric](evaluation-rubric.md) (0-30) │
+│  6. Score using [rubric](evaluation-rubric.md) (0-50 combined) │
 │  7. Decide: PRESENT/REJECT/EXTRACT      │
 │  8. Extract insights                    │
 │  9. Update status and log findings      │
@@ -86,9 +86,24 @@ Research runs through two distinct phases:
 └─────────────────────────────────────────┘
 ```
 
+### IDEATION Phase
+
+**Goal**: Turn analyzed papers into product opportunities.
+
+```
+┌─────────────────────────────────────────┐
+│           IDEATION Phase                │
+│                                         │
+│  1. Synthesize findings and insights    │
+│  2. Generate product ideas (3-12)       │
+│  3. Write product-ideas.json            │
+│  4. Transition to COMPLETE              │
+└─────────────────────────────────────────┘
+```
+
 ## Agent Invocation
 
-The `ralph.sh` script invokes agents differently based on the selected backend:
+The `research-ralph` CLI invokes agents differently based on the selected backend:
 
 ### Claude Code
 ```bash
@@ -176,8 +191,8 @@ After 3 consecutive failures from a source:
 
 ```
 project-root/
-├── ralph.sh              # Loop controller
-├── skill.sh              # Skill runner
+├── ralph/cli.py          # Python CLI entrypoint
+├── skills/rrd/           # RRD skill definition
 ├── prompt.md             # Agent instructions
 ├── AGENTS.md             # Patterns (agent reads/writes)
 ├── CLAUDE.md             # Claude-specific guidance
@@ -193,5 +208,5 @@ project-root/
 
 - [Evaluation Rubric](evaluation-rubric.md) - How papers are scored during ANALYSIS
 - [RRD Schema](../reference/rrd-schema.md) - Complete `rrd.json` field reference
-- [CLI Reference](../reference/cli.md) - Command-line options for `ralph.sh`
+- [CLI Reference](../reference/cli.md) - Command-line options for `research-ralph`
 - [Handle Rate Limits](../how-to/handle-rate-limits.md) - Error handling in practice

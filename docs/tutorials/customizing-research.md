@@ -26,6 +26,7 @@ You'll see something like:
   "min_score_to_present": 18
 }
 ```
+Mission thresholds live under `mission` and control combined scoring (see Step 3).
 
 ## Step 1: Refine Your Keywords
 
@@ -94,17 +95,21 @@ jq '.requirements.historical_lookback_days = 1095' researches/your-folder/rrd.js
 
 ## Step 3: Set Your Scoring Threshold
 
-The `min_score_to_present` determines which papers get the PRESENT decision.
+Primary thresholds live under `mission`:
 
-| Threshold | Result |
-|-----------|--------|
-| 22-24 | Very selective, only excellent papers |
-| 18-21 | Balanced (default: 18) |
-| 14-17 | Broader coverage, more papers |
+| Field | Range | Meaning |
+|-------|-------|---------|
+| `mission.min_combined_score` | 0-50 | Minimum combined score to present |
+| `mission.min_blue_ocean_score` | 0-20 | Minimum blue ocean score when strategic scoring is enabled |
+
+`requirements.min_score_to_present` is a legacy execution-only threshold.
 
 ```bash
-# Stricter threshold
-jq '.requirements.min_score_to_present = 22' researches/your-folder/rrd.json > tmp.json && mv tmp.json researches/your-folder/rrd.json
+# Stricter combined threshold
+jq '.mission.min_combined_score = 30' researches/your-folder/rrd.json > tmp.json && mv tmp.json researches/your-folder/rrd.json
+
+# Raise the blue ocean minimum
+jq '.mission.min_blue_ocean_score = 14' researches/your-folder/rrd.json > tmp.json && mv tmp.json researches/your-folder/rrd.json
 ```
 
 See [Evaluation Rubric](../explanations/evaluation-rubric.md) for how scores work.
@@ -180,6 +185,13 @@ Here's a fully customized RRD for a specific use case:
   "branchName": "research/vlm-robotics",
   "description": "Survey VLM applications in robot manipulation, focusing on practical implementations",
 
+  "mission": {
+    "blue_ocean_scoring": true,
+    "min_blue_ocean_score": 12,
+    "min_combined_score": 28,
+    "strategic_focus": "balanced"
+  },
+
   "requirements": {
     "focus_area": "robotics",
     "keywords": [
@@ -191,8 +203,7 @@ Here's a fully customized RRD for a specific use case:
     "time_window_days": 60,
     "historical_lookback_days": 730,
     "target_papers": 15,
-    "sources": ["arXiv", "web"],
-    "min_score_to_present": 20
+    "sources": ["arXiv", "web"]
   },
 
   "domain_glossary": {
@@ -219,7 +230,7 @@ cat researches/your-folder/rrd.json | jq '.requirements'
 jq empty researches/your-folder/rrd.json && echo "Valid JSON"
 
 # Run research with new settings
-./ralph.sh researches/your-folder
+research-ralph --run researches/your-folder
 ```
 
 ## Tips
@@ -233,25 +244,25 @@ jq empty researches/your-folder/rrd.json && echo "Valid JSON"
 
 ### Academic Literature Review
 ```json
+"mission": { "min_combined_score": 22 },
 "time_window_days": 365,
 "target_papers": 50,
-"min_score_to_present": 16,
 "sources": ["arXiv", "Google Scholar"]
 ```
 
 ### Startup Technology Scouting
 ```json
+"mission": { "min_combined_score": 28 },
 "time_window_days": 30,
 "target_papers": 20,
-"min_score_to_present": 20,
 "sources": ["arXiv", "web"]
 ```
 
 ### Conference Preparation
 ```json
+"mission": { "min_combined_score": 25 },
 "time_window_days": 7,
 "target_papers": 10,
-"min_score_to_present": 18,
 "sources": ["arXiv"]
 ```
 

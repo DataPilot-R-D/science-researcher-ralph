@@ -215,7 +215,7 @@ class SkillRunner:
 
 Save all files to the research folder: {temp_path}/
 - Save rrd.json to: {temp_path}/rrd.json
-- progress.txt will be created automatically by ralph.sh
+- progress.txt will be created automatically by research-ralph
 
 **Note:** The `project` field in rrd.json will be used for the directory name, so make it concise and descriptive (3-6 words).
 

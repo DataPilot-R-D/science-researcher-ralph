@@ -12,30 +12,30 @@ Research-Ralph supports three AI agent backends. Choose based on your preference
 
 ## Switching Agents
 
-### For ralph.sh (Research Loop)
+### For research runs
 
 ```bash
 # Use Claude Code (default)
-./ralph.sh researches/your-folder
+research-ralph --run researches/your-folder
 
 # Use Amp
-./ralph.sh researches/your-folder --agent amp
+research-ralph --run researches/your-folder --agent amp
 
 # Use Codex
-./ralph.sh researches/your-folder --agent codex
+research-ralph --run researches/your-folder --agent codex
 ```
 
-### For skill.sh (Creating RRDs)
+### For new projects
 
 ```bash
 # Use Claude Code (default)
-./skill.sh rrd "Your research topic"
+research-ralph --new "Your research topic"
 
 # Use Amp
-./skill.sh rrd "Your research topic" --agent amp
+research-ralph --new "Your research topic" --agent amp
 
 # Use Codex
-./skill.sh rrd "Your research topic" --agent codex
+research-ralph --new "Your research topic" --agent codex
 ```
 
 ## Agent Installation
@@ -66,11 +66,11 @@ codex --version
 You can use different agents for different phases:
 
 ```bash
-# Create RRD with Claude
-./skill.sh rrd "Quantum computing research"
+# Create project with Claude
+research-ralph --new "Quantum computing research"
 
 # Run research with Amp
-./ralph.sh researches/quantum-computing-2026-01-14 --agent amp
+research-ralph --run researches/quantum-computing-2026-01-14 --agent amp
 ```
 
 The research state is stored in `rrd.json`, so any agent can continue work started by another.
@@ -88,6 +88,12 @@ The research state is stored in `rrd.json`, so any agent can continue work start
 ### Codex
 - Uses `--dangerously-bypass-approvals-and-sandbox`
 - Outputs captured via `--output-last-message`
+
+## Set a Default Agent
+
+```bash
+research-ralph config default_agent=amp
+```
 
 ## Troubleshooting
 

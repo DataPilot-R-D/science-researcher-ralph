@@ -16,7 +16,7 @@
 | Document | Status | Issue |
 |----------|--------|-------|
 | `README.md` | **Outdated** | Shows old workflow (root rrd.json), not per-research folders |
-| `CLAUDE.md` | Current | Good technical reference, updated for v2.1 |
+| `CLAUDE.md` | Current | Good technical reference, updated for v4.0 |
 | `AGENTS.md` | Current | Synced with CLAUDE.md |
 | `skills/rrd/SKILL.md` | Current | RRD skill documentation |
 | `rrd.json.example` | Current | Example RRD format |
@@ -38,8 +38,8 @@
 - **Purpose:** First-time user onboarding - run first research in 10 minutes
 - **Covers:**
   - Prerequisites check (jq, Claude/Amp/Codex CLI)
-  - Creating first RRD with skill.sh
-  - Running research with ralph.sh
+  - Creating first project with research-ralph --new
+  - Running research with research-ralph --run
   - Understanding the output
 - **Estimated length:** 1,000-1,500 words
 - **Prerequisites:** None
@@ -64,7 +64,7 @@
 ### 1. How to Resume Interrupted Research
 - **Priority:** HIGH
 - **Purpose:** Continue research after interruption
-- **Covers:** Checking status, rerunning ralph.sh, handling errors
+- **Covers:** Checking status, rerunning research-ralph --run, handling errors
 - **Estimated length:** 400-600 words
 - **Location:** `docs/how-to/resume-research.md`
 
@@ -106,7 +106,7 @@
 - **Covers:**
   - Stateless iteration model
   - Memory persistence (rrd.json, progress.txt)
-  - Two-phase workflow (DISCOVERY → ANALYSIS)
+  - Three-phase workflow (DISCOVERY → ANALYSIS → IDEATION)
   - Agent invocation mechanism
 - **Estimated length:** 1,500-2,000 words
 - **Location:** `docs/explanations/architecture.md`
@@ -135,8 +135,7 @@
 - **Priority:** HIGH
 - **Purpose:** All CLI commands and options
 - **Covers:**
-  - `ralph.sh` - all arguments and flags
-  - `skill.sh` - all arguments and flags
+  - `research-ralph` flags and subcommands
   - Exit codes and error messages
 - **Location:** `docs/reference/cli.md`
 
@@ -155,17 +154,17 @@
 
 ### 1. Update README.md (Priority: CRITICAL)
 
-The README is outdated and shows the old workflow. Update to reflect v2.2:
+The README is outdated and shows the old workflow. Update to reflect v4.0:
 
 **Current (wrong):**
 ```bash
-./ralph.sh [max_iterations]
+research-ralph --run <project>
 ```
 
 **Should be:**
 ```bash
-./skill.sh rrd "Topic"  # Creates researches/{topic}-{date}/
-./ralph.sh researches/{folder} [-p papers] [-i iterations]
+research-ralph --new "Topic"  # Creates <project>-YYYY-MM-DD/
+research-ralph --run researches/{folder} [-p papers] [-i iterations]
 ```
 
 **Changes needed:**
@@ -182,7 +181,7 @@ The README is outdated and shows the old workflow. Update to reflect v2.2:
 1. **README.md update** (Critical - blocks user onboarding)
 2. **Getting Started Tutorial** (Unblocks new users)
 3. **CLI Reference** (Unblocks power users)
-4. **How to Manage Multiple Projects** (Key v2.1 feature)
+4. **How to Manage Multiple Projects** (Key multi-project feature)
 5. **Architecture Overview** (Helps understanding)
 6. **RRD Schema Reference** (Complete reference)
 7. **How to Resume Interrupted Research** (Common need)

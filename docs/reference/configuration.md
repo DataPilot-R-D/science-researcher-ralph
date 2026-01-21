@@ -2,7 +2,37 @@
 
 All configurable options for Research-Ralph.
 
-## Environment Variables
+## Config file
+
+Default location:
+- `~/.research-ralph/config.yaml`
+
+Create or view config via:
+```bash
+# Show all config
+research-ralph config
+
+# Set a value
+research-ralph config default_agent=amp
+
+# Alternate flag form
+research-ralph --config default_papers=30
+research-ralph --config
+```
+
+### Config keys
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| `research_dir` | string | `~/research` | Directory you use for projects (shown in UI; project creation uses current working directory) |
+| `default_agent` | string | `claude` | Default agent to use |
+| `default_papers` | int | `20` | Default target papers for new projects |
+| `live_output` | bool | `true` | Stream agent output during runs |
+| `max_consecutive_failures` | int | `3` | Abort after this many consecutive failures |
+
+---
+
+## Environment variables
 
 ### GITHUB_TOKEN
 
@@ -22,11 +52,11 @@ Create at: https://github.com/settings/tokens
 
 ---
 
-## RRD Configuration
+## RRD configuration
 
 All settings in `rrd.json` under `requirements`:
 
-### Search Settings
+### Search settings
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -37,13 +67,22 @@ All settings in `rrd.json` under `requirements`:
 | `target_papers` | number | 20 | Papers to collect |
 | `sources` | string[] | ["arXiv", "Google Scholar", "web"] | Search sources |
 
-### Evaluation Settings
+### Evaluation settings
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `min_score_to_present` | number | 18 | PRESENT threshold (0-30) |
+| `min_score_to_present` | number | 18 | Legacy execution-only threshold (0-30) |
 
-### Adjusting Settings
+### Mission settings
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `mission.blue_ocean_scoring` | bool | true | Enable strategic scoring |
+| `mission.min_combined_score` | number | 25 | Minimum combined score (0-50) to present |
+| `mission.min_blue_ocean_score` | number | 12 | Minimum blue ocean score (0-20) |
+| `mission.strategic_focus` | string | balanced | balanced, execution, or blue_ocean |
+
+### Adjusting settings
 
 Edit `rrd.json` directly:
 
@@ -57,29 +96,15 @@ jq '.requirements.min_score_to_present = 20' researches/your-folder/rrd.json > t
 
 ---
 
-## Script Options
+## CLI options
 
-### ralph.sh
-
-| Option | Default | Description |
-|--------|---------|-------------|
-| `<research_folder>` | (required) | Path to research folder |
-| `-p, --papers <N>` | from rrd.json | Target papers (auto-sets iterations to N+5) |
-| `-i, --iterations <N>` | auto | Override max iterations |
-| `--agent <name>` | claude | Agent: claude, amp, codex |
-
-### skill.sh
-
-| Option | Default | Description |
-|--------|---------|-------------|
-| `<skill_name>` | (required) | Skill to run (e.g., rrd) |
-| `"<description>"` | (required) | Task description |
-| `--agent <name>` | claude | Agent: claude, amp, codex |
-| `--list` | - | List available skills |
+See the [CLI Reference](cli.md) for flags and subcommands.
 
 ---
 
-## Agent Configuration
+## Agent configuration
+
+Agent invocation is defined in `ralph/core/agent_runner.py` (research loop) and `ralph/core/skill_runner.py` (RRD creation).
 
 ### Claude Code
 
@@ -89,8 +114,6 @@ claude -p "$PROMPT" \
   --dangerously-skip-permissions \
   --allowedTools "Bash,Read,Edit,Write,Grep,Glob,WebFetch,WebSearch"
 ```
-
-Allowed tools can be modified in `ralph.sh` (line ~167).
 
 ### Amp
 
@@ -110,9 +133,9 @@ echo "$PROMPT" | codex exec \
 
 ---
 
-## Rate Limit Configuration
+## Rate limit configuration
 
-Built into `ralph.sh` (not configurable via file):
+Defined in `AGENTS.md` and `prompt.md` and applied by the agent:
 
 | Source | Delay | Retry on 429 | Retry on 403 |
 |--------|-------|--------------|--------------|
@@ -121,39 +144,40 @@ Built into `ralph.sh` (not configurable via file):
 | GitHub API | 1s | Yes | No |
 | WebSearch | 2s | Yes | No |
 
-To modify: edit `ralph.sh` or `AGENTS.md` (which the agent reads).
+To modify: edit `AGENTS.md` (keep `CLAUDE.md` in sync).
 
 ---
 
-## Retry Configuration
+## Retry configuration
 
-Built into `ralph.sh`:
+Built into `ralph/core/agent_runner.py` (RETRY_CONFIG) and `ralph/core/research_loop.py`:
 
-| Setting | Value | Location |
-|---------|-------|----------|
-| Max consecutive failures | 3 | Line ~229 |
-| 429 retry delay | 30s | Line ~255 |
-| Network error retry delay | 2s | Lines ~268-272 |
-| Timeout retry delay | 2s | Lines ~268-272 |
+| Setting | Value |
+|---------|-------|
+| Max consecutive failures | Configurable (`max_consecutive_failures`, default 3) |
+| 429 retry delay | 30s |
+| Network error retry delay | 2s |
+| Timeout retry delay | 2s |
 
 ---
 
-## File Locations
+## File locations
 
-Default paths (relative to project root):
+Default paths:
 
 | File | Purpose | Configurable |
 |------|---------|--------------|
-| `researches/` | Research folders | No |
-| `prompt.md` | Agent instructions | No (path in ralph.sh) |
+| `~/.research-ralph/config.yaml` | CLI config | Yes |
+| `researches/` | Research folders (common convention) | No |
+| `prompt.md` | Agent instructions | No |
 | `AGENTS.md` | Patterns/gotchas | No |
 | `skills/` | Skill definitions | No |
 
 ---
 
-## Customization Examples
+## Customization examples
 
-### Stricter Scoring
+### Stricter scoring
 
 Only present papers scoring 22+:
 ```json
@@ -162,7 +186,7 @@ Only present papers scoring 22+:
 }
 ```
 
-### Longer Time Window
+### Longer time window
 
 Look back 90 days for papers:
 ```json
@@ -171,7 +195,7 @@ Look back 90 days for papers:
 }
 ```
 
-### More Papers
+### More papers
 
 Collect 50 papers before analysis:
 ```json
@@ -180,7 +204,7 @@ Collect 50 papers before analysis:
 }
 ```
 
-### arXiv Only
+### arXiv only
 
 Disable other sources:
 ```json
@@ -189,7 +213,7 @@ Disable other sources:
 }
 ```
 
-### Add Domain Terms
+### Add domain terms
 
 Help the agent understand jargon:
 ```json
@@ -205,7 +229,7 @@ Help the agent understand jargon:
 
 ---
 
-## Related Documentation
+## Related documentation
 
 - [RRD Schema](rrd-schema.md) - Complete field-by-field reference
 - [Customizing Research](../tutorials/customizing-research.md) - Hands-on customization guide

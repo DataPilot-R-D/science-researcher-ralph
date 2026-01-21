@@ -14,7 +14,7 @@ Research-Ralph is designed to be resumable. If your research session is interrup
 Simply run the same command again:
 
 ```bash
-./ralph.sh researches/your-research-folder
+research-ralph --run researches/your-research-folder
 ```
 
 Research-Ralph automatically:
@@ -55,7 +55,7 @@ If you hit the iteration limit without completing:
 
 ```bash
 # Run 20 more iterations
-./ralph.sh researches/your-folder 20
+research-ralph --run researches/your-folder --iterations 20
 ```
 
 ## Troubleshooting

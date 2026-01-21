@@ -1,7 +1,7 @@
 # Research-Ralph
 
 [![Status: Active](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/DataPilot-R-D/science-researcher-ralph)
-[![Version: 3.0.0](https://img.shields.io/badge/version-3.0.0-blue)](https://github.com/DataPilot-R-D/science-researcher-ralph/releases)
+[![Version: 4.0.0](https://img.shields.io/badge/version-4.0.0-blue)](https://github.com/DataPilot-R-D/science-researcher-ralph/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
 Research-Ralph is an autonomous AI research scouting agent that discovers, analyzes, and evaluates research papers. Each research project gets its own folder with all artifacts, and each iteration spawns a fresh agent instance with clean context.
@@ -15,6 +15,18 @@ Based on [Geoffrey Huntley's Ralph pattern](https://ghuntley.com/ralph/), adapte
 
 ## Prerequisites
 
+Install dependencies:
+
+```bash
+# From the repo
+poetry install
+
+# Run via Poetry (no global install needed)
+poetry run research-ralph --help
+```
+
+If you did not install the CLI globally, prefix commands below with `poetry run`.
+
 Choose ONE of the following AI agents:
 - [Claude Code CLI](https://claude.ai/code) installed and authenticated (default)
 - [Amp CLI](https://ampcode.com) installed and authenticated
@@ -27,61 +39,66 @@ Also required:
 
 ### 1. Create a Research Project
 
-Use the RRD skill to generate research requirements:
+Use the built-in RRD creation command:
 
 ```bash
-./skill.sh rrd "Research robotics and embodied AI, focusing on sim2real transfer"
+research-ralph --new "Research robotics and embodied AI, focusing on sim2real transfer"
 ```
 
-This creates a research folder with your RRD:
+This creates a project folder (in your current directory) with your RRD:
 ```
 researches/research-robotics-and-embodied-2026-01-14/
 └── rrd.json
 ```
 
-Answer the clarifying questions to configure your research parameters.
+If `open_questions` are included in `rrd.json`, review and update them before running research.
+Examples below assume you keep projects under `researches/` (run `research-ralph --new` from that directory or move the folder after creation).
 
-### 2. Check Status / Manage Researches
+### 2. Check Status / Manage Projects
 
 ```bash
 # List all research projects with status
-./ralph.sh --list
+research-ralph --list
 
 # Show detailed status of a specific research
-./ralph.sh --status researches/research-robotics-and-embodied-2026-01-14
+research-ralph --status researches/research-robotics-and-embodied-2026-01-14
 
 # Reset research to start fresh (creates backup)
-./ralph.sh --reset researches/research-robotics-and-embodied-2026-01-14
+research-ralph --reset researches/research-robotics-and-embodied-2026-01-14
 ```
 
 ### 3. Run Research-Ralph
 
 ```bash
 # Run with Claude Code (default)
-./ralph.sh researches/research-robotics-and-embodied-2026-01-14
+research-ralph --run researches/research-robotics-and-embodied-2026-01-14
 
 # Set target papers (iterations auto-calculated as papers + 6)
-./ralph.sh researches/research-robotics-and-embodied-2026-01-14 -p 30
+research-ralph --run researches/research-robotics-and-embodied-2026-01-14 -p 30
 
 # Override iterations if needed
-./ralph.sh researches/research-robotics-and-embodied-2026-01-14 -p 30 -i 100
+research-ralph --run researches/research-robotics-and-embodied-2026-01-14 -p 30 -i 100
 
 # Run with Amp
-./ralph.sh researches/research-robotics-and-embodied-2026-01-14 --agent amp
+research-ralph --run researches/research-robotics-and-embodied-2026-01-14 --agent amp
 
 # Run with Codex
-./ralph.sh researches/research-robotics-and-embodied-2026-01-14 --agent codex
+research-ralph --run researches/research-robotics-and-embodied-2026-01-14 --agent codex
 
 # Force change target papers on in-progress research (creates backup)
-./ralph.sh researches/research-robotics-and-embodied-2026-01-14 -p 50 --force
+research-ralph --run researches/research-robotics-and-embodied-2026-01-14 -p 50 --force
 ```
 
 **Commands:**
 | Command | Description |
 |---------|-------------|
+| `--new "<topic>"` | Create a new research project with the built-in RRD skill |
+| `--run <folder>` | Run research on a project |
 | `--list` | List all research projects with color-coded status |
 | `--status <folder>` | Show detailed status with progress bar |
 | `--reset <folder>` | Reset research to DISCOVERY phase (creates backup) |
+| `--config [key=value]` | View or set CLI config |
+| `--version` | Show version and exit |
 | `-h, --help` | Show help message |
 
 **Run Options:**
@@ -94,16 +111,17 @@ Answer the clarifying questions to configure your research parameters.
 
 You'll see output like:
 ```
-Starting Research-Ralph v3.0.0
-  Research: researches/research-robotics-and-embodied-2026-01-14
-  Agent: claude
+Research-Ralph - Starting Research Loop
+
   Project: Research: Robotics and Embodied AI
+  Path: researches/research-robotics-and-embodied-2026-01-14
+  Agent: claude
   Phase: DISCOVERY
-  Papers: 0 analyzed / 20 target
-  Max iterations: 10
+  Papers: 0/20 analyzed
+  Max iterations: 26
 
 =======================================================
-  Research-Ralph Iteration 1 of 10 (claude)
+  Research-Ralph Iteration 1 of 26 (claude)
 =======================================================
   Phase: DISCOVERY
 ```
@@ -119,6 +137,7 @@ Research-Ralph will:
 3. Update `rrd.json` with findings
 4. Append detailed analysis to `progress.txt`
 5. Repeat until all papers analyzed
+6. Generate `research-report.md` and `product-ideas.json` during IDEATION
 
 ## Folder Structure
 
@@ -140,8 +159,7 @@ researches/
 
 | File/Folder | Purpose |
 |-------------|---------|
-| `ralph.sh` | Main research loop script |
-| `skill.sh` | Skill runner (creates research folders) |
+| `ralph/cli.py` | Python CLI entrypoint (`research-ralph`) |
 | `prompt.md` | Instructions given to each agent instance |
 | `MISSION.md` | Agent objectives, success metrics, blue ocean scoring |
 | `researches/` | Per-research artifact folders |
@@ -271,10 +289,10 @@ Check current state:
 
 ```bash
 # List all research projects with status (recommended)
-./ralph.sh --list
+research-ralph --list
 
 # Show detailed status with progress bar
-./ralph.sh --status researches/{folder}
+research-ralph --status researches/{folder}
 
 # See research findings
 cat researches/{folder}/progress.txt
@@ -286,7 +304,7 @@ cat researches/{folder}/rrd.json | jq '.papers_pool[] | {id, title, status, scor
 cat researches/{folder}/rrd.json | jq '.papers_pool[] | select(.status == "presented")'
 
 # Reset to start over (creates backup)
-./ralph.sh --reset researches/{folder}
+research-ralph --reset researches/{folder}
 ```
 
 ## Rate Limits
@@ -321,26 +339,14 @@ To make research progress easy to track and revert, commit state/doc updates reg
 
 Skills are reusable prompts that work with Claude Code, Amp, and Codex.
 
-### Available Skills
+### RRD Skill (built-in)
 
-| Skill | Description |
-|-------|-------------|
-| `rrd` | Generate an RRD from research topic description |
-
-### Running Skills
+The `rrd` skill is used automatically by `research-ralph --new` to create projects.
+If you need to edit it, see `skills/rrd/SKILL.md`.
 
 ```bash
-# List available skills
-./skill.sh --list
-
-# Run a skill with Claude Code (default)
-./skill.sh rrd "Research robotics and embodied AI"
-
-# Run a skill with Amp
-./skill.sh rrd "Research NLP transformers" --agent amp
-
-# Run a skill with Codex
-./skill.sh rrd "Research computer vision" --agent codex
+# Create a new project (runs the rrd skill)
+research-ralph --new "Research robotics and embodied AI"
 ```
 
 ## RRD Format

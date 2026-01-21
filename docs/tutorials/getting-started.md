@@ -37,44 +37,42 @@ apt install jq
 jq --version
 ```
 
+If you did not install the CLI globally, prefix commands below with `poetry run`.
+
 ## Step 1: Create a Research Project
 
-Every research run starts with a Research Requirements Document (RRD). Use the `rrd` skill to generate one:
+Every research run starts with a Research Requirements Document (RRD). Use the built-in creation command:
 
 ```bash
-./skill.sh rrd "Research robotics and embodied AI, focusing on sim2real transfer"
+research-ralph --new "Research robotics and embodied AI, focusing on sim2real transfer"
 ```
 
-The skill will ask clarifying questions about:
-- **Keywords**: Search terms for finding papers
-- **Time window**: How recent the papers should be
-- **Target papers**: How many papers to discover
-- **Scoring threshold**: Minimum score to present a paper
-
-After answering, you'll see:
+After creation, you'll see:
 ```
-Created research folder: researches/research-robotics-and-embodied-2026-01-14/
+Research project created: researches/research-robotics-and-embodied-2026-01-14
 ```
 
-Your research folder now contains `rrd.json` with your configuration.
+Your research folder now contains `rrd.json`. If `open_questions` are present, review and edit them before running research.
+Projects are created in the current directory; examples assume you keep them under `researches/` (run `research-ralph --new` from that directory or move the folder after creation).
 
 ## Step 2: Run Research-Ralph
 
 Start the autonomous research loop:
 
 ```bash
-./ralph.sh researches/research-robotics-and-embodied-2026-01-14
+research-ralph --run researches/research-robotics-and-embodied-2026-01-14
 ```
 
 You'll see:
 ```
-Starting Research-Ralph v2.1.0
-  Research: researches/research-robotics-and-embodied-2026-01-14
-  Agent: claude
+Research-Ralph - Starting Research Loop
+
   Project: Research: Robotics and Embodied AI
+  Path: researches/research-robotics-and-embodied-2026-01-14
+  Agent: claude
   Phase: DISCOVERY
-  Papers: 0 analyzed / 20 target
-  Max iterations: 10
+  Papers: 0/20 analyzed
+  Max iterations: 26
 ```
 
 ### What Happens During Research
@@ -89,7 +87,7 @@ Starting Research-Ralph v2.1.0
 - Analyzes ONE paper per iteration (deep dive)
 - Reads full paper content, not just abstracts
 - Searches for implementations on GitHub
-- Scores using a 6-dimension rubric (0-30 points)
+- Scores using a dual rubric (0-50 combined)
 - Decides: PRESENT, REJECT, or EXTRACT_INSIGHTS
 
 ## Step 3: Monitor Progress
@@ -125,7 +123,7 @@ cat researches/research-robotics-and-embodied-2026-01-14/research-report.md
 ```
 
 ### Presented Papers
-Papers that scored >= 18/30 and are worth investigating:
+Papers marked `presented` in the RRD:
 ```bash
 cat researches/research-robotics-and-embodied-2026-01-14/rrd.json | jq '.papers_pool[] | select(.status == "presented")'
 ```
@@ -143,12 +141,12 @@ The `progress.txt` file contains detailed analysis notes, cross-references, and 
 
 ### Run More Iterations
 ```bash
-./ralph.sh researches/research-robotics-and-embodied-2026-01-14 20
+research-ralph --run researches/research-robotics-and-embodied-2026-01-14 --iterations 20
 ```
 
 ### Use a Different Agent
 ```bash
-./ralph.sh researches/research-robotics-and-embodied-2026-01-14 --agent amp
+research-ralph --run researches/research-robotics-and-embodied-2026-01-14 --agent amp
 ```
 
 ### Resume Interrupted Research

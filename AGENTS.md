@@ -11,26 +11,30 @@ Keep research patterns and gotchas in this file in sync with `CLAUDE.md`. When u
 ## Commands
 
 ```bash
-# Create a new research (creates folder in researches/)
-./skill.sh rrd "Your research topic description"
-# Creates: researches/{topic}-{date}/rrd.json
+# Create a new research (creates a project folder)
+research-ralph --new "Your research topic description"
+# Creates: <project>-YYYY-MM-DD/rrd.json (in current directory)
 
 # List all research projects with status
-./ralph.sh --list
+research-ralph --list
 
 # Show detailed status of a specific research
-./ralph.sh --status researches/{folder-name}
+research-ralph --status researches/{folder-name}
 
 # Reset research to DISCOVERY phase (creates backup)
-./ralph.sh --reset researches/{folder-name}
+research-ralph --reset researches/{folder-name}
 
 # Run research on a folder
-./ralph.sh researches/{folder-name} [options]
+research-ralph --run researches/{folder-name} [options]
 
 # Commands:
+#   --new "<topic>"       Create a new research project (RRD generation)
+#   --run <folder>        Run research on a project
 #   --list                List all research projects with color-coded status
 #   --status <folder>     Show detailed status with progress bar
 #   --reset <folder>      Reset research to DISCOVERY phase (creates backup)
+#   --config [key=value]  View or set CLI config
+#   --version             Show version and exit
 #   -h, --help            Show help message
 
 # Run Options:
@@ -40,17 +44,14 @@ Keep research patterns and gotchas in this file in sync with `CLAUDE.md`. When u
 #   --force               Allow -p to change target_papers on in-progress research
 
 # Examples
-./ralph.sh --list                                             # List all researches
-./ralph.sh --status researches/robotics-llms-2026-01-14       # Check status
-./ralph.sh --reset researches/robotics-llms-2026-01-14        # Reset to start
-./ralph.sh researches/robotics-llms-2026-01-14                # Run research
-./ralph.sh researches/robotics-llms-2026-01-14 -p 30          # 30 papers, 36 iterations
-./ralph.sh researches/robotics-llms-2026-01-14 -p 30 -i 100   # Override iterations
-./ralph.sh researches/robotics-llms-2026-01-14 --agent amp    # Use Amp agent
-./ralph.sh researches/robotics-llms-2026-01-14 -p 50 --force  # Force change target
-
-# List available skills
-./skill.sh --list
+research-ralph --list                                             # List all researches
+research-ralph --status researches/robotics-llms-2026-01-14       # Check status
+research-ralph --reset researches/robotics-llms-2026-01-14        # Reset to start
+research-ralph --run researches/robotics-llms-2026-01-14          # Run research
+research-ralph --run researches/robotics-llms-2026-01-14 -p 30    # 30 papers, 36 iterations
+research-ralph --run researches/robotics-llms-2026-01-14 -p 30 -i 100   # Override iterations
+research-ralph --run researches/robotics-llms-2026-01-14 --agent amp    # Use Amp agent
+research-ralph --run researches/robotics-llms-2026-01-14 -p 50 --force  # Force change target
 ```
 
 ## Folder Structure
@@ -71,8 +72,7 @@ researches/
 
 | File/Folder | Purpose |
 |-------------|---------|
-| `ralph.sh` | Main research loop script |
-| `skill.sh` | Skill runner (creates research folders for rrd skill) |
+| `ralph/cli.py` | Python CLI entrypoint (`research-ralph`) |
 | `prompt.md` | Agent instructions for research workflow |
 | `MISSION.md` | Agent objectives, success metrics, blue ocean scoring |
 | `researches/` | Per-research artifact folders |

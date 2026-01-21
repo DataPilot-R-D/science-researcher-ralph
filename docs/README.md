@@ -5,7 +5,7 @@ Welcome to the Research-Ralph documentation. This guide helps you run autonomous
 ## Quick Links
 
 - [Getting Started Tutorial](tutorials/getting-started.md) - Run your first research in 10 minutes
-- [CLI Reference](reference/cli.md) - All command-line options
+- [CLI Reference](reference/cli.md) - `research-ralph` command-line options
 - [Architecture Overview](explanations/architecture.md) - How Research-Ralph works
 
 ---
@@ -52,7 +52,7 @@ Complete technical reference.
 
 | Reference | Description |
 |-----------|-------------|
-| [CLI Reference](reference/cli.md) | `ralph.sh` and `skill.sh` commands |
+| [CLI Reference](reference/cli.md) | `research-ralph` CLI commands |
 | [RRD Schema](reference/rrd-schema.md) | Complete `rrd.json` field documentation |
 | [Configuration](reference/configuration.md) | All configurable options |
 

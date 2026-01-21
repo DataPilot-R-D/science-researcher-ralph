@@ -2,59 +2,93 @@
 
 Complete reference for Research-Ralph command-line tools.
 
-## ralph.sh
+## research-ralph
 
-Main research loop script that runs autonomous research sessions.
+Primary Python CLI for Research-Ralph. Run without arguments to open the interactive menu.
+If you installed via Poetry, use `poetry run research-ralph`.
 
-### Usage
+### Flag-based usage
 
 ```bash
-./ralph.sh <research_folder> [-p papers] [-i iterations] [--agent name]
+research-ralph [--new "<topic>"] [--run <project>] [--status <project>] [--list] \
+  [--reset <project>] [--config [key=value]] [--papers N] [--iterations N] \
+  [--agent claude|amp|codex] [--force] [--version]
 ```
 
-### Arguments
+### Subcommands
 
-| Argument | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `<research_folder>` | Yes | - | Path to research folder containing `rrd.json` |
-| `-p, --papers <N>` | No | from rrd.json | Target papers count (auto-sets iterations to N+5) |
-| `-i, --iterations <N>` | No | auto-calculated | Override max iterations |
-| `--agent <name>` | No | claude | AI agent to use: `claude`, `amp`, or `codex` |
-| `-h, --help` | No | - | Show help message |
+```bash
+research-ralph create "<topic>" [--papers N] [--agent claude|amp|codex]
+research-ralph run <project> [--papers N] [--iterations N] [--agent claude|amp|codex] [--force]
+research-ralph status <project>
+research-ralph list
+research-ralph reset <project> [--yes]
+research-ralph config [key[=value]]
+research-ralph init [--yes]
+```
+
+### Core flags
+
+| Flag | Description |
+|------|-------------|
+| `--new "<topic>"` | Create a new research project using the built-in RRD skill |
+| `--run <project>` | Run research on a project (name or path) |
+| `--status <project>` | Show detailed status for a project |
+| `--list` | List all research projects |
+| `--reset <project>` | Reset a project to DISCOVERY phase (creates backup) |
+| `--config [key=value]` | View or set CLI config |
+| `--version` | Show version and exit |
+| `-h, --help` | Show help message |
+
+### Run options
+
+| Option | Description |
+|--------|-------------|
+| `-p, --papers <N>` | Target papers count (auto-sets iterations to N+6) |
+| `-i, --iterations <N>` | Override max iterations (default: auto-calculated) |
+| `--agent <name>` | AI agent to use: `claude`, `amp`, or `codex` |
+| `--force` | Allow `--papers` to override target_papers on in-progress research |
 
 ### Examples
 
 ```bash
-# Basic usage with defaults (papers from rrd.json, auto iterations)
-./ralph.sh researches/robotics-2026-01-14
+# Interactive menu
+research-ralph
 
-# Set 30 target papers (iterations auto = 35)
-./ralph.sh researches/robotics-2026-01-14 -p 30
+# Create a new project
+research-ralph --new "Research robotics and embodied AI"
 
-# Override iterations if needed
-./ralph.sh researches/robotics-2026-01-14 -p 30 -i 100
+# List all projects
+research-ralph --list
 
-# Use Amp agent
-./ralph.sh researches/robotics-2026-01-14 --agent amp
+# Run research on a project folder
+research-ralph --run researches/robotics-2026-01-14
 
-# Short folder name (resolved to researches/)
-./ralph.sh robotics-2026-01-14
+# Override papers and iterations
+research-ralph --run researches/robotics-2026-01-14 -p 30 -i 100
+
+# Use a different agent
+research-ralph --run researches/robotics-2026-01-14 --agent amp
+
+# Reset a project
+research-ralph --reset researches/robotics-2026-01-14
 ```
 
-### Exit Codes
+### Exit codes
 
 | Code | Meaning |
 |------|---------|
-| 0 | Research completed successfully (all papers analyzed) |
+| 0 | Research completed successfully |
 | 1 | Error or max iterations reached without completion |
+| 130 | Interrupted (Ctrl+C) |
 
 ### Output
 
 - **Console**: Progress updates for each iteration
-- **Files**: Updates `rrd.json` and `progress.txt` in the research folder
+- **Files**: Updates `rrd.json` and `progress.txt` in the project folder
 - **Report**: Auto-generates `research-report.md` when research completes
 
-### Research Report Contents
+### Research report contents
 
 When all papers are analyzed, the report includes:
 - Executive summary with key metrics
@@ -64,7 +98,7 @@ When all papers are analyzed, the report includes:
 - Research quality self-assessment (0-100 scores)
 - Prioritized follow-up recommendations
 
-### Completion Signal
+### Completion signal
 
 Research-Ralph exits successfully when it outputs:
 ```
@@ -75,62 +109,31 @@ This indicates all papers in `papers_pool` have been analyzed.
 
 ---
 
-## skill.sh
+## RRD creation output
 
-Skill runner for creating research projects and other tasks.
-
-### Usage
-
-```bash
-./skill.sh <skill_name> "<task_description>" [--agent amp|claude|codex]
+`research-ralph --new` (or `create`) generates:
 ```
-
-### Arguments
-
-| Argument | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `<skill_name>` | Yes | - | Name of skill to run |
-| `"<task_description>"` | Yes | - | Description passed to the skill |
-| `--agent <name>` | No | claude | AI agent to use |
-| `--list` | No | - | List available skills |
-| `-h, --help` | No | - | Show help message |
-
-### Available Skills
-
-| Skill | Description |
-|-------|-------------|
-| `rrd` | Generate a Research Requirements Document |
-
-### Examples
-
-```bash
-# List available skills
-./skill.sh --list
-
-# Create a new research project
-./skill.sh rrd "Research quantum computing applications in machine learning"
-
-# Use Amp agent
-./skill.sh rrd "Research NLP transformers" --agent amp
-```
-
-### RRD Skill Output
-
-When running the `rrd` skill, it creates:
-```
-researches/{sanitized-topic}-{date}/
+<project-slug>-YYYY-MM-DD/
 └── rrd.json
 ```
 
-The folder name is derived from the task description:
+The folder name is derived from the RRD `project` field (preferred) or the input topic:
 - Converted to lowercase
 - Non-alphanumeric characters replaced with hyphens
-- Truncated to 40 characters
+- Truncated to 40-50 characters
 - Date appended in YYYY-MM-DD format
+
+Projects are created in the current working directory; examples use a `researches/` folder for organization.
+
+### Path resolution tips
+
+- Use `research-ralph --run .` from inside a project folder.
+- You can pass an absolute path or a folder name under the current directory.
+- If you keep projects under `researches/`, use `researches/<name>`.
 
 ---
 
-## Environment Variables
+## Environment variables
 
 ### GITHUB_TOKEN
 
@@ -140,40 +143,31 @@ Set for higher GitHub API rate limits when searching for implementations.
 export GITHUB_TOKEN="ghp_your_token_here"
 ```
 
-| Authentication | Rate Limit |
+| Authentication | Rate limit |
 |----------------|------------|
 | Unauthenticated | 10 requests/minute |
 | Authenticated | 30 requests/minute |
 
 ---
 
-## File Paths
+## File paths
 
-### Research Folder Structure
-
-```
-researches/{name}-{date}/
-├── rrd.json           # Research Requirements Document
-├── progress.txt       # Research findings log
-└── research-report.md # Auto-generated comprehensive report
-```
-
-### Project Files
+### Project files
 
 | File | Purpose |
 |------|---------|
-| `ralph.sh` | Main research loop script |
-| `skill.sh` | Skill runner |
+| `ralph/cli.py` | Python CLI entrypoint (`research-ralph`) |
 | `prompt.md` | Agent instructions |
 | `rrd.json.example` | Example RRD format |
 | `AGENTS.md` | Research patterns and gotchas |
 | `CLAUDE.md` | Claude Code specific guidance |
+| `skills/rrd/SKILL.md` | RRD skill definition |
 
 ---
 
 ## Debugging
 
-### Check Research Status
+### Check research status
 
 ```bash
 # Current phase and statistics
@@ -189,7 +183,7 @@ cat researches/{folder}/rrd.json | jq '.papers_pool[] | select(.status == "prese
 cat researches/{folder}/rrd.json | jq '.papers_pool[] | select(.status == "rejected")'
 ```
 
-### View Research Log
+### View research log
 
 ```bash
 # Full log
@@ -199,7 +193,7 @@ cat researches/{folder}/progress.txt
 tail -50 researches/{folder}/progress.txt
 ```
 
-### List All Research Projects
+### List all research projects
 
 ```bash
 ls -la researches/
@@ -207,18 +201,18 @@ ls -la researches/
 
 ---
 
-## Error Handling
+## Error handling
 
-### Rate Limit Errors
+### Rate limit errors
 
 Research-Ralph handles rate limits automatically:
 - **429 (Too Many Requests)**: Waits 30s, then retries
 - **403 (Forbidden)**: Skips to next source
 - **3 consecutive failures**: Source added to `blocked_sources`
 
-### Agent Failures
+### Agent failures
 
-- **3 consecutive agent failures**: Script aborts with error
+- **Max consecutive failures**: Controlled by `max_consecutive_failures` in config
 - **Network errors**: Quick retry after 2s
 - **Timeouts**: Quick retry after 2s
 
@@ -227,5 +221,5 @@ Research-Ralph handles rate limits automatically:
 To resume after an error:
 ```bash
 # Just run again - picks up from current state
-./ralph.sh researches/{folder}
+research-ralph --run researches/{folder}
 ```
