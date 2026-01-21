@@ -67,17 +67,29 @@ def load_config() -> Config:
 
 
 def save_config(config: Config) -> None:
-    """Save configuration to ~/.ralph/config.yaml."""
-    get_config_dir()
-    data = config.model_dump()
-    # Convert Path to string for YAML serialization
-    data["research_dir"] = str(data["research_dir"])
-    # Note: use_enum_values=True should handle this, but model_dump() returns
-    # the string value directly, so this check is a safety fallback
-    if hasattr(data["default_agent"], "value"):
-        data["default_agent"] = data["default_agent"].value
-    with open(CONFIG_FILE, "w") as f:
-        yaml.dump(data, f, default_flow_style=False, sort_keys=False)
+    """Save configuration to ~/.ralph/config.yaml.
+
+    Raises:
+        PermissionError: If config file is not writable
+        OSError: If config file cannot be saved
+    """
+    try:
+        get_config_dir()
+        data = config.model_dump()
+        # Convert Path to string for YAML serialization
+        data["research_dir"] = str(data["research_dir"])
+        # Note: use_enum_values=True should handle this, but model_dump() returns
+        # the string value directly, so this check is a safety fallback
+        if hasattr(data["default_agent"], "value"):
+            data["default_agent"] = data["default_agent"].value
+        with open(CONFIG_FILE, "w") as f:
+            yaml.dump(data, f, default_flow_style=False, sort_keys=False)
+    except PermissionError:
+        print(f"Error: Cannot write config file (permission denied): {CONFIG_FILE}", file=sys.stderr)
+        raise
+    except OSError as e:
+        print(f"Error: Cannot save config file: {e}", file=sys.stderr)
+        raise
 
 
 def get_config_value(key: str) -> Optional[str]:
@@ -88,20 +100,27 @@ def get_config_value(key: str) -> Optional[str]:
     return None
 
 
-def set_config_value(key: str, value: str) -> bool:
-    """Set a single config value. Returns True on success."""
+def set_config_value(key: str, value: str) -> tuple[bool, Optional[str]]:
+    """Set a single config value.
+
+    Returns:
+        Tuple of (success, error_message). error_message is None on success.
+    """
     config = load_config()
     if key not in Config.model_fields:
-        return False
+        valid_keys = ", ".join(sorted(Config.model_fields.keys()))
+        return False, f"Unknown config key: {key}. Valid keys: {valid_keys}"
 
     try:
         field_type = Config.model_fields[key].annotation
         converted = _convert_config_value(value, field_type)
         setattr(config, key, converted)
         save_config(config)
-        return True
-    except (ValueError, KeyError):
-        return False
+        return True, None
+    except ValueError as e:
+        return False, f"Invalid value for {key}: {e}"
+    except (PermissionError, OSError) as e:
+        return False, f"Failed to save config: {e}"
 
 
 def _convert_config_value(value: str, field_type: type) -> object:

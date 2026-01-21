@@ -135,10 +135,15 @@ class SkillRunner:
                 pass
             return None, f"RRD file was not created. Agent output:\n{output}"
 
+        # Parse rrd.json
         try:
             with open(rrd_path) as f:
                 rrd_data = json.load(f)
+        except json.JSONDecodeError as e:
+            return temp_path, f"Created research but rrd.json has invalid JSON: {e}\n{output}"
 
+        # Rename directory and update rrd.json
+        try:
             project_name = rrd_data.get("project", "").replace("Research: ", "")
             slug = _to_slug(project_name, 50) if project_name else _to_slug(topic, 40)
 
@@ -161,7 +166,7 @@ class SkillRunner:
                 json.dump(rrd_data, f, indent=2)
 
             return final_path, output
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             return temp_path, f"Created research but failed to rename ({type(e).__name__}): {e}\n{output}"
 
     def run_rrd_skill(

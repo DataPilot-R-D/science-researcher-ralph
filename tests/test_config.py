@@ -278,9 +278,10 @@ class TestSetConfigValue:
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
 
-        result = set_config_value("research_dir", str(tmp_path / "new-research"))
+        success, error = set_config_value("research_dir", str(tmp_path / "new-research"))
 
-        assert result is True
+        assert success is True
+        assert error is None
 
     def test_set_default_agent_valid(self, tmp_path, monkeypatch):
         """Set handles valid agent value."""
@@ -289,20 +290,23 @@ class TestSetConfigValue:
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
 
-        result = set_config_value("default_agent", "amp")
+        success, error = set_config_value("default_agent", "amp")
 
-        assert result is True
+        assert success is True
+        assert error is None
 
     def test_set_default_agent_invalid(self, tmp_path, monkeypatch):
-        """Set returns False for invalid agent."""
+        """Set returns False with error for invalid agent."""
         config_dir = tmp_path / ".ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
 
-        result = set_config_value("default_agent", "invalid_agent")
+        success, error = set_config_value("default_agent", "invalid_agent")
 
-        assert result is False
+        assert success is False
+        assert error is not None
+        assert "Invalid value" in error
 
     def test_set_integer_field(self, tmp_path, monkeypatch):
         """Set handles integer fields."""
@@ -311,20 +315,23 @@ class TestSetConfigValue:
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
 
-        result = set_config_value("default_papers", "50")
+        success, error = set_config_value("default_papers", "50")
 
-        assert result is True
+        assert success is True
+        assert error is None
 
     def test_set_integer_field_invalid(self, tmp_path, monkeypatch):
-        """Set returns False for invalid integer."""
+        """Set returns False with error for invalid integer."""
         config_dir = tmp_path / ".ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
 
-        result = set_config_value("default_papers", "not_a_number")
+        success, error = set_config_value("default_papers", "not_a_number")
 
-        assert result is False
+        assert success is False
+        assert error is not None
+        assert "Invalid value" in error
 
     def test_set_boolean_field_true_values(self, tmp_path, monkeypatch):
         """Set handles boolean true values."""
@@ -334,8 +341,9 @@ class TestSetConfigValue:
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
 
         for value in ["true", "1", "yes"]:
-            result = set_config_value("live_output", value)
-            assert result is True
+            success, error = set_config_value("live_output", value)
+            assert success is True
+            assert error is None
 
     def test_set_boolean_field_false_value(self, tmp_path, monkeypatch):
         """Set handles boolean false value."""
@@ -344,20 +352,23 @@ class TestSetConfigValue:
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
 
-        result = set_config_value("live_output", "false")
+        success, error = set_config_value("live_output", "false")
 
-        assert result is True
+        assert success is True
+        assert error is None
 
     def test_set_unknown_key(self, tmp_path, monkeypatch):
-        """Set returns False for unknown key."""
+        """Set returns False with error for unknown key."""
         config_dir = tmp_path / ".ralph"
         config_dir.mkdir()
         monkeypatch.setattr("ralph.config.CONFIG_DIR", config_dir)
         monkeypatch.setattr("ralph.config.CONFIG_FILE", config_dir / "config.yaml")
 
-        result = set_config_value("unknown_key", "value")
+        success, error = set_config_value("unknown_key", "value")
 
-        assert result is False
+        assert success is False
+        assert error is not None
+        assert "Unknown config key" in error
 
 
 class TestResolveResearchPath:

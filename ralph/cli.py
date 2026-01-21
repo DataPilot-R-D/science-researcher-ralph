@@ -206,14 +206,11 @@ def handle_config(config_arg: str) -> None:
     if "=" in config_arg:
         # Set config value
         key, value = config_arg.split("=", 1)
-        if set_config_value(key.strip(), value.strip()):
+        success, error = set_config_value(key.strip(), value.strip())
+        if success:
             print_success(f"Set {key} = {value}")
         else:
-            print_error(f"Unknown config key: {key}")
-            console.print()
-            console.print("Available keys:")
-            for field in Config.model_fields:
-                console.print(f"  - {field}")
+            print_error(error or f"Failed to set {key}")
             raise typer.Exit(1)
     else:
         # Show config value or all config
