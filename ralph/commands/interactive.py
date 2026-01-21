@@ -296,12 +296,15 @@ def run_menu() -> None:
 
     # Load current settings from project and config
     config = load_config()
+    can_modify_papers = True
     try:
         from ralph.core.rrd_manager import RRDManager
 
         manager = RRDManager(project)
         rrd = manager.load()
         current_papers = rrd.requirements.target_papers
+        # Check if research is in progress (can't modify papers without --force)
+        can_modify_papers = rrd.phase == "DISCOVERY" and rrd.statistics.total_analyzed == 0
     except Exception:
         current_papers = config.default_papers
 
@@ -324,13 +327,15 @@ def run_menu() -> None:
         run_research(str(project))
         return
 
-    # Allow modifications with current values as defaults
-    papers = questionary.text(
-        f"Target papers [{current_papers}]:",
-        default=str(current_papers),
-        validate=lambda x: x.isdigit() or "Enter a number",
-        style=MENU_STYLE,
-    ).ask()
+    # Only allow modifying papers if research not in progress
+    papers = None
+    if can_modify_papers:
+        papers = questionary.text(
+            f"Target papers [{current_papers}]:",
+            default=str(current_papers),
+            validate=lambda x: x.isdigit() or "Enter a number",
+            style=MENU_STYLE,
+        ).ask()
 
     iterations = questionary.text(
         "Max iterations [auto]:",
