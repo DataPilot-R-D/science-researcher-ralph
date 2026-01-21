@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Agent(str, Enum):
@@ -29,8 +29,7 @@ class Config(BaseModel):
     live_output: bool = Field(default=True, description="Show live agent output during run")
     max_consecutive_failures: int = Field(default=3, ge=1, description="Max failures before aborting")
 
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)
 
 
 # Default config path
@@ -84,29 +83,30 @@ def get_config_value(key: str) -> Optional[str]:
 def set_config_value(key: str, value: str) -> bool:
     """Set a single config value. Returns True on success."""
     config = load_config()
-    if not hasattr(config, key):
+    if key not in Config.model_fields:
         return False
 
-    # Type conversion based on field type
-    if key == "research_dir":
-        setattr(config, key, Path(value).expanduser())
-    elif key == "default_agent":
-        try:
-            setattr(config, key, Agent(value))
-        except ValueError:
-            return False
-    elif key in ("default_papers", "max_consecutive_failures"):
-        try:
-            setattr(config, key, int(value))
-        except ValueError:
-            return False
-    elif key == "live_output":
-        setattr(config, key, value.lower() in ("true", "1", "yes"))
-    else:
-        setattr(config, key, value)
+    try:
+        field_type = Config.model_fields[key].annotation
+        converted = _convert_config_value(value, field_type)
+        setattr(config, key, converted)
+        save_config(config)
+        return True
+    except (ValueError, KeyError):
+        return False
 
-    save_config(config)
-    return True
+
+def _convert_config_value(value: str, field_type: type) -> object:
+    """Convert a string value to the appropriate type for config."""
+    if field_type is Path:
+        return Path(value).expanduser()
+    if field_type is Agent:
+        return Agent(value)
+    if field_type is int:
+        return int(value)
+    if field_type is bool:
+        return value.lower() in ("true", "1", "yes")
+    return value
 
 
 def _get_repo_root() -> Path:
@@ -164,6 +164,19 @@ def resolve_research_path(path: str) -> Optional[Path]:
     return None
 
 
+def _collect_projects_from_dir(
+    directory: Path, projects: list[Path], seen_names: set[str]
+) -> None:
+    """Collect research projects from a directory into the projects list."""
+    try:
+        for item in directory.iterdir():
+            if item.is_dir() and item.name not in seen_names and (item / "rrd.json").exists():
+                projects.append(item)
+                seen_names.add(item.name)
+    except PermissionError:
+        pass
+
+
 def list_research_projects() -> list[Path]:
     """
     List all research projects. Looks in:
@@ -172,7 +185,7 @@ def list_research_projects() -> list[Path]:
     3. Configured research_dir (fallback)
     4. Script's researches/ folder (legacy)
 
-    Returns list of project paths.
+    Returns list of project paths sorted by modification time (most recent first).
     """
     projects: list[Path] = []
     seen_names: set[str] = set()
@@ -184,37 +197,19 @@ def list_research_projects() -> list[Path]:
         seen_names.add(cwd.name)
 
     # Check subdirectories of current directory
-    try:
-        for item in cwd.iterdir():
-            if item.is_dir() and item.name not in seen_names and (item / "rrd.json").exists():
-                projects.append(item)
-                seen_names.add(item.name)
-    except PermissionError:
-        pass
+    _collect_projects_from_dir(cwd, projects, seen_names)
 
     # Fallback to configured research_dir (if different from cwd)
     config = load_config()
     if config.research_dir.exists() and config.research_dir.resolve() != cwd.resolve():
-        try:
-            for item in config.research_dir.iterdir():
-                if item.is_dir() and item.name not in seen_names and (item / "rrd.json").exists():
-                    projects.append(item)
-                    seen_names.add(item.name)
-        except PermissionError:
-            pass
+        _collect_projects_from_dir(config.research_dir, projects, seen_names)
 
     # Check legacy researches/ folder
     script_dir = Path(__file__).parent.parent
     legacy_dir = script_dir / "researches"
     if legacy_dir.exists() and legacy_dir.resolve() != cwd.resolve():
-        try:
-            for item in legacy_dir.iterdir():
-                if item.is_dir() and item.name not in seen_names and (item / "rrd.json").exists():
-                    projects.append(item)
-        except PermissionError:
-            pass
+        _collect_projects_from_dir(legacy_dir, projects, seen_names)
 
-    # Sort by modification time (most recent first)
     return sorted(projects, key=lambda p: p.stat().st_mtime, reverse=True)
 
 

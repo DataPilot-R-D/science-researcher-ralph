@@ -2,11 +2,39 @@
 
 import json
 from pathlib import Path
-from typing import Optional
 
 from ralph.config import list_research_projects
-from ralph.ui.console import console, print_error, print_info
+from ralph.ui.console import console, print_info
 from ralph.ui.tables import create_project_table
+
+
+def _get_project_info(project_path: Path) -> dict:
+    """Extract project info from a project path."""
+    base_info = {
+        "name": project_path.name,
+        "path": project_path,
+        "phase": "ERROR",
+        "target": 0,
+        "analyzed": 0,
+        "pending": 0,
+    }
+
+    try:
+        with open(project_path / "rrd.json") as f:
+            rrd = json.load(f)
+
+        papers = rrd.get("papers_pool", [])
+        return {
+            **base_info,
+            "phase": rrd.get("phase", "UNKNOWN"),
+            "target": rrd.get("requirements", {}).get("target_papers", 0),
+            "analyzed": rrd.get("statistics", {}).get("total_analyzed", 0),
+            "pending": sum(1 for p in papers if p.get("status") in ("pending", "analyzing")),
+        }
+    except json.JSONDecodeError:
+        return {**base_info, "phase": "INVALID JSON"}
+    except Exception:
+        return base_info
 
 
 def list_projects() -> list[dict]:
@@ -24,58 +52,8 @@ def list_projects() -> list[dict]:
         console.print("Create one with: [bold]research-ralph --new \"Your topic\"[/bold]")
         return []
 
-    project_info: list[dict] = []
+    project_info = [_get_project_info(p) for p in projects]
 
-    for project_path in projects:
-        rrd_path = project_path / "rrd.json"
-
-        try:
-            with open(rrd_path) as f:
-                rrd_data = json.load(f)
-
-            # Extract info
-            phase = rrd_data.get("phase", "UNKNOWN")
-            target = rrd_data.get("requirements", {}).get("target_papers", 0)
-            analyzed = rrd_data.get("statistics", {}).get("total_analyzed", 0)
-
-            # Count pending papers
-            papers = rrd_data.get("papers_pool", [])
-            pending = sum(1 for p in papers if p.get("status") in ("pending", "analyzing"))
-
-            project_info.append(
-                {
-                    "name": project_path.name,
-                    "path": project_path,
-                    "phase": phase,
-                    "target": target,
-                    "analyzed": analyzed,
-                    "pending": pending,
-                }
-            )
-        except json.JSONDecodeError:
-            project_info.append(
-                {
-                    "name": project_path.name,
-                    "path": project_path,
-                    "phase": "INVALID JSON",
-                    "target": 0,
-                    "analyzed": 0,
-                    "pending": 0,
-                }
-            )
-        except Exception as e:
-            project_info.append(
-                {
-                    "name": project_path.name,
-                    "path": project_path,
-                    "phase": "ERROR",
-                    "target": 0,
-                    "analyzed": 0,
-                    "pending": 0,
-                }
-            )
-
-    # Display table
     table = create_project_table(project_info)
     console.print(table)
     console.print()

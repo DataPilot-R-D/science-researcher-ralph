@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from ralph.models.paper import Paper
 
@@ -115,8 +115,7 @@ class ScoreDistribution(BaseModel):
     range_25_34: int = Field(default=0, alias="25-34")
     range_35_50: int = Field(default=0, alias="35-50")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class BlueOceanDistribution(BaseModel):
@@ -127,8 +126,7 @@ class BlueOceanDistribution(BaseModel):
     range_12_15: int = Field(default=0, alias="12-15")
     range_16_20: int = Field(default=0, alias="16-20")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class AnalysisMetrics(BaseModel):
@@ -190,8 +188,7 @@ class RRD(BaseModel):
     blocked_sources: list[str] = Field(default_factory=list)
     statistics: Statistics = Field(default_factory=Statistics)
 
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)
 
     @property
     def pending_papers(self) -> list[Paper]:

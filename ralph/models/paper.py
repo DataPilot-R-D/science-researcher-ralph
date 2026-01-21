@@ -4,7 +4,7 @@ from datetime import date as dt_date
 from enum import Enum
 from typing import Any, Optional, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PaperStatus(str, Enum):
@@ -83,5 +83,4 @@ class Paper(BaseModel):
     implementation_url: Optional[str] = Field(default=None, description="GitHub/implementation URL")
     commercialized: Optional[bool] = Field(default=None, description="Whether already commercialized")
 
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)

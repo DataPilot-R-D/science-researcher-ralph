@@ -80,6 +80,16 @@ def classify_error(output: str) -> ErrorType:
     return ErrorType.UNKNOWN
 
 
+RETRY_CONFIG: dict[ErrorType, tuple[int, bool]] = {
+    ErrorType.FORBIDDEN: (0, False),
+    ErrorType.BOT_CHALLENGE: (0, False),
+    ErrorType.RATE_LIMIT: (30, True),
+    ErrorType.TIMEOUT: (2, True),
+    ErrorType.NETWORK: (2, True),
+    ErrorType.UNKNOWN: (5, True),
+}
+
+
 def get_retry_delay(error_type: ErrorType) -> tuple[int, bool]:
     """
     Get retry delay and whether to retry for an error type.
@@ -87,16 +97,7 @@ def get_retry_delay(error_type: ErrorType) -> tuple[int, bool]:
     Returns:
         Tuple of (delay_seconds, should_retry)
     """
-    if error_type == ErrorType.FORBIDDEN:
-        return 0, False
-    if error_type == ErrorType.BOT_CHALLENGE:
-        return 0, False
-    if error_type == ErrorType.RATE_LIMIT:
-        return 30, True
-    if error_type in (ErrorType.TIMEOUT, ErrorType.NETWORK):
-        return 2, True
-
-    return 5, True
+    return RETRY_CONFIG.get(error_type, (5, True))
 
 
 def _get_repo_root() -> Path:
@@ -155,34 +156,12 @@ class AgentRunner:
         Returns:
             AgentResult with output and status
         """
-        if prompt_path is None:
-            prompt_path = self.script_dir / "prompt.md"
-
-        if not prompt_path.exists():
-            return AgentResult(
-                output=f"Prompt file not found: {prompt_path}",
-                exit_code=1,
-                success=False,
-                error_type="missing_prompt",
-            )
-
-        # Read and prepare prompt
-        with open(prompt_path) as f:
-            prompt_content = f.read()
-
-        # Inject research directory path
-        prompt_content = prompt_content.replace("{{RESEARCH_DIR}}", str(research_dir))
+        prompt_content, error = self._prepare_prompt(research_dir, prompt_path)
+        if error:
+            return error
 
         try:
-            if self.agent == Agent.AMP:
-                result = self._run_amp(prompt_content, timeout)
-            elif self.agent == Agent.CODEX:
-                result = self._run_codex(prompt_content, timeout)
-            else:  # CLAUDE
-                result = self._run_claude(prompt_content, timeout)
-
-            return result
-
+            return self._run_agent(prompt_content, timeout)  # type: ignore
         except subprocess.TimeoutExpired:
             return AgentResult(
                 output="Agent timed out",
@@ -198,113 +177,87 @@ class AgentRunner:
                 error_type=ErrorType.UNKNOWN.value,
             )
 
-    def _run_claude(self, prompt: str, timeout: int) -> AgentResult:
-        """Run Claude Code CLI."""
-        cmd = [
-            "claude",
-            "-p",
-            prompt,
-            "--dangerously-skip-permissions",
-            "--allowedTools",
-            "Bash,Read,Edit,Write,Grep,Glob,WebFetch,WebSearch",
-        ]
+    def _get_command_and_input(self, prompt: str) -> tuple[list[str], Optional[str]]:
+        """Get the command and optional stdin input for the agent."""
+        if self.agent == Agent.CLAUDE:
+            cmd = [
+                "claude", "-p", prompt,
+                "--dangerously-skip-permissions",
+                "--allowedTools", "Bash,Read,Edit,Write,Grep,Glob,WebFetch,WebSearch",
+            ]
+            return cmd, None
+        elif self.agent == Agent.AMP:
+            return ["amp", "--dangerously-allow-all"], prompt
+        else:  # CODEX
+            return ["codex", "exec", "--dangerously-bypass-approvals-and-sandbox", "-"], prompt
+
+    def _build_result(self, output: str, exit_code: int) -> AgentResult:
+        """Build an AgentResult from output and exit code."""
+        success = exit_code == 0
+        error_type = None if success else classify_error(output).value
+        return AgentResult(output=output, exit_code=exit_code, success=success, error_type=error_type)
+
+    def _run_agent(self, prompt: str, timeout: int) -> AgentResult:
+        """Run the agent and return the result."""
+        cmd, stdin_input = self._get_command_and_input(prompt)
+
+        # Codex requires special handling for last message output
+        if self.agent == Agent.CODEX:
+            return self._run_codex_with_output_file(cmd, stdin_input, timeout)
 
         result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
+            cmd, input=stdin_input, capture_output=True, text=True, timeout=timeout
         )
+        return self._build_result(result.stdout + result.stderr, result.returncode)
 
-        output = result.stdout + result.stderr
-        exit_code = result.returncode
-        success = exit_code == 0
-
-        error_type = None
-        if not success:
-            error_type = classify_error(output).value
-
-        return AgentResult(
-            output=output,
-            exit_code=exit_code,
-            success=success,
-            error_type=error_type,
-        )
-
-    def _run_amp(self, prompt: str, timeout: int) -> AgentResult:
-        """Run Amp CLI."""
-        result = subprocess.run(
-            ["amp", "--dangerously-allow-all"],
-            input=prompt,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-        )
-
-        output = result.stdout + result.stderr
-        exit_code = result.returncode
-        success = exit_code == 0
-
-        error_type = None
-        if not success:
-            error_type = classify_error(output).value
-
-        return AgentResult(
-            output=output,
-            exit_code=exit_code,
-            success=success,
-            error_type=error_type,
-        )
-
-    def _run_codex(self, prompt: str, timeout: int) -> AgentResult:
-        """Run Codex CLI."""
-        # Codex requires a temp file for last message output
+    def _run_codex_with_output_file(
+        self, base_cmd: list[str], stdin_input: Optional[str], timeout: int
+    ) -> AgentResult:
+        """Run Codex with temp file for last message output."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
             last_message_file = f.name
 
         try:
+            cmd = base_cmd[:-1] + ["--output-last-message", last_message_file, "-"]
             result = subprocess.run(
-                [
-                    "codex",
-                    "exec",
-                    "--dangerously-bypass-approvals-and-sandbox",
-                    "--output-last-message",
-                    last_message_file,
-                    "-",
-                ],
-                input=prompt,
-                capture_output=True,
-                text=True,
-                timeout=timeout,
+                cmd, input=stdin_input, capture_output=True, text=True, timeout=timeout
             )
 
-            # Read last message from file
+            last_message = ""
             try:
                 with open(last_message_file) as f:
                     last_message = f.read()
             except Exception:
-                last_message = ""
+                pass
 
-            output = result.stdout + result.stderr + last_message
-            exit_code = result.returncode
-            success = exit_code == 0
-
-            error_type = None
-            if not success:
-                error_type = classify_error(output).value
-
-            return AgentResult(
-                output=output,
-                exit_code=exit_code,
-                success=success,
-                error_type=error_type,
+            return self._build_result(
+                result.stdout + result.stderr + last_message, result.returncode
             )
         finally:
-            # Clean up temp file
             try:
                 os.unlink(last_message_file)
             except Exception:
                 pass
+
+    def _prepare_prompt(
+        self, research_dir: Path, prompt_path: Optional[Path]
+    ) -> tuple[Optional[str], Optional[AgentResult]]:
+        """Prepare prompt content, returning error result if prompt not found."""
+        if prompt_path is None:
+            prompt_path = self.script_dir / "prompt.md"
+
+        if not prompt_path.exists():
+            error = AgentResult(
+                output=f"Prompt file not found: {prompt_path}",
+                exit_code=1,
+                success=False,
+                error_type="missing_prompt",
+            )
+            return None, error
+
+        with open(prompt_path) as f:
+            content = f.read()
+        return content.replace("{{RESEARCH_DIR}}", str(research_dir)), None
 
     def run_streaming(
         self,
@@ -326,42 +279,13 @@ class AgentRunner:
         Returns:
             Final AgentResult
         """
-        if prompt_path is None:
-            prompt_path = self.script_dir / "prompt.md"
+        prompt_content, error = self._prepare_prompt(research_dir, prompt_path)
+        if error:
+            return error
 
-        if not prompt_path.exists():
-            return AgentResult(
-                output=f"Prompt file not found: {prompt_path}",
-                exit_code=1,
-                success=False,
-                error_type="missing_prompt",
-            )
+        cmd, stdin_input = self._get_command_and_input(prompt_content)  # type: ignore
+        use_stdin = stdin_input is not None
 
-        # Read and prepare prompt
-        with open(prompt_path) as f:
-            prompt_content = f.read()
-
-        prompt_content = prompt_content.replace("{{RESEARCH_DIR}}", str(research_dir))
-
-        # Build command based on agent
-        if self.agent == Agent.AMP:
-            cmd = ["amp", "--dangerously-allow-all"]
-            use_stdin = True
-        elif self.agent == Agent.CODEX:
-            cmd = ["codex", "exec", "--dangerously-bypass-approvals-and-sandbox", "-"]
-            use_stdin = True
-        else:  # CLAUDE
-            cmd = [
-                "claude",
-                "-p",
-                prompt_content,
-                "--dangerously-skip-permissions",
-                "--allowedTools",
-                "Bash,Read,Edit,Write,Grep,Glob,WebFetch,WebSearch",
-            ]
-            use_stdin = False
-
-        # Run with streaming
         process = subprocess.Popen(
             cmd,
             stdin=subprocess.PIPE if use_stdin else None,
@@ -372,7 +296,7 @@ class AgentRunner:
         )
 
         if use_stdin and process.stdin:
-            process.stdin.write(prompt_content)
+            process.stdin.write(stdin_input)  # type: ignore
             process.stdin.close()
 
         output_lines: list[str] = []
@@ -382,17 +306,4 @@ class AgentRunner:
                 yield line
 
         process.wait()
-        output = "".join(output_lines)
-        exit_code = process.returncode
-        success = exit_code == 0
-
-        error_type = None
-        if not success:
-            error_type = classify_error(output).value
-
-        return AgentResult(
-            output=output,
-            exit_code=exit_code,
-            success=success,
-            error_type=error_type,
-        )
+        return self._build_result("".join(output_lines), process.returncode or 0)

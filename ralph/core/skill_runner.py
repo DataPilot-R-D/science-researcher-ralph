@@ -1,5 +1,6 @@
 """Skill runner for executing Research-Ralph skills."""
 
+import json
 import re
 import subprocess
 from datetime import date
@@ -7,19 +8,13 @@ from pathlib import Path
 from typing import Optional
 
 from ralph.config import Agent, load_config
-from ralph.core.agent_runner import AgentRunner
+from ralph.core.agent_runner import AgentRunner, _get_repo_root
 
 
-def _get_repo_root() -> Path:
-    """Get the repository root directory."""
-    # Try to find repo root by looking for known markers
-    current = Path(__file__).resolve().parent
-    for _ in range(5):  # Max 5 levels up
-        if (current / "pyproject.toml").exists() or (current / "skills").exists():
-            return current
-        current = current.parent
-    # Fallback to package parent
-    return Path(__file__).parent.parent
+def _to_slug(text: str, max_length: int = 50) -> str:
+    """Convert text to a URL-friendly slug."""
+    slug = re.sub(r"[^a-z0-9]+", "-", text.lower())
+    return re.sub(r"^-|-$", "", slug)[:max_length]
 
 
 class SkillRunner:
@@ -98,6 +93,73 @@ class SkillRunner:
 
         return content
 
+    def _run_agent_with_prompt(self, agent: Agent, prompt: str) -> tuple[str, Optional[str]]:
+        """Run agent with prompt, returning (output, error_message)."""
+        try:
+            cmd, stdin_input = self._get_agent_command(agent, prompt)
+            result = subprocess.run(
+                cmd, input=stdin_input, capture_output=True, text=True, timeout=300
+            )
+            return result.stdout + result.stderr, None
+        except subprocess.TimeoutExpired:
+            return "", "Agent timed out"
+        except Exception as e:
+            return "", str(e)
+
+    def _get_agent_command(self, agent: Agent, prompt: str) -> tuple[list[str], Optional[str]]:
+        """Get command and optional stdin for agent."""
+        if agent == Agent.AMP:
+            return ["amp", "--dangerously-allow-all"], prompt
+        elif agent == Agent.CODEX:
+            return ["codex", "exec", "--dangerously-bypass-approvals-and-sandbox", "-"], prompt
+        else:  # CLAUDE
+            return [
+                "claude", "-p", prompt,
+                "--dangerously-skip-permissions",
+                "--allowedTools", "Bash,Read,Edit,Write,Grep,Glob,WebFetch,WebSearch",
+            ], None
+
+    def _finalize_project(
+        self, temp_path: Path, topic: str, output: str
+    ) -> tuple[Optional[Path], str]:
+        """Rename temp directory to final name and update rrd.json."""
+        rrd_path = temp_path / "rrd.json"
+        if not rrd_path.exists():
+            try:
+                temp_path.rmdir()
+            except Exception:
+                pass
+            return None, f"RRD file was not created. Agent output:\n{output}"
+
+        try:
+            with open(rrd_path) as f:
+                rrd_data = json.load(f)
+
+            project_name = rrd_data.get("project", "").replace("Research: ", "")
+            slug = _to_slug(project_name, 50) if project_name else _to_slug(topic, 40)
+
+            today = date.today().isoformat()
+            final_name = f"{slug}-{today}"
+            research_dir = temp_path.parent
+            final_path = research_dir / final_name
+
+            # Handle name collision
+            if final_path.exists():
+                counter = 1
+                while (research_dir / f"{final_name}-{counter}").exists():
+                    counter += 1
+                final_path = research_dir / f"{final_name}-{counter}"
+
+            temp_path.rename(final_path)
+
+            rrd_data["branchName"] = f"research/{slug}"
+            with open(final_path / "rrd.json", "w") as f:
+                json.dump(rrd_data, f, indent=2)
+
+            return final_path, output
+        except Exception as e:
+            return temp_path, f"Created research but failed to rename: {e}\n{output}"
+
     def run_rrd_skill(
         self,
         topic: str,
@@ -118,21 +180,14 @@ class SkillRunner:
         config = load_config()
         agent = agent or config.default_agent
 
-        # Get skill content
         skill_content = self.get_skill_content("rrd")
         if skill_content is None:
             return None, "RRD skill not found"
 
-        # Create temporary directory for the research in current directory
-        research_dir = Path.cwd()
         today = date.today().isoformat()
-        temp_name = f"rrd-temp-{today}"
-        temp_path = research_dir / temp_name
-
-        # Create temp directory
+        temp_path = Path.cwd() / f"rrd-temp-{today}"
         temp_path.mkdir(parents=True, exist_ok=True)
 
-        # Build full prompt
         prompt = f"""{skill_content}
 
 ---
@@ -154,97 +209,13 @@ Save all files to the research folder: {temp_path}/
 **Target Papers:** {target_papers}
 """
 
-        # Run agent
         runner = AgentRunner(agent, self.script_dir)
         if not runner.is_available():
             temp_path.rmdir()
             return None, f"Agent '{agent.value}' not available. {runner.get_install_instructions()}"
 
-        # Run the agent
-        try:
-            if agent == Agent.AMP:
-                result = subprocess.run(
-                    ["amp", "--dangerously-allow-all"],
-                    input=prompt,
-                    capture_output=True,
-                    text=True,
-                    timeout=300,
-                )
-            elif agent == Agent.CODEX:
-                result = subprocess.run(
-                    ["codex", "exec", "--dangerously-bypass-approvals-and-sandbox", "-"],
-                    input=prompt,
-                    capture_output=True,
-                    text=True,
-                    timeout=300,
-                )
-            else:  # CLAUDE
-                result = subprocess.run(
-                    [
-                        "claude",
-                        "-p",
-                        prompt,
-                        "--dangerously-skip-permissions",
-                        "--allowedTools",
-                        "Bash,Read,Edit,Write,Grep,Glob,WebFetch,WebSearch",
-                    ],
-                    capture_output=True,
-                    text=True,
-                    timeout=300,
-                )
+        output, error = self._run_agent_with_prompt(agent, prompt)
+        if error:
+            return None, error
 
-            output = result.stdout + result.stderr
-        except subprocess.TimeoutExpired:
-            return None, "Agent timed out"
-        except Exception as e:
-            return None, str(e)
-
-        # Check if rrd.json was created
-        rrd_path = temp_path / "rrd.json"
-        if not rrd_path.exists():
-            # Clean up
-            try:
-                temp_path.rmdir()
-            except Exception:
-                pass
-            return None, f"RRD file was not created. Agent output:\n{output}"
-
-        # Rename to final name based on project name
-        import json
-
-        try:
-            with open(rrd_path) as f:
-                rrd_data = json.load(f)
-
-            project_name = rrd_data.get("project", "").replace("Research: ", "")
-            if project_name:
-                # Convert to slug
-                slug = re.sub(r"[^a-z0-9]+", "-", project_name.lower())
-                slug = re.sub(r"^-|-$", "", slug)[:50]
-            else:
-                # Use topic
-                slug = re.sub(r"[^a-z0-9]+", "-", topic.lower())
-                slug = re.sub(r"^-|-$", "", slug)[:40]
-
-            final_name = f"{slug}-{today}"
-            final_path = research_dir / final_name
-
-            # Handle collision
-            if final_path.exists():
-                i = 1
-                while (research_dir / f"{final_name}-{i}").exists():
-                    i += 1
-                final_path = research_dir / f"{final_name}-{i}"
-
-            # Rename
-            temp_path.rename(final_path)
-
-            # Update branchName in rrd.json
-            rrd_data["branchName"] = f"research/{slug}"
-            with open(final_path / "rrd.json", "w") as f:
-                json.dump(rrd_data, f, indent=2)
-
-            return final_path, output
-
-        except Exception as e:
-            return temp_path, f"Created research but failed to rename: {e}\n{output}"
+        return self._finalize_project(temp_path, topic, output)

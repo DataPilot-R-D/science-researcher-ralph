@@ -120,6 +120,21 @@ class ResearchLoop:
 
         return errors
 
+    def _build_loop_result(
+        self, completed: bool, iterations: int, error_message: Optional[str] = None
+    ) -> LoopResult:
+        """Build a LoopResult from current RRD state."""
+        rrd = self.rrd_manager.load()
+        return LoopResult(
+            completed=completed,
+            iterations_run=iterations,
+            final_phase=rrd.phase,
+            total_analyzed=rrd.statistics.total_analyzed,
+            total_presented=rrd.statistics.total_presented,
+            total_insights=rrd.statistics.total_insights_extracted,
+            error_message=error_message,
+        )
+
     def run(self) -> LoopResult:
         """
         Run the research loop.
@@ -127,7 +142,6 @@ class ResearchLoop:
         Returns:
             LoopResult with final state
         """
-        # Validate first
         errors = self.validate()
         if errors:
             return LoopResult(
@@ -140,129 +154,104 @@ class ResearchLoop:
                 error_message="; ".join(errors),
             )
 
-        # Ensure progress file exists
         self.rrd_manager.ensure_progress_file()
-
-        # Create agent runner
         runner = AgentRunner(self.agent, self.project_path.parent)
 
-        # Main loop
         for i in range(1, self.max_iterations + 1):
             self.current_iteration = i
             result = self._run_iteration(runner, i)
 
             if not result.should_continue:
-                rrd = self.rrd_manager.load()
-                return LoopResult(
-                    completed=result.is_complete,
-                    iterations_run=i,
-                    final_phase=rrd.phase,
-                    total_analyzed=rrd.statistics.total_analyzed,
-                    total_presented=rrd.statistics.total_presented,
-                    total_insights=rrd.statistics.total_insights_extracted,
-                    error_message=result.error_message,
-                )
+                return self._build_loop_result(result.is_complete, i, result.error_message)
 
-        # Max iterations reached
-        rrd = self.rrd_manager.load()
-        return LoopResult(
-            completed=False,
-            iterations_run=self.max_iterations,
-            final_phase=rrd.phase,
-            total_analyzed=rrd.statistics.total_analyzed,
-            total_presented=rrd.statistics.total_presented,
-            total_insights=rrd.statistics.total_insights_extracted,
-            error_message=f"Max iterations ({self.max_iterations}) reached",
+        return self._build_loop_result(
+            False, self.max_iterations, f"Max iterations ({self.max_iterations}) reached"
         )
 
-    def _run_iteration(self, runner: AgentRunner, iteration: int) -> IterationResult:
-        """Run a single iteration of the loop."""
-        # Load current state
+    def _ensure_valid_phase(self) -> Phase:
+        """Ensure phase is valid, reverting to DISCOVERY if needed."""
         rrd = self.rrd_manager.load()
         phase = rrd.phase
-        analyzed_before = rrd.statistics.total_analyzed
 
-        # Check for phase validation (ANALYSIS needs enough papers)
-        if phase == Phase.ANALYSIS:
-            pool_count = len(rrd.papers_pool)
-            target_count = rrd.requirements.target_papers
-            if pool_count < target_count:
-                # Revert to DISCOVERY
-                rrd.phase = Phase.DISCOVERY
-                self.rrd_manager.save()
-                phase = Phase.DISCOVERY
+        if phase == Phase.ANALYSIS and len(rrd.papers_pool) < rrd.requirements.target_papers:
+            rrd.phase = Phase.DISCOVERY
+            self.rrd_manager.save()
+            return Phase.DISCOVERY
+        return phase
 
-        # Callback
-        if self.on_iteration_start:
-            self.on_iteration_start(iteration, phase)
-
-        # Run agent
+    def _run_agent(self, runner: AgentRunner) -> AgentResult:
+        """Run the agent, with streaming if enabled."""
         if self.live_output and self.on_output:
-            # Streaming mode
-            output_lines: list[str] = []
             gen = runner.run_streaming(self.project_path)
             try:
                 for line in gen:
-                    output_lines.append(line)
                     self.on_output(line)
-                # Get final result from generator return
-                agent_result = gen.send(None)  # type: ignore
+                return gen.send(None)  # type: ignore
             except StopIteration as e:
-                agent_result = e.value
-        else:
-            # Non-streaming mode
-            agent_result = runner.run(self.project_path)
+                return e.value
+        return runner.run(self.project_path)
 
-        # Handle failure
+    def _is_research_complete(self, agent_result: AgentResult) -> bool:
+        """Check if research is complete based on agent result and RRD state."""
+        rrd = self.rrd_manager.load()
+        pending_count = len(rrd.pending_papers) + len(rrd.analyzing_papers)
+        has_analyzed = rrd.statistics.total_analyzed > 0
+
+        # Complete if explicit signal or COMPLETE phase, with no pending work
+        if (agent_result.is_complete or rrd.phase == Phase.COMPLETE) and pending_count == 0 and has_analyzed:
+            return True
+        return False
+
+    def _handle_failure(
+        self, iteration: int, phase: Phase, agent_result: AgentResult
+    ) -> IterationResult:
+        """Handle agent failure and return appropriate result."""
+        self.consecutive_failures += 1
+        error_type = ErrorType(agent_result.error_type) if agent_result.error_type else ErrorType.UNKNOWN
+        delay, should_retry = get_retry_delay(error_type)
+
+        too_many_failures = self.consecutive_failures >= self.max_consecutive_failures
+        should_continue = should_retry and not too_many_failures
+
+        error_msg = f"{error_type.value}: {agent_result.output[:200]}"
+        if too_many_failures:
+            error_msg = f"Too many consecutive failures ({self.consecutive_failures})"
+
+        result = IterationResult(
+            iteration=iteration,
+            success=False,
+            agent_result=agent_result,
+            phase=phase,
+            should_continue=should_continue,
+            error_message=error_msg,
+        )
+
+        if self.on_iteration_end:
+            self.on_iteration_end(result)
+
+        if should_retry and delay > 0:
+            time.sleep(delay)
+
+        return result
+
+    def _run_iteration(self, runner: AgentRunner, iteration: int) -> IterationResult:
+        """Run a single iteration of the loop."""
+        analyzed_before = self.rrd_manager.load().statistics.total_analyzed
+        phase = self._ensure_valid_phase()
+
+        if self.on_iteration_start:
+            self.on_iteration_start(iteration, phase)
+
+        agent_result = self._run_agent(runner)
+
         if not agent_result.success:
-            self.consecutive_failures += 1
-            error_type = ErrorType(agent_result.error_type) if agent_result.error_type else ErrorType.UNKNOWN
+            return self._handle_failure(iteration, phase, agent_result)
 
-            delay, should_retry = get_retry_delay(error_type)
-
-            result = IterationResult(
-                iteration=iteration,
-                success=False,
-                agent_result=agent_result,
-                phase=phase,
-                should_continue=should_retry and self.consecutive_failures < self.max_consecutive_failures,
-                error_message=f"{error_type.value}: {agent_result.output[:200]}",
-            )
-
-            if self.on_iteration_end:
-                self.on_iteration_end(result)
-
-            if should_retry and delay > 0:
-                time.sleep(delay)
-
-            if self.consecutive_failures >= self.max_consecutive_failures:
-                result.should_continue = False
-                result.error_message = f"Too many consecutive failures ({self.consecutive_failures})"
-
-            return result
-
-        # Success - reset failure counter
         self.consecutive_failures = 0
 
-        # Reload RRD to get updated state
         rrd = self.rrd_manager.load()
-        analyzed_after = rrd.statistics.total_analyzed
-        papers_delta = analyzed_after - analyzed_before
-
-        # Check for completion
-        is_complete = False
-
-        # Primary: explicit completion signal
-        if agent_result.is_complete:
-            pending_count = len(rrd.pending_papers) + len(rrd.analyzing_papers)
-            if pending_count == 0 and analyzed_after > 0:
-                is_complete = True
-
-        # Fallback: phase is COMPLETE
-        if rrd.phase == Phase.COMPLETE:
-            pending_count = len(rrd.pending_papers) + len(rrd.analyzing_papers)
-            if pending_count == 0 and analyzed_after > 0:
-                is_complete = True
+        papers_delta = rrd.statistics.total_analyzed - analyzed_before
+        is_complete = self._is_research_complete(agent_result)
 
         result = IterationResult(
             iteration=iteration,
@@ -277,7 +266,6 @@ class ResearchLoop:
         if self.on_iteration_end:
             self.on_iteration_end(result)
 
-        # Small delay between iterations
         if not is_complete:
             time.sleep(2)
 

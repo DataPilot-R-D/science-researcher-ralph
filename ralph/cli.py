@@ -7,7 +7,7 @@ import typer
 from rich.console import Console
 
 from ralph import __version__, __app_name__
-from ralph.config import get_config_value, set_config_value, load_config
+from ralph.config import Config, get_config_value, set_config_value, load_config
 from ralph.ui.console import console, print_error, print_success, print_info, SimpsonsColors
 
 # Create Typer app
@@ -212,8 +212,7 @@ def handle_config(config_arg: str) -> None:
             print_error(f"Unknown config key: {key}")
             console.print()
             console.print("Available keys:")
-            cfg = load_config()
-            for field in cfg.model_fields:
+            for field in Config.model_fields:
                 console.print(f"  - {field}")
             raise typer.Exit(1)
     else:

@@ -1,5 +1,6 @@
 """Interactive menu mode for Research-Ralph."""
 
+import json
 import os
 import time
 from pathlib import Path
@@ -7,7 +8,6 @@ from typing import Optional
 
 import questionary
 from questionary import Style
-from rich.panel import Panel
 
 from ralph import __version__
 from ralph.config import (
@@ -24,7 +24,6 @@ from ralph.commands.status import show_status
 from ralph.ui.console import console, print_info, SimpsonsColors
 
 
-# Custom questionary style using Simpsons colors
 MENU_STYLE = Style(
     [
         ("question", "bold"),
@@ -34,6 +33,46 @@ MENU_STYLE = Style(
         ("selected", f"fg:{SimpsonsColors.PINK}"),
     ]
 )
+
+AGENT_CHOICES = [
+    questionary.Choice("Claude", value="claude"),
+    questionary.Choice("Amp", value="amp"),
+    questionary.Choice("Codex", value="codex"),
+]
+
+
+def _get_project_label(project_path: Path) -> str:
+    """Get a display label for a project with status info."""
+    try:
+        with open(project_path / "rrd.json") as f:
+            rrd = json.load(f)
+        phase = rrd.get("phase", "?")
+        analyzed = rrd.get("statistics", {}).get("total_analyzed", 0)
+        target = rrd.get("requirements", {}).get("target_papers", "?")
+        return f"{project_path.name} [{phase}] ({analyzed}/{target} papers)"
+    except Exception:
+        return project_path.name
+
+
+def _select_project(prompt: str, include_status: bool = False) -> Optional[Path]:
+    """Show project selection menu, returning selected path or None."""
+    projects = list_research_projects()
+
+    if not projects:
+        console.print()
+        print_info("No research projects found. Create one first!")
+        return None
+
+    choices = []
+    for p in projects:
+        label = _get_project_label(p) if include_status else p.name
+        choices.append(questionary.Choice(label, value=p))
+
+    choices.append(questionary.Separator())
+    choices.append(questionary.Choice("Back to main menu", value=None))
+
+    console.print()
+    return questionary.select(prompt, choices=choices, style=MENU_STYLE).ask()
 
 
 ASCII_BANNER = """
@@ -112,117 +151,51 @@ def main_menu() -> None:
 
 def run_menu() -> None:
     """Show menu for running a research project."""
-    projects = list_research_projects()
-
-    if not projects:
-        console.print()
-        print_info("No research projects found. Create one first!")
-        return
-
-    # Build choices
-    choices = []
-    for p in projects:
-        # Try to get project info
-        rrd_path = p / "rrd.json"
-        try:
-            import json
-
-            with open(rrd_path) as f:
-                rrd = json.load(f)
-            phase = rrd.get("phase", "?")
-            analyzed = rrd.get("statistics", {}).get("total_analyzed", 0)
-            target = rrd.get("requirements", {}).get("target_papers", "?")
-            label = f"{p.name} [{phase}] ({analyzed}/{target} papers)"
-        except Exception:
-            label = p.name
-
-        choices.append(questionary.Choice(label, value=p))
-
-    choices.append(questionary.Separator())
-    choices.append(questionary.Choice("Back to main menu", value=None))
-
-    console.print()
-    project = questionary.select(
-        "Select a research project to run:",
-        choices=choices,
-        style=MENU_STYLE,
-    ).ask()
-
+    project = _select_project("Select a research project to run:", include_status=True)
     if project is None:
         return
 
-    # Ask for options
     console.print()
     use_defaults = questionary.confirm(
-        "Use default settings?",
-        default=True,
-        style=MENU_STYLE,
+        "Use default settings?", default=True, style=MENU_STYLE
     ).ask()
 
     if use_defaults:
         run_research(str(project))
-    else:
-        # Get custom options
-        papers = questionary.text(
-            "Target papers (leave empty to use existing):",
-            style=MENU_STYLE,
-        ).ask()
+        return
 
-        iterations = questionary.text(
-            "Max iterations (leave empty for auto):",
-            style=MENU_STYLE,
-        ).ask()
+    papers = questionary.text(
+        "Target papers (leave empty to use existing):", style=MENU_STYLE
+    ).ask()
 
-        config = load_config()
-        agent = questionary.select(
-            "Agent to use:",
-            choices=[
-                questionary.Choice("Claude", value="claude"),
-                questionary.Choice("Amp", value="amp"),
-                questionary.Choice("Codex", value="codex"),
-            ],
-            default=config.default_agent.value,
-            style=MENU_STYLE,
-        ).ask()
+    iterations = questionary.text(
+        "Max iterations (leave empty for auto):", style=MENU_STYLE
+    ).ask()
 
-        run_research(
-            str(project),
-            papers=int(papers) if papers else None,
-            iterations=int(iterations) if iterations else None,
-            agent=agent,
-        )
+    config = load_config()
+    agent = questionary.select(
+        "Agent to use:",
+        choices=AGENT_CHOICES,
+        default=config.default_agent.value,
+        style=MENU_STYLE,
+    ).ask()
+
+    run_research(
+        str(project),
+        papers=int(papers) if papers else None,
+        iterations=int(iterations) if iterations else None,
+        agent=agent,
+    )
 
 
 def status_menu() -> None:
     """Show menu for viewing project status."""
-    projects = list_research_projects()
-
-    if not projects:
-        console.print()
-        print_info("No research projects found. Create one first!")
-        return
-
-    # Build choices
-    choices = []
-    for p in projects:
-        choices.append(questionary.Choice(p.name, value=p))
-
-    choices.append(questionary.Separator())
-    choices.append(questionary.Choice("Back to main menu", value=None))
-
-    console.print()
-    project = questionary.select(
-        "Select a research project:",
-        choices=choices,
-        style=MENU_STYLE,
-    ).ask()
-
+    project = _select_project("Select a research project:")
     if project is None:
         return
 
     show_status(str(project))
 
-    # Offer actions
     console.print()
     action = questionary.select(
         "What would you like to do?",
@@ -240,17 +213,21 @@ def status_menu() -> None:
         reset_project(str(project))
 
 
-def config_menu() -> None:
-    """Show menu for configuring settings."""
-    config = load_config()
-
+def _print_config(config, title: str = "Current Settings") -> None:
+    """Print configuration values."""
     console.print()
-    console.print("[bold]Current Settings[/bold]")
+    console.print(f"[bold]{title}[/bold]")
     console.print(f"  Research directory: {config.research_dir}")
     console.print(f"  Default agent: {config.default_agent.value}")
     console.print(f"  Default papers: {config.default_papers}")
     console.print(f"  Live output: {config.live_output}")
     console.print()
+
+
+def config_menu() -> None:
+    """Show menu for configuring settings."""
+    config = load_config()
+    _print_config(config)
 
     while True:
         choice = questionary.select(
@@ -270,7 +247,8 @@ def config_menu() -> None:
             save_config(config)
             print_info("Settings saved!")
             break
-        elif choice == "research_dir":
+
+        if choice == "research_dir":
             new_dir = questionary.path(
                 "Research directory:",
                 default=str(config.research_dir),
@@ -282,11 +260,7 @@ def config_menu() -> None:
         elif choice == "default_agent":
             new_agent = questionary.select(
                 "Default agent:",
-                choices=[
-                    questionary.Choice("Claude", value="claude"),
-                    questionary.Choice("Amp", value="amp"),
-                    questionary.Choice("Codex", value="codex"),
-                ],
+                choices=AGENT_CHOICES,
                 default=config.default_agent.value,
                 style=MENU_STYLE,
             ).ask()
@@ -308,11 +282,4 @@ def config_menu() -> None:
                 style=MENU_STYLE,
             ).ask()
 
-        # Show updated settings
-        console.print()
-        console.print("[dim]Updated settings:[/dim]")
-        console.print(f"  Research directory: {config.research_dir}")
-        console.print(f"  Default agent: {config.default_agent.value}")
-        console.print(f"  Default papers: {config.default_papers}")
-        console.print(f"  Live output: {config.live_output}")
-        console.print()
+        _print_config(config, "[dim]Updated settings[/dim]")
