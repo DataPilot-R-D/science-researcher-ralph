@@ -8,6 +8,24 @@ from ralph.ui.console import console, print_info
 from ralph.ui.tables import create_project_table
 
 
+def _infer_phase(rrd: dict, project_path: Path) -> str:
+    """Infer phase from statistics when stored phase may be inconsistent."""
+    stored_phase = rrd.get("phase", "DISCOVERY")
+    stats = rrd.get("statistics", {})
+    reqs = rrd.get("requirements", {})
+
+    total_analyzed = stats.get("total_analyzed", 0)
+    target = reqs.get("target_papers", 0)
+
+    # If in IDEATION but product-ideas.json exists → should be COMPLETE
+    if stored_phase == "IDEATION":
+        product_ideas_path = project_path / "product-ideas.json"
+        if product_ideas_path.exists() and total_analyzed >= target and target > 0:
+            return "COMPLETE"
+
+    return stored_phase
+
+
 def _get_project_info(project_path: Path) -> dict:
     """Extract project info from a project path."""
     base_info = {
@@ -26,7 +44,7 @@ def _get_project_info(project_path: Path) -> dict:
         papers = rrd.get("papers_pool", [])
         return {
             **base_info,
-            "phase": rrd.get("phase", "UNKNOWN"),
+            "phase": _infer_phase(rrd, project_path),
             "target": rrd.get("requirements", {}).get("target_papers", 0),
             "analyzed": rrd.get("statistics", {}).get("total_analyzed", 0),
             "pending": sum(1 for p in papers if p.get("status") in ("pending", "analyzing")),

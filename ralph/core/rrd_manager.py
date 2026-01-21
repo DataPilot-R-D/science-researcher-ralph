@@ -198,9 +198,18 @@ Reset: {datetime.now().isoformat()}
     def get_summary(self) -> dict:
         """Get a summary of the RRD state."""
         rrd = self.load()
+        phase = rrd.phase
+
+        # Infer COMPLETE if IDEATION but product-ideas.json exists
+        if phase == Phase.IDEATION:
+            product_ideas_path = self.project_path / "product-ideas.json"
+            target = rrd.requirements.target_papers
+            if product_ideas_path.exists() and rrd.statistics.total_analyzed >= target and target > 0:
+                phase = Phase.COMPLETE
+
         return {
             "project": rrd.project,
-            "phase": rrd.phase,
+            "phase": phase,
             "target_papers": rrd.requirements.target_papers,
             "pool_size": len(rrd.papers_pool),
             "analyzed": rrd.statistics.total_analyzed,
