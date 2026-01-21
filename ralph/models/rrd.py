@@ -166,6 +166,15 @@ class DomainGlossary(BaseModel):
     terms: dict[str, str] = Field(default_factory=dict)
 
 
+class OpenQuestion(BaseModel):
+    """An open question about research direction."""
+
+    field: str = Field(..., description="RRD field this question relates to")
+    question: str = Field(..., description="The question text")
+    options: list[str] = Field(default_factory=list, description="Available options")
+    current_default: str = Field(default="", description="Current default answer")
+
+
 class RRD(BaseModel):
     """Research Requirements Document - the main research state."""
 
@@ -176,7 +185,7 @@ class RRD(BaseModel):
     mission: Mission = Field(default_factory=Mission)
     requirements: Requirements
     domain_glossary: DomainGlossary = Field(default_factory=DomainGlossary)
-    open_questions: list[str] = Field(default_factory=list)
+    open_questions: list[OpenQuestion] = Field(default_factory=list)
 
     phase: Phase = Field(default=Phase.DISCOVERY)
     timing: Timing = Field(default_factory=Timing)

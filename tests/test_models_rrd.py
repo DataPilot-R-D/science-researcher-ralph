@@ -23,6 +23,7 @@ from ralph.models.rrd import (
     ScoreDistribution,
     BlueOceanDistribution,
     DomainGlossary,
+    OpenQuestion,
 )
 
 
@@ -510,7 +511,7 @@ class TestRRD:
             mission=Mission(blue_ocean_scoring=True, min_combined_score=30),
             requirements=sample_requirements,
             domain_glossary=DomainGlossary(enabled=True, terms={"AI": "Artificial Intelligence"}),
-            open_questions=["What is the best approach?"],
+            open_questions=[OpenQuestion(field="approach", question="What is the best approach?", options=["A", "B"], current_default="A")],
             phase=Phase.ANALYSIS,
             papers_pool=[
                 Paper(id="1", title="P1", url="http://1"),
@@ -534,7 +535,7 @@ class TestRRD:
             mission=Mission(blue_ocean_scoring=True, min_combined_score=30),
             requirements=sample_requirements,
             domain_glossary=DomainGlossary(enabled=True, terms={"AI": "Artificial Intelligence"}),
-            open_questions=["Will this roundtrip?"],
+            open_questions=[OpenQuestion(field="roundtrip", question="Will this roundtrip?", options=["Yes", "No"], current_default="Yes")],
             phase=Phase.ANALYSIS,
             papers_pool=[
                 Paper(id="p1", title="Paper 1", url="http://example.com/1", status=PaperStatus.PRESENTED),
