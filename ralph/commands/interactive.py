@@ -15,13 +15,15 @@ from ralph.config import (
     load_config,
     save_config,
     list_research_projects,
+    check_initialization_status,
+    ensure_current_dir_initialized,
 )
 from ralph.commands.create import create_project_interactive
 from ralph.commands.list_cmd import list_projects
 from ralph.commands.reset import reset_project
 from ralph.commands.run import run_research
 from ralph.commands.status import show_status
-from ralph.ui.console import console, print_info, SimpsonsColors
+from ralph.ui.console import console, print_info, print_success, SimpsonsColors
 
 
 MENU_STYLE = Style(
@@ -39,6 +41,63 @@ AGENT_CHOICES = [
     questionary.Choice("Amp", value="amp"),
     questionary.Choice("Codex", value="codex"),
 ]
+
+
+def check_and_prompt_init() -> bool:
+    """
+    Check initialization status and prompt user if anything is missing.
+
+    Returns True if initialization was performed, False otherwise.
+    """
+    status = check_initialization_status()
+
+    # Check if anything needs initialization
+    config_missing = status["config_missing"]
+    git_missing = status["git_missing"]
+    files_missing = status["files_missing"]
+
+    if not config_missing and not git_missing and not files_missing:
+        return False  # Nothing to do
+
+    # Show what's missing
+    console.print()
+    console.print("[bold]Research-Ralph needs initialization:[/bold]")
+    console.print()
+
+    if config_missing:
+        console.print("  [red]✗[/red] Config file missing (~/.research-ralph/config.yaml)")
+    if git_missing:
+        console.print("  [red]✗[/red] Git not initialized")
+    if files_missing:
+        console.print(f"  [red]✗[/red] Template files missing: {', '.join(files_missing)}")
+
+    console.print()
+
+    # Prompt user
+    proceed = questionary.confirm(
+        "Initialize Research-Ralph?",
+        default=True,
+        style=MENU_STYLE,
+    ).ask()
+
+    if not proceed:
+        return False
+
+    # Perform initialization
+    result = ensure_current_dir_initialized()
+
+    # Show results
+    console.print()
+    if result["config_created"]:
+        print_success("Created ~/.research-ralph/config.yaml")
+    if result["git_initialized"]:
+        print_success("Initialized git repository")
+    if result["files_created"]:
+        files = ", ".join(result["files_created"])
+        print_success(f"Created template files: {files}")
+
+    console.print()
+    return True
 
 
 def _get_project_label(project_path: Path) -> str:
@@ -120,6 +179,9 @@ def show_banner() -> None:
 
 def main_menu() -> None:
     """Show the main interactive menu."""
+    # Check for missing initialization before showing menu
+    check_and_prompt_init()
+
     show_banner()
 
     while True:

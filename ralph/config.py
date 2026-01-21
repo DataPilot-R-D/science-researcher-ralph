@@ -247,6 +247,34 @@ def ensure_research_dir() -> Path:
     return config.research_dir
 
 
+def check_initialization_status() -> dict[str, object]:
+    """
+    Check what initialization is needed (without performing any actions).
+
+    Returns:
+        Dict with keys:
+        - config_missing: True if ~/.research-ralph/config.yaml doesn't exist
+        - git_missing: True if .git doesn't exist in cwd
+        - files_missing: list of missing template files
+    """
+    cwd = Path.cwd()
+    templates = ["AGENTS.md", "CLAUDE.md", "prompt.md", "MISSION.md"]
+
+    missing_files = [f for f in templates if not (cwd / f).exists()]
+
+    return {
+        "config_missing": not CONFIG_FILE.exists(),
+        "git_missing": not (cwd / ".git").exists(),
+        "files_missing": missing_files,
+    }
+
+
+def needs_initialization() -> bool:
+    """Check if any initialization is needed."""
+    status = check_initialization_status()
+    return status["config_missing"] or status["git_missing"] or bool(status["files_missing"])
+
+
 def ensure_current_dir_initialized() -> dict[str, object]:
     """
     Ensure current directory is fully initialized for Research-Ralph.

@@ -335,44 +335,63 @@ def cmd_config(
 
 
 @app.command("init")
-def cmd_init() -> None:
+def cmd_init(
+    yes: Annotated[
+        bool,
+        typer.Option("--yes", "-y", help="Skip prompts and initialize all"),
+    ] = False,
+) -> None:
     """Initialize current directory for Research-Ralph.
 
     Performs:
     - Creates ~/.research-ralph/config.yaml if missing
     - Initializes git repo if not present
     - Creates AGENTS.md, CLAUDE.md, prompt.md, MISSION.md if missing
+
+    By default, prompts before initializing. Use -y to skip prompts.
     """
-    from ralph.config import ensure_current_dir_initialized
+    from ralph.config import check_initialization_status, ensure_current_dir_initialized
 
-    result = ensure_current_dir_initialized()
-    config_created = result["config_created"]
-    git_initialized = result["git_initialized"]
-    files_created = result["files_created"]
+    if yes:
+        # Non-interactive mode: just initialize everything
+        result = ensure_current_dir_initialized()
+        config_created = result["config_created"]
+        git_initialized = result["git_initialized"]
+        files_created = result["files_created"]
 
-    any_changes = config_created or git_initialized or files_created
+        any_changes = config_created or git_initialized or files_created
 
-    if any_changes:
-        console.print()
-        print_success("Initialized Research-Ralph")
-        console.print()
-
-        if config_created:
-            console.print("[dim]Created config:[/dim]")
-            console.print("  - ~/.research-ralph/config.yaml")
+        if any_changes:
+            console.print()
+            print_success("Initialized Research-Ralph")
             console.print()
 
-        if git_initialized:
-            console.print("[dim]Initialized git repository[/dim]")
-            console.print()
+            if config_created:
+                console.print("[dim]Created config:[/dim]")
+                console.print("  - ~/.research-ralph/config.yaml")
+                console.print()
 
-        if files_created:
-            console.print("[dim]Created template files:[/dim]")
-            for f in files_created:
-                console.print(f"  - {f}")
-            console.print()
+            if git_initialized:
+                console.print("[dim]Initialized git repository[/dim]")
+                console.print()
+
+            if files_created:
+                console.print("[dim]Created template files:[/dim]")
+                for f in files_created:
+                    console.print(f"  - {f}")
+                console.print()
+        else:
+            print_info("Already initialized (config, git, and template files present)")
     else:
-        print_info("Already initialized (config, git, and template files present)")
+        # Interactive mode: use the interactive prompt
+        from ralph.commands.interactive import check_and_prompt_init
+
+        initialized = check_and_prompt_init()
+        if not initialized:
+            # User declined or nothing to do
+            status = check_initialization_status()
+            if not status["config_missing"] and not status["git_missing"] and not status["files_missing"]:
+                print_info("Already initialized (config, git, and template files present)")
 
 
 if __name__ == "__main__":

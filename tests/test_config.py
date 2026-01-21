@@ -15,6 +15,8 @@ from ralph.config import (
     resolve_research_path,
     list_research_projects,
     ensure_research_dir,
+    check_initialization_status,
+    needs_initialization,
     ensure_current_dir_initialized,
     get_config_dir,
     CONFIG_DIR,
@@ -747,3 +749,121 @@ class TestEnsureCurrentDirInitialized:
         # Should not crash, just skip git init
         assert result["git_initialized"] is False
         assert not (tmp_path / ".git").exists()
+
+
+class TestCheckInitializationStatus:
+    """Tests for check_initialization_status function."""
+
+    def test_all_missing(self, tmp_path, monkeypatch):
+        """Returns all missing when nothing is initialized."""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", tmp_path / "nonexistent.yaml")
+
+        status = check_initialization_status()
+
+        assert status["config_missing"] is True
+        assert status["git_missing"] is True
+        assert len(status["files_missing"]) == 4
+
+    def test_nothing_missing(self, tmp_path, monkeypatch):
+        """Returns nothing missing when fully initialized."""
+        monkeypatch.chdir(tmp_path)
+
+        # Create config
+        config_file = tmp_path / "config.yaml"
+        config_file.write_text("default_papers: 20")
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+
+        # Create git
+        (tmp_path / ".git").mkdir()
+
+        # Create template files
+        for f in ["AGENTS.md", "CLAUDE.md", "prompt.md", "MISSION.md"]:
+            (tmp_path / f).write_text(f"# {f}")
+
+        status = check_initialization_status()
+
+        assert status["config_missing"] is False
+        assert status["git_missing"] is False
+        assert status["files_missing"] == []
+
+    def test_partial_missing(self, tmp_path, monkeypatch):
+        """Returns only missing items when partially initialized."""
+        monkeypatch.chdir(tmp_path)
+
+        # Create config
+        config_file = tmp_path / "config.yaml"
+        config_file.write_text("default_papers: 20")
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+
+        # Create git but NOT template files
+        (tmp_path / ".git").mkdir()
+
+        status = check_initialization_status()
+
+        assert status["config_missing"] is False
+        assert status["git_missing"] is False
+        assert len(status["files_missing"]) == 4
+
+    def test_some_files_missing(self, tmp_path, monkeypatch):
+        """Returns only missing files when some exist."""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", tmp_path / "config.yaml")
+
+        # Create some template files
+        (tmp_path / "AGENTS.md").write_text("# Agents")
+        (tmp_path / "CLAUDE.md").write_text("# Claude")
+
+        status = check_initialization_status()
+
+        assert "AGENTS.md" not in status["files_missing"]
+        assert "CLAUDE.md" not in status["files_missing"]
+        assert "prompt.md" in status["files_missing"]
+        assert "MISSION.md" in status["files_missing"]
+
+
+class TestNeedsInitialization:
+    """Tests for needs_initialization function."""
+
+    def test_returns_true_when_config_missing(self, tmp_path, monkeypatch):
+        """Returns True when config is missing."""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", tmp_path / "nonexistent.yaml")
+        (tmp_path / ".git").mkdir()
+        for f in ["AGENTS.md", "CLAUDE.md", "prompt.md", "MISSION.md"]:
+            (tmp_path / f).write_text(f"# {f}")
+
+        assert needs_initialization() is True
+
+    def test_returns_true_when_git_missing(self, tmp_path, monkeypatch):
+        """Returns True when git is missing."""
+        monkeypatch.chdir(tmp_path)
+        config_file = tmp_path / "config.yaml"
+        config_file.write_text("default_papers: 20")
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+        for f in ["AGENTS.md", "CLAUDE.md", "prompt.md", "MISSION.md"]:
+            (tmp_path / f).write_text(f"# {f}")
+
+        assert needs_initialization() is True
+
+    def test_returns_true_when_files_missing(self, tmp_path, monkeypatch):
+        """Returns True when template files are missing."""
+        monkeypatch.chdir(tmp_path)
+        config_file = tmp_path / "config.yaml"
+        config_file.write_text("default_papers: 20")
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+        (tmp_path / ".git").mkdir()
+
+        assert needs_initialization() is True
+
+    def test_returns_false_when_all_initialized(self, tmp_path, monkeypatch):
+        """Returns False when everything is initialized."""
+        monkeypatch.chdir(tmp_path)
+        config_file = tmp_path / "config.yaml"
+        config_file.write_text("default_papers: 20")
+        monkeypatch.setattr("ralph.config.CONFIG_FILE", config_file)
+        (tmp_path / ".git").mkdir()
+        for f in ["AGENTS.md", "CLAUDE.md", "prompt.md", "MISSION.md"]:
+            (tmp_path / f).write_text(f"# {f}")
+
+        assert needs_initialization() is False

@@ -302,8 +302,8 @@ class TestCLISubcommands:
 
         assert result.exit_code == 0
 
-    def test_init_subcommand_creates_all(self, tmp_path, monkeypatch):
-        """Test 'init' subcommand creates config, git, and files."""
+    def test_init_subcommand_with_yes_creates_all(self, tmp_path, monkeypatch):
+        """Test 'init -y' creates config, git, and files without prompts."""
         monkeypatch.chdir(tmp_path)
 
         with patch("ralph.config.ensure_current_dir_initialized") as mock_init:
@@ -313,7 +313,7 @@ class TestCLISubcommands:
                 "files_created": ["AGENTS.md", "CLAUDE.md"],
             }
 
-            result = runner.invoke(app, ["init"])
+            result = runner.invoke(app, ["init", "-y"])
 
             assert result.exit_code == 0
             mock_init.assert_called_once()
@@ -321,8 +321,8 @@ class TestCLISubcommands:
             assert "config" in result.stdout.lower()
             assert "git" in result.stdout.lower()
 
-    def test_init_subcommand_creates_only_files(self, tmp_path, monkeypatch):
-        """Test 'init' subcommand when only files need creation."""
+    def test_init_subcommand_with_yes_creates_only_files(self, tmp_path, monkeypatch):
+        """Test 'init -y' when only files need creation."""
         monkeypatch.chdir(tmp_path)
 
         with patch("ralph.config.ensure_current_dir_initialized") as mock_init:
@@ -332,14 +332,14 @@ class TestCLISubcommands:
                 "files_created": ["prompt.md", "MISSION.md"],
             }
 
-            result = runner.invoke(app, ["init"])
+            result = runner.invoke(app, ["init", "-y"])
 
             assert result.exit_code == 0
             assert "prompt.md" in result.stdout
             assert "MISSION.md" in result.stdout
 
-    def test_init_subcommand_already_initialized(self, tmp_path, monkeypatch):
-        """Test 'init' subcommand when already initialized."""
+    def test_init_subcommand_with_yes_already_initialized(self, tmp_path, monkeypatch):
+        """Test 'init -y' when already initialized."""
         monkeypatch.chdir(tmp_path)
 
         with patch("ralph.config.ensure_current_dir_initialized") as mock_init:
@@ -349,7 +349,43 @@ class TestCLISubcommands:
                 "files_created": [],
             }
 
-            result = runner.invoke(app, ["init"])
+            result = runner.invoke(app, ["init", "-y"])
 
             assert result.exit_code == 0
             assert "already initialized" in result.stdout.lower()
+
+    def test_init_subcommand_interactive_mode(self, tmp_path, monkeypatch):
+        """Test 'init' without -y calls interactive init."""
+        monkeypatch.chdir(tmp_path)
+
+        with patch("ralph.commands.interactive.check_and_prompt_init") as mock_prompt:
+            mock_prompt.return_value = True  # User accepted initialization
+            with patch("ralph.config.check_initialization_status") as mock_status:
+                mock_status.return_value = {
+                    "config_missing": False,
+                    "git_missing": False,
+                    "files_missing": [],
+                }
+
+                result = runner.invoke(app, ["init"])
+
+                assert result.exit_code == 0
+                mock_prompt.assert_called_once()
+
+    def test_init_subcommand_interactive_already_initialized(self, tmp_path, monkeypatch):
+        """Test 'init' when already initialized shows message."""
+        monkeypatch.chdir(tmp_path)
+
+        with patch("ralph.commands.interactive.check_and_prompt_init") as mock_prompt:
+            mock_prompt.return_value = False  # Nothing to do
+            with patch("ralph.config.check_initialization_status") as mock_status:
+                mock_status.return_value = {
+                    "config_missing": False,
+                    "git_missing": False,
+                    "files_missing": [],
+                }
+
+                result = runner.invoke(app, ["init"])
+
+                assert result.exit_code == 0
+                assert "already initialized" in result.stdout.lower()
