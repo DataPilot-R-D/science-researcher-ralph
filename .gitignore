@@ -1,6 +1,20 @@
 # Ralph working files (legacy, kept for cleanup)
 prd.json
 
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+.coverage
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+
+# Local/non-source artifacts
+legacy/
+planning/
+
 # IDE/tool config
 .serena/
 
