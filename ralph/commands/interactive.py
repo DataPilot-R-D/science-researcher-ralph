@@ -291,32 +291,55 @@ def run_menu() -> None:
         print_info("Research cancelled")
         return
 
+    # Load current settings from project and config
+    config = load_config()
+    try:
+        from ralph.core.rrd_manager import RRDManager
+
+        manager = RRDManager(project)
+        rrd = manager.load()
+        current_papers = rrd.requirements.target_papers
+    except Exception:
+        current_papers = config.default_papers
+
+    current_agent = config.default_agent  # Already a string (use_enum_values=True)
+    auto_iterations = current_papers + 6
+
+    # Show current settings
     console.print()
-    use_defaults = questionary.confirm(
-        "Use default settings?", default=True, style=MENU_STYLE
+    console.print("[bold]Current settings:[/bold]")
+    console.print(f"  Papers:     {current_papers}")
+    console.print(f"  Iterations: auto ({auto_iterations})")
+    console.print(f"  Agent:      {current_agent}")
+    console.print()
+
+    modify = questionary.confirm(
+        "Modify settings before running?", default=False, style=MENU_STYLE
     ).ask()
 
-    if use_defaults:
+    if not modify:
         run_research(str(project))
         return
 
+    # Allow modifications with current values as defaults
     papers = questionary.text(
-        "Target papers (leave empty to use existing):",
-        validate=lambda x: x == "" or x.isdigit() or "Enter a number",
+        f"Target papers [{current_papers}]:",
+        default=str(current_papers),
+        validate=lambda x: x.isdigit() or "Enter a number",
         style=MENU_STYLE,
     ).ask()
 
     iterations = questionary.text(
-        "Max iterations (leave empty for auto):",
+        "Max iterations [auto]:",
+        default="",
         validate=lambda x: x == "" or x.isdigit() or "Enter a number",
         style=MENU_STYLE,
     ).ask()
 
-    config = load_config()
     agent = questionary.select(
         "Agent to use:",
         choices=AGENT_CHOICES,
-        default=config.default_agent.value,
+        default=current_agent,
         style=MENU_STYLE,
     ).ask()
 

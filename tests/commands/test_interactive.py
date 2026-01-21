@@ -178,12 +178,13 @@ class TestRunMenu:
 
         mock_run.assert_not_called()
 
+    @patch("ralph.commands.interactive.load_config")
     @patch("ralph.commands.interactive.run_research")
     @patch("ralph.commands.interactive.list_research_projects")
     @patch("ralph.commands.interactive.questionary")
     @patch("ralph.commands.interactive.console")
-    def test_run_menu_default_settings(self, mock_console, mock_questionary, mock_list_projects, mock_run, tmp_path):
-        """Test run menu with default settings."""
+    def test_run_menu_default_settings(self, mock_console, mock_questionary, mock_list_projects, mock_run, mock_load_config, tmp_path):
+        """Test run menu with default settings (no modifications)."""
         project = tmp_path / "test-project"
         project.mkdir()
         (project / "rrd.json").write_text(json.dumps({
@@ -193,9 +194,14 @@ class TestRunMenu:
         }))
         mock_list_projects.return_value = [project]
 
+        mock_config = MagicMock()
+        mock_config.default_agent = "claude"  # String, not enum
+        mock_config.default_papers = 20
+        mock_load_config.return_value = mock_config
+
         # Setup questionary responses
         mock_questionary.select.return_value.ask.return_value = project
-        mock_questionary.confirm.return_value.ask.return_value = True  # Use defaults
+        mock_questionary.confirm.return_value.ask.return_value = False  # Don't modify settings
         mock_questionary.Choice = MagicMock(side_effect=lambda *args, **kwargs: kwargs.get("value", args[0]))
         mock_questionary.Separator = MagicMock()
 
@@ -209,7 +215,7 @@ class TestRunMenu:
     @patch("ralph.commands.interactive.questionary")
     @patch("ralph.commands.interactive.console")
     def test_run_menu_custom_settings(self, mock_console, mock_questionary, mock_list_projects, mock_run, mock_load_config, tmp_path):
-        """Test run menu with custom settings."""
+        """Test run menu with custom settings (user modifies)."""
         project = tmp_path / "test-project"
         project.mkdir()
         (project / "rrd.json").write_text(json.dumps({
@@ -220,13 +226,14 @@ class TestRunMenu:
         mock_list_projects.return_value = [project]
 
         mock_config = MagicMock()
-        mock_config.default_agent = Agent.CLAUDE
+        mock_config.default_agent = "claude"  # String, not enum
+        mock_config.default_papers = 20
         mock_load_config.return_value = mock_config
 
         # Setup questionary responses
-        select_responses = [project, "amp"]  # project, agent
+        select_responses = [project, "amp"]  # project selection, agent selection
         mock_questionary.select.return_value.ask.side_effect = select_responses
-        mock_questionary.confirm.return_value.ask.return_value = False  # Don't use defaults
+        mock_questionary.confirm.return_value.ask.return_value = True  # Yes, modify settings
         mock_questionary.text.return_value.ask.side_effect = ["30", "50"]  # papers, iterations
         mock_questionary.Choice = MagicMock(side_effect=lambda *args, **kwargs: kwargs.get("value", args[0]))
         mock_questionary.Separator = MagicMock()
