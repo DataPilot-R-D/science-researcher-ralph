@@ -37,6 +37,16 @@ Also required:
 
 ## Quick Start
 
+### Interactive Mode (Default)
+
+Run without flags to open the interactive menu:
+
+```bash
+research-ralph
+```
+
+From the menu you can create a project, run research, check status, reset projects, and update config defaults. If you installed via Poetry, use `poetry run research-ralph`.
+
 ### 1. Create a Research Project
 
 Use the built-in RRD creation command:

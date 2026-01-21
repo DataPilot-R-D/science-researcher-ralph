@@ -4,7 +4,11 @@ Complete reference for Research-Ralph command-line tools.
 
 ## research-ralph
 
-Primary Python CLI for Research-Ralph. Run without arguments to open the interactive menu.
+Primary Python CLI for Research-Ralph. Run without arguments to open the interactive menu:
+```bash
+research-ralph
+```
+
 If you installed via Poetry, use `poetry run research-ralph`.
 
 ### Flag-based usage

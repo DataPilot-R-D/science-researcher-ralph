@@ -8,6 +8,11 @@ Welcome to the Research-Ralph documentation. This guide helps you run autonomous
 - [CLI Reference](reference/cli.md) - `research-ralph` command-line options
 - [Architecture Overview](explanations/architecture.md) - How Research-Ralph works
 
+Interactive mode is the default:
+```bash
+research-ralph
+```
+
 ---
 
 ## Tutorials
