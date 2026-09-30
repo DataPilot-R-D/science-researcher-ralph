@@ -172,6 +172,7 @@ class TestRunResearch:
         mock_rrd.requirements.target_papers = 20
         mock_rrd.statistics.total_analyzed = 20
         mock_manager.load.return_value = mock_rrd
+        mock_manager.completion_errors.return_value = []
         mock_manager_class.return_value = mock_manager
 
         result = run_research("test-project")

@@ -199,13 +199,13 @@ def main(
                 agent=agent,
                 force=force,
             )
-            raise typer.Exit(0 if result else 1)
         except KeyboardInterrupt:
             console.print("\n[dim]Research interrupted[/dim]")
             raise typer.Exit(130)
         except Exception as e:
             print_error(f"Research failed: {type(e).__name__}: {e}")
             raise typer.Exit(1)
+        raise typer.Exit(0 if result else 1)
 
 
 def handle_config(config_arg: str) -> None:
@@ -290,13 +290,13 @@ def cmd_run(
             agent=agent,
             force=force,
         )
-        raise typer.Exit(0 if result else 1)
     except KeyboardInterrupt:
         console.print("\n[dim]Research interrupted[/dim]")
         raise typer.Exit(130)
     except Exception as e:
         print_error(f"Research failed: {type(e).__name__}: {e}")
         raise typer.Exit(1)
+    raise typer.Exit(0 if result else 1)
 
 
 @app.command("status")

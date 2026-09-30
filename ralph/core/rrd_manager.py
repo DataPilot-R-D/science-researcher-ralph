@@ -7,6 +7,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+from pydantic import ValidationError
+
+from ralph.models.product_ideas import ProductIdeas
 from ralph.models.rrd import RRD, Phase
 
 
@@ -83,7 +86,15 @@ class RRDManager:
             Path to the backup file
         """
         if suffix is None:
-            suffix = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            suffix = timestamp
+            counter = 1
+            while (
+                self.rrd_path.with_suffix(f".backup.{suffix}.json").exists()
+                or self.progress_path.with_suffix(f".backup.{suffix}.txt").exists()
+            ):
+                suffix = f"{timestamp}_{counter}"
+                counter += 1
 
         backup_path = self.rrd_path.with_suffix(f".backup.{suffix}.json")
         shutil.copy2(self.rrd_path, backup_path)
@@ -161,6 +172,9 @@ Reset: {datetime.now().isoformat()}
         if not force and (rrd.phase != Phase.DISCOVERY or rrd.statistics.total_analyzed > 0):
             return False
 
+        if force:
+            self.create_backup()
+
         rrd.requirements.target_papers = target
         self.save()
         return True
@@ -195,17 +209,57 @@ Reset: {datetime.now().isoformat()}
 
         return errors
 
+    def completion_errors(self, rrd: Optional[RRD] = None) -> list[str]:
+        """Verify final state, report, and the configured product-ideas handoff."""
+        rrd = rrd if rrd is not None else self.load()
+        errors: list[str] = []
+        if rrd.phase != Phase.COMPLETE:
+            errors.append("Research phase is not COMPLETE")
+        analyzed = len(rrd.analyzed_papers)
+        if not analyzed or analyzed != len(rrd.papers_pool):
+            errors.append("Research must contain analyzed papers with no pending work")
+        if rrd.statistics.total_analyzed != analyzed:
+            errors.append("total_analyzed does not match paper statuses")
+
+        try:
+            if not (self.project_path / "research-report.md").read_text(encoding="utf-8").strip():
+                errors.append("research-report.md is empty")
+        except (OSError, UnicodeError) as error:
+            errors.append(f"Cannot read research-report.md: {error}")
+
+        config = rrd.handoff.product_ideation
+        if not config.enabled:
+            return errors
+        ideas_path = (self.project_path / config.output_filename).resolve()
+        if not ideas_path.is_relative_to(self.project_path.resolve()):
+            errors.append("Product ideas must be saved inside the research folder")
+            return errors
+        try:
+            ideas = ProductIdeas.model_validate_json(ideas_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, ValidationError) as error:
+            errors.append(f"Invalid {config.output_filename}: {error}")
+            return errors
+
+        if ideas.project != rrd.project:
+            errors.append("Product ideas belong to a different research project")
+        if not config.min_ideas <= len(ideas.ideas) <= config.max_ideas:
+            errors.append(f"Expected {config.min_ideas}-{config.max_ideas} product ideas")
+        ids = [idea.id for idea in ideas.ideas]
+        if len(set(ids)) != len(ids):
+            errors.append("Product idea IDs must be unique")
+        paper_ids = {paper.id for paper in rrd.papers_pool}
+        insight_ids = {insight.id for insight in rrd.insights}
+        for idea in ideas.ideas:
+            if not set(idea.evidence.paper_ids) <= paper_ids:
+                errors.append(f"{idea.id} references unknown papers")
+            if not set(idea.evidence.insight_ids) <= insight_ids:
+                errors.append(f"{idea.id} references unknown insights")
+        return errors
+
     def get_summary(self) -> dict:
         """Get a summary of the RRD state."""
         rrd = self.load()
         phase = rrd.phase
-
-        # Infer COMPLETE if IDEATION but product-ideas.json exists
-        if phase == Phase.IDEATION:
-            product_ideas_path = self.project_path / "product-ideas.json"
-            target = rrd.requirements.target_papers
-            if product_ideas_path.exists() and rrd.statistics.total_analyzed >= target and target > 0:
-                phase = Phase.COMPLETE
 
         return {
             "project": rrd.project,
@@ -219,4 +273,5 @@ Reset: {datetime.now().isoformat()}
             "analyzing": len(rrd.analyzing_papers),
             "insights": rrd.statistics.total_insights_extracted,
             "completion_pct": rrd.completion_percentage,
+            "completion_errors": self.completion_errors(rrd) if phase == Phase.COMPLETE else [],
         }

@@ -72,6 +72,24 @@ def sample_score_breakdown() -> ScoreBreakdown:
 
 
 @pytest.fixture
+def nested_score_breakdown() -> dict:
+    """The score format written by the research prompt and existing projects."""
+    return {
+        "execution": {
+            "novelty": 4, "feasibility": 3, "time_to_poc": 3,
+            "value_market": 4, "defensibility": 3, "adoption": 4,
+        },
+        "blue_ocean": {
+            "market_creation": 4, "first_mover_window": 3,
+            "network_effects": 3, "strategic_clarity": 4,
+        },
+        "execution_total": 21,
+        "blue_ocean_total": 14,
+        "combined_total": 35,
+    }
+
+
+@pytest.fixture
 def sample_requirements() -> Requirements:
     """Create sample research requirements."""
     return Requirements(
@@ -140,6 +158,42 @@ def project_with_progress(project_with_rrd: Path) -> Path:
     """Create a project with progress.txt."""
     progress_path = project_with_rrd / "progress.txt"
     progress_path.write_text("# Research Progress\n\n## Findings\n- Initial setup\n")
+    return project_with_rrd
+
+
+@pytest.fixture
+def completed_project(project_with_rrd: Path, sample_paper: Paper) -> Path:
+    """A completed research project with a report and traceable product ideas."""
+    path = project_with_rrd / "rrd.json"
+    data = json.loads(path.read_text())
+    paper = sample_paper.model_dump(mode="json")
+    paper["status"] = "insights_extracted"
+    data.update(
+        phase="COMPLETE", papers_pool=[paper],
+        statistics={"total_analyzed": 1},
+        insights=[{"id": "insight_001", "paper_id": paper["id"], "insight": "Useful technique"}],
+    )
+    data["requirements"]["target_papers"] = 1
+    path.write_text(json.dumps(data))
+    (project_with_rrd / "research-report.md").write_text("# Research report\nA useful technique.")
+    ideas = {
+        "schema_version": "1.0", "project": data["project"],
+        "ideas": [
+            {
+                "id": f"idea_{i}", "name": f"Product {i}",
+                "one_liner": "Apply the technique to a user problem.",
+                "problem": {"who": "Engineers", "pain": "Manual work", "why_now": "New technique"},
+                "solution": {"what": "Automate the work", "mvp_scope": ["Prototype"]},
+                "evidence": {"paper_ids": [paper["id"]], "insight_ids": ["insight_001"]},
+                "scores": {
+                    "execution_0_30": 20, "blue_ocean_0_20": 10,
+                    "combined_0_50": 30, "confidence_0_1": 0.7,
+                },
+            }
+            for i in range(3)
+        ],
+    }
+    (project_with_rrd / "product-ideas.json").write_text(json.dumps(ideas))
     return project_with_rrd
 
 

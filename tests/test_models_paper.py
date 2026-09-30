@@ -31,6 +31,29 @@ class TestPaperStatus:
 class TestScoreBreakdown:
     """Tests for ScoreBreakdown model."""
 
+    def test_nested_scores_survive_round_trip(self, nested_score_breakdown):
+        scores = ScoreBreakdown.model_validate(nested_score_breakdown)
+
+        assert scores.execution_score == 21
+        assert scores.blue_ocean_score == 14
+        assert scores.combined_score == 35
+        assert scores.model_dump(mode="json") == nested_score_breakdown
+        assert ScoreBreakdown.model_validate_json(scores.model_dump_json()) == scores
+
+    def test_nested_scores_enforce_dimension_limits(self, nested_score_breakdown):
+        nested_score_breakdown["execution"]["novelty"] = 6
+        with pytest.raises(ValidationError):
+            ScoreBreakdown.model_validate(nested_score_breakdown)
+
+    def test_legacy_flat_scores_serialize_to_prompt_format(self):
+        scores = ScoreBreakdown(novelty=4, network_data_effects=3)
+        data = scores.model_dump(mode="json")
+
+        assert data["execution"]["novelty"] == 4
+        assert data["blue_ocean"]["network_effects"] == 3
+        assert data["combined_total"] == 7
+        assert ScoreBreakdown.model_validate(data) == scores
+
     def test_default_scores_are_zero(self):
         """All scores default to 0."""
         breakdown = ScoreBreakdown()

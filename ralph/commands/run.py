@@ -100,6 +100,12 @@ def run_research(
 
     # Check if already complete
     if rrd.phase == Phase.COMPLETE:
+        errors = manager.completion_errors(rrd)
+        if errors:
+            print_error("Completion validation failed:")
+            for error in errors:
+                console.print(f"  - {error}")
+            return False
         print_success("Research already complete!")
         console.print(f"  View report: cat {project_path}/research-report.md")
         return True

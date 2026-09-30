@@ -2,9 +2,9 @@
 
 from datetime import date as dt_date
 from enum import Enum
-from typing import Any, Optional, Union
+from typing import Any, ClassVar, Optional, Union
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
 
 
 class PaperStatus(str, Enum):
@@ -21,6 +21,16 @@ class PaperStatus(str, Enum):
 class ScoreBreakdown(BaseModel):
     """Detailed score breakdown for a paper."""
 
+    _execution_fields: ClassVar[tuple[str, ...]] = (
+        "novelty", "feasibility", "time_to_poc", "value_market", "defensibility", "adoption",
+    )
+    _blue_ocean_fields: ClassVar[dict[str, str]] = {
+        "market_creation": "market_creation",
+        "first_mover_window": "first_mover_window",
+        "network_effects": "network_data_effects",
+        "strategic_clarity": "strategic_clarity",
+    }
+
     # Execution Rubric (0-30)
     novelty: int = Field(default=0, ge=0, le=5, description="How new/different is this approach?")
     feasibility: int = Field(default=0, ge=0, le=5, description="Can a small team build this?")
@@ -34,6 +44,40 @@ class ScoreBreakdown(BaseModel):
     first_mover_window: int = Field(default=0, ge=0, le=5, description="Time until competitors replicate?")
     network_data_effects: int = Field(default=0, ge=0, le=5, description="Does value compound over time?")
     strategic_clarity: int = Field(default=0, ge=0, le=5, description="How focused is the opportunity?")
+
+    @model_validator(mode="before")
+    @classmethod
+    def read_nested_scores(cls, data: Any) -> Any:
+        """Accept the prompt's nested format as well as legacy flat scores."""
+        if not isinstance(data, dict):
+            return data
+        values = dict(data)
+        groups = {
+            "execution": {name: name for name in cls._execution_fields},
+            "blue_ocean": cls._blue_ocean_fields,
+        }
+        for group, fields in groups.items():
+            if group not in data:
+                continue
+            if not isinstance(data[group], dict):
+                raise ValueError(f"{group} scores must be an object")
+            for source, target in fields.items():
+                if source in data[group]:
+                    values[target] = data[group][source]
+        return values
+
+    @model_serializer
+    def serialize_scores(self) -> dict[str, Any]:
+        """Write the same nested schema used by the research prompt."""
+        return {
+            "execution": {name: getattr(self, name) for name in self._execution_fields},
+            "blue_ocean": {
+                name: getattr(self, field) for name, field in self._blue_ocean_fields.items()
+            },
+            "execution_total": self.execution_score,
+            "blue_ocean_total": self.blue_ocean_score,
+            "combined_total": self.combined_score,
+        }
 
     @property
     def execution_score(self) -> int:

@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Callable, Optional
 
 from ralph.config import Agent, load_config
-from ralph.core.agent_runner import AgentRunner, AgentResult, ErrorType, classify_error, get_retry_delay, _get_repo_root
+from ralph.core.agent_runner import AgentRunner, AgentResult, ErrorType, get_retry_delay, _get_repo_root
 from ralph.core.rrd_manager import RRDManager
 from ralph.models.rrd import Phase
 
@@ -43,7 +43,7 @@ class ResearchLoop:
     Main research loop that runs the AI agent repeatedly.
 
     The loop continues until:
-    1. Agent outputs <promise>COMPLETE</promise>
+    1. COMPLETE phase and required research artifacts are verified
     2. Max iterations reached
     3. Too many consecutive failures
     """
@@ -70,6 +70,9 @@ class ResearchLoop:
         """
         self.project_path = project_path
         self.rrd_manager = RRDManager(project_path)
+        self.prompt_path = project_path.parent / "prompt.md"
+        if not self.prompt_path.is_file():
+            self.prompt_path = _get_repo_root() / "prompt.md"
 
         config = load_config()
         self.agent = agent or config.default_agent
@@ -111,11 +114,7 @@ class ResearchLoop:
             errors.append(f"Agent '{self.agent.value}' not found. {runner.get_install_instructions()}")
 
         # Check prompt.md exists
-        prompt_path = self.project_path.parent / "prompt.md"
-        if not prompt_path.exists():
-            # Try repo root
-            prompt_path = _get_repo_root() / "prompt.md"
-        if not prompt_path.exists():
+        if not self.prompt_path.is_file():
             errors.append("prompt.md not found")
 
         return errors
@@ -182,7 +181,7 @@ class ResearchLoop:
     def _run_agent(self, runner: AgentRunner) -> AgentResult:
         """Run the agent, with streaming if enabled."""
         if self.live_output and self.on_output:
-            gen = runner.run_streaming(self.project_path)
+            gen = runner.run_streaming(self.project_path, prompt_path=self.prompt_path)
             result = None
             try:
                 while True:
@@ -200,19 +199,8 @@ class ResearchLoop:
             # Unexpected: streaming didn't return AgentResult, fall back
             import sys
             print("Warning: Streaming did not return AgentResult, falling back to non-streaming", file=sys.stderr)
-            return runner.run(self.project_path)
-        return runner.run(self.project_path)
-
-    def _is_research_complete(self, agent_result: AgentResult) -> bool:
-        """Check if research is complete based on agent result and RRD state."""
-        rrd = self.rrd_manager.load()
-        pending_count = len(rrd.pending_papers) + len(rrd.analyzing_papers)
-        has_analyzed = rrd.statistics.total_analyzed > 0
-
-        # Complete if explicit signal or COMPLETE phase, with no pending work
-        if (agent_result.is_complete or rrd.phase == Phase.COMPLETE) and pending_count == 0 and has_analyzed:
-            return True
-        return False
+            return runner.run(self.project_path, prompt_path=self.prompt_path)
+        return runner.run(self.project_path, prompt_path=self.prompt_path)
 
     def _handle_failure(
         self, iteration: int, phase: Phase, agent_result: AgentResult
@@ -263,22 +251,30 @@ class ResearchLoop:
 
         rrd = self.rrd_manager.load()
         papers_delta = rrd.statistics.total_analyzed - analyzed_before
-        is_complete = self._is_research_complete(agent_result)
+        # Verify the saved state and artifacts; a tag in output is not sufficient.
+        completion_errors = (
+            self.rrd_manager.completion_errors(rrd) if rrd.phase == Phase.COMPLETE else []
+        )
+        is_complete = rrd.phase == Phase.COMPLETE and not completion_errors
+        error_message = None
+        if completion_errors:
+            error_message = "Completion validation failed: " + "; ".join(completion_errors)
 
         result = IterationResult(
             iteration=iteration,
-            success=True,
+            success=error_message is None,
             agent_result=agent_result,
             phase=rrd.phase,
             papers_delta=papers_delta,
-            should_continue=not is_complete,
+            should_continue=not is_complete and error_message is None,
             is_complete=is_complete,
+            error_message=error_message,
         )
 
         if self.on_iteration_end:
             self.on_iteration_end(result)
 
-        if not is_complete:
+        if result.should_continue:
             time.sleep(2)
 
         return result

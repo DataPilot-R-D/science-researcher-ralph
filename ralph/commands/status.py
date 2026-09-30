@@ -92,7 +92,11 @@ def show_status(project: str) -> bool:
     pool_size = summary.get("pool_size", 0)
     target = summary.get("target_papers", 0)
 
-    if phase == "COMPLETE":
+    if summary.get("completion_errors"):
+        print_error("Completion validation failed:")
+        for error in summary["completion_errors"]:
+            console.print(f"  - {error}")
+    elif phase == "COMPLETE":
         console.print(f"[{SimpsonsColors.PINK}]Research complete![/]")
         console.print(f"  View report: [bold]cat {project_path}/research-report.md[/bold]")
         if (project_path / "product-ideas.json").exists():

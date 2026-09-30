@@ -213,7 +213,8 @@ class RRD(BaseModel):
     def analyzed_papers(self) -> list[Paper]:
         """Get papers that have been analyzed."""
         return [
-            p for p in self.papers_pool if p.status in ("presented", "rejected", "extract_insights")
+            p for p in self.papers_pool
+            if p.status in ("presented", "rejected", "extract_insights", "insights_extracted")
         ]
 
     @property

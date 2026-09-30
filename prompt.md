@@ -294,6 +294,8 @@ If you notice workflow/instruction issues:
 
 **Trigger:** `phase == "IDEATION"` in `{{RESEARCH_DIR}}/rrd.json`
 
+Use `handoff.product_ideation.output_filename` for every product-ideas output and reference below (default: `product-ideas.json`). Keep this file inside the research folder. Honor the configured `min_ideas` and `max_ideas` limits.
+
 ### Input
 - `{{RESEARCH_DIR}}/rrd.json` (papers, insights, scores)
 - `{{RESEARCH_DIR}}/research-report.md` (synthesis, recommendations)
@@ -399,6 +401,9 @@ If you notice workflow/instruction issues:
    ```
 
 6. **Update `{{RESEARCH_DIR}}/rrd.json`:**
+   - First verify that `research-report.md` is non-empty and the product-ideas file parses as JSON with `schema_version: "1.0"` and the same `project` as the RRD
+   - Check the configured idea count, unique idea IDs, non-empty problem/solution descriptions, and evidence IDs that resolve to papers/insights in this RRD
+   - Verify that each idea's combined score equals its execution score plus its blue ocean score
    - Set `"phase": "COMPLETE"`
    - Set `timing.ideation.ended_at` to current ISO8601 timestamp
    - Calculate `timing.ideation.duration_seconds`
@@ -451,15 +456,16 @@ Check paper statuses:
 - Count papers with `status: "pending"` → must be 0
 - Count papers with `status: "analyzing"` → must be 0
 - `statistics.total_analyzed` → must be > 0
+- `statistics.total_analyzed` must equal the number of papers in terminal statuses (`presented`, `rejected`, `extract_insights`, or `insights_extracted`)
 
 **If verification PASSES** (all papers analyzed):
 - **Update timing:**
   - Set `timing.analysis.ended_at` to current ISO8601 timestamp
   - Calculate `timing.analysis.duration_seconds` = (ended_at - started_at) in seconds
 - Generate the Final Research Report and save to `{{RESEARCH_DIR}}/research-report.md`
-- Update `"phase": "IDEATION"` in `{{RESEARCH_DIR}}/rrd.json`
-- Set `timing.ideation.started_at` to current ISO8601 timestamp
-- **Do NOT output `<promise>COMPLETE</promise>` yet** - the next iteration will run IDEATION
+- If `handoff.product_ideation.enabled` is false, verify the report, set `phase` to `COMPLETE` and `timing.complete.ended_at`, then output the completion tag
+- Otherwise, update `"phase": "IDEATION"` and set `timing.ideation.started_at` to the current ISO8601 timestamp
+- When transitioning to IDEATION, leave the completion tag for the next iteration after product ideas are generated
 
 **If verification FAILS** (papers still pending):
 - Do NOT change phase
@@ -474,19 +480,19 @@ The IDEATION phase instructions above will guide you to:
    - Set `timing.ideation.ended_at` and calculate duration
    - Set `timing.complete.ended_at`
    - Update `statistics.ideation_metrics`
-3. **OUTPUT THIS EXACT TAG (required for loop to exit):**
+3. **Output the completion tag after saving and verifying the artifacts:**
    ```
    <promise>COMPLETE</promise>
    ```
 
 ### If `phase == "COMPLETE"`:
 
-If you see `phase == "COMPLETE"`, output:
+If you see `phase == "COMPLETE"`, verify the report and, when ideation is enabled, the configured product-ideas file using the checks above. Report missing or invalid artifacts as an error. Once verification passes, output:
 ```
 <promise>COMPLETE</promise>
 ```
 
-**CRITICAL:** The loop ONLY exits when it sees the EXACT string `<promise>COMPLETE</promise>` in your output. Saying "research is complete" or "all papers analyzed" in plain English will NOT work. You MUST output the exact XML-style tag above.
+**CRITICAL:** Successful completion requires a persisted `COMPLETE` phase, all papers analyzed with consistent counts, a non-empty report, and valid product ideas when enabled. The Python loop verifies these conditions and fails with an error if a completed project has invalid artifacts. A completion tag alone cannot finish research.
 
 **WARNING:** Outputting `<promise>COMPLETE</promise>` without reading and verifying `{{RESEARCH_DIR}}/rrd.json` is a CRITICAL FAILURE. Never assume work is done - always verify by reading the actual files. Do NOT read rrd.json from any other folder!
 
@@ -496,7 +502,7 @@ Do not quote or restate the stop condition text in your response.
 
 ## Final Research Report
 
-When research is COMPLETE, generate a comprehensive report and save it to `{{RESEARCH_DIR}}/research-report.md`.
+When analysis finishes, generate a comprehensive report and save it to `{{RESEARCH_DIR}}/research-report.md` before IDEATION or COMPLETE.
 
 ### Report Structure
 

@@ -85,6 +85,55 @@ class TestRRDManagerLoad:
 class TestRRDManagerSave:
     """Tests for RRDManager.save method."""
 
+    def test_target_update_preserves_nested_scores(
+        self, project_with_rrd, nested_score_breakdown, sample_paper,
+    ):
+        path = project_with_rrd / "rrd.json"
+        data = json.loads(path.read_text())
+        paper = sample_paper.model_dump(mode="json")
+        paper["score_breakdown"] = nested_score_breakdown
+        data["papers_pool"] = [paper]
+        path.write_text(json.dumps(data))
+
+        assert RRDManager(project_with_rrd).update_target_papers(30)
+
+        saved = json.loads(path.read_text())
+        assert saved["papers_pool"][0]["score_breakdown"] == nested_score_breakdown
+
+    def test_forced_target_update_backs_up_original_files(self, project_with_progress):
+        manager = RRDManager(project_with_progress)
+        original_rrd = manager.rrd_path.read_bytes()
+        original_progress = manager.progress_path.read_bytes()
+
+        assert manager.update_target_papers(30, force=True)
+
+        backups = list(project_with_progress.glob("rrd.backup.*.json"))
+        progress_backups = list(project_with_progress.glob("progress.backup.*.txt"))
+        assert len(backups) == len(progress_backups) == 1
+        assert backups[0].read_bytes() == original_rrd
+        assert progress_backups[0].read_bytes() == original_progress
+        assert manager.load().requirements.target_papers == 30
+
+    def test_backup_failure_prevents_forced_update(self, project_with_rrd):
+        manager = RRDManager(project_with_rrd)
+        original = manager.rrd_path.read_bytes()
+        with patch.object(manager, "create_backup", side_effect=OSError("Disk full")):
+            with pytest.raises(OSError, match="Disk full"):
+                manager.update_target_papers(30, force=True)
+        assert manager.rrd_path.read_bytes() == original
+
+    def test_forced_updates_keep_distinct_backups(self, project_with_progress):
+        manager = RRDManager(project_with_progress)
+        with patch("ralph.core.rrd_manager.datetime") as clock:
+            clock.now.return_value = datetime(2026, 9, 30, 12, 0, 0)
+            manager.update_target_papers(21, force=True)
+            manager.update_target_papers(22, force=True)
+
+        backups = list(project_with_progress.glob("rrd.backup.*.json"))
+        assert len(backups) == 2
+        assert {json.loads(p.read_text())["requirements"]["target_papers"] for p in backups} == {20, 21}
+        assert len(list(project_with_progress.glob("progress.backup.*.txt"))) == 2
+
     def test_save_with_rrd_param(self, tmp_project_dir, sample_rrd):
         """Test saving RRD passed as parameter."""
         manager = RRDManager(tmp_project_dir)

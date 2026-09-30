@@ -299,8 +299,8 @@ class TestResearchLoopRun:
     @patch("ralph.core.research_loop.AgentRunner")
     @patch("ralph.core.research_loop.load_config")
     @patch("ralph.core.research_loop.RRDManager")
-    def test_run_completes_on_signal(self, mock_manager_class, mock_load_config, mock_runner_class, mock_time, tmp_path):
-        """Test run completes on COMPLETE signal."""
+    def test_run_completes_with_verified_artifacts(self, mock_manager_class, mock_load_config, mock_runner_class, mock_time, tmp_path):
+        """Test run completes after the manager verifies state and artifacts."""
         mock_config = MagicMock()
         mock_config.default_agent = Agent.CLAUDE
         mock_config.max_consecutive_failures = 3
@@ -319,6 +319,7 @@ class TestResearchLoopRun:
         mock_rrd.pending_papers = []
         mock_rrd.analyzing_papers = []
         mock_manager.load.return_value = mock_rrd
+        mock_manager.completion_errors.return_value = []
         mock_manager_class.return_value = mock_manager
 
         mock_runner = MagicMock()

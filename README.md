@@ -210,6 +210,10 @@ researches/
 - Full traceability to source papers and insights
 - Transition to COMPLETE when done
 
+The Python CLI verifies completion against saved paper statuses, analysis counts, a non-empty report, and valid product ideas with traceable evidence. It checks the configured idea filename and count limits; ideas are optional when `handoff.product_ideation.enabled` is false. An output tag or an existing ideas file alone does not establish completion. Invalid completed projects exit with a validation error.
+
+Both legacy flat paper scores and the current nested execution/blue-ocean format are accepted. Saves use the nested format and calculate totals from the dimensions. Forced target changes back up the original RRD and progress log before saving.
+
 ### Evaluation Rubric
 
 Papers are scored on **TWO rubrics** (see `MISSION.md` for full criteria):
